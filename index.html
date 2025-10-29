@@ -7,10 +7,10 @@
   <meta name="description" content="Zixun Huang — Profile, Publications, Education & Honors" />
   <style>
     :root{
-      --bg:#f4f4f9; --fg:#111; --muted:#666; --card:#fff; --line:rgba(0,0,0,.08); --link:#003d99;
+      --bg:#f4f4f9; --fg:#111; --muted:#666; --card:#e8f0fe; --line:rgba(0,0,0,.08); --link:#003d99;
     }
     [data-theme="dark"]{
-      --bg:#0b0b0f; --fg:#f5f5f7; --muted:#a0a0aa; --card:#121217; --line:rgba(255,255,255,.12); --link:#5c85ff;
+      --bg:#0b0b0f; --fg:#f5f5f7; --muted:#a0a0aa; --card:#1a2332; --line:rgba(255,255,255,.12); --link:#5c85ff;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -52,7 +52,7 @@
       display:flex; align-items:flex-start; gap:32px; margin-bottom:32px;
     }
     .profile-image{
-      width:100px; height:100px; border-radius:8px; object-fit:cover; border:1px solid var(--line);
+      width:100px; height:100px; border-radius:50%; object-fit:cover; border:1px solid var(--line);
     }
     .profile-info{
       flex:1; padding-top:8px;
@@ -71,14 +71,29 @@
     }
     .profile-contact a:hover{text-decoration:underline}
     .toggle{
-      margin-top:16px; font-size:12px; cursor:pointer; border:1px solid var(--line);
-      padding:6px 10px; border-radius:999px; background:transparent; color:var(--fg);
+      margin-top:16px; display:flex; align-items:center; gap:8px; cursor:pointer;
+    }
+    .toggle input{opacity:0; width:0; height:0; position:absolute}
+    .toggle-switch{
+      position:relative; display:inline-block; width:50px; height:26px;
+    }
+    .toggle-slider{
+      position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0;
+      background-color:#ccc; transition:.4s; border-radius:26px;
+    }
+    .toggle-slider:before{
+      position:absolute; content:""; height:20px; width:20px; left:3px; bottom:3px;
+      background-color:#fff; transition:.4s; border-radius:50%;
+    }
+    [data-theme="dark"] .toggle-slider{background-color:#4a90e2}
+    [data-theme="dark"] .toggle-slider:before{transform:translateX(24px)}
+    .toggle-label{
+      font-size:12px; color:var(--fg); user-select:none;
     }
     /* Content */
     .content{border:1px solid var(--line); background:var(--card); border-radius:16px; padding:28px}
-    section{scroll-margin-top:80px; padding:8px 0 20px; border-bottom:1px dashed var(--line)}
-    section:last-child{border-bottom:none}
-    h2{margin:0 0 14px; font-size:20px}
+    section{scroll-margin-top:80px; padding:8px 0 20px}
+    h2{margin:0 0 14px; font-size:20px; padding-bottom:8px; border-bottom:1px solid var(--line)}
     p{line-height:1.7; margin:0 0 12px}
     ul{margin:0; padding-left:18px}
     li{margin:6px 0}
@@ -89,10 +104,12 @@
     #lecture-notes ul{list-style:none; padding-left:0}
     #lecture-notes li::before{content:"📖 "; margin-right:6px}
     .two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px}
-    .card{border:1px solid var(--line); border-radius:12px; padding:14px}
+    .card{border:1px solid var(--line); border-radius:12px; padding:14px; background:var(--card)}
     .muted{color:var(--muted)}
     .pub{margin:10px 0; padding:12px; border:1px solid var(--line); border-radius:10px}
     .pub .title{font-weight:600}
+    .pub > div{margin:4px 0; line-height:1.5}
+    #education .card > div{margin:4px 0; line-height:1.5}
     .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; padding:2px 6px; border:1px solid var(--line); border-radius:6px}
     @media (max-width: 960px){
       .page{grid-template-columns:1fr; gap:24px; padding:24px}
@@ -111,9 +128,9 @@
         <div class="sidebar-section-title">Zixun Huang</div>
         <div class="sidebar-divider"></div>
         <div class="sidebar-links">
-          <a href="mailto:alexpku@stu.pku.edu.cn">Email</a>
-          <a href="./CV.pdf" target="_blank" rel="noreferrer">CV</a>
-          <a href="https://github.com/" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="mailto:alexpku@stu.pku.edu.cn">📧 Email</a>
+          <a href="./CV.pdf" target="_blank" rel="noreferrer">📄 CV</a>
+          <a href="https://github.com/" target="_blank" rel="noreferrer">🔗 GitHub</a>
         </div>
       </div>
       
@@ -122,14 +139,20 @@
         <div class="sidebar-divider"></div>
         <div class="sidebar-links">
           <a href="#profile">Profile</a>
-          <a href="#pubs">Publication</a>
+          <a href="#pubs">Publications</a>
           <a href="#education">Education</a>
           <a href="#honors">Honors</a>
           <a href="#lecture-notes">Lecture Notes</a>
         </div>
       </div>
       
-      <button class="toggle" id="toggle">🌙 Dark</button>
+      <label class="toggle" id="toggle">
+        <input type="checkbox" id="toggle-input">
+        <span class="toggle-switch">
+          <span class="toggle-slider"></span>
+        </span>
+        <span class="toggle-label" id="toggle-label">☀️</span>
+      </label>
     </aside>
 
     <!-- Content -->
@@ -138,7 +161,7 @@
       <div class="content-header">
         <img class="profile-image" src="profile.jpg" alt="Profile Picture" />
         <div class="profile-info">
-          <div class="profile-name">Zixun Huang</div>
+          <div class="profile-name">Zixun Huang (黄梓洵)</div>
           <div class="profile-tag">Undergraduate in Statistics @ PKU</div>
           <div style="font-weight: bold; margin-top: 8px; color: #003d99;">Seeking Ph.D. opportunities in Statistics and IEOR (2026 Fall).</div>
         </div>
@@ -146,16 +169,17 @@
 
       <section id="profile">
         <h2>Profile</h2>
-        <p>I am a fourth-year undergraduate student in Statistics at Peking University and participated in an academic exchange at the University of California, 
-          Berkeley. Throughout my academic journey, I have been fortunate to work closely with Professors
-          <a href="https://leiwu0.github.io/">Lei Wu</a>, 
-          <a href="https://zheng80.github.io/">Zeyu Zheng</a>, 
-          and <a href="https://cs.pku.edu.cn/info/1237/2134.htm" target="_blank" rel="noreferrer">Junfeng Hu</a>.
-          My research focuses on the theoretical foundations of machine learning, including <a href="https://en.wikipedia.org/wiki/Neural_scaling_law" target="_blank" rel="noreferrer">scaling laws</a>, and reinforcement learning theory.</p>
+        <div class="card">
+          <p>I am a fourth-year undergraduate student in Statistics at <a href="https://en.wikipedia.org/wiki/Peking_University" target="_blank" rel="noreferrer">Peking University</a> and participated in an academic exchange at the <a href="https://en.wikipedia.org/wiki/University_of_California,_Berkeley" target="_blank" rel="noreferrer">University of California, Berkeley</a>. Throughout my academic journey, I have been fortunate to work closely with Professors
+            <a href="https://leiwu0.github.io/">Lei Wu</a>, 
+            <a href="https://zheng80.github.io/">Zeyu Zheng</a>, 
+            and <a href="https://cs.pku.edu.cn/info/1237/2134.htm" target="_blank" rel="noreferrer">Junfeng Hu</a>.
+            My research focuses on the theoretical foundations of machine learning, including <a href="https://en.wikipedia.org/wiki/Neural_scaling_law" target="_blank" rel="noreferrer">scaling laws</a>, and reinforcement learning theory.</p>
+        </div>
       </section>
 
       <section id="pubs">
-        <h2>Publication</h2>
+        <h2>Publications</h2>
         <div class="pub">
           <div class="title">Unveiling the Role of Learning Rate Schedules via Functional Scaling Laws</div>
           <div class="muted">Binghui Li*, Fengling Chen*, <strong>Zixun Huang*</strong>, Lean Wang*, Lei Wu</div>
@@ -164,9 +188,10 @@
         </div>
         <div class="pub">
           <div class="title">OBLR-PO: A Theoretical Framework for Stable Reinforcement Learning</div>
-          <div class="muted"><strong>Zixun Huang*</strong>, Jiayi Sheng, Zeyu Zheng</div>
+          <div class="muted"><strong>Zixun Huang*</strong>, Jiayi Sheng*, Zeyu Zheng</div>
           <div class="muted">Submitted to AISTATS 2026</div>
         </div>
+        <div class="muted" style="margin-top: 12px; font-size: 14px;">* indicates equal contribution.</div>
       </section>
 
       <section id="education">
@@ -235,12 +260,19 @@
     // Dark mode toggle (persist)
     const root = document.documentElement;
     const saved = localStorage.getItem('theme');
-    if(saved){ root.setAttribute('data-theme', saved); }
-    const toggle = document.getElementById('toggle');
-    function setTheme(t){ root.setAttribute('data-theme', t); localStorage.setItem('theme', t); toggle.textContent = (t==='dark'?'☀️ Light':'🌙 Dark'); }
-    toggle.addEventListener('click', ()=> setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark'));
-    // init button label
-    setTheme(root.getAttribute('data-theme'));
+    const currentTheme = saved || 'light';
+    root.setAttribute('data-theme', currentTheme);
+    const toggleInput = document.getElementById('toggle-input');
+    const toggleLabel = document.getElementById('toggle-label');
+    toggleInput.checked = currentTheme === 'dark';
+    toggleLabel.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
+    function setTheme(t){
+      root.setAttribute('data-theme', t);
+      localStorage.setItem('theme', t);
+      toggleInput.checked = t === 'dark';
+      toggleLabel.textContent = t === 'dark' ? '🌙' : '☀️';
+    }
+    toggleInput.addEventListener('change', ()=> setTheme(toggleInput.checked ? 'dark' : 'light'));
     // Shortcut: press "/" to focus hash search (jump menu)
     window.addEventListener('keydown', (e)=>{ if(e.key==='/'){ e.preventDefault(); links[0].focus?.(); }});
   </script>
