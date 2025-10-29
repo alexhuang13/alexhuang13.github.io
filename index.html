@@ -98,9 +98,12 @@
     ul{margin:0; padding-left:18px}
     li{margin:6px 0}
     #honors ul{list-style:none; padding-left:0}
-    #honors li::before{content:"🎖️ "; margin-right:6px}
-    #honors li.gold::before{content:"🏅 "; margin-right:6px}
-    #honors li.silver::before{content:"🥈 "; margin-right:6px}
+    #honors li{display:flex; justify-content:space-between; align-items:flex-start}
+    #honors li::before{content:"🎖️ "; margin-right:6px; flex-shrink:0}
+    #honors li.gold::before{content:"🏅 "; margin-right:6px; flex-shrink:0}
+    #honors li.silver::before{content:"🥈 "; margin-right:6px; flex-shrink:0}
+    #honors li span{flex:1}
+    #honors li .year{color:var(--muted); margin-left:16px; flex-shrink:0}
     #lecture-notes ul{list-style:none; padding-left:0}
     #lecture-notes li::before{content:"📖 "; margin-right:6px}
     .two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px}
@@ -213,12 +216,12 @@
         <h2>Honors</h2>
         <div class="card">
           <ul>
-            <li>Merit Student and Model Student of Outstanding Capacity (2024)</li>
-            <li class="gold">First Prize, Chinese Mathematics Contest (2024)</li>
-            <li>Yau Contest Groups Prize (2024)</li>
-            <li>Merit Student and Model Student of Outstanding Capacity (2023)</li>
-            <li class="gold">Gold Prize, Chinese Mathematical Olympiad (2021)</li>
-            <li class="silver">Silver Prize, Chinese Mathematical Olympiad (2020)</li>
+            <li><span>Hong Sheng Scholarship (<strong>Top 12%</strong>)</span><span class="year">2024</span></li>
+            <li class="gold"><span>First Prize, Chinese Mathematics Contest (<strong>Top 1%</strong>)</span><span class="year">2024</span></li>
+            <li><span>Yau Contest Groups Prize (<strong>Top 5%</strong>)</span><span class="year">2024</span></li>
+            <li><span>Xiaomi Scholarship (<strong>Top 12%</strong>)</span><span class="year">2023</span></li>
+            <li class="gold"><span>Gold Prize, Chinese Mathematical Olympiad</span><span class="year">2021</span></li>
+            <li class="silver"><span>Silver Prize, Chinese Mathematical Olympiad</span><span class="year">2020</span></li>
           </ul>
         </div>
       </section>
