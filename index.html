@@ -7,10 +7,10 @@
   <meta name="description" content="Zixun Huang — Profile, Publications, Education & Honors" />
   <style>
     :root{
-      --bg:#f4f4f9; --fg:#111; --muted:#666; --card:#fff; --line:rgba(0,0,0,.08); --link:#0a58ff;
+      --bg:#f4f4f9; --fg:#111; --muted:#666; --card:#fff; --line:rgba(0,0,0,.08); --link:#003d99;
     }
     [data-theme="dark"]{
-      --bg:#0b0b0f; --fg:#f5f5f7; --muted:#a0a0aa; --card:#121217; --line:rgba(255,255,255,.12); --link:#7aa2ff;
+      --bg:#0b0b0f; --fg:#f5f5f7; --muted:#a0a0aa; --card:#121217; --line:rgba(255,255,255,.12); --link:#5c85ff;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -82,6 +82,10 @@
     p{line-height:1.7; margin:0 0 12px}
     ul{margin:0; padding-left:18px}
     li{margin:6px 0}
+    #honors ul{list-style:none; padding-left:0}
+    #honors li::before{content:"🎖️ "; margin-right:6px}
+    #honors li.gold::before{content:"🏅 "; margin-right:6px}
+    #honors li.silver::before{content:"🥈 "; margin-right:6px}
     .two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px}
     .card{border:1px solid var(--line); border-radius:12px; padding:14px}
     .muted{color:var(--muted)}
@@ -119,6 +123,7 @@
           <a href="#pubs">Publication</a>
           <a href="#education">Education</a>
           <a href="#honors">Honors</a>
+          <a href="#lecture-notes">Lecture Notes</a>
         </div>
       </div>
       
@@ -133,6 +138,7 @@
         <div class="profile-info">
           <div class="profile-name">Zixun Huang</div>
           <div class="profile-tag">Undergraduate in Statistics @ PKU</div>
+          <div style="font-weight: bold; margin-top: 8px; color: #003d99;">Seeking Ph.D. opportunities in Statistics and IEOR (2025–2026).</div>
         </div>
       </div>
 
@@ -151,8 +157,8 @@
         <div class="pub">
           <div class="title">Unveiling the Role of Learning Rate Schedules via Functional Scaling Laws</div>
           <div class="muted">Binghui Li*, Fengling Chen*, <strong>Zixun Huang*</strong>, Lean Wang*, Lei Wu</div>
-          <div class="muted">NeurIPS 2025 (Spotlight)</div>
-          <a href="https://arxiv.org/abs/2509.19189" target="_blank" rel="noreferrer">Paper</a>
+          <div class="muted">NeurIPS 2025 (✨ <span style="color: #cc0000; font-weight: bold;">Spotlight</span>)</div>
+          <div><a href="https://arxiv.org/abs/2509.19189" target="_blank" rel="noreferrer">https://arxiv.org/abs/2509.19189</a></div>
         </div>
         <div class="pub">
           <div class="title">OBLR-PO: A Theoretical Framework for Stable Reinforcement Learning</div>
@@ -163,20 +169,16 @@
 
       <section id="education">
         <h2>Education</h2>
-        <div class="card">
-          <ul>
-            <li>
-              <strong>Peking University, School of Mathematical Sciences</strong>
-              <div class="muted">Sept 2022 – Present</div>
-              <div>B.S. in Statistics, GPA: 3.68/4.0</div>
-              <div>Elite Undergraduate Program for Applied Mathematics (Top 10%)</div>
-            </li>
-            <li>
-              <strong>University of California, Berkeley</strong>
-              <div class="muted">Jan 2025 – Aug 2025</div>
-              <div>Visiting Student, GPA: 4.0/4.0</div>
-            </li>
-          </ul>
+        <div class="card" style="margin: 10px 0;">
+          <strong>Peking University, School of Mathematical Sciences</strong>
+          <div class="muted">Sept 2022 – Present</div>
+          <div>B.S. in Statistics, GPA: 3.68/4.0</div>
+          <div>Elite Undergraduate Program for Applied Mathematics (<strong>Top 10%</strong>)</div>
+        </div>
+        <div class="card" style="margin: 10px 0;">
+          <strong>University of California, Berkeley</strong>
+          <div class="muted">Jan 2025 – Aug 2025</div>
+          <div>Visiting Student, GPA: 4.0/4.0</div>
         </div>
       </section>
 
@@ -185,11 +187,23 @@
         <div class="card">
           <ul>
             <li>Merit Student and Model Student of Outstanding Capacity (2024)</li>
-            <li>First Prize, Chinese Mathematics Contest (2024)</li>
+            <li class="gold">First Prize, Chinese Mathematics Contest (2024)</li>
             <li>Yau Contest Groups Prize (2024)</li>
             <li>Merit Student and Model Student of Outstanding Capacity (2023)</li>
-            <li>Gold Prize, Chinese Mathematical Olympiad (2021)</li>
-            <li>Silver Prize, Chinese Mathematical Olympiad (2020)</li>
+            <li class="gold">Gold Prize, Chinese Mathematical Olympiad (2021)</li>
+            <li class="silver">Silver Prize, Chinese Mathematical Olympiad (2020)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="lecture-notes">
+        <h2>Lecture Notes</h2>
+        <div class="card">
+          <ul>
+            <li><a href="./StatC206_Lecture_Notes.pdf" target="_blank" rel="noreferrer">Random Matrix Theory (StatC206)</a></li>
+            <li><a href="./Modern_Optimization.pdf" target="_blank" rel="noreferrer">Modern Optimization Theory</a></li>
+            <li><a href="./Generative model paper discussion.pdf" target="_blank" rel="noreferrer">Overview of Generative Models</a></li>
+            <li><a href="./Stat210b_HW.pdf" target="_blank" rel="noreferrer">High dimensional statistics (Stat210b)</a></li>
           </ul>
         </div>
       </section>
