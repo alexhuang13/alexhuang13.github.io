@@ -102,8 +102,8 @@
     #honors li::before{content:"🎖️ "; margin-right:6px; flex-shrink:0}
     #honors li.gold::before{content:"🏅 "; margin-right:6px; flex-shrink:0}
     #honors li.silver::before{content:"🥈 "; margin-right:6px; flex-shrink:0}
-    #honors li span{flex:1}
-    #honors li .year{color:var(--muted); margin-left:16px; flex-shrink:0}
+    #honors li > span:first-of-type{flex:1; min-width:0}
+    #honors li .year{color:var(--muted); flex-shrink:0; text-align:right}
     #lecture-notes ul{list-style:none; padding-left:0}
     #lecture-notes li::before{content:"📖 "; margin-right:6px}
     .two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px}
@@ -113,6 +113,8 @@
     .pub .title{font-weight:600}
     .pub > div{margin:4px 0; line-height:1.5}
     #education .card > div{margin:4px 0; line-height:1.5}
+    #education .card > strong{display:flex; justify-content:space-between; align-items:center}
+    #education .card .edu-date{color:var(--muted); font-weight:normal; margin-left:16px; flex-shrink:0}
     .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; padding:2px 6px; border:1px solid var(--line); border-radius:6px}
     @media (max-width: 960px){
       .page{grid-template-columns:1fr; gap:24px; padding:24px}
@@ -200,14 +202,12 @@
       <section id="education">
         <h2>Education</h2>
         <div class="card" style="margin: 10px 0;">
-          <strong>Peking University, School of Mathematical Sciences</strong>
-          <div class="muted">Sept 2022 – Present</div>
+          <strong>Peking University, School of Mathematical Sciences<span class="edu-date">Sept 2022 – Present</span></strong>
           <div>B.S. in Statistics, GPA: 3.68/4.0</div>
           <div>Elite Undergraduate Program for Applied Mathematics (<strong>Top 10%</strong>)</div>
         </div>
         <div class="card" style="margin: 10px 0;">
-          <strong>University of California, Berkeley</strong>
-          <div class="muted">Jan 2025 – Aug 2025</div>
+          <strong>University of California, Berkeley<span class="edu-date">Jan 2025 – Aug 2025</span></strong>
           <div>Visiting Student, GPA: 4.0/4.0</div>
         </div>
       </section>
@@ -233,7 +233,7 @@
             <li><a href="./StatC206_Lecture_Notes.pdf" target="_blank" rel="noreferrer">Random Matrix Theory (StatC206)</a></li>
             <li><a href="./Modern_Optimization.pdf" target="_blank" rel="noreferrer">Modern Optimization Theory</a></li>
             <li><a href="./Generative model paper discussion.pdf" target="_blank" rel="noreferrer">Overview of Generative Models</a></li>
-            <li><a href="./Stat210b_HW.pdf" target="_blank" rel="noreferrer">High dimensional statistics (Stat210b)</a></li>
+            <li><a href="./Stat210b_HW.pdf" target="_blank" rel="noreferrer">High dimensional statistics homework (Stat210b)</a></li>
           </ul>
         </div>
       </section>
