@@ -7,23 +7,24 @@
   <meta name="description" content="Zixun Huang — Profile, Publications, Education & Honors" />
   <style>
     :root{
-      --bg:#f4f4f9; --fg:#111; --muted:#666; --card:#e8f0fe; --line:rgba(0,0,0,.08); --link:#003d99;
+      --bg:#fff; --fg:#444; --muted:#666; --card:#fff; --line:rgba(0,0,0,.08); --link:#003d99;
     }
     [data-theme="dark"]{
-      --bg:#0b0b0f; --fg:#f5f5f7; --muted:#a0a0aa; --card:#1a2332; --line:rgba(255,255,255,.12); --link:#5c85ff;
+      --bg:#0b0b0f; --fg:#f5f5f7; --muted:#a0a0aa; --card:#121217; --line:rgba(255,255,255,.12); --link:#5c85ff;
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
+    html,body{height:100%; margin:0; padding:0}
     body{
-      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      background:linear-gradient(180deg,var(--bg),#eaeaf1 40%,var(--bg));
+      margin:0; padding:0; font-family:"Trebuchet MS", "KaiTi", "楷体", "STKaiti", "华文楷体", Arial, sans-serif;
+      font-size:22px;
+      background:#fff;
       color:var(--fg);
     }
     a{color:var(--link); text-decoration:none}
     a:hover{text-decoration:underline}
     .page{
-      min-height:100svh; display:grid; grid-template-columns:100px 1fr; gap:32px;
-      padding:32px; max-width:1200px; margin:0 auto;
+      min-height:100svh; display:grid; grid-template-columns:140px 1fr; gap:32px;
+      padding:32px; max-width:1560px; margin:0 auto;
     }
     /* Left Sidebar */
     .sidebar{
@@ -37,37 +38,37 @@
       display:flex; flex-direction:column; gap:8px;
     }
     .sidebar-section-title{
-      font-size:14px; font-weight:600; margin:0; color:var(--fg);
+      font-size:22px; font-weight:600; margin:0; color:var(--fg);
     }
     .sidebar-links{
       display:flex; flex-direction:column; gap:4px;
     }
     .sidebar-links a{
-      font-size:13px; color:var(--link); text-decoration:none; padding:2px 0;
+      font-size:21px; color:var(--link); text-decoration:none; padding:2px 0;
     }
     .sidebar-links a:hover{text-decoration:underline}
     .sidebar-links a.active{font-weight:600}
     /* Right Content Area */
     .content-header{
-      display:flex; align-items:flex-start; gap:32px; margin-bottom:32px;
+      display:flex; align-items:flex-start; gap:32px; margin-bottom:16px;
     }
     .profile-image{
-      width:100px; height:100px; border-radius:50%; object-fit:cover; border:1px solid var(--line);
+      width:156px; height:156px; border-radius:50%; object-fit:cover;
     }
     .profile-info{
       flex:1; padding-top:8px;
     }
     .profile-name{
-      font-size:28px; font-weight:700; margin:0 0 8px; color:var(--fg);
+      font-size:44px; font-weight:700; margin:0 0 6px; color:var(--fg);
     }
     .profile-tag{
-      font-size:16px; color:var(--muted); margin:0 0 16px; line-height:1.4;
+      font-size:24px; color:var(--muted); margin:0 0 8px; line-height:1.4;
     }
     .profile-contact{
       display:flex; flex-direction:column; gap:6px;
     }
     .profile-contact a{
-      font-size:14px; color:var(--link); text-decoration:none;
+      font-size:22px; color:var(--link); text-decoration:none;
     }
     .profile-contact a:hover{text-decoration:underline}
     .toggle{
@@ -88,15 +89,19 @@
     [data-theme="dark"] .toggle-slider{background-color:#4a90e2}
     [data-theme="dark"] .toggle-slider:before{transform:translateX(24px)}
     .toggle-label{
-      font-size:12px; color:var(--fg); user-select:none;
+      font-size:20px; color:var(--fg); user-select:none;
     }
     /* Content */
-    .content{border:1px solid var(--line); background:var(--card); border-radius:16px; padding:28px}
-    section{scroll-margin-top:80px; padding:8px 0 20px}
-    h2{margin:0 0 14px; font-size:20px; padding-bottom:8px; border-bottom:1px solid var(--line)}
-    p{line-height:1.7; margin:0 0 12px}
+    .content{background:var(--card); border-radius:16px; padding:20px}
+    section{scroll-margin-top:80px; padding:2px 0 8px; font-size:20px}
+    h2{margin:0 0 0; font-size:28px; padding-bottom:6px}
+    p{line-height:1.3; margin:0 0 8px}
+    section p{font-size:20px}
+    section .muted{font-size:20px}
+    section .pub{font-size:20px}
+    section .card{font-size:20px}
     ul{margin:0; padding-left:18px}
-    li{margin:6px 0}
+    li{margin:4px 0}
     #honors ul{list-style:none; padding-left:0}
     #honors li{display:flex; justify-content:space-between; align-items:flex-start}
     #honors li::before{content:"🎖️ "; margin-right:6px; flex-shrink:0}
@@ -107,16 +112,16 @@
     #lecture-notes ul{list-style:none; padding-left:0}
     #lecture-notes li::before{content:"📖 "; margin-right:6px}
     .two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px}
-    .card{border:1px solid var(--line); border-radius:12px; padding:14px; background:var(--card)}
+    .card{border-radius:12px; padding:10px; background:var(--card)}
     .muted{color:var(--muted)}
-    .pub{margin:10px 0; padding:12px; border:1px solid var(--line); border-radius:10px}
+    .pub{margin:-3px 0 0 0; padding:10px; border-radius:10px}
     .pub .title{font-weight:600}
-    .pub > div{margin:4px 0; line-height:1.5}
-    #education .card > div{margin:4px 0; line-height:1.5}
+    .pub > div{margin:3px 0; line-height:1.3}
+    #education .card > div{margin:3px 0; line-height:1.3}
     #education .card > strong{display:flex; justify-content:space-between; align-items:center}
     #education .card .edu-date{color:var(--muted); font-weight:normal; margin-left:16px; flex-shrink:0}
     .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; padding:2px 6px; border:1px solid var(--line); border-radius:6px}
-    footer{text-align:center; padding:40px 32px; margin-top:32px; font-family:"Times New Roman", Times, serif, "STSong", "SimSun", serif; font-style:italic; font-size:16px; color:var(--muted); line-height:1.8}
+    footer{text-align:center; padding:40px 32px; margin-top:32px; font-family:"Times New Roman", Times, serif, "STSong", "SimSun", serif; font-style:italic; font-size:24px; color:var(--muted); line-height:1.8}
     @media (max-width: 960px){
       .page{grid-template-columns:1fr; gap:24px; padding:24px}
       .sidebar{position:static; order:2}
@@ -144,7 +149,6 @@
         <div class="sidebar-section-title">Catalog</div>
         <div class="sidebar-divider"></div>
         <div class="sidebar-links">
-          <a href="#profile">Profile</a>
           <a href="#pubs">Publications</a>
           <a href="#education">Education</a>
           <a href="#honors">Honors</a>
@@ -169,12 +173,11 @@
         <div class="profile-info">
           <div class="profile-name">Zixun Huang (黄梓洵)</div>
           <div class="profile-tag">Undergraduate in Statistics @ PKU</div>
-          <div style="font-weight: bold; margin-top: 8px; color: #003d99;">Seeking Ph.D. opportunities in Statistics and IEOR (2026 Fall).</div>
+          <div style="font-weight: bold; margin-top: 4px; color: #444; background-color: #fff9c4; padding: 8px 12px; border-radius: 6px; display: inline-block;">Seeking Ph.D. opportunities in IEOR and Statistics (2026 Fall).</div>
         </div>
       </div>
 
       <section id="profile">
-        <h2>Profile</h2>
         <div class="card">
           <p>I am a fourth-year undergraduate student in Statistics at <a href="https://en.wikipedia.org/wiki/Peking_University" target="_blank" rel="noreferrer">Peking University</a> and participated in an academic exchange at the <a href="https://en.wikipedia.org/wiki/University_of_California,_Berkeley" target="_blank" rel="noreferrer">University of California, Berkeley</a>. Throughout my academic journey, I have been fortunate to work closely with Professors
             <a href="https://leiwu0.github.io/">Lei Wu</a>, 
@@ -186,22 +189,22 @@
 
       <section id="pubs">
         <h2>Publications</h2>
+        <div class="muted" style="margin-top: -3px; margin-bottom: 8px; font-size: 20px;">* indicates equal contribution.</div>
         <div class="pub">
           <div class="title">Unveiling the Role of Learning Rate Schedules via Functional Scaling Laws</div>
           <div class="muted">Binghui Li*, Fengling Chen*, <strong>Zixun Huang*</strong>, Lean Wang*, Lei Wu</div>
-          <div class="muted">NeurIPS 2025 (✨ <span style="color: #cc0000; font-weight: bold;">Spotlight</span>)</div>
+          <div class="muted"><strong>NeurIPS 2025</strong> (✨ <span style="color: #444; font-weight: bold;">Spotlight</span>)</div>
           <div><a href="https://arxiv.org/abs/2509.19189" target="_blank" rel="noreferrer">https://arxiv.org/abs/2509.19189</a></div>
         </div>
         <div class="pub">
           <div class="title">OBLR-PO: A Theoretical Framework for Stable Reinforcement Learning</div>
           <div class="muted"><strong>Zixun Huang*</strong>, Jiayi Sheng*, Zeyu Zheng</div>
-          <div class="muted">Submitted to AISTATS 2026</div>
+          <div class="muted"><strong>Submitted to AISTATS 2026</strong></div>
         </div>
-        <div class="muted" style="margin-top: 12px; font-size: 14px;">* indicates equal contribution.</div>
       </section>
 
       <section id="education">
-        <h2>Education</h2>
+        <h2>Educations</h2>
         <div class="card" style="margin: 10px 0;">
           <strong>Peking University, School of Mathematical Sciences<span class="edu-date">Sept 2022 – Present</span></strong>
           <div>B.S. in Statistics</div>
