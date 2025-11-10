@@ -7,24 +7,37 @@
   <meta name="description" content="Zixun Huang — Profile, Publications, Education & Honors" />
   <style>
     :root{
-      --bg:#fff; --fg:#444; --muted:#666; --card:#fff; --line:rgba(0,0,0,.08); --link:#003d99;
+      --bg:#fff; --fg:#444; --muted:#666; --card:#fff; --line:rgba(0,0,0,.08); --link:#003d99; --highlight:#fff9c4;
     }
     [data-theme="dark"]{
-      --bg:#0b0b0f; --fg:#f5f5f7; --muted:#a0a0aa; --card:#121217; --line:rgba(255,255,255,.12); --link:#5c85ff;
+      --bg:#0b0b0f; --fg:#f5f5f7; --muted:#a0a0aa; --card:#121217; --line:rgba(255,255,255,.12); --link:#5c85ff; --highlight:#4a4a2a;
     }
     *{box-sizing:border-box}
     html,body{height:100%; margin:0; padding:0}
     body{
       margin:0; padding:0; font-family:"Trebuchet MS", "KaiTi", "楷体", "STKaiti", "华文楷体", Arial, sans-serif;
       font-size:22px;
-      background:#fff;
+      background:var(--bg);
       color:var(--fg);
     }
     a{color:var(--link); text-decoration:none}
     a:hover{text-decoration:underline}
+    .top-nav{
+      background:var(--card); padding:12px 32px; border-bottom:1px solid var(--line);
+      display:flex; justify-content:center; align-items:center; gap:32px; position:sticky; top:0; z-index:100;
+      max-width:1560px; margin:0 auto;
+    }
+    .top-nav .nav-links{
+      display:flex; justify-content:center; align-items:center; gap:32px;
+    }
+    .top-nav a{
+      color:var(--fg); font-size:27px; padding:4px 8px; border-radius:4px; transition:background 0.2s; text-align:center;
+    }
+    .top-nav a:hover{background:var(--line); text-decoration:none}
+    .top-nav a.active{font-weight:600; color:var(--link)}
+    .top-nav .toggle{margin-left:auto}
     .page{
-      min-height:100svh; display:grid; grid-template-columns:140px 1fr; gap:32px;
-      padding:32px; max-width:1560px; margin:0 auto;
+      min-height:100svh; padding:32px; max-width:1560px; margin:0 auto;
     }
     /* Left Sidebar */
     .sidebar{
@@ -89,7 +102,7 @@
     [data-theme="dark"] .toggle-slider{background-color:#4a90e2}
     [data-theme="dark"] .toggle-slider:before{transform:translateX(24px)}
     .toggle-label{
-      font-size:20px; color:var(--fg); user-select:none;
+      font-size:30px; color:var(--fg); user-select:none;
     }
     /* Content */
     .content{background:var(--card); border-radius:16px; padding:20px}
@@ -132,39 +145,23 @@
   </style>
 </head>
 <body>
+  <nav class="top-nav">
+    <div class="nav-links">
+      <a href="#profile">Profile</a>
+      <a href="#pubs">Publications</a>
+      <a href="#education">Education</a>
+      <a href="#honors">Honors</a>
+      <a href="#lecture-notes">Lecture Notes</a>
+    </div>
+    <label class="toggle" id="toggle">
+      <input type="checkbox" id="toggle-input">
+      <span class="toggle-switch">
+        <span class="toggle-slider"></span>
+      </span>
+      <span class="toggle-label" id="toggle-label">☀️</span>
+    </label>
+  </nav>
   <main class="page">
-    <!-- Left Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">Zixun Huang</div>
-        <div class="sidebar-divider"></div>
-        <div class="sidebar-links">
-          <a href="mailto:alexpku@stu.pku.edu.cn">📧 Email</a>
-          <a href="./CV.pdf" target="_blank" rel="noreferrer">📄 CV</a>
-          <a href="https://github.com/" target="_blank" rel="noreferrer">🔗 GitHub</a>
-        </div>
-      </div>
-      
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">Catalog</div>
-        <div class="sidebar-divider"></div>
-        <div class="sidebar-links">
-          <a href="#pubs">Publications</a>
-          <a href="#education">Education</a>
-          <a href="#honors">Honors</a>
-          <a href="#lecture-notes">Lecture Notes</a>
-        </div>
-      </div>
-      
-      <label class="toggle" id="toggle">
-        <input type="checkbox" id="toggle-input">
-        <span class="toggle-switch">
-          <span class="toggle-slider"></span>
-        </span>
-        <span class="toggle-label" id="toggle-label">☀️</span>
-      </label>
-    </aside>
-
     <!-- Content -->
     <div class="content">
       <!-- Profile Header -->
@@ -173,7 +170,15 @@
         <div class="profile-info">
           <div class="profile-name">Zixun Huang (黄梓洵)</div>
           <div class="profile-tag">Undergraduate in Statistics @ PKU</div>
-          <div style="font-weight: bold; margin-top: 4px; color: #444; background-color: #fff9c4; padding: 8px 12px; border-radius: 6px; display: inline-block;">Seeking Ph.D. opportunities in IEOR and Statistics (2026 Fall).</div>
+          <div style="margin-top: 12px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
+            <a href="mailto:alexpku@stu.pku.edu.cn">📧 Email</a>
+            <span style="color: var(--muted);">|</span>
+            <a href="./CV.pdf" target="_blank" rel="noreferrer">📄 CV</a>
+            <span style="color: var(--muted);">|</span>
+            <a href="https://github.com/" target="_blank" rel="noreferrer">🔗 GitHub</a>
+            <span style="color: var(--muted);">|</span>
+            <a href="https://scholar.google.com/citations?hl=en&view_op=list_works&gmla=AKzYXQ2ygMGUsaPVUYzRsPY8ODI--lkmMCtlhGsI0uJ3sQ85_uI1-I_Tk8BB4hcklbQStb2bghEsy2QYzL0Jag&user=RzFIBNgAAAAJ" target="_blank" rel="noreferrer">🎓 Google Scholar</a>
+          </div>
         </div>
       </div>
 
@@ -186,6 +191,8 @@
             My research focuses on the theoretical foundations of machine learning, including <a href="https://en.wikipedia.org/wiki/Neural_scaling_law" target="_blank" rel="noreferrer">scaling laws</a>, and reinforcement learning theory.</p>
         </div>
       </section>
+
+      <div style="font-weight: bold; margin-top: 4px; margin-bottom: 16px; color: var(--fg); background-color: var(--highlight); padding: 8px 12px; border-radius: 6px; display: inline-block;">Seeking Ph.D. opportunities in IEOR and Statistics (2026 Fall).</div>
 
       <section id="pubs">
         <h2>Publications</h2>
@@ -260,11 +267,16 @@
     });
     const sidebar = document.querySelector('.sidebar');
     const links = [...sidebar.querySelectorAll('a[href^="#"]')];
+    const topNavLinks = [...document.querySelectorAll('.top-nav a[href^="#"]')];
+    const allLinks = [...links, ...topNavLinks];
     const io = new IntersectionObserver((entries)=>{
       entries.forEach(entry=>{
         const id = entry.target.id;
-        const l = links.find(x=>x.getAttribute('href')==='#'+id);
-        if(l){ entry.isIntersecting ? l.classList.add('active') : l.classList.remove('active'); }
+        allLinks.forEach(l=>{
+          if(l.getAttribute('href')==='#'+id){
+            entry.isIntersecting ? l.classList.add('active') : l.classList.remove('active');
+          }
+        });
       })
     }, {rootMargin:'-40% 0px -50% 0px', threshold:0.01});
     document.querySelectorAll('section').forEach(s=>io.observe(s));
