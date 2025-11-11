@@ -91,15 +91,14 @@
     section .card{font-size:19px}
     ul{margin:0; padding-left:18px}
     li{margin:4px 0}
-    #honors ul{list-style:none; padding-left:0}
-    #honors li{display:flex; justify-content:space-between; align-items:flex-start}
-    #honors li::before{content:"🎖️ "; margin-right:6px; flex-shrink:0}
-    #honors li.gold::before{content:"🏅 "; margin-right:6px; flex-shrink:0}
-    #honors li.silver::before{content:"🥈 "; margin-right:6px; flex-shrink:0}
-    #honors li > span:first-of-type{flex:1; min-width:0}
-    #honors li .year{color:var(--muted); flex-shrink:0; text-align:right}
-    #lecture-notes ul{list-style:none; padding-left:0}
-    #lecture-notes li::before{content:"📖 "; margin-right:6px}
+    #honors ul{list-style:none; padding-left:18px}
+    #honors li{display:flex; justify-content:space-between; align-items:flex-start; position:relative}
+    #honors li::before{content:"•"; position:absolute; left:-21px; color:var(--fg)}
+    #honors li > span:first-of-type{flex:1; min-width:0; padding-left:0}
+    #honors li .year{color:var(--muted); flex-shrink:0; text-align:right; margin-left:8px}
+    #pubs ul{list-style:disc; padding-left:18px}
+    #pubs li{margin:8px 0}
+    #lecture-notes ul{list-style:disc; padding-left:18px}
     .two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px}
     .card{border-radius:12px; padding:10px; background:var(--card)}
     .muted{color:var(--muted)}
@@ -108,7 +107,8 @@
     .pub > div{margin:3px 0; line-height:1.3}
     #education .card > div{margin:3px 0; line-height:1.3}
     #education .card > strong{display:flex; justify-content:space-between; align-items:center}
-    #education .card .edu-date{color:var(--muted); font-weight:normal; margin-left:16px; flex-shrink:0}
+    #education .card .edu-date{color:var(--muted); font-weight:normal; flex-shrink:0; text-align:right; margin-left:16px}
+    #education li{margin:8px 0}
     .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:11px; padding:2px 6px; border:1px solid var(--line); border-radius:6px}
     footer{text-align:center; padding:40px 64px; margin-top:32px; font-family:"Times New Roman", Times, serif, "STSong", "SimSun", serif; font-style:italic; font-size:23px; color:var(--muted); line-height:1.8}
     @media (max-width: 960px){
@@ -138,9 +138,11 @@
         <img class="profile-image" src="profile.jpg" alt="Profile Picture" />
         <div class="profile-info">
           <div class="profile-name">Zixun Huang (黄梓洵)</div>
-          <div class="profile-tag">Undergraduate in Statistics @ PKU</div>
+          <div class="profile-tag">Undergraduate in Statistics, Peking University</div>
           <div style="font-weight: bold; margin-top: 4px; margin-bottom: 12px; color: var(--fg); display: block; text-align: left;"><span style="background-color: var(--highlight); border-radius: 6px; padding: 2px 4px;">Seeking Ph.D. opportunities in IEOR and Statistics (2026 Fall).</span></div>
           <div style="margin-top: 12px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
+            <a href="https://en.wikipedia.org/wiki/Beijing" target="_blank" rel="noreferrer">📍 Beijing, China</a>
+            <span style="color: var(--muted);">|</span>
             <a href="mailto:alexpku@stu.pku.edu.cn">📧 Email</a>
             <span style="color: var(--muted);">|</span>
             <a href="./CV.pdf" target="_blank" rel="noreferrer">📄 CV</a>
@@ -163,35 +165,53 @@
       </section>
 
       <section id="pubs">
-        <h2>Publications</h2>
+        <h2>📄 Publications</h2>
         <div class="muted" style="margin-top: -3px; margin-bottom: 8px; font-size: 19px;">* indicates equal contribution.</div>
-        <div class="pub">
-          <div class="title">Unveiling the Role of Learning Rate Schedules via Functional Scaling Laws <a href="https://arxiv.org/abs/2509.19189" target="_blank" rel="noreferrer">[Paper]</a></div>
-          <div class="muted">Binghui Li*, Fengling Chen*, <strong style="text-decoration: underline;">Zixun Huang*</strong>, Lean Wang*, Lei Wu</div>
-          <div class="muted"><strong style="font-style: italic;">NeurIPS 2025 Spotlight</strong></div>
-        </div>
-        <div class="pub">
-          <div class="title">OBLR-PO: A Theoretical Framework for Stable Reinforcement Learning</div>
-          <div class="muted"><strong style="text-decoration: underline;">Zixun Huang*</strong>, Jiayi Sheng*, Zeyu Zheng</div>
-          <div class="muted"><strong style="font-style: italic;">Submitted to AISTATS 2026</strong></div>
+        <div class="card">
+          <ul>
+            <li>
+              <div class="title">Unveiling the Role of Learning Rate Schedules via Functional Scaling Laws <a href="https://arxiv.org/abs/2509.19189" target="_blank" rel="noreferrer">[Paper]</a></div>
+              <div class="muted">Binghui Li*, Fengling Chen*, <strong style="text-decoration: underline;">Zixun Huang*</strong>, Lean Wang*, Lei Wu</div>
+              <div class="muted"><strong style="font-style: italic;">NeurIPS 2025 Spotlight</strong></div>
+            </li>
+            <li>
+              <div class="title">OBLR-PO: A Theoretical Framework for Stable Reinforcement Learning</div>
+              <div class="muted"><strong style="text-decoration: underline;">Zixun Huang*</strong>, Jiayi Sheng*, Zeyu Zheng</div>
+              <div class="muted"><strong style="font-style: italic;">Submitted to AISTATS 2026</strong></div>
+            </li>
+          </ul>
         </div>
       </section>
 
       <section id="education">
-        <h2>Educations</h2>
-        <div class="card" style="margin: 10px 0;">
-          <strong>Peking University, School of Mathematical Sciences<span class="edu-date">Sept 2022 – Present</span></strong>
-          <div>B.S. in Statistics</div>
-          <div>Elite Undergraduate Program for Applied Mathematics (<strong>Top 10%</strong>)</div>
-        </div>
-        <div class="card" style="margin: 10px 0;">
-          <strong>University of California, Berkeley<span class="edu-date">Jan 2025 – Aug 2025</span></strong>
-          <div>Visiting Student</div>
+        <h2>🎓 Educations</h2>
+        <div class="card">
+          <ul>
+            <li>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                  <strong>Peking University, School of Mathematical Sciences</strong>
+                  <div>B.S. in Statistics</div>
+                  <div>Elite Undergraduate Program for Applied Mathematics (<strong>Top 10%</strong>)</div>
+                </div>
+                <span class="edu-date">Sept 2022 – Present</span>
+              </div>
+            </li>
+            <li>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                  <strong>University of California, Berkeley</strong>
+                  <div>Visiting Student</div>
+                </div>
+                <span class="edu-date">Jan 2025 – Aug 2025</span>
+              </div>
+            </li>
+          </ul>
         </div>
       </section>
 
       <section id="honors">
-        <h2>Honors</h2>
+        <h2>🏅 Honors</h2>
         <div class="card">
           <ul>
             <li><span>Hong Sheng Scholarship (<strong>Top 12%</strong>)</span><span class="year">2024</span></li>
@@ -205,7 +225,7 @@
       </section>
 
       <section id="lecture-notes">
-        <h2>Lecture Notes</h2>
+        <h2>📖 Lecture Notes</h2>
         <div class="card">
           <ul>   
             <li>A Map to Statistics (in progressing)</li>
