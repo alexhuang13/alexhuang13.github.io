@@ -14,6 +14,7 @@
     body{
       margin:0; padding:0; font-family:"Trebuchet MS", "KaiTi", "楷体", "STKaiti", "华文楷体", Arial, sans-serif;
       font-size:20px;
+      line-height:1.5;
       background:var(--bg);
       color:var(--fg);
     }
@@ -71,7 +72,7 @@
       font-size:31px; font-weight:700; margin:0 0 6px; color:var(--fg);
     }
     .profile-tag{
-      font-size:20px; color:var(--muted); margin:0 0 8px; line-height:1.4;
+      font-size:20px; color:var(--fg); margin:0 0 8px; line-height:1.6;
     }
     .profile-contact{
       display:flex; flex-direction:column; gap:6px;
@@ -84,7 +85,7 @@
     .content{background:var(--card); border-radius:16px; padding:20px}
     section{scroll-margin-top:80px; padding:2px 0 8px; font-size:19px}
     h2{margin:0 0 0; font-size:27px; padding-bottom:6px}
-    p{line-height:1.3; margin:0 0 8px}
+    p{line-height:1.5; margin:0 0 8px}
     section p{font-size:19px}
     section .muted{font-size:19px}
     section .pub{font-size:19px}
@@ -95,22 +96,22 @@
     #honors li{display:flex; justify-content:space-between; align-items:flex-start; position:relative}
     #honors li::before{content:"•"; position:absolute; left:-21px; color:var(--fg)}
     #honors li > span:first-of-type{flex:1; min-width:0; padding-left:0}
-    #honors li .year{color:var(--muted); flex-shrink:0; text-align:right; margin-left:8px}
+    #honors li .year{color:var(--fg); font-style:italic; flex-shrink:0; text-align:right; margin-left:8px}
     #pubs ul{list-style:disc; padding-left:18px}
-    #pubs li{margin:8px 0}
+    #pubs li{margin:12px 0}
     #lecture-notes ul{list-style:disc; padding-left:18px}
     .two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px}
     .card{border-radius:12px; padding:10px; background:var(--card)}
-    .muted{color:var(--muted)}
+    .muted{color:var(--fg)}
     .pub{margin:-3px 0 0 0; padding:10px; border-radius:10px}
     .pub .title{font-weight:600}
-    .pub > div{margin:3px 0; line-height:1.3}
-    #education .card > div{margin:3px 0; line-height:1.3}
+    .pub > div{margin:3px 0; line-height:1.5}
+    #education .card > div{margin:3px 0; line-height:1.5}
     #education .card > strong{display:flex; justify-content:space-between; align-items:center}
-    #education .card .edu-date{color:var(--muted); font-weight:normal; flex-shrink:0; text-align:right; margin-left:16px}
-    #education li{margin:8px 0}
+    #education .card .edu-date{color:var(--fg); font-weight:normal; font-style:italic; flex-shrink:0; text-align:right; margin-left:16px}
+    #education li{margin:12px 0}
     .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:11px; padding:2px 6px; border:1px solid var(--line); border-radius:6px}
-    footer{text-align:center; padding:40px 64px; margin-top:32px; font-family:"Times New Roman", Times, serif, "STSong", "SimSun", serif; font-style:italic; font-size:23px; color:var(--muted); line-height:1.8}
+    footer{text-align:center; padding:40px 64px; margin-top:32px; font-family:"Times New Roman", Times, serif, "STSong", "SimSun", serif; font-style:italic; font-size:23px; color:var(--fg); line-height:1.8}
     @media (max-width: 960px){
       .page{grid-template-columns:1fr; gap:24px; padding:24px}
       .sidebar{position:static; order:2}
@@ -158,7 +159,7 @@
 
       <section id="profile">
         <div class="card">
-          <p>I am a fourth-year undergraduate student in Statistics at <a href="https://en.wikipedia.org/wiki/Peking_University" target="_blank" rel="noreferrer">Peking University</a> and participated in an academic exchange at the <a href="https://en.wikipedia.org/wiki/University_of_California,_Berkeley" target="_blank" rel="noreferrer">University of California, Berkeley</a>. Throughout my academic journey, I have been fortunate to work closely with Professors
+          <p>I am a fourth-year undergraduate student in Statistics at <a href="https://en.wikipedia.org/wiki/Peking_University" target="_blank" rel="noreferrer">Peking University</a> and participated in an exchange program at the <a href="https://en.wikipedia.org/wiki/University_of_California,_Berkeley" target="_blank" rel="noreferrer">University of California, Berkeley</a>. Throughout my academic journey, I have been fortunate to work closely with Professors
             <a href="https://leiwu0.github.io/">Lei Wu</a>, 
             <a href="https://zheng80.github.io/">Zeyu Zheng</a>, 
             and <a href="https://cs.pku.edu.cn/info/1237/2134.htm" target="_blank" rel="noreferrer">Junfeng Hu</a>.
@@ -193,19 +194,19 @@
               <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div>
                   <strong>Peking University, School of Mathematical Sciences</strong>
-                  <div>B.S. in Statistics</div>
+                  <div><em>B.S. in Statistics</em></div>
                   <div>Elite Undergraduate Program for Applied Mathematics (<strong>Top 10%</strong>)</div>
                 </div>
-                <span class="edu-date">Sept 2022 – Present</span>
+                <span class="edu-date">Sept. 2022 – Present</span>
               </div>
             </li>
             <li>
               <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div>
                   <strong>University of California, Berkeley</strong>
-                  <div>Visiting Student</div>
+                  <div><em>Visiting Student</em></div>
                 </div>
-                <span class="edu-date">Jan 2025 – Aug 2025</span>
+                <span class="edu-date">Jan. 2025 – Aug. 2025</span>
               </div>
             </li>
           </ul>
