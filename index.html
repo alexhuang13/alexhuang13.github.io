@@ -100,6 +100,9 @@
     #pubs ul{list-style:disc; padding-left:18px}
     #pubs li{margin:12px 0}
     #pubs strong[style*="text-decoration: underline"]{text-underline-offset: 5px}
+    #pubs details summary{list-style:none; user-select:none}
+    #pubs details summary::-webkit-details-marker{display:none}
+    #pubs details summary:hover{text-decoration:underline}
     #lecture-notes ul{list-style:disc; padding-left:18px}
     .two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px}
     .card{border-radius:12px; padding:10px; background:var(--card)}
@@ -174,14 +177,32 @@
         <div class="card">
           <ul>
             <li>
-              <div class="title">Unveiling the Role of Learning Rate Schedules via Functional Scaling Laws <a href="https://arxiv.org/abs/2509.19189" target="_blank" rel="noreferrer">[Paper]</a></div>
+              <div class="title"><strong>Unveiling the Role of Learning Rate Schedules via Functional Scaling Laws</strong> <a href="https://arxiv.org/abs/2509.19189" target="_blank" rel="noreferrer">[Paper]</a></div>
               <div class="muted">Binghui Li*, Fengling Chen*, <strong style="text-decoration: underline;">Zixun Huang*</strong>, Lean Wang*, Lei Wu</div>
               <div class="muted"><strong style="font-style: italic;">NeurIPS 2025 Spotlight</strong></div>
+              <details style="margin-top: 8px;">
+                <summary style="cursor: pointer; color: var(--fg);">► <strong>TL;DR</strong>: We propose a Functional Scaling Law using an intrinsic-time view of SGD, analyze learning-rate schedules, and validate the framework to obtain effective training schedules.</summary>
+                <div class="muted" style="margin-top: 8px; padding-left: 16px;">
+                  <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 20px;">
+                    <li style="margin: 4px 0;">We introduce a Functional Scaling Law that predicts full loss trajectories under arbitrary learning-rate schedules. Using an intrinsic-time view of SGD on a power-law kernel model, we derive explicit scaling relations that unify loss dynamics across constant, decay, and warmup–stable–decay schedules.</li>
+                    <li style="margin: 4px 0;">Experiments on 0.1B–1B LLMs show that the Functional Scaling Law accurately fits and forecasts training loss across schedules. Results confirm larger models' efficiency gains, the benefits of learning-rate decay, and the superior performance of warmup–stable–decay strategies.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
             <li>
-              <div class="title">OBLR-PO: A Theoretical Framework for Stable Reinforcement Learning</div>
+              <div class="title"><strong>OBLR-PO: A Theoretical Framework for Stable Reinforcement Learning</strong></div>
               <div class="muted"><strong style="text-decoration: underline;">Zixun Huang*</strong>, Jiayi Sheng*, Zeyu Zheng</div>
-              <div class="muted"><strong style="font-style: italic;">Submitted to AISTATS 2026</strong></div>
+              <div class="muted"><strong style="font-style: italic;">Submitted to AISTATS 2026</strong>; Reviewer scores: 6, 5, 5 (max 7).</div>
+              <details style="margin-top: 8px;">
+                <summary style="cursor: pointer; color: var(--fg);">► <strong>TL;DR</strong>: We develop a theoretical framework for stable RL post-training by analyzing intrinsic gradient statistics, deriving SNR-based adaptive schedules, and implementing these insights in OBLR-PO to achieve more stable and performant LLM post-training.</summary>
+                <div class="muted" style="margin-top: 8px; padding-left: 16px;">
+                  <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 20px;">
+                    <li style="margin: 4px 0;">We provide a principled analysis of policy-gradient estimators, proving unbiasedness, deriving exact variance formulas, and bounding optimization loss under mild assumptions. This foundation yields convergence guarantees, an SNR-based adaptive learning-rate schedule, and a gradient-weighted optimal baseline for variance reduction beyond heuristic approaches.</li>
+                    <li style="margin: 4px 0;">Instantiating the theory, OBLR-PO jointly adapts learning rates and baselines. Experiments on Qwen3-4B-Base and Qwen3-8B-Base show consistently improved stability and downstream performance over GRPO, demonstrating that the theoretical insights translate directly into practical gains in large-scale RL post-training.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
           </ul>
         </div>
@@ -215,7 +236,7 @@
       </section>
 
       <section id="honors">
-        <h2>🏅 Honors</h2>
+        <h2>🏅 Selected Honors and Awards</h2>
         <div class="card">
           <ul>
             <li><span>Hong Sheng Scholarship (<strong>Top 12%</strong>)</span><span class="year">2024</span></li>
@@ -229,7 +250,7 @@
       </section>
 
       <section id="lecture-notes">
-        <h2>📖 Lecture Notes</h2>
+        <h2>📖 Selected Lecture Notes</h2>
         <div class="card">
           <ul>   
             <li>A Map to Statistics (in progressing)</li>
