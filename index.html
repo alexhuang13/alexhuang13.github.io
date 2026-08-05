@@ -181,7 +181,7 @@
           <div class="topic-title">Optimization Theory <span class="amp">&amp;</span> Scaling Laws</div>
           <ul>
             <li>
-              <div class="title"><strong>Functional Scaling Laws in Kernel Regression: Loss Dynamics and Learning Rate Schedules</strong> <a href="https://arxiv.org/abs/2509.19189" target="_blank" rel="noreferrer">[Paper]</a></div>
+              <div class="title"><strong>[1] Functional Scaling Laws in Kernel Regression: Loss Dynamics and Learning Rate Schedules</strong> <a href="https://arxiv.org/abs/2509.19189" target="_blank" rel="noreferrer">[Paper]</a></div>
               <div class="muted">Binghui Li*, Fengling Chen*, <strong style="text-decoration: underline;">Zixun Huang*</strong>, Lean Wang*, Lei Wu</div>
               <div class="muted"><strong style="font-style: italic;">NeurIPS 2025 Spotlight</strong></div>
               <details style="margin-top: 8px;">
@@ -199,16 +199,16 @@
           <div class="topic-title">LLM Reasoning <span class="amp">&amp;</span> Post-training</div>
           <ul>
             <li>
-              <div class="title"><strong>OBLR-PO: A Theoretical Framework for Stable Reinforcement Learning</strong> <a href="https://arxiv.org/pdf/2511.23310" target="_blank" rel="noreferrer">[Paper]</a></div>
+              <div class="title"><strong>[1] Variance-Aware Baselines and Adaptive Learning Rates for Reinforcement Learning with Verifiable Rewards</strong> <a href="https://arxiv.org/pdf/2511.23310" target="_blank" rel="noreferrer">[Paper]</a></div>
               <div class="muted"><strong style="text-decoration: underline;">Zixun Huang*</strong>, Jiayi Sheng*, Zeyu Zheng</div>
               <div class="muted"><strong style="font-style: italic;">Under review</strong></div>
               <details style="margin-top: 8px;">
-                <summary style="cursor: pointer; color: var(--fg);">► <strong>TL;DR</strong>: We establish a unified theory for policy-gradient estimation in LLM post-training and translate it into OBLR-PO, which jointly adapts the learning rate and baseline for more stable and effective optimization.</summary>
+                <summary style="cursor: pointer; color: var(--fg);">► <strong>TL;DR</strong>: We replace heuristic baseline and learning-rate choices in RLVR with a variance-optimal baseline and an SNR-adaptive learning-rate rule, whose combination yields OBLR-PO and the strongest overall performance.</summary>
                 <div class="muted" style="margin-top: 8px; padding-left: 16px;">
                   <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 0;">
-                    <li style="margin: 4px 0;"><strong>Theory:</strong> We characterize commonly used policy-gradient estimators under mild assumptions, establishing unbiasedness, exact variance expressions, an optimization-loss upper bound, and convergence guarantees.</li>
-                    <li style="margin: 4px 0;"><strong>Method:</strong> The theory yields an SNR-guided adaptive learning-rate schedule and a gradient-weighted, variance-optimal baseline. OBLR-PO combines these two components in a principled policy-optimization algorithm.</li>
-                    <li style="margin: 4px 0;"><strong>Experiments:</strong> On Qwen3-4B-Base and Qwen3-8B-Base, OBLR-PO consistently improves training stability and performance over existing policy-optimization methods.</li>
+                    <li style="margin: 4px 0;"><strong>Theory:</strong> Under KL-regularized policy optimization, we prove that the policy-gradient estimator is unbiased, derive exact variance expressions including the KL cross-covariance, establish an optimization-loss upper bound, and provide convergence guarantees.</li>
+                    <li style="margin: 4px 0;"><strong>Method:</strong> The analysis yields two complementary components: an adaptive learning-rate schedule governed by the policy gradient's signal-to-noise ratio and a variance-optimal, gradient-weighted baseline for the KL-regularized reward. Combining them gives Optimal Baseline and Learning-Rate Policy Optimization (OBLR-PO).</li>
+                    <li style="margin: 4px 0;"><strong>Experiments:</strong> On Qwen3-4B-Base, each component independently improves policy-optimization performance. The learning-rate rule further improves existing policy-optimization methods, while the complete OBLR-PO method achieves the strongest overall results.</li>
                   </ul>
                 </div>
               </details>
@@ -218,7 +218,7 @@
           <div class="topic-title">Applications of AI</div>
           <ul>
             <li>
-              <div class="title"><strong>TracingFlow: A Simulation-Free Trajectory Inference Framework Based on Second-Order Dynamics</strong></div>
+              <div class="title"><strong>[1] TracingFlow: A Simulation-Free Trajectory Inference Framework Based on Second-Order Dynamics</strong></div>
               <div class="muted">Yuhao Sun, Zekun Wu, <strong style="text-decoration: underline;">Zixun Huang</strong>, Peijie Zhou</div>
               <div class="muted"><strong style="font-style: italic;">Under review</strong></div>
               <details style="margin-top: 8px;">
