@@ -19,6 +19,7 @@
       color:var(--fg);
     }
     a{color:var(--link); text-decoration:none}
+    .amp{font-family:Arial, Helvetica, sans-serif}
     a:hover{text-decoration:underline}
     .top-nav{
       background:var(--card); padding:12px 64px; border-bottom:1px solid var(--line);
@@ -63,7 +64,7 @@
       display:flex; align-items:flex-start; gap:32px; margin-bottom:16px;
     }
     .profile-image{
-      width:178px; height:178px; border-radius:50%; object-fit:cover;
+      width:160px; height:160px; border-radius:50%; object-fit:cover; object-position:center 35%;
     }
     .profile-info{
       flex:1; padding-top:8px;
@@ -95,21 +96,21 @@
     section .muted{font-size:19px}
     section .pub{font-size:19px}
     section .card{font-size:19px}
-    ul{margin:0; padding-left:18px}
+    ul{margin:0; padding-left:0; list-style:none}
     li{margin:4px 0}
-    #honors ul{list-style:none; padding-left:18px}
-    #honors li{display:flex; justify-content:space-between; align-items:flex-start; position:relative}
-    #honors li::before{content:"•"; position:absolute; left:-21px; color:var(--fg)}
+    #honors ul{padding-left:0}
+    #honors li{display:flex; justify-content:space-between; align-items:flex-start}
     #honors li > span:first-of-type{flex:1; min-width:0; padding-left:0}
     #honors li .year{color:var(--fg); font-style:italic; flex-shrink:0; text-align:right; margin-left:8px}
-    #pubs ul{list-style:disc; padding-left:18px}
+    #pubs ul{padding-left:0}
     #pubs li{margin:12px 0}
+    #pubs .topic-title{font-family:Georgia, "Times New Roman", serif; font-size:19px; font-weight:400; font-style:italic; margin:18px 0 6px; color:var(--fg)}
+    #pubs .topic-title:first-child{margin-top:0}
     #pubs strong[style*="text-decoration: underline"]{text-underline-offset: 5px}
     #pubs details summary{list-style:none; user-select:none}
     #pubs details summary::-webkit-details-marker{display:none}
     #pubs details summary:hover{text-decoration:underline}
-    #lecture-notes ul{list-style:disc; padding-left:18px}
-    #miscs ul{list-style:disc; padding-left:18px}
+    #lecture-notes ul{padding-left:0}
     .two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px}
     .card{border-radius:12px; padding:10px; background:var(--card)}
     .muted{color:var(--fg)}
@@ -118,7 +119,7 @@
     .pub > div{margin:3px 0; line-height:1.5}
     #education .card > div{margin:3px 0; line-height:1.5}
     #education .card > strong{display:flex; justify-content:space-between; align-items:center}
-    #education .card .edu-date{color:var(--fg); font-weight:normal; font-style:italic; flex-shrink:0; text-align:right; margin-left:16px}
+    #education .card .edu-date, #working-experience .card .edu-date{color:var(--fg); font-weight:normal; font-style:italic; flex-shrink:0; text-align:right; margin-left:16px}
     #education li{margin:12px 0}
     .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:11px; padding:2px 6px; border:1px solid var(--line); border-radius:6px}
     footer{text-align:center; padding:40px 64px; margin-top:32px; font-family:"Times New Roman", Times, serif, "STSong", "SimSun", serif; font-style:italic; font-size:23px; color:var(--fg); line-height:1.8}
@@ -137,9 +138,9 @@
       <a href="#profile">Profile</a>
       <a href="#pubs">Publications</a>
       <a href="#education">Education</a>
+      <a href="#working-experience">Working Experience</a>
       <a href="#honors">Honors</a>
       <a href="#lecture-notes">Lecture Notes</a>
-      <a href="#miscs">Miscs</a>
     </div>
   </nav>
   <main class="page">
@@ -150,7 +151,7 @@
         <img class="profile-image" src="profile.jpg" alt="Profile Picture" />
         <div class="profile-info">
           <div class="profile-name">Zixun Huang (<span class="profile-name-chinese">黄梓洵</span>)</div>
-          <div class="profile-tag">Undergraduate in Statistics, Peking University</div>
+          <div class="profile-tag">Wharton School, University of Pennsylvania</div>
           <div style="margin-top: 12px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
             <a href="https://en.wikipedia.org/wiki/Beijing" target="_blank" rel="noreferrer">📍 Beijing, China</a>
             <span style="color: var(--muted);">|</span>
@@ -169,13 +170,7 @@
 
       <section id="profile">
         <div class="card">
-          <p>I am a fourth-year undergraduate student in Statistics at <a href="https://en.wikipedia.org/wiki/Peking_University" target="_blank" rel="noreferrer">Peking University</a> and participated in an exchange program at the <a href="https://en.wikipedia.org/wiki/University_of_California,_Berkeley" target="_blank" rel="noreferrer">University of California, Berkeley</a>. Throughout my academic journey, I have been fortunate to work closely with Professors
-            <a href="https://leiwu0.github.io/">Lei Wu</a>, 
-            <a href="https://zheng80.github.io/">Zeyu Zheng</a>, 
-            and <a href="https://cliffzhou92.github.io/" target="_blank" rel="noreferrer">Peijie Zhou</a>.
-            My research focuses on the theoretical foundations of machine learning, including <a href="https://en.wikipedia.org/wiki/Neural_scaling_law" target="_blank" rel="noreferrer">scaling laws</a>, and reinforcement learning theory.</p>
-            <p>
-            I will begin my Ph.D. studies in Statistics and Data Science at the <a href="https://en.wikipedia.org/wiki/Wharton_School" target="_blank" rel="noreferrer">Wharton School of the University of Pennsylvania</a> in Fall 2026, under the supervision of Professor <a href="https://yuxinchen2020.github.io/" target="_blank" rel="noreferrer">Yuxin Chen</a>.</p>
+          <p>I am a first-year Ph.D. student in Statistics and Data Science at the <a href="https://en.wikipedia.org/wiki/Wharton_School" target="_blank" rel="noreferrer">Wharton School of the University of Pennsylvania</a>, advised by Professor <a href="https://yuxinchen2020.github.io/" target="_blank" rel="noreferrer">Yuxin Chen</a>. Before joining Wharton, I received my B.S. in Statistics from <a href="https://en.wikipedia.org/wiki/Peking_University" target="_blank" rel="noreferrer">Peking University</a> and was an exchange student at the <a href="https://en.wikipedia.org/wiki/University_of_California,_Berkeley" target="_blank" rel="noreferrer">University of California, Berkeley</a>. Throughout my academic journey, I have been fortunate to work closely with Professors <a href="https://leiwu0.github.io/">Lei Wu</a>, <a href="https://zheng80.github.io/">Zeyu Zheng</a>, and <a href="https://cliffzhou92.github.io/" target="_blank" rel="noreferrer">Peijie Zhou</a>. My research focuses on the theoretical foundations of machine learning, including <strong>optimization theory <span class="amp">&amp;</span> <a href="https://en.wikipedia.org/wiki/Neural_scaling_law" target="_blank" rel="noreferrer">scaling laws</a></strong>, <strong>LLM reasoning <span class="amp">&amp;</span> post-training</strong>, and <strong>applications of AI</strong>.</p>
         </div>
       </section>
 
@@ -183,6 +178,7 @@
         <h2>📄 Publications</h2>
         <div class="muted" style="margin-top: -3px; margin-bottom: 8px; font-size: 19px;">* indicates equal contribution; expand TL;DR for details.</div>
         <div class="card">
+          <div class="topic-title">Optimization Theory <span class="amp">&amp;</span> Scaling Laws</div>
           <ul>
             <li>
               <div class="title"><strong>Functional Scaling Laws in Kernel Regression: Loss Dynamics and Learning Rate Schedules</strong> <a href="https://arxiv.org/abs/2509.19189" target="_blank" rel="noreferrer">[Paper]</a></div>
@@ -191,23 +187,46 @@
               <details style="margin-top: 8px;">
                 <summary style="cursor: pointer; color: var(--fg);">► <strong>TL;DR</strong>: We propose a Functional Scaling Law using an intrinsic-time view of SGD, analyze learning-rate schedules, and validate the framework to obtain effective training schedules.</summary>
                 <div class="muted" style="margin-top: 8px; padding-left: 16px;">
-                  <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 20px;">
+                  <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 0;">
                     <li style="margin: 4px 0;">We introduce a Functional Scaling Law that predicts full loss trajectories under arbitrary learning-rate schedules. Using an intrinsic-time view of SGD on a power-law kernel model, we derive explicit scaling relations that unify loss dynamics across constant, decay, and <a href="https://arxiv.org/pdf/2404.06395" target="_blank" rel="noreferrer">warmup–stable–decay</a> schedules.</li>
                     <li style="margin: 4px 0;">Experiments on 0.1B–1B LLMs show that the Functional Scaling Law accurately fits and forecasts training loss across schedules. Results confirm larger models' efficiency gains, the benefits of learning-rate decay, and the superior performance of warmup–stable–decay strategies.</li>
                   </ul>
                 </div>
               </details>
             </li>
+          </ul>
+
+          <div class="topic-title">LLM Reasoning <span class="amp">&amp;</span> Post-training</div>
+          <ul>
             <li>
-              <div class="title"><strong>OBLR-PO: A Theoretical Framework for Stable Reinforcement Learning</strong> <a href="https://arxiv.org/abs/2511.23310" target="_blank" rel="noreferrer">[Paper]</a></div>
+              <div class="title"><strong>OBLR-PO: A Theoretical Framework for Stable Reinforcement Learning</strong> <a href="https://arxiv.org/pdf/2511.23310" target="_blank" rel="noreferrer">[Paper]</a></div>
               <div class="muted"><strong style="text-decoration: underline;">Zixun Huang*</strong>, Jiayi Sheng*, Zeyu Zheng</div>
-              <div class="muted"><strong style="font-style: italic;">Submitted to AISTATS 2026</strong>; Reviewer scores: 6, 5, 5 (max 7).</div>
+              <div class="muted"><strong style="font-style: italic;">Under review</strong></div>
               <details style="margin-top: 8px;">
-                <summary style="cursor: pointer; color: var(--fg);">► <strong>TL;DR</strong>: We develop a theoretical framework for stable RL post-training by analyzing intrinsic gradient statistics, deriving SNR-based adaptive schedules, and implementing these insights in OBLR-PO to achieve more stable and performant LLM post-training.</summary>
+                <summary style="cursor: pointer; color: var(--fg);">► <strong>TL;DR</strong>: We establish a unified theory for policy-gradient estimation in LLM post-training and translate it into OBLR-PO, which jointly adapts the learning rate and baseline for more stable and effective optimization.</summary>
                 <div class="muted" style="margin-top: 8px; padding-left: 16px;">
-                  <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 20px;">
-                    <li style="margin: 4px 0;">We provide a principled analysis of policy-gradient estimators, proving unbiasedness, deriving exact variance formulas, and bounding optimization loss under mild assumptions. This foundation yields convergence guarantees, an SNR-based adaptive learning-rate schedule, and a gradient-weighted optimal baseline for variance reduction beyond heuristic approaches.</li>
-                    <li style="margin: 4px 0;">Instantiating the theory, OBLR-PO jointly adapts learning rates and baselines. Experiments on Qwen3-4B-Base and Qwen3-8B-Base show consistently improved stability and downstream performance over existing methods, demonstrating that the theoretical insights translate directly into practical gains in large-scale RL post-training.</li>
+                  <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 0;">
+                    <li style="margin: 4px 0;"><strong>Theory:</strong> We characterize commonly used policy-gradient estimators under mild assumptions, establishing unbiasedness, exact variance expressions, an optimization-loss upper bound, and convergence guarantees.</li>
+                    <li style="margin: 4px 0;"><strong>Method:</strong> The theory yields an SNR-guided adaptive learning-rate schedule and a gradient-weighted, variance-optimal baseline. OBLR-PO combines these two components in a principled policy-optimization algorithm.</li>
+                    <li style="margin: 4px 0;"><strong>Experiments:</strong> On Qwen3-4B-Base and Qwen3-8B-Base, OBLR-PO consistently improves training stability and performance over existing policy-optimization methods.</li>
+                  </ul>
+                </div>
+              </details>
+            </li>
+          </ul>
+
+          <div class="topic-title">Applications of AI</div>
+          <ul>
+            <li>
+              <div class="title"><strong>TracingFlow: A Simulation-Free Trajectory Inference Framework Based on Second-Order Dynamics</strong></div>
+              <div class="muted">Yuhao Sun, Zekun Wu, <strong style="text-decoration: underline;">Zixun Huang</strong>, Peijie Zhou</div>
+              <div class="muted"><strong style="font-style: italic;">Under review</strong></div>
+              <details style="margin-top: 8px;">
+                <summary style="cursor: pointer; color: var(--fg);">► <strong>TL;DR</strong>: We introduce TracingFlow, a simulation-free trajectory-inference framework that models continuous evolution with second-order dynamics by learning acceleration fields.</summary>
+                <div class="muted" style="margin-top: 8px; padding-left: 16px;">
+                  <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 0;">
+                    <li style="margin: 4px 0;"><strong>Theory:</strong> The framework decouples optimal transport-plan design from single-particle control and provides an iterative strategy for settings where initial velocities are unavailable.</li>
+                    <li style="margin: 4px 0;"><strong>Experiments:</strong> Results on synthetic and single-cell RNA-sequencing datasets show improved distribution reconstruction, trajectory fidelity, and preservation of biological priors.</li>
                   </ul>
                 </div>
               </details>
@@ -226,15 +245,14 @@
                   <strong>Wharton School, University of Pennsylvania</strong>
                   <div><em>Ph.D. in Statistics and Data Science</em></div>
                 </div>
-                <span class="edu-date">Sept. 2026 – Present</span>
+                <span class="edu-date">Aug. 2026 – Present</span>
               </div>
             </li>
             <li>
               <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div>
                   <strong>Peking University, School of Mathematical Sciences</strong>
-                  <div><em>B.S. in Statistics</em></div>
-                  <div>Elite Undergraduate Program for Applied Mathematics (<strong>Top 10%</strong>)</div>
+                  <div><em>B.S. in Statistics</em>, Elite Undergraduate Program for Applied Mathematics</div>
                 </div>
                 <span class="edu-date">Sept. 2022 – Jun. 2026</span>
               </div>
@@ -252,16 +270,31 @@
         </div>
       </section>
 
+      <section id="working-experience">
+        <h2>💼 Working Experience</h2>
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+              <strong>Tencent Hy – Qingyun Talent Program</strong>
+              <div><em>Research Intern</em></div>
+            </div>
+            <span class="edu-date">2026.06 – 2026.08</span>
+          </div>
+        </div>
+      </section>
+
       <section id="honors">
         <h2>🏅 Selected Honors and Awards</h2>
         <div class="card">
           <ul>
-            <li><span>Hong Sheng Scholarship (<strong>Top 12%</strong>)</span><span class="year">2024</span></li>
-            <li class="gold"><span>First Prize, Chinese Mathematics Contest (<strong>Top 1%</strong>)</span><span class="year">2024</span></li>
-            <li><span>Yau Contest Groups Prize (<strong>Top 5%</strong>)</span><span class="year">2024</span></li>
-            <li><span>Xiaomi Scholarship (<strong>Top 12%</strong>)</span><span class="year">2023</span></li>
-            <li class="gold"><span>Gold Prize, Chinese Mathematical Olympiad</span><span class="year">2021</span></li>
-            <li class="silver"><span>Silver Prize, Chinese Mathematical Olympiad</span><span class="year">2020</span></li>
+            <li class="gold"><span>Grand Prize in “Challenge Cup” Competition</span><span class="year">2026</span></li>
+            <li><span>Weiming Scholar in Peking University</span><span class="year">2026</span></li>
+            <li><span>Hong Sheng Scholarship</span><span class="year">2024</span></li>
+            <li class="gold"><span>First Prize in Chinese Mathematics Contest</span><span class="year">2024</span></li>
+            <li><span>Yau Contest Groups Prize</span><span class="year">2024</span></li>
+            <li><span>Xiaomi Scholarship</span><span class="year">2023</span></li>
+            <li class="gold"><span>Gold Prize in Chinese Mathematical Olympiad</span><span class="year">2021</span></li>
+            <li class="silver"><span>Silver Prize in Chinese Mathematical Olympiad</span><span class="year">2020</span></li>
           </ul>
         </div>
       </section>
@@ -271,25 +304,11 @@
         <div class="card">
           <ul>   
             <li><a href="./Statistics_note.pdf" target="_blank" rel="noreferrer">A Guided Tour of Modern Statistics</a> (in progressing)</li>
-            <li><a href="./Random_Simulation_Method_Homework.pdf" target="_blank" rel="noreferrer">Random Simulation Method Homework</a></li>
             <li><a href="./StatC206_Lecture_Notes.pdf" target="_blank" rel="noreferrer">Random Matrix Theory (StatC206)</a></li>
-            <li><a href="./Modern_Optimization.pdf" target="_blank" rel="noreferrer">Modern Optimization Theory</a></li>
-            <li><a href="./Generative model paper discussion.pdf" target="_blank" rel="noreferrer">Overview of Generative Models</a></li>
-            <li><a href="./Stat210b_HW.pdf" target="_blank" rel="noreferrer">High Dimensional Statistics Homework (Stat210b)</a></li>
           </ul>
         </div>
       </section>
 
-      <section id="miscs">
-        <h2>😉 Miscs</h2>
-        <div class="card">
-          <ul>
-            <li>I'm trying to learn <a href="./coffee.jpg" target="_blank" rel="noreferrer">latte art</a>.</li>
-            <li>I'm trying to learn how to <a href="./alcohol.jpg" target="_blank" rel="noreferrer">mix drinks</a>.</li>
-            <li>I'm currently volunteering in <a href="./rabbit.jpg" target="_blank" rel="noreferrer">rabbit care</a>.</li>
-          </ul>
-        </div>
-      </section>
     </div>
   </main>
 
