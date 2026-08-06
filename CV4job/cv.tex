@@ -1,0 +1,110 @@
+%-------------------------------------------------------------------------------
+% Resume
+%-------------------------------------------------------------------------------
+\documentclass[a4paper,10pt]{article}
+
+\usepackage{url}
+\usepackage{parskip}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[scale=0.91]{geometry}
+\usepackage{tabularx}
+\usepackage{titlesec}
+\usepackage{fontawesome5}
+\usepackage[unicode,draft=false]{hyperref}
+\definecolor{linkcolour}{rgb}{0,0.2,0.6}
+\hypersetup{colorlinks,breaklinks,urlcolor=linkcolour,linkcolor=linkcolour}
+
+\titleformat{\section}{\large\scshape\raggedright}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{7pt}{5pt}
+\pagestyle{empty}
+
+\newcommand{\datedentry}[2]{%
+\begin{tabularx}{\linewidth}{@{}X r@{}}
+#1 & #2
+\end{tabularx}}
+
+\newenvironment{researchentry}[2]{%
+\datedentry{\textbf{#1}}{#2}
+\vspace{-2pt}
+\par\noindent\ignorespaces
+}{%
+\par
+}
+
+\begin{document}
+
+%-------------------------------------------------------------------------------
+% Header
+%-------------------------------------------------------------------------------
+\begin{center}
+    {\LARGE \textbf{Zixun Huang}}\\[3pt]
+    {\small
+    \href{mailto:zixunh@wharton.upenn.edu}{\faEnvelope\ zixunh@wharton.upenn.edu} \; | \;
+    \href{https://alexhuang13.github.io/}{\faGlobe\ Homepage} \; | \;
+    \href{https://github.com/alexhuang13}{\faGithub\ GitHub} \; | \;
+    \href{https://scholar.google.com/citations?user=n7NzBzAAAAAJ}{\faGraduationCap\ Google Scholar} \; | \;
+    \href{https://www.linkedin.com/in/zixun-huang-b80ab4351/}{\faLinkedin\ LinkedIn}}
+\end{center}
+\vspace{-9pt}
+
+%-------------------------------------------------------------------------------
+\section{Research Interests}
+Theoretical foundations of machine learning, with an emphasis on \textbf{optimization theory and scaling laws}, \textbf{LLM reasoning and post-training}, and \textbf{applications of AI}.
+
+%-------------------------------------------------------------------------------
+\section{Education}
+\datedentry{\textbf{The Wharton School, University of Pennsylvania}}{Aug. 2026 -- Present}
+\vspace{-2pt}
+\hspace{1em}\textit{Ph.D. in Statistics and Data Science}
+
+\datedentry{\textbf{Peking University, School of Mathematical Sciences}}{Sept. 2022 -- Jun. 2026}
+\vspace{-2pt}
+\hspace{1em}\textit{B.S. in Statistics}; Elite Undergraduate Program for Applied Mathematics; GPA: 3.7/4.0
+
+\datedentry{\textbf{University of California, Berkeley}}{Jan. 2025 -- Aug. 2025}
+\vspace{-2pt}
+\hspace{1em}\textit{Visiting Student}; GPA: 4.0/4.0
+
+%-------------------------------------------------------------------------------
+\section{Working Experience}
+\datedentry{\textbf{Tencent Hy -- Qingyun Talent Program} \quad \textit{Research Intern, Beijing}}{Jun. 2026 -- Aug. 2026}
+
+%-------------------------------------------------------------------------------
+\section{Publications}
+[1] \textbf{Zixun Huang*}, Jiayi Sheng*, Zeyu Zheng. \textit{Variance-Aware Baselines and Adaptive Learning Rates for Reinforcement Learning with Verifiable Rewards}. \textbf{Under review}. \href{https://arxiv.org/abs/2511.23310}{[Paper]}
+
+[2] Yuhao Sun, Zekun Wu, \textbf{Zixun Huang}, Peijie Zhou. \textit{TracingFlow: A Simulation-Free Trajectory Inference Framework Based on Second-Order Dynamics}. \textbf{Under review}.
+
+[3] Binghui Li*, Fengling Chen*, \textbf{Zixun Huang*}, Lean Wang*, Lei Wu. \textit{Functional Scaling Laws in Kernel Regression: Loss Dynamics and Learning Rate Schedules}. \textbf{NeurIPS 2025 Spotlight}. \href{https://arxiv.org/abs/2509.19189}{[Paper]} {\footnotesize * Equal contribution.}
+
+%-------------------------------------------------------------------------------
+\section{Research Experience}
+\datedentry{\textbf{University of California, Berkeley} \quad \textit{Research Intern, Berkeley, CA}}{Jan. 2025 -- Aug. 2025}
+\vspace{-2pt}
+\hspace{1em}\textit{Supervisor: Associate Professor Zeyu Zheng}
+
+\datedentry{\textbf{Peking University} \quad \textit{Research Intern, Beijing}}{May 2023 -- Aug. 2026}
+\vspace{-2pt}
+\hspace{1em}\textit{Supervisor: Assistant Professor Lei Wu}
+
+%-------------------------------------------------------------------------------
+\section{Selected Honors and Awards}
+\begin{tabularx}{\linewidth}{@{}X r@{}}
+Grand Prize, ``Challenge Cup'' Competition & 2026 \\
+Weiming Scholar, Peking University & 2026 \\
+Hong Sheng Scholarship & 2024 \\
+First Prize, Chinese Mathematics Contest & 2024 \\
+Yau Contest Groups Prize & 2024 \\
+Xiaomi Scholarship & 2023 \\
+Gold Prize, Chinese Mathematical Olympiad & 2021 \\
+Silver Prize, Chinese Mathematical Olympiad & 2020
+\end{tabularx}
+
+%-------------------------------------------------------------------------------
+\section{Skills}
+\begin{tabularx}{\linewidth}{@{}l X@{}}
+\textbf{Programming:} & Python (NumPy, pandas, scikit-learn, PyTorch), C++, MATLAB, \LaTeX \\
+\textbf{Language:} & GRE V160/Q170; GRE Math 970 (95th percentile); TOEFL 101
+\end{tabularx}
+
+\end{document}
