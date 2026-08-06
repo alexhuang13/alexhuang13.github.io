@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Zixun Huang — Personal Homepage</title>
-  <meta name="description" content="Zixun Huang — Profile, Publications, Education & Honors" />
+  <meta name="description" content="Zixun Huang — Profile, Publications, Work Experience, Education & Honors" />
   <style>
     :root{
       --bg:#fff; --fg:#444; --muted:#666; --card:#fff; --line:rgba(0,0,0,.08); --link:#003d99; --highlight:#fff9c4;
@@ -119,8 +119,9 @@
     .pub > div{margin:3px 0; line-height:1.5}
     #education .card > div{margin:3px 0; line-height:1.5}
     #education .card > strong{display:flex; justify-content:space-between; align-items:center}
-    #education .card .edu-date{color:var(--fg); font-weight:normal; font-style:italic; flex-shrink:0; text-align:right; margin-left:16px}
-    #education li{margin:12px 0}
+    #education .card .edu-date, #experience .experience-date{color:var(--fg); font-weight:normal; font-style:italic; flex-shrink:0; text-align:right; margin-left:16px}
+    #education li, #experience li{margin:12px 0}
+    .experience-entry{display:flex; justify-content:space-between; align-items:flex-start; gap:16px}
     .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:11px; padding:2px 6px; border:1px solid var(--line); border-radius:6px}
     footer{text-align:center; padding:40px 64px; margin-top:32px; font-family:"Times New Roman", Times, serif, "STSong", "SimSun", serif; font-style:italic; font-size:23px; color:var(--fg); line-height:1.8}
     @media (max-width: 960px){
@@ -138,6 +139,7 @@
       <a href="#profile">Profile</a>
       <a href="#pubs">Publications</a>
       <a href="#education">Education</a>
+      <a href="#experience">Work Experience</a>
       <a href="#honors">Honors</a>
       <a href="#lecture-notes">Lecture Notes</a>
     </div>
@@ -271,6 +273,23 @@
 
 
 
+      <section id="experience">
+        <h2>💼 Work Experience</h2>
+        <div class="card">
+          <ul>
+            <li>
+              <div class="experience-entry">
+                <div>
+                  <strong>Tencent HY – Qingyun Talent Program</strong>
+                  <div><em>Research Intern</em></div>
+                </div>
+                <span class="experience-date">Jun. 2026 – Aug. 2026</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
       <section id="honors">
         <h2>🏅 Selected Honors and Awards</h2>
         <div class="card">
@@ -314,7 +333,7 @@
       })
     });
     const sidebar = document.querySelector('.sidebar');
-    const links = [...sidebar.querySelectorAll('a[href^="#"]')];
+    const links = sidebar ? [...sidebar.querySelectorAll('a[href^="#"]')] : [];
     const topNavLinks = [...document.querySelectorAll('.top-nav a[href^="#"]')];
     const allLinks = [...links, ...topNavLinks];
     const io = new IntersectionObserver((entries)=>{
