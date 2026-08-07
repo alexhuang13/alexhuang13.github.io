@@ -189,8 +189,8 @@
                 <summary style="cursor: pointer; color: var(--fg);">► <strong>TL;DR</strong>: We propose a Functional Scaling Law using an intrinsic-time view of SGD, analyze learning-rate schedules, and validate the framework to obtain effective training schedules.</summary>
                 <div class="muted" style="margin-top: 8px; padding-left: 16px;">
                   <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 0;">
-                    <li style="margin: 4px 0;">We introduce a Functional Scaling Law that predicts full loss trajectories under arbitrary learning-rate schedules. Using an intrinsic-time view of SGD on a power-law kernel model, we derive explicit scaling relations that unify loss dynamics across constant, decay, and <a href="https://arxiv.org/pdf/2404.06395" target="_blank" rel="noreferrer">warmup–stable–decay</a> schedules.</li>
-                    <li style="margin: 4px 0;">Experiments on 0.1B–1B LLMs show that the Functional Scaling Law accurately fits and forecasts training loss across schedules. Results confirm larger models' efficiency gains, the benefits of learning-rate decay, and the superior performance of warmup–stable–decay strategies.</li>
+                    <li style="margin: 4px 0;"><strong>Theory:</strong> We analyze one-pass SGD in power-law kernel regression through an intrinsic-time reparameterization and establish a Functional Scaling Law for the full loss trajectory under arbitrary learning-rate schedules. The schedule enters through a convolutional functional, yielding explicit data- and compute-limited scaling relations for constant, exponential-decay, and <a href="https://arxiv.org/pdf/2404.06395" target="_blank" rel="noreferrer">warmup–stable–decay</a> schedules.</li>
+                    <li style="margin: 4px 0;"><strong>Experiments:</strong> Power-law kernel simulations validate the predicted loss dynamics and scaling behavior. Pre-training experiments on 0.1B–1B LLMs further show that the Functional Scaling Law can fit and forecast loss trajectories across schedules, while confirming the efficiency gains of larger models, learning-rate decay, and warmup–stable–decay schedules.</li>
                   </ul>
                 </div>
               </details>
@@ -203,6 +203,16 @@
               <div class="title"><strong>[1] Recursive Synthesis for Long-Horizon Terminal Tasks</strong> <a href="https://arxiv.org/abs/2608.05466" target="_blank" rel="noreferrer">[Paper]</a> <a href="https://huggingface.co/collections/Zhongzhi1228/recursive-task-synthesis" target="_blank" rel="noreferrer">[Hugging Face]</a> <a href="https://zhongzhi660.github.io/recursive-verified-synthesis-site/?case=jobs-diff-01-3341b098" target="_blank" rel="noreferrer">[Website]</a></div>
               <div class="muted">Zhongzhi Li, Yucheng Shi, Zongxia Li, Ruhan Wang, Anhao Li, <strong style="text-decoration: underline;">Zixun Huang</strong>, Junyao Yang, Lei Ke, Ninghao Liu, Haitao Mi, Leowei Liang</div>
               <div class="muted"><strong style="font-style: italic;">Preprint</strong></div>
+              <details style="margin-top: 8px;">
+                <summary style="cursor: pointer; color: var(--fg);">► <strong>TL;DR</strong>: We recursively evolve verified terminal tasks into progressively harder executable tasks, providing scalable, low-cost training data for long-horizon agents.</summary>
+                <div class="muted" style="margin-top: 8px; padding-left: 16px;">
+                  <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 0;">
+                    <li style="margin: 4px 0;"><strong>Method:</strong> Each accepted task becomes a seed for the next synthesis round. The pipeline expands the executable solution, realigns the instruction and verifier, and admits a task only when its reference solution runs successfully in a fresh sandbox and every semantic requirement is publicly specified or discoverable.</li>
+                    <li style="margin: 4px 0;"><strong>Task Evolution:</strong> Recursive synthesis produces <strong>37,484 verified tasks</strong> through 15 rounds at about <strong>$0.05 per task</strong>. Across rounds, solution length, command count, tool use, and control-flow complexity grow substantially, while domain coverage remains stable and a fixed solver's success rate drops sharply.</li>
+                    <li style="margin: 4px 0;"><strong>Training:</strong> Trajectories collected from the synthesized tasks improve Qwen3.5 agents through both supervised fine-tuning and reinforcement learning on held-out long-horizon terminal benchmarks, showing that the generated tasks are not only harder but also useful for training.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
             <li>
               <div class="title"><strong>[2] Variance-Aware Baselines and Adaptive Learning Rates for Reinforcement Learning with Verifiable Rewards</strong> <a href="https://arxiv.org/pdf/2511.23310" target="_blank" rel="noreferrer">[Paper]</a></div>
