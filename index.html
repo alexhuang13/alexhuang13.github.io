@@ -7,7 +7,26 @@
   <meta name="description" content="Zixun Huang — Profile, Publications, Work Experience, Education & Honors" />
   <style>
     :root{
-      --bg:#fff; --fg:#444; --muted:#666; --card:#fff; --line:rgba(0,0,0,.08); --link:#003d99; --highlight:#fff9c4;
+      /* Harness Handbook-inspired warm paper palette */
+      --bg:#faf9f6;
+      --surface:#fdfcfa;
+      --ink:#201d18;
+      --ink-soft:#4a463f;
+      --muted:#6f6a61;
+      --faint:#8d887e;
+      --line:#e6e2d8;
+      --line-soft:#efece4;
+      --accent:#2a78d6;
+      --accent-ink:#1c5cab;
+      --accent-wash:#eaf1fb;
+      --sienna:#bd5f16;
+      --sienna-ink:#9a4a0b;
+      --sienna-wash:#f9efe3;
+      /* Backward-compatible aliases used by the existing markup */
+      --fg:var(--ink);
+      --card:var(--surface);
+      --link:var(--accent-ink);
+      --highlight:var(--accent-wash);
     }
     *{box-sizing:border-box}
     html,body{height:100%; margin:0; padding:0}
@@ -16,24 +35,28 @@
       font-size:20px;
       line-height:1.5;
       background:var(--bg);
-      color:var(--fg);
+      color:var(--ink-soft);
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+      transition:background .25s ease, color .25s ease;
     }
-    a{color:var(--link); text-decoration:none}
+    a{color:var(--accent-ink); text-decoration:none}
     .amp{font-family:Arial, Helvetica, sans-serif}
-    a:hover{text-decoration:underline}
+    a:hover{text-decoration:underline; text-underline-offset:3px}
     .top-nav{
-      background:var(--card); padding:12px 64px; border-bottom:1px solid var(--line);
+      background:color-mix(in srgb, var(--bg) 88%, transparent); padding:12px 64px; border-bottom:1px solid var(--line);
       display:flex; justify-content:flex-start; align-items:center; position:sticky; top:0; z-index:100;
-      max-width:1560px; margin:0 auto;
+      max-width:none; margin:0 auto; backdrop-filter:saturate(140%) blur(10px);
+      -webkit-backdrop-filter:saturate(140%) blur(10px);
     }
     .top-nav .nav-links{
       display:flex; justify-content:flex-start; align-items:center; gap:32px;
     }
     .top-nav a{
-      color:var(--fg); font-size:19.25px; padding:4px 8px; border-radius:4px; transition:background 0.2s; text-align:center;
+      color:var(--muted); font-size:19.25px; padding:4px 8px; border-radius:7px; transition:background .2s, color .2s; text-align:center;
     }
-    .top-nav a:hover{background:var(--line); text-decoration:none}
-    .top-nav a.active{font-weight:600; color:var(--link)}
+    .top-nav a:hover{background:var(--line-soft); color:var(--ink); text-decoration:none}
+    .top-nav a.active{font-weight:600; color:var(--accent-ink); background:var(--accent-wash)}
     .page{
       min-height:100svh; padding:32px 64px; max-width:1560px; margin:0 auto;
     }
@@ -65,6 +88,7 @@
     }
     .profile-image{
       width:160px; height:160px; border-radius:50%; object-fit:cover; object-position:center 35%;
+      border:1px solid var(--line); box-shadow:0 4px 16px rgba(32,29,24,.07);
     }
     .profile-info{
       flex:1; padding-top:8px;
@@ -78,7 +102,7 @@
       font-size:90%;
     }
     .profile-tag{
-      font-size:20px; color:var(--fg); margin:0 0 8px; line-height:1.6;
+      font-size:20px; color:var(--ink-soft); margin:0 0 8px; line-height:1.6;
     }
     .profile-contact{
       display:flex; flex-direction:column; gap:6px;
@@ -88,9 +112,9 @@
     }
     .profile-contact a:hover{text-decoration:underline}
     /* Content */
-    .content{background:var(--card); border-radius:16px; padding:20px}
+    .content{background:transparent; border-radius:16px; padding:20px}
     section{scroll-margin-top:80px; padding:2px 0 8px; font-size:19px}
-    h2{margin:0 0 0; font-size:27px; padding-bottom:6px}
+    h2{margin:0 0 0; font-size:27px; padding-bottom:6px; color:var(--ink)}
     p{line-height:1.5; margin:0 0 8px}
     section p{font-size:19px}
     section .muted{font-size:19px}
@@ -112,8 +136,11 @@
     #pubs details summary:hover{text-decoration:underline}
     #lecture-notes ul{padding-left:0}
     .two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px}
-    .card{border-radius:12px; padding:10px; background:var(--card)}
-    .muted{color:var(--fg)}
+    .card{
+      border-radius:10px; padding:14px 16px; background:var(--surface);
+      border:1px solid var(--line); box-shadow:0 1px 2px rgba(32,29,24,.035);
+    }
+    .muted{color:var(--muted)}
     .pub{margin:-3px 0 0 0; padding:10px; border-radius:10px}
     .pub .title{font-weight:600}
     .pub > div{margin:3px 0; line-height:1.5}
@@ -123,7 +150,22 @@
     #education li, #experience li{margin:12px 0}
     .experience-entry{display:flex; justify-content:space-between; align-items:flex-start; gap:16px}
     .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:11px; padding:2px 6px; border:1px solid var(--line); border-radius:6px}
-    footer{text-align:center; padding:40px 64px; margin-top:32px; font-family:"Times New Roman", Times, serif, "STSong", "SimSun", serif; font-style:italic; font-size:23px; color:var(--fg); line-height:1.8}
+    footer{
+      text-align:center; padding:32px 64px 40px; margin:32px auto 0; max-width:1432px;
+      border-top:1px solid var(--line); font-family:"Times New Roman", Times, serif, "STSong", "SimSun", serif;
+      font-style:italic; font-size:23px; color:var(--muted); line-height:1.8;
+    }
+    strong{color:var(--ink)}
+    ::selection{background:color-mix(in srgb, var(--accent) 22%, transparent)}
+    #pubs details summary{color:var(--ink-soft)!important; transition:color .15s}
+    #pubs details summary:hover{color:var(--accent-ink)!important}
+    #pubs details[open]{margin-bottom:10px}
+    #pubs details[open] > summary{color:var(--accent-ink)!important}
+    #pubs details > .muted{border-left:2px solid var(--accent); margin-left:2px; padding:8px 0 4px 16px!important}
+    .spotlight{color:var(--sienna-ink)!important}
+    @supports not (background:color-mix(in srgb, white 50%, transparent)){
+      .top-nav{background:rgba(250,249,246,.96)}
+    }
     @media (max-width: 960px){
       .page{grid-template-columns:1fr; gap:24px; padding:24px}
       .sidebar{position:static; order:2}
@@ -184,7 +226,7 @@
             <li>
               <div class="title"><strong>[1] Functional Scaling Laws in Kernel Regression: Loss Dynamics and Learning Rate Schedules</strong> <a href="https://arxiv.org/abs/2509.19189" target="_blank" rel="noreferrer">[Paper]</a></div>
               <div class="muted">Binghui Li*, Fengling Chen*, <strong style="text-decoration: underline;">Zixun Huang*</strong>, Lean Wang*, Lei Wu</div>
-              <div class="muted"><strong style="font-style: italic; color: #8b0000;">NeurIPS 2025 Spotlight</strong></div>
+              <div class="muted"><strong class="spotlight" style="font-style: italic;">NeurIPS 2025 Spotlight</strong></div>
               <details style="margin-top: 8px;">
                 <summary style="cursor: pointer; color: var(--fg);">► <strong>TL;DR</strong>: We propose a Functional Scaling Law using an intrinsic-time view of SGD, analyze learning-rate schedules, and validate the framework to obtain effective training schedules.</summary>
                 <div class="muted" style="margin-top: 8px; padding-left: 16px;">
