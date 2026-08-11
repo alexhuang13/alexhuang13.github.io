@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" preserveAspectRatio="xMidYMid meet" role="img" aria-label="log-prob differences over training, staleness=1">
+  <style>
+    .lc-grid  { stroke: #efece4; stroke-width: .8; fill: none; }
+    .lc-frame { stroke: #d9d4c7; stroke-width: 1;  fill: none; }
+    .lc-tick  { font-family: "Inter", ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 500; fill: #6f6a61; font-variant-numeric: tabular-nums; }
+    .lc-axlbl { font-family: "Source Serif 4", "Iowan Old Style", Georgia, serif; font-size: 15.5px; font-weight: 600; fill: #2a2820; }
+    .lc-endlabel { font-family: "Source Serif 4", "Iowan Old Style", Georgia, serif; font-size: 15px; font-weight: 700; letter-spacing: .1px; }
+    .lc-endval   { font-family: "Inter", ui-sans-serif, system-ui, sans-serif; font-size: 12.5px; font-weight: 500; fill: #8a857a; font-variant-numeric: tabular-nums; }
+    .lc-legend   { font-family: "Source Serif 4", "Iowan Old Style", Georgia, serif; font-size: 14px; font-weight: 650; }
+  </style>
+  <line class="lc-grid" x1="90.0" y1="392.00" x2="770.0" y2="392.00"/>
+  <text class="lc-tick" x="82.0" y="396.00" text-anchor="end">0</text>
+  <line class="lc-grid" x1="90.0" y1="332.00" x2="770.0" y2="332.00"/>
+  <text class="lc-tick" x="82.0" y="336.00" text-anchor="end">0.004</text>
+  <line class="lc-grid" x1="90.0" y1="272.00" x2="770.0" y2="272.00"/>
+  <text class="lc-tick" x="82.0" y="276.00" text-anchor="end">0.008</text>
+  <line class="lc-grid" x1="90.0" y1="212.00" x2="770.0" y2="212.00"/>
+  <text class="lc-tick" x="82.0" y="216.00" text-anchor="end">0.012</text>
+  <line class="lc-grid" x1="90.0" y1="152.00" x2="770.0" y2="152.00"/>
+  <text class="lc-tick" x="82.0" y="156.00" text-anchor="end">0.016</text>
+  <line class="lc-grid" x1="90.0" y1="92.00" x2="770.0" y2="92.00"/>
+  <text class="lc-tick" x="82.0" y="96.00" text-anchor="end">0.020</text>
+  <line class="lc-grid" x1="90.0" y1="32.00" x2="770.0" y2="32.00"/>
+  <text class="lc-tick" x="82.0" y="36.00" text-anchor="end">0.024</text>
+  <line class="lc-frame" x1="90.0" y1="392.0" x2="90.0" y2="396.0"/>
+  <text class="lc-tick" x="90.0" y="410.0" text-anchor="middle">0</text>
+  <line class="lc-frame" x1="209.3" y1="392.0" x2="209.3" y2="396.0"/>
+  <text class="lc-tick" x="209.3" y="410.0" text-anchor="middle">50</text>
+  <line class="lc-frame" x1="328.6" y1="392.0" x2="328.6" y2="396.0"/>
+  <text class="lc-tick" x="328.6" y="410.0" text-anchor="middle">100</text>
+  <line class="lc-frame" x1="447.9" y1="392.0" x2="447.9" y2="396.0"/>
+  <text class="lc-tick" x="447.9" y="410.0" text-anchor="middle">150</text>
+  <line class="lc-frame" x1="567.2" y1="392.0" x2="567.2" y2="396.0"/>
+  <text class="lc-tick" x="567.2" y="410.0" text-anchor="middle">200</text>
+  <line class="lc-frame" x1="686.5" y1="392.0" x2="686.5" y2="396.0"/>
+  <text class="lc-tick" x="686.5" y="410.0" text-anchor="middle">250</text>
+  <line class="lc-frame" x1="770.0" y1="392.0" x2="770.0" y2="396.0"/>
+  <text class="lc-tick" x="770.0" y="410.0" text-anchor="middle">285</text>
+  <rect class="lc-frame" x="90.0" y="32.0" width="680.0" height="360.0" fill="none"/>
+  <text class="lc-axlbl" x="430.0" y="432.0" text-anchor="middle">training step</text>
+  <text class="lc-axlbl" transform="translate(24 212.0) rotate(-90)" text-anchor="middle">Log-prob Differences</text>
+  <path d="M90.0 59.3 L99.5 68.3 L109.1 103.7 L118.6 183.4 L128.2 209.6 L137.7 226.5 L147.3 240.7 L156.8 246.0 L166.4 236.8 L175.9 248.6 L185.4 245.9 L195.0 248.4 L204.5 248.4 L214.1 239.3 L223.6 242.7 L233.2 244.6 L242.7 234.9 L252.2 237.5 L261.8 242.4 L271.3 251.2 L280.9 240.9 L290.4 236.2 L300.0 243.4 L309.5 243.8 L319.1 238.5 L328.6 239.2 L338.1 250.0 L347.7 246.6 L357.2 240.7 L366.8 238.9 L376.3 240.7 L385.9 237.4 L395.4 241.6 L404.9 234.8 L414.5 233.0 L424.0 235.2 L433.6 232.7 L443.1 231.6 L452.7 228.5 L462.2 231.3 L471.8 230.2 L481.3 239.1 L490.8 228.4 L500.4 228.6 L509.9 226.6 L519.5 226.3 L529.0 221.3 L538.6 222.3 L548.1 225.5 L557.6 218.2 L567.2 221.3 L576.7 216.0 L586.3 217.3 L595.8 216.5 L605.4 210.9 L614.9 214.6 L624.5 218.5 L634.0 226.6 L643.5 217.3" stroke="#9a4a0b" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="643.5" y1="217.3" x2="775" y2="80" stroke="#9a4a0b" stroke-width="0.9" stroke-dasharray="1 3" opacity="0.55" stroke-linecap="round"/>
+  <circle cx="643.5" cy="217.3" r="3.7" fill="#9a4a0b" stroke="#ffffff" stroke-width="1.5"/>
+  <text class="lc-endlabel" x="782" y="79.0" fill="#9a4a0b">GRPO + SATR</text>
+  <text class="lc-endval"   x="782" y="96.0">&#8776; 0.0115</text>
+  <path d="M90.0 53.6 L94.8 45.5 L99.5 66.3 L104.3 95.9 L109.1 96.5 L113.9 151.5 L118.6 178.8 L123.4 192.8 L128.2 200.9 L132.9 197.7 L137.7 214.7 L142.5 222.6 L147.3 231.4 L152.0 237.4 L156.8 240.2 L161.6 239.0 L166.4 233.6 L171.1 240.4 L175.9 246.0 L180.7 246.7 L185.4 243.7 L190.2 244.2 L195.0 242.3 L199.8 242.3 L204.5 243.3 L209.3 243.2 L214.1 236.9 L218.8 243.9 L223.6 239.1 L228.4 236.8 L233.2 243.4 L237.9 234.0 L242.7 235.5 L247.5 234.5 L252.2 233.4 L257.0 237.3 L261.8 238.2 L266.6 241.4 L271.3 243.5 L276.1 232.7 L280.9 233.5 L285.6 230.3 L290.4 231.0 L295.2 234.6 L300.0 237.1 L304.7 229.9 L309.5 235.9 L314.3 237.9 L319.1 231.8 L323.8 228.5 L328.6 236.3 L333.4 239.7 L338.1 243.0 L342.9 228.8 L347.7 237.3 L352.5 235.7 L357.2 234.2 L362.0 235.9 L366.8 232.3 L371.5 237.0 L376.3 237.3 L381.1 228.0 L385.9 233.8 L390.6 242.3 L395.4 243.8 L400.2 243.3 L404.9 234.8 L409.7 239.0 L414.5 235.3 L419.3 235.8" stroke="#b7434b" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="419.3" y1="235.8" x2="775" y2="150" stroke="#b7434b" stroke-width="0.9" stroke-dasharray="1 3" opacity="0.55" stroke-linecap="round"/>
+  <circle cx="419.3" cy="235.8" r="3.7" fill="#b7434b" stroke="#ffffff" stroke-width="1.5"/>
+  <text class="lc-endlabel" x="782" y="149.0" fill="#9c3a41">DPPO</text>
+  <text class="lc-endval"   x="782" y="166.0">&#8776; 0.0104</text>
+  <path d="M90.0 54.9 L99.5 59.6 L109.1 106.8 L118.6 186.6 L128.2 197.3 L137.7 205.8 L147.3 240.0 L156.8 235.0 L166.4 236.7 L175.9 245.7 L185.4 248.0 L195.0 242.4 L204.5 253.0 L214.1 248.9 L223.6 250.4 L233.2 249.2 L242.7 257.5 L252.2 254.3 L261.8 253.3 L271.3 247.4 L280.9 245.1 L290.4 247.5 L300.0 257.4 L309.5 255.4 L319.1 249.7 L328.6 256.3 L338.1 256.9 L347.7 251.3 L357.2 249.5 L366.8 257.6 L376.3 250.3 L385.9 237.7 L395.4 243.4 L404.9 249.7 L414.5 251.3 L424.0 254.4 L433.6 247.1 L443.1 250.8 L452.7 254.8 L462.2 247.1 L471.8 244.6 L481.3 245.5 L490.8 243.7 L500.4 244.5 L509.9 244.3 L519.5 240.8 L529.0 244.9 L538.6 242.7 L548.1 234.6 L557.6 246.9 L567.2 249.9 L576.7 243.6 L586.3 248.7 L595.8 234.8 L605.4 238.7 L614.9 227.7 L624.5 232.8 L634.0 244.1 L643.5 237.1 L653.1 247.9 L662.6 240.9 L672.2 240.1 L681.7 232.7 L691.3 230.1 L700.8 233.1 L710.4 238.8 L719.9 238.8 L729.4 247.8 L739.0 243.1 L748.5 251.2 L758.1 245.2 L767.6 239.8" stroke="#8d887e" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="767.6" y1="239.8" x2="775" y2="220" stroke="#8d887e" stroke-width="0.9" stroke-dasharray="1 3" opacity="0.55" stroke-linecap="round"/>
+  <circle cx="767.6" cy="239.8" r="3.7" fill="#8d887e" stroke="#ffffff" stroke-width="1.5"/>
+  <text class="lc-endlabel" x="782" y="219.0" fill="#6b665d">GRPO (s = 1)</text>
+  <text class="lc-endval"   x="782" y="236.0">&#8776; 0.0102</text>
+  <path d="M90.0 202.3 L94.8 204.5 L99.5 203.1 L104.3 220.0 L109.1 216.8 L113.9 242.1 L118.6 266.2 L123.4 272.6 L128.2 280.8 L132.9 266.9 L137.7 283.9 L142.5 292.8 L147.3 301.0 L152.0 302.5 L156.8 306.8 L161.6 306.7 L166.4 302.8 L171.1 307.1 L175.9 310.6 L180.7 309.8 L185.4 307.1 L190.2 309.9 L195.0 309.5 L199.8 308.3 L204.5 309.6 L209.3 310.5 L214.1 304.6 L218.8 309.9 L223.6 309.2 L228.4 306.5 L233.2 312.0 L237.9 307.9 L242.7 307.8 L247.5 308.5 L252.2 308.5 L257.0 309.7 L261.8 310.6 L266.6 313.4 L271.3 314.5 L276.1 310.1 L280.9 308.7 L285.6 309.0 L290.4 309.1 L295.2 310.4 L300.0 312.0 L304.7 307.0 L309.5 311.4 L314.3 312.4 L319.1 307.7 L323.8 306.6 L328.6 309.5 L333.4 311.8 L338.1 314.7 L342.9 308.2 L347.7 313.9" stroke="#3f7fc7" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="347.7" y1="313.9" x2="775" y2="310" stroke="#3f7fc7" stroke-width="0.9" stroke-dasharray="1 3" opacity="0.55" stroke-linecap="round"/>
+  <circle cx="347.7" cy="313.9" r="3.7" fill="#3f7fc7" stroke="#ffffff" stroke-width="1.5"/>
+  <text class="lc-endlabel" x="782" y="309.0" fill="#2c6cbb">GRPO + R3</text>
+  <text class="lc-endval"   x="782" y="326.0">&#8776; 0.0055</text>
+  <path d="M90.0 203.4 L99.5 200.6 L109.1 220.1 L118.6 265.0 L128.2 281.2 L137.7 283.5 L147.3 301.1 L156.8 306.2 L166.4 300.7 L175.9 309.2 L185.4 307.7 L195.0 306.4 L204.5 306.5 L214.1 301.9 L223.6 304.1 L233.2 305.1 L242.7 299.5 L252.2 299.6 L261.8 301.1 L271.3 309.4 L280.9 305.9 L290.4 306.9 L300.0 310.1 L309.5 304.4 L319.1 297.4 L328.6 299.6 L338.1 304.2 L347.7 301.9 L357.2 302.9 L366.8 303.9 L376.3 309.7 L385.9 310.7 L395.4 313.1 L404.9 304.5 L414.5 304.3 L424.0 300.8 L433.6 297.9 L443.1 300.3 L452.7 303.3 L462.2 308.2 L471.8 309.2 L481.3 314.6 L490.8 312.3 L500.4 315.3 L509.9 313.2 L519.5 312.2 L529.0 308.8 L538.6 310.0 L548.1 315.1 L557.6 313.0 L567.2 319.8 L576.7 318.7 L586.3 319.9 L595.8 322.6 L605.4 320.8 L614.9 318.2 L624.5 317.7 L634.0 313.6" stroke="#bd5f16" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="634.0" y1="313.6" x2="775" y2="370" stroke="#bd5f16" stroke-width="0.9" stroke-dasharray="1 3" opacity="0.55" stroke-linecap="round"/>
+  <circle cx="634.0" cy="313.6" r="3.7" fill="#bd5f16" stroke="#ffffff" stroke-width="1.5"/>
+  <text class="lc-endlabel" x="782" y="369.0" fill="#bd5f16">GRPO + SATR + R3</text>
+  <text class="lc-endval"   x="782" y="386.0">&#8776; 0.0051</text>
+  <line x1="157.4" y1="465.0" x2="179.4" y2="465.0" stroke="#8d887e" stroke-width="2.6" stroke-linecap="round"/>
+  <text class="lc-legend" x="185.4" y="468.0" fill="#6b665d">GRPO (s = 1)</text>
+  <line x1="302.6" y1="465.0" x2="324.6" y2="465.0" stroke="#b7434b" stroke-width="2.8" stroke-linecap="round"/>
+  <text class="lc-legend" x="330.6" y="468.0" fill="#9c3a41">DPPO</text>
+  <line x1="387.0" y1="465.0" x2="409.0" y2="465.0" stroke="#3f7fc7" stroke-width="2.8" stroke-linecap="round"/>
+  <text class="lc-legend" x="415.0" y="468.0" fill="#2c6cbb">GRPO + R3</text>
+  <line x1="509.4" y1="465.0" x2="531.4" y2="465.0" stroke="#9a4a0b" stroke-width="3.2" stroke-linecap="round"/>
+  <text class="lc-legend" x="537.4" y="468.0" fill="#9a4a0b">GRPO + SATR</text>
+  <line x1="647.0" y1="465.0" x2="669.0" y2="465.0" stroke="#bd5f16" stroke-width="3.4" stroke-linecap="round"/>
+  <text class="lc-legend" x="675.0" y="468.0" fill="#bd5f16">GRPO + SATR + R3</text>
+</svg>

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 340"
+     class="lc-static" preserveAspectRatio="xMidYMid meet"
+     role="img" aria-label="GSPO AIME24 eval curves under staleness = 1 vs staleness = 8">
+  <style>
+    .lc-static .lc-grid   { stroke: #efece4; stroke-width: .8; fill: none; }
+    .lc-static .lc-frame  { stroke: #e6e2d8; stroke-width: .8; fill: none; }
+    .lc-static .lc-tick   { font: 500 10.5px "Inter", ui-sans-serif, system-ui, sans-serif; fill: #6f6a61; font-variant-numeric: tabular-nums; }
+    .lc-static .lc-axlbl  { font: 500 11.5px "Inter", ui-sans-serif, system-ui, sans-serif; fill: #4a463f; }
+    .lc-static .plot-title { font: 650 13px "Inter", ui-sans-serif, system-ui, sans-serif; fill: #201d18; }
+    .lc-static .lc-path   { fill: none; stroke-width: 2.0; stroke-linecap: round; stroke-linejoin: round; }
+    .lc-static .lc-path--s1 { stroke: #1c5cab; }
+    .lc-static .lc-path--s8 { stroke: #9a4a0b; }
+    .lc-static .lg          { font: 500 11.5px "Inter", ui-sans-serif, system-ui, sans-serif; fill: #4a463f; }
+  </style>
+
+<text class="plot-title" x="68" y="24">GSPO on AIME24 &#8212; low-staleness run keeps climbing while high-staleness run collapses</text>
+  <line class="lc-grid" x1="68" y1="254.11" x2="896" y2="254.11"/>
+  <text class="lc-tick" x="60" y="257.61" text-anchor="end">0.05</text>
+  <line class="lc-grid" x1="68" y1="220.22" x2="896" y2="220.22"/>
+  <text class="lc-tick" x="60" y="223.72" text-anchor="end">0.10</text>
+  <line class="lc-grid" x1="68" y1="186.33" x2="896" y2="186.33"/>
+  <text class="lc-tick" x="60" y="189.83" text-anchor="end">0.15</text>
+  <line class="lc-grid" x1="68" y1="152.44" x2="896" y2="152.44"/>
+  <text class="lc-tick" x="60" y="155.94" text-anchor="end">0.20</text>
+  <line class="lc-grid" x1="68" y1="118.56" x2="896" y2="118.56"/>
+  <text class="lc-tick" x="60" y="122.06" text-anchor="end">0.25</text>
+  <line class="lc-grid" x1="68" y1="84.67" x2="896" y2="84.67"/>
+  <text class="lc-tick" x="60" y="88.17" text-anchor="end">0.30</text>
+  <line class="lc-grid" x1="68" y1="50.78" x2="896" y2="50.78"/>
+  <text class="lc-tick" x="60" y="54.28" text-anchor="end">0.35</text>
+  <line class="lc-frame" x1="68.00" y1="288" x2="68.00" y2="292"/>
+  <text class="lc-tick" x="68.00" y="306" text-anchor="middle">0</text>
+  <line class="lc-frame" x1="218.55" y1="288" x2="218.55" y2="292"/>
+  <text class="lc-tick" x="218.55" y="306" text-anchor="middle">100</text>
+  <line class="lc-frame" x1="369.09" y1="288" x2="369.09" y2="292"/>
+  <text class="lc-tick" x="369.09" y="306" text-anchor="middle">200</text>
+  <line class="lc-frame" x1="519.64" y1="288" x2="519.64" y2="292"/>
+  <text class="lc-tick" x="519.64" y="306" text-anchor="middle">300</text>
+  <line class="lc-frame" x1="670.18" y1="288" x2="670.18" y2="292"/>
+  <text class="lc-tick" x="670.18" y="306" text-anchor="middle">400</text>
+  <line class="lc-frame" x1="820.73" y1="288" x2="820.73" y2="292"/>
+  <text class="lc-tick" x="820.73" y="306" text-anchor="middle">500</text>
+  <rect class="lc-frame" x="68" y="44" width="828" height="244" fill="none"/>
+
+  <text class="lc-axlbl" x="482" y="328" text-anchor="middle">training step</text>
+  <text class="lc-axlbl" transform="translate(20 166) rotate(-90)" text-anchor="middle">AIME24 pass@1</text>
+
+  <path class="lc-path lc-path--s1" d="M74.0 217.4 L81.5 213.2 L89.1 193.4 L96.6 204.7 L104.1 211.8 L111.7 179.3 L119.2 177.9 L126.7 183.5 L134.2 184.9 L141.8 179.3 L149.3 153.9 L156.8 176.4 L164.3 156.7 L171.9 163.7 L179.4 165.2 L186.9 163.7 L194.5 165.2 L202.0 152.4 L209.5 156.7 L217.0 165.2 L224.6 166.6 L232.1 151.0 L239.6 135.5 L247.1 153.9 L254.7 141.1 L262.2 151.0 L269.7 155.3 L277.3 144.0 L284.8 136.9 L292.3 132.7 L299.8 129.9 L307.4 144.0 L314.9 124.2 L322.4 127.0 L329.9 135.5 L337.5 139.7 L345.0 128.4 L352.5 114.3 L360.1 138.3 L367.6 122.8 L375.1 98.8 L382.6 134.1 L390.2 121.4 L397.7 117.1 L405.2 112.9 L412.7 117.1 L420.3 115.7 L427.8 110.1 L435.3 104.4 L442.9 112.9 L450.4 87.5 L457.9 104.4 L465.4 93.1 L473.0 111.5 L480.5 110.1 L488.0 96.0 L495.5 108.7 L503.1 94.6 L510.6 121.4 L518.1 104.4 L525.7 108.7 L533.2 121.4 L540.7 115.7 L548.2 107.3 L555.8 101.6 L563.3 117.1 L570.8 107.3 L578.3 111.5 L585.9 112.9 L593.4 100.2 L600.9 104.4 L608.5 121.4 L616.0 104.4 L623.5 86.1 L631.0 90.3 L638.6 90.3 L646.1 103.0 L653.6 83.3 L661.1 104.4 L668.7 98.8 L676.2 110.1 L683.7 103.0 L691.3 94.6 L698.8 98.8 L706.3 96.0 L713.8 81.8 L721.4 100.2 L728.9 104.4 L736.4 100.2 L743.9 84.7 L751.5 96.0 L759.0 110.1 L766.5 100.2 L774.1 100.2 L781.6 76.2 L789.1 98.8 L796.6 108.7 L804.2 100.2 L811.7 97.4 L819.2 110.1 L826.7 96.0 L834.3 81.8 L841.8 94.6 L849.3 101.6 L856.9 103.0 L864.4 107.3 L871.9 96.0 L879.4 98.8 "/>
+  <path class="lc-path lc-path--s8" d="M74.0 225.9 L81.5 208.9 L89.1 208.9 L96.6 201.9 L104.1 187.7 L111.7 190.6 L119.2 193.4 L126.7 177.9 L134.2 163.7 L141.8 168.0 L149.3 172.2 L156.8 180.7 L164.3 168.0 L171.9 169.4 L179.4 159.5 L186.9 165.2 L194.5 155.3 L202.0 165.2 L209.5 163.7 L217.0 146.8 L224.6 148.2 L232.1 136.9 L239.6 136.9 L247.1 124.2 L254.7 132.7 L262.2 142.6 L269.7 156.7 L277.3 138.3 L284.8 124.2 L292.3 127.0 L299.8 138.3 L307.4 117.1 L314.9 131.3 L322.4 151.0 L329.9 122.8 L337.5 136.9 L345.0 139.7 L352.5 127.0 L360.1 124.2 L367.6 135.5 L375.1 128.4 L382.6 124.2 L390.2 111.5 L397.7 114.3 L405.2 128.4 L412.7 129.9 L420.3 100.2 L427.8 132.7 L435.3 125.6 L442.9 120.0 L450.4 122.8 L457.9 118.6 L465.4 134.1 L473.0 117.1 L480.5 114.3 L488.0 120.0 L495.5 112.9 L503.1 114.3 L510.6 110.1 L518.1 127.0 L525.7 91.7 L533.2 104.4 L540.7 93.1 L548.2 121.4 L555.8 103.0 L563.3 97.4 L570.8 110.1 L578.3 94.6 L585.9 90.3 L593.4 83.3 L600.9 90.3 L608.5 74.8 L616.0 86.1 L623.5 79.0 L631.0 59.2 L638.6 81.8 L646.1 66.3 L653.6 76.2 L661.1 79.0 L668.7 98.8 L676.2 76.2 L683.7 88.9 L691.3 81.8 L698.8 74.8 L706.3 110.1 L713.8 105.8 L721.4 110.1 L728.9 155.3 L736.4 168.0 L743.9 196.2 L751.5 159.5 L759.0 158.1 L766.5 129.9 L774.1 134.1 L781.6 115.7 L789.1 141.1 L796.6 146.8 L804.2 175.0 L811.7 142.6 L819.2 184.9 L826.7 169.4 "/>
+
+  <!-- collapse annotation at step 449 on the s=8 curve -->
+  <g class="lc-annot-collapse">
+    <circle cx="743.95" cy="196.2" r="3.2" fill="#a11d1d" stroke="#fdfcfa" stroke-width="1"/>
+    <line x1="748" y1="220" x2="744.6" y2="201.2" stroke="#a11d1d" stroke-width="1.6" stroke-linecap="round"/>
+    <polygon points="744.6,201.2 741.4,205.4 748.2,204.2" fill="#a11d1d"/>
+    <text x="748" y="234" text-anchor="middle" style="font: 650 12px 'Inter', ui-sans-serif, system-ui, sans-serif; fill:#a11d1d;">collapse</text>
+  </g>
+
+  <g transform="translate(84 60)">
+    <rect x="-10" y="-14" width="235" height="46" rx="6" ry="6" fill="#fdfcfa" stroke="#e6e2d8" stroke-width="0.8"/>
+    <line x1="0"  y1="-2" x2="24" y2="-2" stroke="#1c5cab" stroke-width="1.8"/>
+    <text class="lg" x="30" y="2">staleness = 1 (GSPO) &#8212; stable</text>
+    <line x1="0"  y1="18" x2="24" y2="18" stroke="#9a4a0b" stroke-width="1.8"/>
+<text class="lg" x="30" y="22">staleness = 8 (GSPO) &#8212; collapse</text>
+  </g>
+</svg>

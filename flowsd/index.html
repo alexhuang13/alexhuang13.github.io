@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FlowSD — Trajectory-Balanced On-Policy Self-Distillation</title>
+  <meta name="description" content="FlowSD learns an explicit distribution over complete reasoning paths using verifier outcomes, privileged teacher feedback, and trajectory balance." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="assets/icons/book-mark.svg" />
+  <link rel="alternate" hreflang="en" href="index.html" />
+  <link rel="alternate" hreflang="zh-CN" href="zh.html" />
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:true,tags:"none"},svg:{fontCache:"global"},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+  <div class="progress" id="progress" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a class="brand" href="#top">FlowSD</a>
+      <nav class="topnav" aria-label="Article links">
+        <a href="#methodology">Methodology</a>
+        <a href="#balance">Trajectory balance</a>
+        <a href="#results">Experiments</a>
+        <a href="#diversity">Diversity</a>
+        <a class="topnav__pill" href="#cite">Cite</a>
+        <div class="lang-switch" role="group" aria-label="Language">
+          <a class="active" href="index.html" lang="en" aria-current="page">EN</a>
+          <a href="zh.html" lang="zh-CN">中文</a>
+        </div>
+        <button id="theme-toggle" class="theme" aria-label="Toggle dark mode">
+          <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>
+          <svg class="moon" viewBox="0 0 24 24"><path d="M20 15a8 8 0 1 1-11-11 7 7 0 0 0 11 11Z"/></svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <span id="top"></span>
+  <div class="page">
+    <aside class="toc" aria-label="Contents">
+      <p>Contents</p>
+      <nav>
+        <a href="#methodology">Methodology</a>
+        <a href="#balance">Trajectory balance</a>
+        <a href="#gate">When to trust the teacher</a>
+        <a href="#results">Experiments</a>
+        <a href="#diversity">Diversity analysis</a>
+      </nav>
+    </aside>
+
+    <main class="article">
+      <section class="hero">
+        <p class="eyebrow">FlowSD · Tencent HY LLM Frontier · August 2026</p>
+        <h1>FlowSD: Trajectory-Balanced OPSD</h1>
+        <p class="hero__tagline">Learning a distribution over complete reasoning paths.</p>
+        <p class="hero__lead">
+          Long-horizon reasoning problems often admit multiple valid solution strategies. RL with verifiable rewards offers reliable but sparse outcome supervision, while on-policy self-distillation adds dense privileged feedback; however, standard local objectives still do not specify how probability should be distributed over complete responses. FlowSD fills this gap by defining a reference-supported target from verifier-derived group advantages and sign-gated teacher gains. It then fits this normalized target with profiled trajectory balance, explicitly determining where reasoning probability mass should settle.
+        </p>
+
+        <div class="byline">
+          <p class="authors">Zixun Huang<sup>*1,2</sup>, Kishan Panaganti<sup>*†1</sup>, Haitao Mi<sup>1</sup>, Leowei Liang<sup>1</sup></p>
+          <p><sup>1</sup>Tencent HY LLM Frontier &nbsp;&nbsp; <sup>2</sup>University of Pennsylvania</p>
+          <p><sup>*</sup>Equal contribution, &nbsp;<sup>†</sup>Project lead</p>
+        </div>
+
+
+      </section>
+
+      <section class="section" id="methodology">
+        <p class="section__label">Part 01</p>
+        <h2>Methodology</h2>
+        <p>FlowSD starts from a group of responses sampled by the current policy. The verifier gives each response a stopped, group-relative advantage $A_i$. The same frozen rollout model is then given privileged context—such as a reference solution—and rescores the sampled tokens. Their average log-probability gain over the reference becomes the trajectory-level teacher signal $G_T(y_i)$.</p>
+
+        <div class="flow-round" aria-label="One FlowSD training round">
+          <article><span>1</span><b>Sample</b><p>Generate a group of complete responses without privileged context.</p></article>
+          <svg viewBox="0 0 54 24" aria-hidden="true"><path d="M2 12h45m-7-7 7 7-7 7"/></svg>
+          <article><span>2</span><b>Evaluate</b><p>Use the verifier for outcomes and the privileged teacher for dense trajectory scores.</p></article>
+          <svg viewBox="0 0 54 24" aria-hidden="true"><path d="M2 12h45m-7-7 7 7-7 7"/></svg>
+          <article><span>3</span><b>Reweight</b><p>Convert both signals into one normalized target over the sampled answers.</p></article>
+        </div>
+
+        <p class="bridge-copy">The resulting energy does not update the policy by itself. It first defines how much relative mass each complete response should receive:</p>
+
+        <div class="equation-card">
+          <span>The target distribution</span>
+          $$p_i^\star=
+          \frac{\pi_{\mathrm{ref}}(y_i\mid x)\exp(E_i/\tau)}
+          {\sum_j\pi_{\mathrm{ref}}(y_j\mid x)\exp(E_j/\tau)},
+          \qquad
+          E_i=\eta_AA_i+\beta_TG_T(y_i)\operatorname{sign}(A_i).$$
+        </div>
+
+        <div class="term-grid">
+          <article><span>Anchor</span><h3>$\pi_{\mathrm{ref}}$</h3><p>Preserves support from the initial model instead of imitating the teacher without constraint.</p></article>
+          <article><span>Outcome</span><h3>$A_i$</h3><p>Separates responses using verifier-derived, group-relative correctness.</p></article>
+          <article><span>Reasoning</span><h3>$G_T(y_i)$</h3><p>Summarizes dense privileged feedback over the complete sampled trajectory.</p></article>
+          <article><span>Normalization</span><h3>$Z_{\mathcal G}$</h3><p>Turns relative preferences into a probability distribution for the prompt.</p></article>
+        </div>
+
+        <aside class="story-callout"><b>What FlowSD adds to OPSD.</b> The teacher is no longer only a source of local token targets. Its feedback becomes one term in an explicit complete-response distribution, anchored by the reference and calibrated by verifier outcomes.</aside>
+
+        <details class="inline-theory">
+          <summary><span>Distributional property</span><b>FlowSD is the smallest reference shift that reaches its energy level.</b><i>+</i></summary>
+          <div>
+            <p>Let $p_i^\star\propto\pi_{\mathrm{ref}}(y_i)e^{E_i/\tau}$ on the realized rollout group. For every group distribution $p$,</p>
+            $$\mathrm{KL}(p\|\pi_{\mathrm{ref}})=\mathrm{KL}(p^\star\|\pi_{\mathrm{ref}})+\mathrm{KL}(p\|p^\star)+\frac{\mathbb E_p[E]-\mathbb E_{p^\star}[E]}{\tau}.$$
+            <p>Among distributions attaining at least the target's expected energy, $p^\star$ uniquely minimizes reverse KL to the reference.</p>
+          </div>
+        </details>
+      </section>
+
+
+      <section class="section" id="balance">
+        <p class="section__label">Part 02</p>
+        <h2>Trajectory Balance</h2>
+        <p>FlowSD has already defined the desired distribution over complete responses. Trajectory balance turns that distribution into a trainable condition: if the student matches the target, then every sampled response $y_i$ must satisfy</p>
+
+        <div class="tb-equation tb-equation--target">
+          <span>Target condition</span>
+          $$\pi_\theta(y_i\mid x)
+          =\frac{1}{Z_{\mathcal G}(x,c)}
+          \pi_{\mathrm{ref}}(y_i\mid x)
+          \exp\!\left(\frac{E_i}{\tau}\right).$$
+        </div>
+
+        <p>Taking logs and moving all terms to one side gives the trajectory-balance residual:</p>
+
+        <div class="tb-equation">
+          <span>Trajectory-balance residual</span>
+          $$\Delta_i
+          =\tau\log Z_{\mathcal G}
+          +\tau\log\frac{\pi_\theta(y_i\mid x)}{\pi_{\mathrm{ref}}(y_i\mid x)}
+          -E_i.$$
+        </div>
+
+        <p>FlowSD minimizes the squared residual across the rollout group:</p>
+
+        <div class="tb-equation tb-equation--loss">
+          <span>FlowSD objective</span>
+          $$\mathcal L_{\mathrm{FlowSD}}
+          =\frac{1}{2N}\sum_{i=1}^{N}\Delta_i^2.$$
+        </div>
+
+        <div class="tb-logic">
+          <article><span>01</span><div><b>Complete-response supervision</b><p>The gradient flows through the sum of student token log-probabilities, but the balance condition is imposed on the probability of the full response.</p></div></article>
+          <article><span>02</span><div><b>One partition per rollout group</b><p>All responses to the same prompt share $Z_{\mathcal G}$. It converts trajectory energies into a normalized distribution rather than independent scores.</p></div></article>
+          <article><span>03</span><div><b>Profile the unknown normalizer</b><p>Each response implies a value of $\log Z$; FlowSD uses their group mean and stops gradients through this estimate.</p></div></article>
+        </div>
+
+        <div class="tb-partition">
+          <span>Group partition estimate</span>
+          $$\widehat{\log Z}_{\mathcal G}
+          =\frac{1}{N}\sum_{i=1}^{N}
+          \left[
+          \frac{E_i}{\tau}
+          -\log\frac{\pi_\theta(y_i\mid x)}{\pi_{\mathrm{ref}}(y_i\mid x)}
+          \right].$$
+        </div>
+
+        <details class="inline-theory" open>
+          <summary><span>Contrast preservation</span><b>Profiling one scalar $Z$ preserves every pairwise response preference.</b><i>−</i></summary>
+          <div>
+            <p>At zero profiled trajectory-balance loss, for every $i,j$ with positive reference support,</p>
+            $$\frac{\pi_\theta(y_i\mid x)}{\pi_\theta(y_j\mid x)}
+            =\frac{\pi_{\mathrm{ref}}(y_i\mid x)}{\pi_{\mathrm{ref}}(y_j\mid x)}
+            \exp\!\left(\frac{E_i-E_j}{\tau}\right).$$
+            <p>The shared partition cancels in the ratio. It removes one common group offset while preserving all $N-1$ relative-probability directions.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="section" id="gate">
+        <p class="section__label">Part 03</p>
+        <h2>When should FlowSD trust the privileged teacher?</h2>
+        <p>Privileged likelihood and verifier correctness are different signals. A teacher may assign positive gain to a coherent-looking response that the verifier rejects. FlowSD therefore uses the sign of $A_i$ as a gate: teacher gain raises the energy of positive-advantage responses, lowers the energy of negative-advantage responses, and vanishes when $A_i=0$.</p>
+
+        <div class="gate-rule">
+          <article class="gate-rule__good">
+            <span>$A_i&gt;0$</span>
+            <svg viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="22"/><path d="m18 28 7 7 14-16"/></svg>
+            <h3>Verified</h3>
+            <p>Follow teacher support.</p>
+          </article>
+          <div class="gate-rule__verb">sign gate</div>
+          <article class="gate-rule__bad">
+            <span>$A_i&lt;0$</span>
+            <svg viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="22"/><path d="m20 20 16 16M36 20 20 36"/></svg>
+            <h3>Rejected</h3>
+            <p>Reverse teacher pressure.</p>
+          </article>
+        </div>
+
+        <h3 class="subhead">Move the weights and watch the distribution respond</h3>
+        <p>This toy rollout group contains two verified answers and two rejected answers. Each starts with reference probability $\pi_{\mathrm{ref}}(y_i)$ and receives the FlowSD energy</p>
+
+        <div class="mass-explainer">
+          <div class="mass-explainer__formula">
+            $$p_i^\star\propto\pi_{\mathrm{ref}}(y_i)
+            \exp\!\left(\eta_AA_i+\beta_TG_T(y_i)\operatorname{sign}(A_i)\right),$$
+          </div>
+          <div class="mass-explainer__guide">
+            <p><b>Verifier weight $\eta_A$</b><span>moves mass from rejected answers toward verified answers.</span></p>
+            <p><b>Teacher weight $\beta_T$</b><span>changes relative preference using privileged reasoning feedback.</span></p>
+          </div>
+        </div>
+
+        <aside class="experiment-prompt"><b>Watch “Plausible failure.”</b> The verifier rejects it, but the teacher gives it a strong positive gain $(+0.7)$. Turn off the sign gate and raise the teacher weight; then turn the gate back on to see how FlowSD redirects that support.</aside>
+
+        <div class="mass-lab" id="mass-lab">
+          <div class="mass-lab__controls">
+            <label><span>Verifier weight <b id="eta-value">2.0</b></span><input id="eta-slider" type="range" min="0" max="4" step="0.1" value="2" /></label>
+            <label><span>Teacher weight <b id="beta-value">1.0</b></span><input id="beta-slider" type="range" min="0" max="3" step="0.1" value="1" /></label>
+            <label class="switch"><input id="gate-toggle" type="checkbox" checked /><i></i><b>Sign gate</b></label>
+          </div>
+          <div class="mass-bars" aria-live="polite">
+            <div class="mass-row" data-ref="0.30" data-a="1" data-g="0.8"><div><b>Geometry</b><small>verified · teacher +0.8</small></div><span><i></i></span><output></output></div>
+            <div class="mass-row" data-ref="0.20" data-a="1" data-g="0.3"><div><b>Algebra</b><small>verified · teacher +0.3</small></div><span><i></i></span><output></output></div>
+            <div class="mass-row mass-row--bad" data-ref="0.25" data-a="-1" data-g="0.7"><div><b>Plausible failure</b><small>rejected · teacher +0.7</small></div><span><i></i></span><output></output></div>
+            <div class="mass-row mass-row--bad" data-ref="0.25" data-a="-1" data-g="-0.2"><div><b>Weak failure</b><small>rejected · teacher −0.2</small></div><span><i></i></span><output></output></div>
+          </div>
+          <p id="gate-readout" class="mass-readout"></p>
+        </div>
+
+        <details class="inline-theory">
+          <summary><span>Sign-gating guarantee</span><b>Teacher support on a rejected response becomes a correction favoring the verified response.</b><i>+</i></summary>
+          <div>
+            <p>Consider a verified response $y_+$ and a verifier-rejected response $y_-$ in the same mixed-outcome rollout group. Compared with otherwise identical ungated teacher shaping, sign gating changes their target probability ratio by</p>
+            $$\frac{p^\star_{\mathrm{gated}}(y_+)/p^\star_{\mathrm{gated}}(y_-)}
+            {p^\star_{\mathrm{ungated}}(y_+)/p^\star_{\mathrm{ungated}}(y_-)}
+            =\exp\!\left(\frac{2\beta_TG_T(y_-\mid x,c)}{\tau}\right).$$
+            <p>Thus, when the privileged teacher assigns positive gain to a rejected response, the gate converts that support from imitation pressure into a success-to-failure probability-ratio gain.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="section" id="results">
+        <p class="section__label">Part 04</p>
+        <h2>Experiments</h2>
+        <p>Across Qwen3-4B and Qwen3-8B, FlowSD achieves the strongest five-benchmark average. The training traces also show faster progress and a different response-length profile from direct on-policy self-distillation.</p>
+
+        <div class="paper-results">
+          <figure>
+            <a href="figures/flowsd/paper/training_acceleration.pdf" target="_blank" rel="noopener">
+              <img src="figures/flowsd/training_acceleration.png" alt="Paper figure showing FlowSD training acceleration on AIME24." />
+            </a>
+            <figcaption><b>Training acceleration.</b> FlowSD reaches 0.5 AIME24 validation accuracy in about 100 steps, versus roughly 143 for GRPO.</figcaption>
+          </figure>
+          <figure>
+            <a href="figures/flowsd/paper/response_length.pdf" target="_blank" rel="noopener">
+              <img src="figures/flowsd/response_length.png" alt="Paper figure comparing FlowSD and OPSD mean response length over training." />
+            </a>
+            <figcaption><b>Response length.</b> FlowSD maintains substantially longer responses than direct OPSD over training, mitigating the response-length degradation observed in local self-distillation.</figcaption>
+          </figure>
+        </div>
+
+        <div class="benchmark-details">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th class="col-model">Model</th><th class="col-method">Method</th><th>AIME24@16</th><th>HMMT25@1</th><th>Minerva@1</th><th>MATH500@1</th><th>Olympiad@1</th><th>Avg.</th></tr></thead>
+              <tbody>
+                <tr><td class="col-model" rowspan="3">Qwen3-4B</td><td class="col-method">GRPO</td><td>78.00</td><td>26.67</td><td><strong>51.18</strong></td><td>92.04</td><td>63.68</td><td>62.31</td></tr>
+                <tr><td class="col-method">RLSD</td><td>73.33</td><td>21.33</td><td>50.29</td><td>91.44</td><td>61.36</td><td>59.55</td></tr>
+                <tr class="ours"><td class="col-method">FlowSD</td><td><strong>80.00</strong></td><td><strong>32.00</strong></td><td>50.51</td><td><strong>93.28</strong></td><td><strong>65.49</strong></td><td><strong>64.26</strong></td></tr>
+                <tr><td class="col-model" rowspan="3">Qwen3-8B</td><td class="col-method">GRPO</td><td>85.33</td><td>31.33</td><td>52.87</td><td>93.16</td><td>64.78</td><td>65.49</td></tr>
+                <tr><td class="col-method">RLSD</td><td>82.67</td><td>28.00</td><td>52.94</td><td>93.44</td><td>63.56</td><td>64.12</td></tr>
+                <tr class="ours"><td class="col-method">FlowSD</td><td><strong>89.33</strong></td><td><strong>34.67</strong></td><td><strong>53.68</strong></td><td><strong>93.52</strong></td><td><strong>66.85</strong></td><td><strong>67.61</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <section class="section" id="diversity">
+        <p class="section__label">Part 05</p>
+        <h2>Diversity Analysis</h2>
+        <p>We use GPT-5.5 to extract the core mathematical representation and tools from each full AIME24 trajectory, then cluster anonymized summaries by semantic strategy rather than wording or response length. Correctness is revealed only after clustering, and diversity is computed on correct trajectories using</p>
+
+        <div class="diversity-formula">
+          <span class="definition-label">Simpson Diversity</span>
+          $$D_{\mathrm{Simpson}}=1-\sum_{k=1}^{K}p_k^2,$$
+          <p>where $p_k$ is the fraction of correct trajectories in cluster $k$; equivalently, $D_{\mathrm{Simpson}}$ is the probability that two sampled correct trajectories use different strategies.</p>
+        </div>
+
+        <figure class="diversity-paper-figure">
+          <a href="figures/flowsd/paper/diversity.pdf" target="_blank" rel="noopener">
+            <img src="figures/flowsd/strategy_diversity.png" alt="Paper figure comparing correct-only Simpson strategy diversity on AIME24." />
+          </a>
+          <figcaption><b>Correct-strategy diversity.</b> FlowSD achieves 0.2194, compared with 0.1017 for GRPO and 0.1456 for RLSD.</figcaption>
+        </figure>
+
+        <h3 class="subhead">Case study: the same answer through a different mathematical object</h3>
+        <div class="case-study">
+          <p class="case-study__problem"><b>AIME24 Problem 23.</b> A tetrahedron has opposite edge pairs $\sqrt{41}$, $\sqrt{80}$, and $\sqrt{89}$; compute its inradius expression.</p>
+          <div class="case-study__routes">
+            <article>
+              <span>Common GRPO route</span>
+              <h3>Cayley–Menger determinant</h3>
+              <p>Treat the tetrahedron through its six pairwise distances, build the distance matrix, exploit symmetry, and recover the volume from a distance invariant.</p>
+              <div><i>distance geometry</i><i>determinant</i><i>symmetry</i></div>
+            </article>
+            <div class="case-study__vs">versus</div>
+            <article class="case-study__flowsd">
+              <span>FlowSD route</span>
+              <h3>Hidden rectangular-box embedding</h3>
+              <p>Recognize $41=4^2+5^2$, $80=4^2+8^2$, and $89=5^2+8^2$; embed the vertices in a $4\times5\times8$ box and compute volume with a scalar triple product.</p>
+              <div><i>coordinate embedding</i><i>Pythagorean structure</i><i>triple product</i></div>
+            </article>
+          </div>
+          <p class="case-study__point">Both trajectories are correct; the distinct determinant and box-embedding routes illustrate FlowSD's greater diversity among successful strategies.</p>
+        </div>
+
+      </section>
+
+      <footer id="cite">
+        <h3>Cite this work</h3>
+        <div class="bibtex"><button id="copy-bib">Copy</button><pre id="bibtex-block">@misc{huang2026flowsd,
+  title  = {FlowSD: Trajectory-Balanced On-Policy Self-Distillation},
+  author = {Zixun Huang and Kishan Panaganti and Haitao Mi and Leowei Liang},
+  year   = {2026}
+}</pre></div>
+      </footer>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

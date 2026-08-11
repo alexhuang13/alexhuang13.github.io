@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FlowSD：基于轨迹平衡的在策略自蒸馏</title>
+  <meta name="description" content="FlowSD 利用验证器结果、特权教师反馈与轨迹平衡，显式学习完整推理路径上的概率分布。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="assets/icons/book-mark.svg" />
+  <link rel="alternate" hreflang="en" href="index.html" />
+  <link rel="alternate" hreflang="zh-CN" href="zh.html" />
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:true,tags:"none"},svg:{fontCache:"global"},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body data-lang="zh">
+  <div class="progress" id="progress" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a class="brand" href="#top">FlowSD</a>
+      <nav class="topnav" aria-label="文章导航">
+        <a href="#methodology">方法</a>
+        <a href="#balance">轨迹平衡</a>
+        <a href="#results">实验</a>
+        <a href="#diversity">多样性</a>
+        <a class="topnav__pill" href="#cite">引用</a>
+        <div class="lang-switch" role="group" aria-label="语言">
+          <a href="index.html" lang="en">EN</a>
+          <a class="active" href="zh.html" lang="zh-CN" aria-current="page">中文</a>
+        </div>
+        <button id="theme-toggle" class="theme" aria-label="切换深色模式">
+          <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>
+          <svg class="moon" viewBox="0 0 24 24"><path d="M20 15a8 8 0 1 1-11-11 7 7 0 0 0 11 11Z"/></svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <span id="top"></span>
+  <div class="page">
+    <aside class="toc" aria-label="目录">
+      <p>目录</p>
+      <nav>
+        <a href="#methodology">方法</a>
+        <a href="#balance">轨迹平衡</a>
+        <a href="#gate">何时信任教师</a>
+        <a href="#results">实验</a>
+        <a href="#diversity">多样性分析</a>
+      </nav>
+    </aside>
+
+    <main class="article">
+      <section class="hero">
+        <p class="eyebrow">FlowSD · Tencent HY LLM Frontier · 2026 年 8 月</p>
+        <h1>FlowSD：基于轨迹平衡的 OPSD</h1>
+        <p class="hero__tagline">学习完整推理路径上的概率分布。</p>
+        <p class="hero__lead">
+          长程推理问题通常存在多种有效解题策略。可验证奖励强化学习提供可靠但稀疏的结果监督，在策略自蒸馏则提供稠密的特权反馈；然而，标准的局部目标仍未规定概率应如何分配到完整回答上。FlowSD 用验证器导出的组相对优势和符号门控的教师增益，定义一个由参考策略支撑的目标分布；再通过剖面化轨迹平衡拟合这一归一化目标，明确决定推理概率质量最终应落在哪里。
+        </p>
+
+        <div class="byline">
+          <p class="authors">Zixun Huang<sup>*1,2</sup>, Kishan Panaganti<sup>*†1</sup>, Haitao Mi<sup>1</sup>, Leowei Liang<sup>1</sup></p>
+          <p><sup>1</sup>Tencent HY LLM Frontier &nbsp;&nbsp; <sup>2</sup>University of Pennsylvania</p>
+          <p><sup>*</sup>共同一作，&nbsp;<sup>†</sup>项目负责人</p>
+        </div>
+
+
+      </section>
+
+      <section class="section" id="methodology">
+        <p class="section__label">第一部分</p>
+        <h2>方法</h2>
+        <p>FlowSD 首先用当前策略为同一道题采样一组回答。验证器为每条回答计算停止梯度的组相对优势 $A_i$。随后，同一个冻结的 rollout 模型获得参考解答等特权上下文，并重新评估已采样 token；相对于参考策略的平均对数概率增益，构成轨迹级教师信号 $G_T(y_i)$。</p>
+
+        <div class="flow-round" aria-label="一轮 FlowSD 训练">
+          <article><span>1</span><b>采样</b><p>在不使用特权上下文的情况下，生成一组完整回答。</p></article>
+          <svg viewBox="0 0 54 24" aria-hidden="true"><path d="M2 12h45m-7-7 7 7-7 7"/></svg>
+          <article><span>2</span><b>评估</b><p>验证器提供结果监督，特权教师提供稠密的轨迹评分。</p></article>
+          <svg viewBox="0 0 54 24" aria-hidden="true"><path d="M2 12h45m-7-7 7 7-7 7"/></svg>
+          <article><span>3</span><b>重加权</b><p>将两类信号转化为采样回答上的归一化目标分布。</p></article>
+        </div>
+
+        <p class="bridge-copy">得到的能量并不直接更新策略，而是先规定每条完整回答应获得多少相对概率质量：</p>
+
+        <div class="equation-card">
+          <span>目标分布</span>
+          $$p_i^\star=
+          \frac{\pi_{\mathrm{ref}}(y_i\mid x)\exp(E_i/\tau)}
+          {\sum_j\pi_{\mathrm{ref}}(y_j\mid x)\exp(E_j/\tau)},
+          \qquad
+          E_i=\eta_AA_i+\beta_TG_T(y_i)\operatorname{sign}(A_i).$$
+        </div>
+
+        <div class="term-grid">
+          <article><span>锚点</span><h3>$\pi_{\mathrm{ref}}$</h3><p>保留初始模型的分布支撑，而不是无约束地模仿教师。</p></article>
+          <article><span>结果</span><h3>$A_i$</h3><p>用验证器导出的组相对正确性区分不同回答。</p></article>
+          <article><span>推理</span><h3>$G_T(y_i)$</h3><p>将完整采样轨迹上的稠密特权反馈汇总为轨迹信号。</p></article>
+          <article><span>归一化</span><h3>$Z_{\mathcal G}$</h3><p>将相对偏好转化为该问题上的概率分布。</p></article>
+        </div>
+
+        <aside class="story-callout"><b>FlowSD 为 OPSD 增加了什么？</b> 教师不再只是局部 token 目标的来源；它的反馈成为完整回答显式分布中的一项，并由参考策略锚定、由验证器结果校准。</aside>
+
+        <details class="inline-theory">
+          <summary><span>分布性质</span><b>FlowSD 是达到目标能量水平所需的最小参考分布偏移。</b><i>+</i></summary>
+          <div>
+            <p>在给定的 rollout 组上，令 $p_i^\star\propto\pi_{\mathrm{ref}}(y_i)e^{E_i/\tau}$。对任意组分布 $p$，</p>
+            $$\mathrm{KL}(p\|\pi_{\mathrm{ref}})=\mathrm{KL}(p^\star\|\pi_{\mathrm{ref}})+\mathrm{KL}(p\|p^\star)+\frac{\mathbb E_p[E]-\mathbb E_{p^\star}[E]}{\tau}.$$
+            <p>在期望能量不低于目标分布的所有分布中，$p^\star$ 唯一最小化相对于参考分布的反向 KL。</p>
+          </div>
+        </details>
+      </section>
+
+
+      <section class="section" id="balance">
+        <p class="section__label">第二部分</p>
+        <h2>轨迹平衡</h2>
+        <p>FlowSD 已经定义了完整回答上的目标分布。轨迹平衡将这个分布转化为可训练的条件：如果学生策略匹配目标，那么每条采样回答 $y_i$ 都必须满足</p>
+
+        <div class="tb-equation tb-equation--target">
+          <span>目标条件</span>
+          $$\pi_\theta(y_i\mid x)
+          =\frac{1}{Z_{\mathcal G}(x,c)}
+          \pi_{\mathrm{ref}}(y_i\mid x)
+          \exp\!\left(\frac{E_i}{\tau}\right).$$
+        </div>
+
+        <p>取对数并将所有项移到等式一侧，得到轨迹平衡残差：</p>
+
+        <div class="tb-equation">
+          <span>轨迹平衡残差</span>
+          $$\Delta_i
+          =\tau\log Z_{\mathcal G}
+          +\tau\log\frac{\pi_\theta(y_i\mid x)}{\pi_{\mathrm{ref}}(y_i\mid x)}
+          -E_i.$$
+        </div>
+
+        <p>FlowSD 在整个 rollout 组上最小化残差平方：</p>
+
+        <div class="tb-equation tb-equation--loss">
+          <span>FlowSD 目标函数</span>
+          $$\mathcal L_{\mathrm{FlowSD}}
+          =\frac{1}{2N}\sum_{i=1}^{N}\Delta_i^2.$$
+        </div>
+
+        <div class="tb-logic">
+          <article><span>01</span><div><b>完整回答级监督</b><p>梯度通过学生 token 对数概率之和传播，但平衡条件施加在完整回答的概率上。</p></div></article>
+          <article><span>02</span><div><b>每个 rollout 组一个配分函数</b><p>同一问题的所有回答共享 $Z_{\mathcal G}$，从而将轨迹能量转化为归一化分布，而不是彼此独立的分数。</p></div></article>
+          <article><span>03</span><div><b>剖面化未知归一化常数</b><p>每条回答都隐含一个 $\log Z$ 估计；FlowSD 使用组内均值，并对该估计停止梯度。</p></div></article>
+        </div>
+
+        <div class="tb-partition">
+          <span>组配分函数估计</span>
+          $$\widehat{\log Z}_{\mathcal G}
+          =\frac{1}{N}\sum_{i=1}^{N}
+          \left[
+          \frac{E_i}{\tau}
+          -\log\frac{\pi_\theta(y_i\mid x)}{\pi_{\mathrm{ref}}(y_i\mid x)}
+          \right].$$
+        </div>
+
+        <details class="inline-theory" open>
+          <summary><span>相对偏好保持</span><b>剖面化一个标量 $Z$ 会保留所有回答对之间的偏好。</b><i>−</i></summary>
+          <div>
+            <p>当剖面化轨迹平衡损失为零时，对参考策略支撑上的任意 $i,j$，</p>
+            $$\frac{\pi_\theta(y_i\mid x)}{\pi_\theta(y_j\mid x)}
+            =\frac{\pi_{\mathrm{ref}}(y_i\mid x)}{\pi_{\mathrm{ref}}(y_j\mid x)}
+            \exp\!\left(\frac{E_i-E_j}{\tau}\right).$$
+            <p>共享配分函数在概率比中相消。它只移除一个组级公共偏移，同时保留全部 $N-1$ 个相对概率方向。</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="section" id="gate">
+        <p class="section__label">第三部分</p>
+        <h2>FlowSD 应该何时信任特权教师？</h2>
+        <p>特权似然与验证器正确性是两类不同信号。教师可能为一条逻辑连贯、但被验证器判错的回答赋予正增益。因此，FlowSD 用 $A_i$ 的符号作为门控：教师增益会提高正优势回答的能量、降低负优势回答的能量，并在 $A_i=0$ 时消失。</p>
+
+        <div class="gate-rule">
+          <article class="gate-rule__good">
+            <span>$A_i&gt;0$</span>
+            <svg viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="22"/><path d="m18 28 7 7 14-16"/></svg>
+            <h3>验证通过</h3>
+            <p>遵循教师支持。</p>
+          </article>
+          <div class="gate-rule__verb">符号门控</div>
+          <article class="gate-rule__bad">
+            <span>$A_i&lt;0$</span>
+            <svg viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="22"/><path d="m20 20 16 16M36 20 20 36"/></svg>
+            <h3>验证拒绝</h3>
+            <p>反转教师压力。</p>
+          </article>
+        </div>
+
+        <h3 class="subhead">调节权重，观察分布如何变化</h3>
+        <p>这个示例 rollout 组包含两条验证通过的回答和两条被拒绝的回答。每条回答从参考概率 $\pi_{\mathrm{ref}}(y_i)$ 出发，并获得 FlowSD 能量</p>
+
+        <div class="mass-explainer">
+          <div class="mass-explainer__formula">
+            $$p_i^\star\propto\pi_{\mathrm{ref}}(y_i)
+            \exp\!\left(\eta_AA_i+\beta_TG_T(y_i)\operatorname{sign}(A_i)\right),$$
+          </div>
+          <div class="mass-explainer__guide">
+            <p><b>验证器权重 $\eta_A$</b><span>将概率质量从被拒绝回答移向验证通过的回答。</span></p>
+            <p><b>教师权重 $\beta_T$</b><span>利用特权推理反馈调整回答间的相对偏好。</span></p>
+          </div>
+        </div>
+
+        <aside class="experiment-prompt"><b>请观察“看似合理的错误”。</b> 验证器拒绝了它，但教师给出了较强的正增益 $(+0.7)$。关闭符号门控并提高教师权重，再重新打开门控，观察 FlowSD 如何重新定向这份支持。</aside>
+
+        <div class="mass-lab" id="mass-lab">
+          <div class="mass-lab__controls">
+            <label><span>验证器权重 <b id="eta-value">2.0</b></span><input id="eta-slider" type="range" min="0" max="4" step="0.1" value="2" /></label>
+            <label><span>教师权重 <b id="beta-value">1.0</b></span><input id="beta-slider" type="range" min="0" max="3" step="0.1" value="1" /></label>
+            <label class="switch"><input id="gate-toggle" type="checkbox" checked /><i></i><b>符号门控</b></label>
+          </div>
+          <div class="mass-bars" aria-live="polite">
+            <div class="mass-row" data-ref="0.30" data-a="1" data-g="0.8"><div><b>几何解法</b><small>验证通过 · 教师 +0.8</small></div><span><i></i></span><output></output></div>
+            <div class="mass-row" data-ref="0.20" data-a="1" data-g="0.3"><div><b>代数解法</b><small>验证通过 · 教师 +0.3</small></div><span><i></i></span><output></output></div>
+            <div class="mass-row mass-row--bad" data-ref="0.25" data-a="-1" data-g="0.7"><div><b>看似合理的错误</b><small>验证拒绝 · 教师 +0.7</small></div><span><i></i></span><output></output></div>
+            <div class="mass-row mass-row--bad" data-ref="0.25" data-a="-1" data-g="-0.2"><div><b>明显错误</b><small>验证拒绝 · 教师 −0.2</small></div><span><i></i></span><output></output></div>
+          </div>
+          <p id="gate-readout" class="mass-readout"></p>
+        </div>
+
+        <details class="inline-theory">
+          <summary><span>符号门控保证</span><b>教师对错误回答的支持会转化为偏向正确回答的概率修正。</b><i>+</i></summary>
+          <div>
+            <p>考虑同一混合结果 rollout 组中的一条验证通过回答 $y_+$ 和一条被验证器拒绝的回答 $y_-$。与其他条件相同但不使用门控的教师塑形相比，符号门控将它们的目标概率比改变为</p>
+            $$\frac{p^\star_{\mathrm{gated}}(y_+)/p^\star_{\mathrm{gated}}(y_-)}
+            {p^\star_{\mathrm{ungated}}(y_+)/p^\star_{\mathrm{ungated}}(y_-)}
+            =\exp\!\left(\frac{2\beta_TG_T(y_-\mid x,c)}{\tau}\right).$$
+            <p>因此，当特权教师为被拒绝回答赋予正增益时，门控会将这份支持从模仿压力转化为正确回答相对于错误回答的概率比增益。</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="section" id="results">
+        <p class="section__label">第四部分</p>
+        <h2>实验</h2>
+        <p>在 Qwen3-4B 和 Qwen3-8B 上，FlowSD 都取得了最高的五项基准平均分。训练曲线还显示，FlowSD 收敛更快，并呈现出不同于直接在策略自蒸馏的回答长度变化。</p>
+
+        <div class="paper-results">
+          <figure>
+            <a href="figures/flowsd/paper/training_acceleration.pdf" target="_blank" rel="noopener">
+              <img src="figures/flowsd/training_acceleration.png" alt="论文中的 AIME24 训练加速图。" />
+            </a>
+            <figcaption><b>训练加速。</b> FlowSD 约用 100 步达到 0.5 的 AIME24 验证准确率，而 GRPO 约需 143 步。</figcaption>
+          </figure>
+          <figure>
+            <a href="figures/flowsd/paper/response_length.pdf" target="_blank" rel="noopener">
+              <img src="figures/flowsd/response_length.png" alt="论文中 FlowSD 与 OPSD 平均回答长度的比较图。" />
+            </a>
+            <figcaption><b>回答长度。</b> 训练过程中，FlowSD 保持了显著长于直接 OPSD 的回答，缓解了局部自蒸馏中的回答长度退化。</figcaption>
+          </figure>
+        </div>
+
+        <div class="benchmark-details">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th class="col-model">模型</th><th class="col-method">方法</th><th>AIME24@16</th><th>HMMT25@1</th><th>Minerva@1</th><th>MATH500@1</th><th>Olympiad@1</th><th>Avg.</th></tr></thead>
+              <tbody>
+                <tr><td class="col-model" rowspan="3">Qwen3-4B</td><td class="col-method">GRPO</td><td>78.00</td><td>26.67</td><td><strong>51.18</strong></td><td>92.04</td><td>63.68</td><td>62.31</td></tr>
+                <tr><td class="col-method">RLSD</td><td>73.33</td><td>21.33</td><td>50.29</td><td>91.44</td><td>61.36</td><td>59.55</td></tr>
+                <tr class="ours"><td class="col-method">FlowSD</td><td><strong>80.00</strong></td><td><strong>32.00</strong></td><td>50.51</td><td><strong>93.28</strong></td><td><strong>65.49</strong></td><td><strong>64.26</strong></td></tr>
+                <tr><td class="col-model" rowspan="3">Qwen3-8B</td><td class="col-method">GRPO</td><td>85.33</td><td>31.33</td><td>52.87</td><td>93.16</td><td>64.78</td><td>65.49</td></tr>
+                <tr><td class="col-method">RLSD</td><td>82.67</td><td>28.00</td><td>52.94</td><td>93.44</td><td>63.56</td><td>64.12</td></tr>
+                <tr class="ours"><td class="col-method">FlowSD</td><td><strong>89.33</strong></td><td><strong>34.67</strong></td><td><strong>53.68</strong></td><td><strong>93.52</strong></td><td><strong>66.85</strong></td><td><strong>67.61</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <section class="section" id="diversity">
+        <p class="section__label">第五部分</p>
+        <h2>多样性分析</h2>
+        <p>我们使用 GPT-5.5 从每条完整 AIME24 轨迹中提取核心数学表示与工具，再依据语义策略而非措辞或回答长度，对匿名摘要进行聚类。聚类完成后才揭示正确性标签，并在正确轨迹上用下式计算多样性：</p>
+
+        <div class="diversity-formula">
+          <span class="definition-label">Simpson 多样性</span>
+          $$D_{\mathrm{Simpson}}=1-\sum_{k=1}^{K}p_k^2,$$
+          <p>其中 $p_k$ 是正确轨迹落入策略簇 $k$ 的比例；等价地，$D_{\mathrm{Simpson}}$ 表示随机抽取两条正确轨迹时，它们采用不同策略的概率。</p>
+        </div>
+
+        <figure class="diversity-paper-figure">
+          <a href="figures/flowsd/paper/diversity.pdf" target="_blank" rel="noopener">
+            <img src="figures/flowsd/strategy_diversity.png" alt="论文中的 AIME24 正确轨迹 Simpson 策略多样性比较图。" />
+          </a>
+          <figcaption><b>正确策略多样性。</b> FlowSD 达到 0.2194，高于 GRPO 的 0.1017 和 RLSD 的 0.1456。</figcaption>
+        </figure>
+
+        <h3 class="subhead">案例分析：用不同数学对象得到同一个答案</h3>
+        <div class="case-study">
+          <p class="case-study__problem"><b>AIME24 第 23 题。</b> 一个四面体的三组对边长度分别为 $\sqrt{41}$、$\sqrt{80}$ 和 $\sqrt{89}$，求其内切球半径表达式。</p>
+          <div class="case-study__routes">
+            <article>
+              <span>常见的 GRPO 路径</span>
+              <h3>Cayley–Menger 行列式</h3>
+              <p>将四面体表示为六条两两距离，构造距离矩阵，利用对称性，并通过距离不变量求出体积。</p>
+              <div><i>距离几何</i><i>行列式</i><i>对称性</i></div>
+            </article>
+            <div class="case-study__vs">对比</div>
+            <article class="case-study__flowsd">
+              <span>FlowSD 路径</span>
+              <h3>隐藏的长方体嵌入</h3>
+              <p>识别 $41=4^2+5^2$、$80=4^2+8^2$ 和 $89=5^2+8^2$；将顶点嵌入一个 $4\times5\times8$ 的长方体，并用标量三重积计算体积。</p>
+              <div><i>坐标嵌入</i><i>勾股结构</i><i>三重积</i></div>
+            </article>
+          </div>
+          <p class="case-study__point">两条轨迹都能得到正确答案；行列式与长方体嵌入这两种不同路径，体现了 FlowSD 在成功策略上的更高多样性。</p>
+        </div>
+
+      </section>
+
+      <footer id="cite">
+        <h3>引用本文</h3>
+        <div class="bibtex"><button id="copy-bib">复制</button><pre id="bibtex-block">@misc{huang2026flowsd,
+  title  = {FlowSD: Trajectory-Balanced On-Policy Self-Distillation},
+  author = {Zixun Huang and Kishan Panaganti and Haitao Mi and Leowei Liang},
+  year   = {2026}
+}</pre></div>
+      </footer>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
