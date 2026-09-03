@@ -66,7 +66,7 @@
 \section{论文发表}
 [1] Jia-Nan Wang*, \textbf{Zixun Huang*}, Kairui Li*, Lei Wu. \textit{Momentum in Large-Batch Training: Polyak Enlarges the Critical Batch Size, Nesterov Improves Data Efficiency}. \textbf{预印本}。\href{https://arxiv.org/pdf/2609.02728}{[论文]}
 
-[2] \textbf{Zixun Huang*}, Kishan Panaganti*, Haitao Mi, Leowei Liang. \textit{FlowSD: Trajectory-Balanced On-Policy Self-Distillation}. \textbf{预印本}。\href{https://alexhuang13.github.io/FlowSD-Blog/}{[博客]}
+[2] \textbf{Zixun Huang*}, Kishan Panaganti*, Haitao Mi, Leowei Liang. \textit{FlowBalance: Verifier-Grounded Self-Improvement from On-Policy Reasoning Experience}. \textbf{预印本}。\href{https://github.com/alexhuang13/FlowBalance}{[GitHub]} \href{https://alexhuang13.github.io/FlowBalance-Blog/}{[博客]}
 
 [3] Zhongzhi Li*, Yucheng Shi*, Zongxia Li*, Ruhan Wang, Anhao Li, \textbf{Zixun Huang}, Junyao Yang, Lei Ke, Ninghao Liu, Haitao Mi, Leowei Liang. \textit{Recursive Synthesis for Long-Horizon Terminal Tasks}. \textbf{预印本}。\href{https://arxiv.org/abs/2608.05466}{[论文]} \href{https://huggingface.co/collections/Zhongzhi1228/recursive-synthesis-for-long-horizon-terminal-tasks}{[Hugging Face]} \href{https://zhongzhi660.github.io/recursive-verified-synthesis-site/?case=jobs-diff-01-3341b098}{[项目主页]}
 
@@ -95,7 +95,7 @@
 \vspace{-3pt}
 \hspace{1em}\textit{导师：高级研究员 Kishan Panaganti}
 \begin{itemize}\setlength\itemsep{1pt}\setlength\topsep{2pt}\setlength\parsep{0pt}\setlength\parskip{0pt}\small
-  \item \textbf{同策略自蒸馏 [2]：}提出 FlowSD，将完整回答视为轨迹，并通过轨迹平衡目标学习高质量回答的概率分布，从而把同策略自蒸馏由单一答案模仿拓展为对多种有效推理策略的分布学习；在五个推理基准上，Qwen3-4B 与 Qwen3-8B 相较 GRPO 的平均表现分别提升 \textbf{1.95} 和 \textbf{2.12 个百分点}，同时显著增加成功解答之间的语义策略多样性。
+  \item \textbf{验证器引导的自我改进 [2]：}提出 FlowBalance，通过轨迹平衡将验证器优势与特权后见自引导相结合，学习完整回答上的归一化分布；在五个推理基准上，Qwen3-4B 与 Qwen3-8B 相较 GRPO 的平均表现分别提升 \textbf{1.95} 和 \textbf{2.12 个百分点}，同时显著增加成功解答之间的语义策略多样性。
   \item \textbf{长程智能体训练 [3]：}构建递归验证任务合成框架 RST：扩展已有任务的参考解法，同步重写指令与验证器，并在全新沙箱中执行通过后将其作为下一轮种子；15 轮共生成 \textbf{37,484 个任务}，单任务成本约 0.05 美元，参考解法中位长度由 67 行增至 374 行。基于合成任务采集 Qwen3.5 轨迹，通过监督微调与智能体 PPO 在三个长程终端基准上取得稳定提升。
 \end{itemize}
 \vspace{-3pt}

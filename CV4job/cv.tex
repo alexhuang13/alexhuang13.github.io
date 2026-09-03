@@ -74,7 +74,7 @@ Theoretical foundations of machine learning, with an emphasis on \textbf{Optimiz
 \section{Publications}
 [1] Jia-Nan Wang*, \textbf{Zixun Huang*}, Kairui Li*, Lei Wu. \textit{Momentum in Large-Batch Training: Polyak Enlarges the Critical Batch Size, Nesterov Improves Data Efficiency}. \textbf{Preprint}. \href{https://arxiv.org/pdf/2609.02728}{[Paper]}
 
-[2] \textbf{Zixun Huang*}, Kishan Panaganti*, Haitao Mi, Leowei Liang. \textit{FlowSD: Trajectory-Balanced On-Policy Self-Distillation}. \textbf{Preprint}. \href{https://alexhuang13.github.io/FlowSD-Blog/}{[Blog]}
+[2] \textbf{Zixun Huang*}, Kishan Panaganti*, Haitao Mi, Leowei Liang. \textit{FlowBalance: Verifier-Grounded Self-Improvement from On-Policy Reasoning Experience}. \textbf{Preprint}. \href{https://github.com/alexhuang13/FlowBalance}{[GitHub]} \href{https://alexhuang13.github.io/FlowBalance-Blog/}{[Blog]}
 
 [3] Zhongzhi Li*, Yucheng Shi*, Zongxia Li*, Ruhan Wang, Anhao Li, \textbf{Zixun Huang}, Junyao Yang, Lei Ke, Ninghao Liu, Haitao Mi, Leowei Liang. \textit{Recursive Synthesis for Long-Horizon Terminal Tasks}. \textbf{Preprint}. \href{https://arxiv.org/abs/2608.05466}{[Paper]} \href{https://huggingface.co/collections/Zhongzhi1228/recursive-synthesis-for-long-horizon-terminal-tasks}{[Hugging Face]} \href{https://zhongzhi660.github.io/recursive-verified-synthesis-site/?case=jobs-diff-01-3341b098}{[Website]}
 
@@ -103,7 +103,7 @@ Theoretical foundations of machine learning, with an emphasis on \textbf{Optimiz
 \vspace{-3pt}
 \hspace{1em}\textit{Supervisor: Senior Researcher Kishan Panaganti}
 \begin{itemize}\setlength\itemsep{1pt}\setlength\topsep{2pt}\setlength\parsep{0pt}\setlength\parskip{0pt}\small
-  \item \textbf{On-policy self-distillation [2]:} Developed FlowSD, a trajectory-balance-based OPSD algorithm for learning distributions over complete responses. Across five reasoning benchmarks, improved over GRPO by \textbf{1.95} and \textbf{2.12 points} on Qwen3-4B and Qwen3-8B, while increasing semantic strategy diversity among successful solutions.
+  \item \textbf{Verifier-grounded self-improvement [2]:} Developed FlowBalance, a trajectory-balance method that combines verifier advantages with privileged-hindsight self-guidance to learn a normalized distribution over complete responses. Across five reasoning benchmarks, improved over GRPO by \textbf{1.95} and \textbf{2.12 points} on Qwen3-4B and Qwen3-8B, while increasing semantic strategy diversity among successful solutions.
   \item \textbf{Long-horizon agent training [3]:} Built a recursive synthesis pipeline that evolves verified terminal tasks into harder executable tasks, producing \textbf{37,484 tasks} across 15 rounds at approximately \$0.05 per task; the resulting trajectories improved Qwen3.5 agents through SFT and RL.
 \end{itemize}
 \vspace{-3pt}
