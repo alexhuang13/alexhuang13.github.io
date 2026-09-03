@@ -228,6 +228,15 @@
               <div class="title"><strong>[1] Momentum in Large-Batch Training: Polyak Enlarges the Critical Batch Size, Nesterov Improves Data Efficiency</strong> <a href="https://arxiv.org/pdf/2609.02728" target="_blank" rel="noreferrer">[Paper]</a></div>
               <div class="muted">Jia-Nan Wang*, <strong style="text-decoration: underline;">Zixun Huang*</strong>, Kairui Li*, Lei Wu</div>
               <div class="muted"><strong style="font-style: italic;">Preprint</strong></div>
+              <details style="margin-top: 8px;">
+                <summary style="cursor: pointer; color: var(--fg);">► <strong>TL;DR</strong>: We characterize how Polyak and Nesterov momentum reshape one-pass large-batch training: Polyak enables larger batches without sacrificing data efficiency, while Nesterov further improves data efficiency in the large-batch regime.</summary>
+                <div class="muted" style="margin-top: 8px; padding-left: 16px;">
+                  <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 0;">
+                    <li style="margin: 4px 0;"><strong>Theory:</strong> In power-law kernel regression under a fixed data budget, we derive sharp critical-learning-rate scalings and full risk dynamics from the early transient through power-law decay to the noise floor. Optimizing the admissible learning rate and momentum yields a three-regime batch-size phase diagram: Polyak enlarges the critical batch size that preserves optimal small-batch scaling, whereas Nesterov's look-ahead mechanism suppresses noise accumulation and achieves better large-batch data scaling.</li>
+                    <li style="margin: 4px 0;"><strong>Experiments:</strong> Numerical simulations validate the predicted stability boundaries, risk trajectories, and batch-size phase diagram. The results recover the theoretical ordering across regimes: all three methods match at small batches; Nesterov outperforms Polyak, which outperforms SGD, at large batches; and both momentum methods outperform SGD at ultra-large batches.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
             <li>
               <div class="title"><strong>[2] Functional Scaling Laws in Kernel Regression: Loss Dynamics and Learning Rate Schedules</strong> <a href="https://arxiv.org/abs/2509.19189" target="_blank" rel="noreferrer">[Paper]</a></div>
