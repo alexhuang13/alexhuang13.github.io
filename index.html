@@ -259,6 +259,16 @@
               <div class="title"><strong>[1] FlowBalance: Verifier-Grounded Self-Improvement from On-Policy Reasoning Experience</strong> <a href="https://arxiv.org/abs/2609.03241" target="_blank" rel="noreferrer">[Paper]</a> <a href="https://github.com/alexhuang13/FlowBalance" target="_blank" rel="noreferrer">[GitHub]</a> <a href="https://alexhuang13.github.io/FlowBalance-Blog/" target="_blank" rel="noreferrer">[Blog]</a></div>
               <div class="muted"><strong style="text-decoration: underline;">Zixun Huang*</strong>, Kishan Panaganti*, Haitao Mi, Leowei Liang</div>
               <div class="muted"><strong style="font-style: italic;">Preprint</strong></div>
+              <details style="margin-top: 8px;">
+                <summary style="cursor: pointer; color: var(--fg);">► <strong>TL;DR</strong>: We introduce FlowBalance, which uses verifier-calibrated privileged-hindsight self-guidance and trajectory balance to learn a normalized distribution over complete responses, improving reasoning performance, training stability, and correct-strategy diversity.</summary>
+                <div class="muted" style="margin-top: 8px; padding-left: 16px;">
+                  <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 0;">
+                    <li style="margin: 4px 0;"><strong>Method:</strong> For each on-policy rollout group, a frozen privileged-hindsight view of the same policy converts token-level log-probability gains into a trajectory-level self-guidance score. Verifier-derived advantages retain this guidance on positive-advantage trajectories, reverse it on negative-advantage ones, and disable it when the group provides no outcome preference. Profiled trajectory balance then fits the resulting reference-supported distribution with one log-partition estimate per group and no separate token-level imitation loss.</li>
+                    <li style="margin: 4px 0;"><strong>Theory:</strong> We prove that the induced target preserves within-group probability contrasts, uniquely minimizes reverse-KL displacement from the reference at its attained energy level, responds monotonically to verifier strength, and exactly corrects false-positive self-guidance on rejected responses.</li>
+                    <li style="margin: 4px 0;"><strong>Experiments:</strong> Across mathematical-reasoning benchmarks, FlowBalance achieves the strongest overall averages on Qwen3-4B and Qwen3-8B, improving the four-benchmark average over FlowRL by <strong>1.67</strong> and <strong>1.98 points</strong>, respectively. It also trains faster and more stably, avoids direct OPSD's response-length collapse, and yields greater correct-strategy diversity on AIME24.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
             <li>
               <div class="title"><strong>[2] Recursive Synthesis for Long-Horizon Terminal Tasks</strong> <a href="https://arxiv.org/abs/2608.05466" target="_blank" rel="noreferrer">[Paper]</a> <a href="https://huggingface.co/collections/Zhongzhi1228/recursive-synthesis-for-long-horizon-terminal-tasks" target="_blank" rel="noreferrer">[Hugging Face]</a> <a href="https://zhongzhi660.github.io/recursive-verified-synthesis-site/?case=jobs-diff-01-3341b098" target="_blank" rel="noreferrer">[Website]</a></div>
