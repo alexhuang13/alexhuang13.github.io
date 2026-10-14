@@ -72,7 +72,9 @@ ${alternates}
 <script>try{if(localStorage.getItem("digest-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
 <link rel="stylesheet" href="/digest/assets/katex/katex.min.css">
 <link rel="stylesheet" href="${asset('assets/digest.css')}">
+<link rel="stylesheet" href="${asset('assets/reading-light.css')}">
 <script defer src="${asset('assets/digest.js')}"></script>
+<script defer src="${asset('assets/reading-light.js')}"></script>
 </head>
 <body><a class="skip-link" href="#main">${tr('跳到正文','Skip to content')}</a><div id="reading-progress" aria-hidden="true"></div>${header(active,canonical)}${content}<footer class="site-footer"><span>Research Digest · Zixun Huang</span><div><a href="${href()}">${tr('全部期刊','All issues')}</a><a href="${href('subscribe.html')}">${tr('邮件订阅','Email subscription')}</a><a href="/">${tr('主页','Home')} ↗</a></div></footer><div role="status" aria-live="polite" id="copy-status" class="sr-only"></div></body>
 </html>
@@ -161,6 +163,13 @@ fs.writeFileSync(path.join(out,'manifest.json'),JSON.stringify({timezone:'Americ
 
 const homeFile=path.join(root,'index.html');
 let home=fs.readFileSync(homeFile,'utf8');
+const lightStart='<!-- reading-light:start -->',lightEnd='<!-- reading-light:end -->';
+const lightAssets=lightStart+'\n  <link rel="stylesheet" href="'+asset('assets/reading-light.css')+'">\n  <script defer src="'+asset('assets/reading-light.js')+'"></script>\n  '+lightEnd;
+if(home.includes(lightStart)&&home.includes(lightEnd)) {
+  home=home.slice(0,home.indexOf(lightStart))+lightAssets+home.slice(home.indexOf(lightEnd)+lightEnd.length);
+} else {
+  home=home.replace('</head>','  '+lightAssets+'\n</head>');
+}
 const start='<!-- research-digest-latest:start -->',end='<!-- research-digest-latest:end -->';
 const teaser=start+'\n      <section id="research-digest">\n        <h2>Research Digest</h2>\n        <div class="card">\n          <p><a href="./digest/'+newest.date+'.html"><strong>'+esc(newest.title)+'</strong></a> <span class="muted">· '+newest.date+'</span></p>\n          <p>'+esc(newest.subtitle)+'</p>\n          <p><a href="./digest/'+newest.date+'.html" lang="zh-CN">中文</a> · <a href="./digest/en/'+newest.date+'.html" lang="en">Read in English →</a> · <a href="./digest/">Browse all issues →</a></p>\n        </div>\n      </section>\n      '+end;
 if(home.includes(start)&&home.includes(end)) {

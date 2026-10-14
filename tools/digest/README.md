@@ -22,6 +22,8 @@ Chinese pages remain at `/digest/`; complete English pages are at `/digest/en/`.
 
 Both languages use the same giscus discussion number or the same stable Chinese date key. Localize only the interface (`zh-CN` or `en`), never the mapping key. This keeps likes and comments together.
 
+The homepage and both digest editions share `reading-light.css` / `reading-light.js`: a soft light follows a mouse, pen, or single-finger swipe, including native touch scrolling, and fades on release or departure. The light paints below text and never captures input. Updates are batched once per animation frame, with no idle animation loop. Reduced-motion, forced-colors and print modes disable it. Keep these shared assets when generating new pages.
+
 ## Subscription
 
 Human-facing subscription links go to the email page `/digest/subscribe.html`. Do not add reader setup instructions. The existing Atom feed and discovery metadata remain available for compatibility, with no reader configuration in the UI.
