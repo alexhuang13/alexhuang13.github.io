@@ -22,7 +22,7 @@ Human-facing subscription links go to `/digest/subscribe.html`, with a copyable 
 
 The current fallback reads real public GitHub issue comments and the first post's thumbs-up count. It renders comments as plain text and links to GitHub for posting. Reading is anonymous, briefly cached per tab and lazy loaded; API errors retain the direct link. No credentials belong in frontend code.
 
-Inline commenting is implemented with giscus but remains disabled until the owner completes its one-time repository setup. `enabled: false` deliberately keeps the functioning issue panel visible. To activate:
+Inline commenting is active through giscus. On 2026-10-14, the owner authorized the app for this repository only, Discussions was enabled, and the Announcements category ID was verified from the official configuration page. The first report uses Discussion #2, converted from issue #1 with its original body preserved. Setup and recovery notes:
 
 1. Enable Discussions on `alexhuang13/alexhuang13.github.io` and authorize the official [giscus app](https://github.com/apps/giscus) for this repository only. Review its actual permissions before installing.
 2. Use [giscus configuration](https://giscus.app/zh-CN) to obtain this repository's real category name and `DIC_…` ID. Prefer an announcements category. Fill `digest/community.json`, verify the repository ID and set `enabled` to `true`. The builder rejects incomplete active configuration.

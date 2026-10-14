@@ -27,7 +27,7 @@ function panel(config, issue, esc, asset) {
     + '<p class="community-intro">交流推导、补充文献，或推荐下一篇精读。</p>'
     + '<p class="community-status">在下方直接评论、回复或点赞。首次参与需要 GitHub 登录授权；评论公开可见。</p>'
     + '<p class="community-status" data-giscus-status role="status">正在加载讨论区…</p>'
-    + '<div class="giscus" data-repo="' + esc(config.repository) + '" data-repo-id="' + esc(config.repositoryId)
+    + '<div class="giscus" id="giscus-comments" data-repo="' + esc(config.repository) + '" data-repo-id="' + esc(config.repositoryId)
     + '" data-category="' + esc(config.category) + '" data-category-id="' + esc(config.categoryId)
     + '" data-mapping="' + mapping + '" data-term="' + esc(term) + '"></div>'
     + '<p class="community-fallback"><a href="' + url + '" target="_blank" rel="noopener noreferrer">在 GitHub 打开讨论 ↗</a></p>'

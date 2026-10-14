@@ -1,8 +1,8 @@
 {
   "provider": "giscus",
-  "enabled": false,
+  "enabled": true,
   "repository": "alexhuang13/alexhuang13.github.io",
   "repositoryId": "R_kgDOQLIo6Q",
-  "category": null,
-  "categoryId": null
+  "category": "Announcements",
+  "categoryId": "DIC_kwDOQLIo6c4DIdDR"
 }

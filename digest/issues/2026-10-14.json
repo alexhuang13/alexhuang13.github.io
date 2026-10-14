@@ -407,6 +407,7 @@
     "provider": "github-issues",
     "repository": "alexhuang13/alexhuang13.github.io",
     "issueNumber": 1,
-    "issueId": 5853769061
+    "issueId": 5853769061,
+    "discussionNumber": 2
   }
 }

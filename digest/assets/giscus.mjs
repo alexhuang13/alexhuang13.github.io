@@ -49,8 +49,9 @@ function mount(panel) {
   }, 15000);
 }
 
+const returningFromSignIn = new URL(window.location.href).searchParams.has('giscus');
 document.querySelectorAll('[data-giscus-panel]').forEach(panel => {
-  if (!('IntersectionObserver' in window)) return mount(panel);
+  if (returningFromSignIn || !('IntersectionObserver' in window)) return mount(panel);
   const observer = new IntersectionObserver(entries => {
     if (entries.some(entry => entry.isIntersecting)) { observer.disconnect(); mount(panel); }
   }, {rootMargin:'500px'});
