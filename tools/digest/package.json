@@ -1,0 +1,7 @@
+{
+  "name": "research-digest-builder",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": { "build": "node build.cjs" },
+  "dependencies": { "katex": "0.16.22" }
+}

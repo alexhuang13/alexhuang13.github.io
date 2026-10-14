@@ -174,6 +174,11 @@
       .content-header{flex-direction:column; text-align:center; gap:24px}
       .two-col{grid-template-columns:1fr}
     }
+    /* Digest navigation: keep the full menu reachable on small screens. */
+    .top-nav{overflow-x:auto; scrollbar-width:thin}
+    .top-nav .nav-links{flex-shrink:0}
+    .top-nav a{white-space:nowrap}
+    @media(max-width:960px){.top-nav{padding:10px 20px}.top-nav .nav-links{gap:12px}}
   </style>
 </head>
 <body>
@@ -185,6 +190,7 @@
       <a href="#experience">Work Experience</a>
       <a href="#honors">Honors</a>
       <a href="#lecture-notes">Lecture Notes</a>
+      <a href="./digest/">Research Digest</a>
     </div>
   </nav>
   <main class="page">
@@ -391,6 +397,17 @@
           </ul>
         </div>
       </section>
+
+      <!-- research-digest-latest:start -->
+      <section id="research-digest">
+        <h2>Research Digest</h2>
+        <div class="card">
+          <p><a href="./digest/2026-10-14.html"><strong>噪声、方向与实验预算</strong></a> <span class="muted">· 2026-10-14</span></p>
+          <p>Muon 的 batch-size 效应 · Scaling law 的主动实验设计</p>
+          <p><a href="./digest/">Browse all issues →</a></p>
+        </div>
+      </section>
+      <!-- research-digest-latest:end -->
 
       <section id="lecture-notes">
         <h2>📖 Selected Lecture Notes</h2>

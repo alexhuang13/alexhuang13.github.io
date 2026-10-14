@@ -1,0 +1,285 @@
+{
+  "date": "2026-10-14",
+  "number": "001",
+  "title": "噪声、方向与实验预算",
+  "subtitle": "Muon 的 batch-size 效应 · Scaling law 的主动实验设计",
+  "window": "2026-10-12 — 2026-10-14 · America/New_York",
+  "readingMinutes": 8,
+  "edition": "风格试刊",
+  "tags": [
+    "Muon",
+    "Scaling laws"
+  ],
+  "intro": "从方向相关的梯度噪声，到发现 scaling law 所需的实验预算。本期展开两篇研究，附两条相关动态。",
+  "articles": [
+    {
+      "id": "batch-size",
+      "kind": "主读 01",
+      "title": "Batch size 与方向相关的优化动力学",
+      "paper": "The Best Optimizer Depends on Batch Size",
+      "authors": "Xingyu Dang · Kaiyue Wen · Sadhika Malladi",
+      "url": "https://arxiv.org/abs/2610.08975",
+      "dateNote": "首发 10.06 · v2 10.12",
+      "evidence": "已读相关正文与作者解读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "固定样本预算 \\(T\\)，增大 batch size \\(B\\) 会降低梯度噪声，同时减少更新次数。论文用 noisy quadratic model 区分这两个因素。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "f(w)=\\frac12\\sum_i h_iw_i^2,\\qquad \\widehat g_i=h_iw_i+\\sqrt{\\frac{c_i}{B}}\\,z_i,\\qquad K=\\frac{T}{B}.",
+          "label": "模型"
+        },
+        {
+          "type": "text",
+          "text": "\\(h_i>0\\)：曲率；\\(c_i>0\\)：单样本梯度噪声方差；\\(z_i\\sim\\mathcal N(0,1)\\)。方向相关的曲率—噪声比为 \\(\\mathrm{CNR}_i=h_i^2/c_i\\)。"
+        },
+        {
+          "type": "text",
+          "text": "理想 Muon 在 \\(1\\times1\\) 矩阵上对应 sign 操作，因此先考察带 momentum 的 SignSGD："
+        },
+        {
+          "type": "equation",
+          "tex": "m_{t+1}=\\mu m_t+(1-\\mu)\\widehat g_t,\\qquad w_{t+1}=w_t-\\eta\\,\\operatorname{sign}(m_{t+1}),\\quad 0\\le\\mu<1.",
+          "label": "更新"
+        },
+        {
+          "type": "text",
+          "text": "**局部机制。** 固定 \\(w_i\\)，令 momentum 达到稳态。在独立高斯噪声下，"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathbb E[\\operatorname{sign}(m_i)]=\\operatorname{erf}(q_i),\\qquad q_i=w_i\\sqrt{\\frac{B(1+\\mu)h_i^2}{2(1-\\mu)c_i}}.",
+          "label": "响应"
+        },
+        {
+          "type": "text",
+          "text": "每处理一个样本的平均位移与 \\(\\eta\\,\\operatorname{erf}(q_i)/B\\) 成正比。保持这一局部位移给出："
+        },
+        {
+          "type": "equation",
+          "tex": "\\eta(B)\\propto \\begin{cases}\\sqrt B,& |q_i|\\ll1 \\quad \\text{noise-dominated},\\\\[2pt] B,& |q_i|\\gg1 \\quad \\text{signal-dominated}.\\end{cases}",
+          "label": "两种区间"
+        },
+        {
+          "type": "note",
+          "title": "机制与边界",
+          "text": "不同方向可以同时处于不同区间，单一 scaling exponent 因而难以兼顾。这是固定位置、稳态 momentum 的局部解释，不保证整条训练轨迹不变。[1,2]"
+        },
+        {
+          "type": "text",
+          "text": "**方向干预。** 从同一 checkpoint 出发，将 batch 从 \\(128\\mathrm K\\) 增至 \\(2\\mathrm M\\)，仅在选定方向保留小 batch 更新。局部 loss 差距恢复比例为"
+        },
+        {
+          "type": "equation",
+          "tex": "R=\\frac{L_{\\rm large}-L_{\\rm mixed}}{L_{\\rm large}-L_{\\rm small}}.",
+          "label": "指标"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "保留小 batch 更新的方向",
+            "局部差距恢复"
+          ],
+          "rows": [
+            [
+              "最尖锐的 768 个方向，约占 \\(0.001\\%\\)",
+              "最高 59.5%"
+            ],
+            [
+              "同维数随机子空间",
+              "变化幅度至多约 3%"
+            ]
+          ],
+          "caption": "同一数据流上的局部曲率诊断；sharp directions 来自 Muon 预条件后的曲率近似。[2]"
+        },
+        {
+          "type": "note",
+          "title": "实验边界",
+          "text": "多数分支为单次运行，效果在训练末期明显减弱。59.5% 衡量局部 loss 差距恢复，不能换算成最终 loss 或训练成本改善。v1→v2 的改动尚未逐项核验。[2]"
+        }
+      ]
+    },
+    {
+      "id": "noise-smoothing",
+      "kind": "相关动态",
+      "title": "噪声可以平滑 sign，也可能改变特征学习顺序",
+      "paper": "From Parallel to Sequential: Small-Batch Noise Restores Simplicity Bias of Muon",
+      "authors": "Tom Jacobs · Rebekka Burkholz",
+      "url": "https://arxiv.org/abs/2610.16868",
+      "dateNote": "arXiv 10.12 · OpenReview 已有 10.01 记录",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "作者报告：小 batch 噪声能恢复 full-batch spectral descent 中缺失的顺序特征学习，并在深线性模型中形式化这一机制。[3,4]"
+        },
+        {
+          "type": "text",
+          "text": "下面是用于理解“噪声平滑”的**标量示意推导**。取 \\(z\\sim\\mathcal N(0,1)\\)、\\(\\sigma>0\\)，则"
+        },
+        {
+          "type": "equation",
+          "tex": "\\begin{aligned}\\mathbb E[\\operatorname{sign}(g+\\sigma z)]&=2\\Phi(g/\\sigma)-1\\\\&=\\sqrt{\\frac2\\pi}\\frac g\\sigma+O\\!\\left((g/\\sigma)^3\\right),\\qquad |g|\\ll\\sigma.\\end{aligned}",
+          "label": "标量直觉"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "微弱信号下，平均 sign 更新重新保留梯度大小。该标量计算不替代论文的矩阵定理；本条未核验其完整理论假设。"
+        }
+      ]
+    },
+    {
+      "id": "active-scaling",
+      "kind": "主读 02",
+      "title": "发现 scaling law，本身也有算力预算",
+      "paper": "SLDBench v2: Active Scaling Law Discovery",
+      "authors": "Lingbei Meng 等",
+      "url": "https://arxiv.org/html/2610.16297v1",
+      "dateNote": "首发 10.12",
+      "evidence": "已读相关正文",
+      "blocks": [
+        {
+          "type": "background",
+          "title": "必要背景",
+          "text": "Chinchilla（2022）通过小规模训练实验研究模型与数据的算力分配；SLDBench（2025，ICLR 2026）进一步让 agent 自动发现预测规律。新的问题是：获得拟合数据本身也要付出训练成本。[6,7]"
+        },
+        {
+          "type": "equation",
+          "tex": "L(N,D)=E+aN^{-\\alpha}+bD^{-\\beta}.",
+          "label": "候选规律"
+        },
+        {
+          "type": "text",
+          "text": "上式只是候选形式。Agent 既不知道正确函数形式，也不能免费获得全部观测；它拿到的是带价格的实验目录。[5]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal U=\\{(x_i,c_i)\\}_{i=1}^{n},\\qquad c_i>0.",
+          "label": "实验目录"
+        },
+        {
+          "type": "text",
+          "text": "\\(x_i\\) 是训练配置，\\(c_i\\) 通常为训练 FLOPs；购买后才看到结果 \\(y_i\\)。略去分组记号，每轮购买 \\(A_t\\)，在时刻 \\(\\tau\\) 停止："
+        },
+        {
+          "type": "equation",
+          "tex": "S_{t+1}=S_t\\cup A_t,\\qquad \\rho=\\frac{\\sum_{i\\in S_\\tau}c_i}{\\sum_{i\\in\\mathcal U}c_i}.",
+          "label": "支出"
+        },
+        {
+          "type": "text",
+          "text": "评价同时记录 \\((\\text{更大规模上的外推误差},\\,\\rho)\\)。因此需要联合决定**买什么实验、何时停止、拟合什么规律**。测试配置比候选实验更大，无法直接购买。[5]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "设置",
+            "各系统的中位 \\(R^2\\) 范围",
+            "实验成本"
+          ],
+          "rows": [
+            [
+              "Passive · 全部观测",
+              "0.723–0.753",
+              "100%"
+            ],
+            [
+              "Active · 自行购买",
+              "0.235–0.570",
+              "各系统平均约 8%–44%"
+            ]
+          ],
+          "caption": "30 个筛选出的困难任务，8 个 agent 系统；R² 范围跨系统，不是置信区间。[5]"
+        },
+        {
+          "type": "note",
+          "title": "读到这里",
+          "text": "便宜实验可能覆盖了所有组别，却没有保留识别规律所需的独立参数变化。实验设计能力构成 scaling-law 自动发现的额外瓶颈；这些结果针对筛选出的困难任务。[5]"
+        }
+      ]
+    },
+    {
+      "id": "monarch",
+      "kind": "简讯",
+      "title": "Monarch-Muon：将大矩阵正交化拆成小块",
+      "paper": "Monarch-Muon: Structure-Aware Muon for Fast and Memory-Efficient Pretraining",
+      "authors": "Alexander Miasnikov 等",
+      "url": "https://arxiv.org/abs/2610.17429",
+      "dateNote": "arXiv 10.12 · OpenReview 已有 10.01 记录",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Monarch 因子对权重施加结构，减少权重、梯度和优化器状态，并产生小块更新子问题。摘要中的 6.89B 系统测量为：[8,9]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "测量",
+            "原设置",
+            "Monarch-Muon"
+          ],
+          "rows": [
+            [
+              "峰值显存",
+              "68.9 GB",
+              "52.9 GB"
+            ],
+            [
+              "Muon optimizer step",
+              "1288 ms",
+              "304 ms"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "耗时仅对应优化器步骤，不能视为端到端训练加速；本条未核验完整实验设置。[8]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "The Best Optimizer Depends on Batch Size · v2",
+      "url": "https://arxiv.org/abs/2610.08975"
+    },
+    {
+      "title": "The Best Optimizer Depends on Batch Size · 作者解读",
+      "url": "https://batch-size-scaling.com/"
+    },
+    {
+      "title": "From Parallel to Sequential · arXiv",
+      "url": "https://arxiv.org/abs/2610.16868"
+    },
+    {
+      "title": "Small Batch Noise Restores Simplicity Bias of Muon · OpenReview",
+      "url": "https://openreview.net/forum?id=tCNXvqBCgv"
+    },
+    {
+      "title": "SLDBench v2 · 正文",
+      "url": "https://arxiv.org/html/2610.16297v1"
+    },
+    {
+      "title": "Training Compute-Optimal Large Language Models · 2022",
+      "url": "https://arxiv.org/abs/2203.15556"
+    },
+    {
+      "title": "Can Language Models Discover Scaling Laws? · 2025/2026",
+      "url": "https://arxiv.org/abs/2507.21184v5"
+    },
+    {
+      "title": "Monarch-Muon · arXiv",
+      "url": "https://arxiv.org/abs/2610.17429"
+    },
+    {
+      "title": "Monarch-Muon · OpenReview",
+      "url": "https://openreview.net/forum?id=TOUrP5VzcN"
+    }
+  ],
+  "publishedAt": "2026-10-14T18:31:28Z"
+}

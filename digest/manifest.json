@@ -1,0 +1,22 @@
+{
+  "timezone": "America/New_York",
+  "latest": "2026-10-14",
+  "issues": [
+    {
+      "date": "2026-10-14",
+      "title": "噪声、方向与实验预算",
+      "url": "/digest/2026-10-14.html",
+      "sources": [
+        "https://arxiv.org/abs/2610.08975",
+        "https://batch-size-scaling.com/",
+        "https://arxiv.org/abs/2610.16868",
+        "https://openreview.net/forum?id=tCNXvqBCgv",
+        "https://arxiv.org/html/2610.16297v1",
+        "https://arxiv.org/abs/2203.15556",
+        "https://arxiv.org/abs/2507.21184v5",
+        "https://arxiv.org/abs/2610.17429",
+        "https://openreview.net/forum?id=TOUrP5VzcN"
+      ]
+    }
+  ]
+}
