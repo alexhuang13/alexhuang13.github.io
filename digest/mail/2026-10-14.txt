@@ -2,6 +2,9 @@ RESEARCH DIGEST / 2026-10-14
 噪声、方向与实验预算
 Muon 的 batch-size 效应 · Scaling law 的主动实验设计
 
+中文: https://alexhuang13.github.io/digest/2026-10-14.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-14.html
+
 主读 01
 Batch size 与方向相关的优化动力学
 The Best Optimizer Depends on Batch Size

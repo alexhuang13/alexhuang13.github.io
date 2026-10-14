@@ -1,19 +1,27 @@
 @import url("https://giscus.app/themes/light.css");
 /* giscus custom theme: retain its authenticated THUMBS_UP handler only.
  * Verified against giscus/giscus 3d6430237108ca4ee3eb6a1a20595201c09c72d5,
- * components/ReactButtons.tsx and locales/zh-CN/common.json.
+ * components/ReactButtons.tsx and locales/{zh-CN,en}/common.json.
  * Select the reaction by its semantic +1 label, never by menu position.
  */
 main { background: transparent; }
+:root { --digest-like: "点赞"; --digest-liked: "已点赞"; }
+:root:lang(en) { --digest-like: "Like"; --digest-liked: "Liked"; }
 .gsc-reactions-count,
-.gsc-direct-reaction-buttons,
+.gsc-direct-reaction-button,
 .gsc-upvotes,
 .gsc-emoji-button { display: none !important; }
 
-.gsc-emoji-button[aria-label$=" +1"] {
+/* The direct button contains GitHub's live count. Its child's translated
+ * title identifies THUMBS_UP even for signed-out readers, whose button has
+ * a generic sign-in aria-label. Never use the sum of all reactions. */
+.gsc-direct-reaction-buttons { display: flex; gap: 0; }
+.gsc-direct-reaction-button:has(> .gsc-social-reaction-summary-item-count[title*="+1"]),
+.gsc-emoji-button:is([aria-label$=" +1"], [aria-label$=" +1 reaction"]) {
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   min-width: 76px;
   width: auto;
   height: 36px;
@@ -26,14 +34,30 @@ main { background: transparent; }
   font-size: 13px;
   cursor: pointer;
 }
-.gsc-emoji-button[aria-label$=" +1"]:disabled { cursor: not-allowed; opacity: .55; }
-.gsc-emoji-button[aria-label$=" +1"]::after { content: "点赞"; }
-.gsc-emoji-button[aria-label$=" +1"].has-reacted {
+.gsc-direct-reaction-button:disabled,
+.gsc-emoji-button:disabled { cursor: not-allowed; opacity: .55; }
+.gsc-direct-reaction-button::before,
+.gsc-emoji-button::before { content: var(--digest-like); }
+.gsc-direct-reaction-button.has-reacted,
+.gsc-emoji-button.has-reacted {
   color: var(--color-accent-fg);
   border-color: var(--color-accent-fg);
   background: var(--color-accent-subtle);
 }
-.gsc-emoji-button[aria-label$=" +1"].has-reacted::after { content: "已点赞"; }
+.gsc-direct-reaction-button.has-reacted::before,
+.gsc-emoji-button.has-reacted::before { content: var(--digest-liked); }
+.gsc-social-reaction-summary-item-count { font-variant-numeric: tabular-nums; }
+
+/* giscus omits direct buttons at zero. Its actual add-like control remains
+ * available then; once THUMBS_UP exists, use its counted button only. */
+.gsc-reactions-menu:has(+ .gsc-direct-reaction-buttons) .gsc-emoji-button::after {
+  content: "0";
+  font-variant-numeric: tabular-nums;
+}
+.gsc-reactions-menu:has(+ .gsc-direct-reaction-buttons > .gsc-direct-reaction-button > .gsc-social-reaction-summary-item-count[title*="+1"]) .gsc-emoji-button {
+  display: none !important;
+}
+.gsc-direct-reaction-button-emoji,
 .gsc-emoji-button .gsc-emoji,
 .gsc-reactions-button svg,
 .gsc-reactions-popover::before,
@@ -43,7 +67,7 @@ main { background: transparent; }
 
 /* Older browsers retain a disclosure containing only the like action. */
 .gsc-reactions-button { width: auto; min-width: 64px; padding: 0 14px; }
-.gsc-reactions-button::after { content: "点赞"; }
+.gsc-reactions-button::after { content: var(--digest-like); }
 .gsc-reactions-popover { width: max-content; max-width: 280px; }
 .gsc-reactions-popover > p { font-size: 12px; }
 .gsc-reactions-popover > div:last-child { margin: 0; }

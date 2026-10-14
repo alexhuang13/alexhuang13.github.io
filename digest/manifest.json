@@ -1,11 +1,21 @@
 {
   "timezone": "America/New_York",
+  "languages": [
+    "zh-CN",
+    "en"
+  ],
   "latest": "2026-10-14",
   "issues": [
     {
       "date": "2026-10-14",
       "title": "噪声、方向与实验预算",
       "url": "/digest/2026-10-14.html",
+      "translations": {
+        "en": {
+          "title": "Noise, Direction, and the Cost of Experiments",
+          "url": "/digest/en/2026-10-14.html"
+        }
+      },
       "sources": [
         "https://arxiv.org/abs/2610.08975",
         "https://batch-size-scaling.com/",

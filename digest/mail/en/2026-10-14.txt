@@ -1,0 +1,36 @@
+RESEARCH DIGEST / 2026-10-14
+Noise, Direction, and the Cost of Experiments
+Muon's batch-size effects · Active experimental design for scaling laws
+
+中文: https://alexhuang13.github.io/digest/2026-10-14.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-14.html
+
+Main reading 01
+Batch size and direction-dependent optimization dynamics
+The Best Optimizer Depends on Batch Size
+https://alexhuang13.github.io/digest/en/2026-10-14.html#batch-size
+
+Related update
+Noise can smooth the sign—and change the order of feature learning
+From Parallel to Sequential: Small-Batch Noise Restores Simplicity Bias of Muon
+https://alexhuang13.github.io/digest/en/2026-10-14.html#noise-smoothing
+
+Main reading 02
+Discovering a scaling law has its own compute budget
+SLDBench v2: Active Scaling Law Discovery
+https://alexhuang13.github.io/digest/en/2026-10-14.html#active-scaling
+
+Brief
+Monarch-Muon: break a large orthogonalization into smaller blocks
+Monarch-Muon: Structure-Aware Muon for Fast and Memory-Efficient Pretraining
+https://alexhuang13.github.io/digest/en/2026-10-14.html#monarch
+
+Daily classic · 2022
+S4: one state space, three ways to compute
+https://alexhuang13.github.io/digest/en/2026-10-14.html#classic-s4
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-10-14.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

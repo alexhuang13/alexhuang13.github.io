@@ -1,0 +1,413 @@
+{
+  "date": "2026-10-14",
+  "number": "001",
+  "title": "Noise, Direction, and the Cost of Experiments",
+  "subtitle": "Muon's batch-size effects · Active experimental design for scaling laws",
+  "window": "2026-10-12 — 2026-10-14 · America/New_York",
+  "readingMinutes": 13,
+  "edition": "Pilot edition",
+  "tags": [
+    "Muon",
+    "Scaling laws"
+  ],
+  "intro": "From direction-dependent gradient noise to the compute cost of discovering scaling laws: two main readings, two related updates, and one classic—S4.",
+  "articles": [
+    {
+      "id": "batch-size",
+      "kind": "Main reading 01",
+      "title": "Batch size and direction-dependent optimization dynamics",
+      "paper": "The Best Optimizer Depends on Batch Size",
+      "authors": "Xingyu Dang · Kaiyue Wen · Sadhika Malladi",
+      "url": "https://arxiv.org/abs/2610.08975",
+      "dateNote": "First posted Oct 6 · v2 Oct 12",
+      "evidence": "Relevant sections and author commentary read",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "With a fixed sample budget \\(T\\), a larger batch size \\(B\\) reduces gradient noise but also reduces the number of updates. The paper separates these effects using a noisy quadratic model.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "f(w)=\\frac12\\sum_i h_iw_i^2,\\qquad \\widehat g_i=h_iw_i+\\sqrt{\\frac{c_i}{B}}\\,z_i,\\qquad K=\\frac{T}{B}.",
+          "label": "Model"
+        },
+        {
+          "type": "text",
+          "text": "\\(h_i>0\\): curvature; \\(c_i>0\\): per-sample gradient-noise variance; \\(z_i\\sim\\mathcal N(0,1)\\). The direction-dependent curvature-to-noise ratio is \\(\\mathrm{CNR}_i=h_i^2/c_i\\)."
+        },
+        {
+          "type": "text",
+          "text": "Ideal Muon reduces to a sign operation on a \\(1\\times1\\) matrix. Start with SignSGD with momentum:"
+        },
+        {
+          "type": "equation",
+          "tex": "m_{t+1}=\\mu m_t+(1-\\mu)\\widehat g_t,\\qquad w_{t+1}=w_t-\\eta\\,\\operatorname{sign}(m_{t+1}),\\quad 0\\le\\mu<1.",
+          "label": "Update"
+        },
+        {
+          "type": "text",
+          "text": "**Local mechanism.** Hold \\(w_i\\) fixed and let momentum reach stationarity. Under independent Gaussian noise,"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathbb E[\\operatorname{sign}(m_i)]=\\operatorname{erf}(q_i),\\qquad q_i=w_i\\sqrt{\\frac{B(1+\\mu)h_i^2}{2(1-\\mu)c_i}}.",
+          "label": "Response"
+        },
+        {
+          "type": "text",
+          "text": "The mean displacement per processed sample is proportional to \\(\\eta\\,\\operatorname{erf}(q_i)/B\\). Preserving this local displacement gives:"
+        },
+        {
+          "type": "equation",
+          "tex": "\\eta(B)\\propto \\begin{cases}\\sqrt B,& |q_i|\\ll1 \\quad \\text{noise-dominated},\\\\[2pt] B,& |q_i|\\gg1 \\quad \\text{signal-dominated}.\\end{cases}",
+          "label": "Two regimes"
+        },
+        {
+          "type": "note",
+          "title": "Mechanism and scope",
+          "text": "Different directions can occupy different regimes at once, so a single scaling exponent cannot accommodate all of them. This is a local explanation at a fixed position with stationary momentum; it does not preserve the entire training trajectory.[1,2]"
+        },
+        {
+          "type": "text",
+          "text": "**Directional intervention.** Starting from the same checkpoint, increase the batch from \\(128\\mathrm K\\) to \\(2\\mathrm M\\), retaining small-batch updates only in selected directions. The recovered fraction of the local loss gap is"
+        },
+        {
+          "type": "equation",
+          "tex": "R=\\frac{L_{\\rm large}-L_{\\rm mixed}}{L_{\\rm large}-L_{\\rm small}}.",
+          "label": "Metric"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Directions retaining small-batch updates",
+            "Local gap recovered"
+          ],
+          "rows": [
+            [
+              "The 768 sharpest directions, about \\(0.001\\%\\)",
+              "Up to 59.5%"
+            ],
+            [
+              "Random subspace of the same dimension",
+              "Change of at most about 3%"
+            ]
+          ],
+          "caption": "Local curvature diagnostic on the same data stream. Sharp directions come from a Muon-preconditioned curvature approximation.[2]"
+        },
+        {
+          "type": "note",
+          "title": "Experimental scope",
+          "text": "Most branches are single runs, and the effect weakens substantially late in training. The 59.5% figure measures recovery of a local loss gap; it is not a final-loss or training-cost improvement. Changes from v1 to v2 have not been checked individually.[2]"
+        }
+      ]
+    },
+    {
+      "id": "noise-smoothing",
+      "kind": "Related update",
+      "title": "Noise can smooth the sign—and change the order of feature learning",
+      "paper": "From Parallel to Sequential: Small-Batch Noise Restores Simplicity Bias of Muon",
+      "authors": "Tom Jacobs · Rebekka Burkholz",
+      "url": "https://arxiv.org/abs/2610.16868",
+      "dateNote": "arXiv Oct 12 · OpenReview record dated Oct 1",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The authors report that small-batch noise restores sequential feature learning absent from full-batch spectral descent, and formalize the mechanism in deep linear models.[3,4]"
+        },
+        {
+          "type": "text",
+          "text": "The following **illustrative scalar derivation** explains noise smoothing. For \\(z\\sim\\mathcal N(0,1)\\) and \\(\\sigma>0\\),"
+        },
+        {
+          "type": "equation",
+          "tex": "\\begin{aligned}\\mathbb E[\\operatorname{sign}(g+\\sigma z)]&=2\\Phi(g/\\sigma)-1\\\\&=\\sqrt{\\frac2\\pi}\\frac g\\sigma+O\\!\\left((g/\\sigma)^3\\right),\\qquad |g|\\ll\\sigma.\\end{aligned}",
+          "label": "Scalar intuition"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "For weak signals, the mean sign update retains gradient magnitude. This scalar calculation does not replace the paper’s matrix theorem; its full theoretical assumptions have not been verified here."
+        }
+      ]
+    },
+    {
+      "id": "active-scaling",
+      "kind": "Main reading 02",
+      "title": "Discovering a scaling law has its own compute budget",
+      "paper": "SLDBench v2: Active Scaling Law Discovery",
+      "authors": "Lingbei Meng et al.",
+      "url": "https://arxiv.org/html/2610.16297v1",
+      "dateNote": "First posted Oct 12",
+      "evidence": "Relevant sections read",
+      "blocks": [
+        {
+          "type": "background",
+          "title": "Background",
+          "text": "Chinchilla (2022) used small-scale training runs to study compute allocation between model size and data. SLDBench (2025; ICLR 2026) then asked agents to discover predictive laws automatically. The new question: obtaining the fitting data itself costs compute.[6,7]"
+        },
+        {
+          "type": "equation",
+          "tex": "L(N,D)=E+aN^{-\\alpha}+bD^{-\\beta}.",
+          "label": "Candidate law"
+        },
+        {
+          "type": "text",
+          "text": "The expression above is only a candidate form. The agent neither knows the correct functional form nor gets all observations for free; it receives a catalog of priced experiments.[5]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal U=\\{(x_i,c_i)\\}_{i=1}^{n},\\qquad c_i>0.",
+          "label": "Experiment catalog"
+        },
+        {
+          "type": "text",
+          "text": "\\(x_i\\) is a training configuration; \\(c_i\\) is usually its training FLOPs. The outcome \\(y_i\\) is revealed only after purchase. Omitting group indices, the agent buys \\(A_t\\) each round and stops at time \\(\\tau\\):"
+        },
+        {
+          "type": "equation",
+          "tex": "S_{t+1}=S_t\\cup A_t,\\qquad \\rho=\\frac{\\sum_{i\\in S_\\tau}c_i}{\\sum_{i\\in\\mathcal U}c_i}.",
+          "label": "Spending"
+        },
+        {
+          "type": "text",
+          "text": "Evaluation records \\((\\text{extrapolation error at larger scales},\\,\\rho)\\). The agent must jointly decide **which experiments to buy, when to stop, and which law to fit**. Test configurations are larger than candidate experiments and cannot be purchased directly.[5]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Setting",
+            "Range of median \\(R^2\\) across systems",
+            "Experiment cost"
+          ],
+          "rows": [
+            [
+              "Passive · all observations",
+              "0.723–0.753",
+              "100%"
+            ],
+            [
+              "Active · chosen purchases",
+              "0.235–0.570",
+              "About 8%–44%, averaged within each system"
+            ]
+          ],
+          "caption": "30 selected difficult tasks and 8 agent systems. The R² range is across systems, not a confidence interval.[5]"
+        },
+        {
+          "type": "note",
+          "title": "What to take away",
+          "text": "Cheap experiments may cover every group while losing the independent parameter variation needed to identify the law. Experimental design adds a bottleneck to automated scaling-law discovery; these results concern the selected difficult tasks.[5]"
+        }
+      ]
+    },
+    {
+      "id": "monarch",
+      "kind": "Brief",
+      "title": "Monarch-Muon: break a large orthogonalization into smaller blocks",
+      "paper": "Monarch-Muon: Structure-Aware Muon for Fast and Memory-Efficient Pretraining",
+      "authors": "Alexander Miasnikov et al.",
+      "url": "https://arxiv.org/abs/2610.17429",
+      "dateNote": "arXiv Oct 12 · OpenReview record dated Oct 1",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Monarch factors impose structure on the weights, reducing weight, gradient, and optimizer-state storage while producing smaller update subproblems. The abstract reports these measurements for a 6.89B system:[8,9]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Measurement",
+            "Original setup",
+            "Monarch-Muon"
+          ],
+          "rows": [
+            [
+              "Peak memory",
+              "68.9 GB",
+              "52.9 GB"
+            ],
+            [
+              "Muon optimizer step",
+              "1288 ms",
+              "304 ms"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Timing covers the optimizer step only; it is not an end-to-end training speedup. The full experimental setup has not been verified here.[8]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "The Best Optimizer Depends on Batch Size · v2",
+      "url": "https://arxiv.org/abs/2610.08975"
+    },
+    {
+      "title": "The Best Optimizer Depends on Batch Size · author commentary",
+      "url": "https://batch-size-scaling.com/"
+    },
+    {
+      "title": "From Parallel to Sequential · arXiv",
+      "url": "https://arxiv.org/abs/2610.16868"
+    },
+    {
+      "title": "Small Batch Noise Restores Simplicity Bias of Muon · OpenReview",
+      "url": "https://openreview.net/forum?id=tCNXvqBCgv"
+    },
+    {
+      "title": "SLDBench v2 · full text",
+      "url": "https://arxiv.org/html/2610.16297v1"
+    },
+    {
+      "title": "Training Compute-Optimal Large Language Models · 2022",
+      "url": "https://arxiv.org/abs/2203.15556"
+    },
+    {
+      "title": "Can Language Models Discover Scaling Laws? · 2025/2026",
+      "url": "https://arxiv.org/abs/2507.21184v5"
+    },
+    {
+      "title": "Monarch-Muon · arXiv",
+      "url": "https://arxiv.org/abs/2610.17429"
+    },
+    {
+      "title": "Monarch-Muon · OpenReview",
+      "url": "https://openreview.net/forum?id=TOUrP5VzcN"
+    },
+    {
+      "title": "S4 · arXiv v3, §§2–3 and Appendix D.2 / Table 10",
+      "url": "https://arxiv.org/pdf/2111.00396v3"
+    },
+    {
+      "title": "ICLR 2022 · official Oral and Outstanding Paper Honorable Mention list",
+      "url": "https://blog.iclr.cc/2022/04/20/announcing-the-iclr-2022-outstanding-paper-award-recipients/"
+    },
+    {
+      "title": "S4 author commentary · continuous time, recurrence, and convolution",
+      "url": "https://hazyresearch.stanford.edu/blog/2022-01-14-s4-3"
+    },
+    {
+      "title": "HiPPO (2020) · Recurrent Memory with Optimal Polynomial Projections",
+      "url": "https://arxiv.org/abs/2008.07669"
+    }
+  ],
+  "publishedAt": "2026-10-14T18:31:28Z",
+  "classic": {
+    "id": "classic-s4",
+    "paperId": "arxiv:2111.00396",
+    "shortTitle": "S4",
+    "year": 2022,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "kind": "Daily classic · 001",
+    "title": "S4: one state space, three ways to compute",
+    "paper": "Efficiently Modeling Long Sequences with Structured State Spaces",
+    "authors": "Albert Gu · Karan Goel · Christopher Ré",
+    "url": "https://arxiv.org/pdf/2111.00396v3",
+    "dateNote": "First posted Oct 2021 · ICLR 2022 · reading v3 (Aug 2022)",
+    "evidence": "Relevant method, theory, and experiment sections read",
+    "recognition": {
+      "label": "ICLR 2022 Oral · Outstanding Paper Honorable Mention",
+      "url": "https://blog.iclr.cc/2022/04/20/announcing-the-iclr-2022-outstanding-paper-award-recipients/"
+    },
+    "question": "If long memory depends on the full kernel Kⱼ = CĀʲB̄, is moving the eigenvalues of Ā toward the unit circle enough? How do input/output directions and non-normality affect memory?",
+    "blocks": [
+      {
+        "type": "background",
+        "title": "Where it comes from",
+        "text": "Long sequences require both memory and efficient training. HiPPO (2020) designed continuous memory through polynomial projections; S4 (2022) sought a state-space parameterization that is fast to compute and numerically stable.[10,13]"
+      },
+      {
+        "type": "text",
+        "text": "Consider one channel with scalar input and output, and hidden state \\(x(t)\\in\\mathbb R^N\\). \\(A\\) governs memory evolution, \\(B\\) writes the input, and \\(C\\) reads the state. Omit the separately computable skip term.[12]"
+      },
+      {
+        "type": "equation",
+        "label": "Continuous system",
+        "tex": "\\dot x(t)=Ax(t)+Bu(t),\\qquad y(t)=Cx(t)."
+      },
+      {
+        "type": "text",
+        "text": "Apply a bilinear discretization with step size \\(\\Delta>0\\), assuming the inverse exists. \\(\\Delta\\) is the sampling timescale and can be learned as a model parameter.[12]"
+      },
+      {
+        "type": "equation",
+        "label": "Discretization",
+        "tex": "\\bar A=\\left(I-\\frac{\\Delta}{2}A\\right)^{-1}\\left(I+\\frac{\\Delta}{2}A\\right),\\qquad \\bar B=\\left(I-\\frac{\\Delta}{2}A\\right)^{-1}\\Delta B."
+      },
+      {
+        "type": "text",
+        "text": "With zero initial state \\(x_{-1}=0\\) and fixed parameters, stepwise recurrence and full-sequence convolution are exactly equivalent:[12]"
+      },
+      {
+        "type": "equation",
+        "label": "RNN ↔ convolution",
+        "tex": "\\begin{aligned}x_k&=\\bar A x_{k-1}+\\bar B u_k,\\\\ y_k&=\\sum_{j=0}^{k}K_j u_{k-j},\\qquad K_j=C\\bar A^j\\bar B.\\end{aligned}"
+      },
+      {
+        "type": "note",
+        "title": "Two execution modes for the same layer",
+        "text": "Use convolution to process the full sequence in parallel during training; retain only the current state during autoregressive generation. Linearity applies to the individual SSM kernel. Channel mixing and nonlinearities between layers give the full network nonlinear expressive power.[10,12]"
+      },
+      {
+        "type": "text",
+        "text": "**Computing the kernel is the real bottleneck.** Direct eigendecomposition of a HiPPO matrix can be severely ill-conditioned. S4 uses a normal matrix plus a low-rank correction, then a unitary change of basis gives DPLR:[10]"
+      },
+      {
+        "type": "equation",
+        "label": "Structured parameterization",
+        "tex": "A=V(\\Lambda-PQ^*)V^*,\\qquad V^*V=I,\\qquad P,Q\\in\\mathbb C^{N\\times r},\\quad r\\ll N."
+      },
+      {
+        "type": "text",
+        "text": "\\(\\Lambda\\) is diagonal. Write \\(\\widehat A=\\Lambda-PQ^*\\) and \\(R(\\omega)=(\\omega I-\\Lambda)^{-1}\\). When the relevant inverses exist, Woodbury’s identity gives:[10]"
+      },
+      {
+        "type": "equation",
+        "label": "Low-rank correction",
+        "tex": "(\\omega I-\\widehat A)^{-1}=R-RP(I+Q^*RP)^{-1}Q^*R."
+      },
+      {
+        "type": "text",
+        "text": "A high-dimensional inverse becomes a diagonal inverse plus an \\(r\\times r\\) correction. The paper reduces the finite-length kernel’s generating function to Cauchy computations and an inverse FFT. For fixed low rank, theoretical kernel construction costs \\(\\widetilde O(N+L)\\), and each recurrent step costs \\(O(N)\\). These are per-SSM costs and assume a fast Cauchy algorithm.[10]"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Path-X: connectivity classification over length 16,384",
+          "Accuracy"
+        ],
+        "rows": [
+          [
+            "Random guessing",
+            "50.00%"
+          ],
+          [
+            "S4 original",
+            "88.10%"
+          ]
+        ],
+        "caption": "The “original” row in v3 Appendix Table 10; later improvements are listed separately as “updated.” Original Path-X setup: 6 layers, 256 channels, state dimension 64 per channel, one A100 40GB.[10]"
+      },
+      {
+        "type": "note",
+        "title": "Discussion · our interpretation",
+        "text": "\\(K_j=C\\bar A^j\\bar B\\) suggests that long memory depends on both dynamics and input–output coupling. Is placing eigenvalues near the unit circle enough? For non-normal \\(\\bar A\\), which transient effects does the spectral radius miss? These are questions for further discussion, not conclusions proved by the paper."
+      }
+    ]
+  },
+  "community": {
+    "provider": "github-issues",
+    "repository": "alexhuang13/alexhuang13.github.io",
+    "issueNumber": 1,
+    "issueId": 5853769061,
+    "discussionNumber": 2
+  }
+}
