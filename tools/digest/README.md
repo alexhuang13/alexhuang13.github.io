@@ -22,7 +22,7 @@ Chinese pages remain at `/digest/`; complete English pages are at `/digest/en/`.
 
 Both languages use the same giscus discussion number or the same stable Chinese date key. Localize only the interface (`zh-CN` or `en`), never the mapping key. This keeps likes and comments together.
 
-The homepage and both digest editions share `reading-light.css` / `reading-light.js`: a soft light follows a mouse, pen, or single-finger swipe, including native touch scrolling, and fades on release or departure. The light paints below text and never captures input. Updates are batched once per animation frame, with no idle animation loop. Reduced-motion, forced-colors and print modes disable it. Keep these shared assets when generating new pages.
+All interactive pages in this repository share `reading-light.css` / `reading-light.js`: a soft light follows a mouse, pen, or single-finger swipe, including native touch scrolling, and fades on release or departure. The light paints below text and never captures input. Updates are batched once per animation frame, with no idle animation loop. Reduced-motion, forced-colors and print modes disable it. The builder finishes with `tools/site/reading-light.cjs`, which applies the same assets to the homepage, both digest editions, FlowSD pages and other web applications. Keep this step when generating new pages; see the root README for the owner's site-wide style preference.
 
 ## Subscription
 

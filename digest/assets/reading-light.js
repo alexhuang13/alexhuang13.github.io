@@ -8,9 +8,30 @@
   light.setAttribute('aria-hidden', 'true');
   document.body.prepend(light);
   document.body.classList.add('has-reading-light');
-  document.querySelectorAll('.article, .equation, .note, .background, .issue-row, .subscription-card, .card').forEach(surface => {
-    surface.setAttribute('data-reading-light-surface', '');
-  });
+  const root = document.documentElement;
+  const syncTheme = () => {
+    const dark = root.hasAttribute('data-theme') ? root.dataset.theme === 'dark'
+      : root.classList.contains('dark') || getComputedStyle(root).colorScheme === 'dark';
+    document.body.dataset.readingLightScheme = dark ? 'dark' : 'light';
+  };
+  syncTheme();
+  new MutationObserver(syncTheme).observe(root, {attributes: true, attributeFilter: ['data-theme', 'class', 'style']});
+  const surfaceSelector = '.article, .equation, .note, .background, .issue-row, .subscription-card, .card, .equation-card, .tb-equation, .tb-partition, .story-callout, .mass-lab, .term-grid > article, .flow-round > article, .gate-rule > article, .panel, .room-card, .summary-card';
+  function surfaceAtPoint() {
+    let surface = document.elementFromPoint(x, y)?.closest(surfaceSelector);
+    while (surface && !surface.hasAttribute('data-reading-light-surface')) {
+      // Do not replace a page's existing decorative pseudo-element.
+      const decoration = getComputedStyle(surface, '::before').content;
+      if (decoration !== 'none' && decoration !== 'normal') {
+        surface = surface.parentElement?.closest(surfaceSelector);
+        continue;
+      }
+      const position = getComputedStyle(surface).position;
+      surface.setAttribute('data-reading-light-surface', '');
+      if (position === 'static') surface.setAttribute('data-reading-light-static', '');
+    }
+    return surface;
+  }
 
   let x = 0, y = 0, visible = false, frame = 0, activeSurface = null, touchId = null;
   function clearSurface() {
@@ -32,7 +53,7 @@
     light.dataset.visible = 'true';
     // Touch targets stay fixed during a native scroll, so find the actual
     // surface under the finger each frame instead of using event.target.
-    const surface = document.elementFromPoint(x, y)?.closest('[data-reading-light-surface]');
+    const surface = surfaceAtPoint();
     if (surface !== activeSurface) { clearSurface(); activeSurface = surface; }
     if (surface) {
       const rect = surface.getBoundingClientRect();

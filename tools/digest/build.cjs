@@ -5,6 +5,7 @@ const katex = require('katex');
 const giscus = require('./giscus.cjs');
 const newsletter = require('./newsletter.cjs');
 const {languages, base, url: localizedUrl, validateTranslation} = require('./languages.cjs');
+const {applyReadingLight} = require('../site/reading-light.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'digest');
@@ -72,9 +73,7 @@ ${alternates}
 <script>try{if(localStorage.getItem("digest-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
 <link rel="stylesheet" href="/digest/assets/katex/katex.min.css">
 <link rel="stylesheet" href="${asset('assets/digest.css')}">
-<link rel="stylesheet" href="${asset('assets/reading-light.css')}">
 <script defer src="${asset('assets/digest.js')}"></script>
-<script defer src="${asset('assets/reading-light.js')}"></script>
 </head>
 <body><a class="skip-link" href="#main">${tr('跳到正文','Skip to content')}</a><div id="reading-progress" aria-hidden="true"></div>${header(active,canonical)}${content}<footer class="site-footer"><span>Research Digest · Zixun Huang</span><div><a href="${href()}">${tr('全部期刊','All issues')}</a><a href="${href('subscribe.html')}">${tr('邮件订阅','Email subscription')}</a><a href="/">${tr('主页','Home')} ↗</a></div></footer><div role="status" aria-live="polite" id="copy-status" class="sr-only"></div></body>
 </html>
@@ -163,13 +162,6 @@ fs.writeFileSync(path.join(out,'manifest.json'),JSON.stringify({timezone:'Americ
 
 const homeFile=path.join(root,'index.html');
 let home=fs.readFileSync(homeFile,'utf8');
-const lightStart='<!-- reading-light:start -->',lightEnd='<!-- reading-light:end -->';
-const lightAssets=lightStart+'\n  <link rel="stylesheet" href="'+asset('assets/reading-light.css')+'">\n  <script defer src="'+asset('assets/reading-light.js')+'"></script>\n  '+lightEnd;
-if(home.includes(lightStart)&&home.includes(lightEnd)) {
-  home=home.slice(0,home.indexOf(lightStart))+lightAssets+home.slice(home.indexOf(lightEnd)+lightEnd.length);
-} else {
-  home=home.replace('</head>','  '+lightAssets+'\n</head>');
-}
 const start='<!-- research-digest-latest:start -->',end='<!-- research-digest-latest:end -->';
 const teaser=start+'\n      <section id="research-digest">\n        <h2>Research Digest</h2>\n        <div class="card">\n          <p><a href="./digest/'+newest.date+'.html"><strong>'+esc(newest.title)+'</strong></a> <span class="muted">· '+newest.date+'</span></p>\n          <p>'+esc(newest.subtitle)+'</p>\n          <p><a href="./digest/'+newest.date+'.html" lang="zh-CN">中文</a> · <a href="./digest/en/'+newest.date+'.html" lang="en">Read in English →</a> · <a href="./digest/">Browse all issues →</a></p>\n        </div>\n      </section>\n      '+end;
 if(home.includes(start)&&home.includes(end)) {
@@ -189,4 +181,5 @@ if(!home.includes('/* Digest navigation: keep the full menu reachable on small s
   home=home.replace('  </style>','    /* Digest navigation: keep the full menu reachable on small screens. */\n    .top-nav{overflow-x:auto; scrollbar-width:thin}\n    .top-nav .nav-links{flex-shrink:0}\n    .top-nav a{white-space:nowrap}\n    @media(max-width:960px){.top-nav{padding:10px 20px}.top-nav .nav-links{gap:12px}}\n  </style>');
 }
 fs.writeFileSync(homeFile,home);
+console.log('Applied shared soft lighting to '+applyReadingLight(root).length+' website pages.');
 console.log('Updated both language editions, email bodies, archives, feed, manifest, and homepage.');
