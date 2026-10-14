@@ -1,0 +1,18 @@
+[
+  {
+    "date": "2026-10-14",
+    "paperId": "arxiv:2111.00396",
+    "paper": "Efficiently Modeling Long Sequences with Structured State Spaces",
+    "shortTitle": "S4",
+    "year": 2022,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "recognition": {
+      "label": "ICLR 2022 Oral · Outstanding Paper Honorable Mention",
+      "url": "https://blog.iclr.cc/2022/04/20/announcing-the-iclr-2022-outstanding-paper-award-recipients/"
+    },
+    "source": "https://arxiv.org/pdf/2111.00396v3",
+    "url": "/digest/2026-10-14.html#classic-s4"
+  }
+]

@@ -4,13 +4,13 @@
   "title": "噪声、方向与实验预算",
   "subtitle": "Muon 的 batch-size 效应 · Scaling law 的主动实验设计",
   "window": "2026-10-12 — 2026-10-14 · America/New_York",
-  "readingMinutes": 8,
+  "readingMinutes": 13,
   "edition": "风格试刊",
   "tags": [
     "Muon",
     "Scaling laws"
   ],
-  "intro": "从方向相关的梯度噪声，到发现 scaling law 所需的实验预算。本期展开两篇研究，附两条相关动态。",
+  "intro": "从方向相关的梯度噪声，到发现 scaling law 所需的实验预算。本期展开两篇研究，附两条相关动态；另精读一篇经典：S4。",
   "articles": [
     {
       "id": "batch-size",
@@ -279,7 +279,134 @@
     {
       "title": "Monarch-Muon · OpenReview",
       "url": "https://openreview.net/forum?id=TOUrP5VzcN"
+    },
+    {
+      "title": "S4 · arXiv v3，§2–3、Appendix D.2/Table 10",
+      "url": "https://arxiv.org/pdf/2111.00396v3"
+    },
+    {
+      "title": "ICLR 2022 · Oral 与 Outstanding Paper Honorable Mention 官方名单",
+      "url": "https://blog.iclr.cc/2022/04/20/announcing-the-iclr-2022-outstanding-paper-award-recipients/"
+    },
+    {
+      "title": "S4 作者解读 · 连续时间、递推与卷积",
+      "url": "https://hazyresearch.stanford.edu/blog/2022-01-14-s4-3"
+    },
+    {
+      "title": "HiPPO (2020) · Recurrent Memory with Optimal Polynomial Projections",
+      "url": "https://arxiv.org/abs/2008.07669"
     }
   ],
-  "publishedAt": "2026-10-14T18:31:28Z"
+  "publishedAt": "2026-10-14T18:31:28Z",
+  "classic": {
+    "id": "classic-s4",
+    "paperId": "arxiv:2111.00396",
+    "shortTitle": "S4",
+    "year": 2022,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "kind": "每日精读 · 经典 001",
+    "title": "S4：一个状态空间，三种计算方式",
+    "paper": "Efficiently Modeling Long Sequences with Structured State Spaces",
+    "authors": "Albert Gu · Karan Goel · Christopher Ré",
+    "url": "https://arxiv.org/pdf/2111.00396v3",
+    "dateNote": "首发 2021.10 · ICLR 2022 · 本次阅读 v3（2022.08）",
+    "evidence": "已读方法、理论与实验相关章节",
+    "recognition": {
+      "label": "ICLR 2022 Oral · Outstanding Paper Honorable Mention",
+      "url": "https://blog.iclr.cc/2022/04/20/announcing-the-iclr-2022-outstanding-paper-award-recipients/"
+    },
+    "question": "如果长记忆由整个核 Kⱼ = CĀʲB̄ 决定，只把 Ā 的特征值推近单位圆是否足够？输入、输出方向与非正规性又会怎样改变记忆？",
+    "blocks": [
+      {
+        "type": "background",
+        "title": "从哪里来",
+        "text": "长序列既需要保留历史，也需要高效训练。HiPPO（2020）用多项式投影设计连续记忆；S4（2022）进一步寻找可快速计算、数值稳定的状态空间参数化。[10,13]"
+      },
+      {
+        "type": "text",
+        "text": "先看一个输入、输出均为标量的通道，隐藏状态 \\(x(t)\\in\\mathbb R^N\\)。\\(A\\) 控制记忆演化，\\(B\\) 写入输入，\\(C\\) 读出状态；略去可单独计算的 skip term。[12]"
+      },
+      {
+        "type": "equation",
+        "label": "连续系统",
+        "tex": "\\dot x(t)=Ax(t)+Bu(t),\\qquad y(t)=Cx(t)."
+      },
+      {
+        "type": "text",
+        "text": "以步长 \\(\\Delta>0\\) 作双线性离散化；假设逆矩阵存在。\\(\\Delta\\) 是采样时间尺度，可作为模型参数学习。[12]"
+      },
+      {
+        "type": "equation",
+        "label": "离散化",
+        "tex": "\\bar A=\\left(I-\\frac{\\Delta}{2}A\\right)^{-1}\\left(I+\\frac{\\Delta}{2}A\\right),\\qquad \\bar B=\\left(I-\\frac{\\Delta}{2}A\\right)^{-1}\\Delta B."
+      },
+      {
+        "type": "text",
+        "text": "零初始状态 \\(x_{-1}=0\\)，固定参数时，逐步递推与整段卷积完全等价：[12]"
+      },
+      {
+        "type": "equation",
+        "label": "RNN ↔ 卷积",
+        "tex": "\\begin{aligned}x_k&=\\bar A x_{k-1}+\\bar B u_k,\\\\ y_k&=\\sum_{j=0}^{k}K_j u_{k-j},\\qquad K_j=C\\bar A^j\\bar B.\\end{aligned}"
+      },
+      {
+        "type": "note",
+        "title": "同一层的两种执行方式",
+        "text": "训练时用卷积并行处理整段输入；自回归生成时只保留当前状态。这里的线性指单个 SSM 核；通道混合与层间非线性让完整网络具有非线性表达能力。[10,12]"
+      },
+      {
+        "type": "text",
+        "text": "**真正的瓶颈是计算核。** 直接对 HiPPO 矩阵做特征分解可能严重病态。S4 的关键是“正规矩阵 + 低秩修正”，再用酉变换得到 DPLR：[10]"
+      },
+      {
+        "type": "equation",
+        "label": "结构化参数化",
+        "tex": "A=V(\\Lambda-PQ^*)V^*,\\qquad V^*V=I,\\qquad P,Q\\in\\mathbb C^{N\\times r},\\quad r\\ll N."
+      },
+      {
+        "type": "text",
+        "text": "\\(\\Lambda\\) 为对角矩阵。令 \\(\\widehat A=\\Lambda-PQ^*\\)、\\(R(\\omega)=(\\omega I-\\Lambda)^{-1}\\)，在相关逆存在时，Woodbury 恒等式给出：[10]"
+      },
+      {
+        "type": "equation",
+        "label": "低秩修正",
+        "tex": "(\\omega I-\\widehat A)^{-1}=R-RP(I+Q^*RP)^{-1}Q^*R."
+      },
+      {
+        "type": "text",
+        "text": "高维求逆由对角求逆与 \\(r\\times r\\) 修正替代。论文再把有限长卷积核的生成函数化为 Cauchy 计算并作逆 FFT：固定低秩时，理论核构造为 \\(\\widetilde O(N+L)\\)，每步递推为 \\(O(N)\\)。这是单个 SSM 的复杂度，快速 Cauchy 算法是前提。[10]"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Path-X：长度 16,384 的连通性分类",
+          "准确率"
+        ],
+        "rows": [
+          [
+            "随机猜测",
+            "50.00%"
+          ],
+          [
+            "S4 original",
+            "88.10%"
+          ]
+        ],
+        "caption": "采用 v3 附录 Table 10 的 original 行；后续改进结果另列为 updated。原始 Path-X 配置：6 层、256 通道、每通道状态维度 64，单张 A100 40GB。[10]"
+      },
+      {
+        "type": "note",
+        "title": "讨论问题 · 我们的理解",
+        "text": "\\(K_j=C\\bar A^j\\bar B\\) 提示：长期记忆取决于动力学与输入—输出耦合。仅让特征值靠近单位圆，是否足够？对非正规 \\(\\bar A\\)，谱半径又会漏掉哪些瞬态行为？这是进一步讨论的方向，并非论文已证明的结论。"
+      }
+    ]
+  },
+  "community": {
+    "provider": "github-issues",
+    "repository": "alexhuang13/alexhuang13.github.io",
+    "issueNumber": 1,
+    "issueId": 5853769061
+  }
 }
