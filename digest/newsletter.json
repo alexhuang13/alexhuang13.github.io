@@ -1,0 +1,9 @@
+{
+  "method": "email-request",
+  "enabled": false,
+  "address": null,
+  "subscribeSubject": "[Research Digest] SUBSCRIBE",
+  "unsubscribeSubject": "[Research Digest] UNSUBSCRIBE",
+  "provider": "agentmail",
+  "sender": null
+}

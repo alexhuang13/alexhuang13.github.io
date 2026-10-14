@@ -156,9 +156,6 @@ figcaption{font-size:11px;line-height:1.8;color:var(--muted);margin-top:9px}
 .subscription-card{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:30px}
 .subscription-card h2,.subscription-faq h2{font-family:var(--serif);font-weight:500;font-size:24px;margin:6px 0 20px}
 .subscription-card label{display:block;font-size:11px;color:var(--muted);margin-bottom:7px}
-.feed-address-row{display:flex;gap:10px}
-.feed-address-row input{min-width:0;flex:1;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--text);font:12px ui-monospace,SFMono-Regular,Consolas,monospace;padding:12px}
-.feed-address-row button{border:0;border-radius:4px;background:var(--blue);color:var(--bg);padding:10px 16px;cursor:pointer;white-space:nowrap;font:12px var(--sans)}
 .subscription-hint{font-size:11px;color:var(--muted);min-height:20px}
 .subscription-steps{padding-left:20px;margin:25px 0;font-size:14px;line-height:2.1}
 .subscription-links{display:flex;flex-wrap:wrap;gap:10px 22px;font-size:12px}
@@ -169,4 +166,14 @@ figcaption{font-size:11px;line-height:1.8;color:var(--muted);margin-top:9px}
 .community-inline .giscus{min-height:150px}
 .community-fallback{font-size:11px;text-align:right}
 .community-status[hidden]{display:none}
-@media(max-width:600px){.subscription-card{padding:22px 18px}.feed-address-row{flex-direction:column}.feed-address-row input{width:100%;box-sizing:border-box;font-size:11px}.feed-address-row button{align-self:flex-start}.subscription-card h2{font-size:22px}}
+@media(max-width:600px){.subscription-card{padding:22px 18px}.subscription-card h2{font-size:22px}}
+.like-count{font-size:12px;color:var(--muted);white-space:nowrap}
+.subscription-state{font-size:14px;color:var(--muted);max-width:560px}
+.subscription-button{display:inline-block;background:var(--blue);color:var(--bg);border-radius:4px;font-size:14px;padding:10px 20px;margin-bottom:12px}
+.subscription-button:hover{text-decoration:none;filter:brightness(1.1)}
+.subscription-manual{font-size:12px;color:var(--muted);border-top:1px solid var(--line);margin-top:22px;padding-top:18px}
+.subscription-manual summary{cursor:pointer}
+.subscription-manual p{margin:12px 0 0}
+.subscription-manual dl{display:grid;grid-template-columns:65px minmax(0,1fr);gap:8px;margin:15px 0}
+.subscription-manual dd{margin:0;overflow-wrap:anywhere;color:var(--text)}
+.subscription-faq code{font-size:12px;overflow-wrap:anywhere}

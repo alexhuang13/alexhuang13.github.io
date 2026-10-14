@@ -1,0 +1,75 @@
+@import url("https://giscus.app/themes/light.css");
+/* giscus custom theme: retain its authenticated THUMBS_UP handler only.
+ * Verified against giscus/giscus 3d6430237108ca4ee3eb6a1a20595201c09c72d5,
+ * components/ReactButtons.tsx and locales/zh-CN/common.json.
+ * Select the reaction by its semantic +1 label, never by menu position.
+ */
+main { background: transparent; }
+.gsc-reactions-count,
+.gsc-direct-reaction-buttons,
+.gsc-upvotes,
+.gsc-emoji-button { display: none !important; }
+
+.gsc-emoji-button[aria-label$=" +1"] {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 76px;
+  width: auto;
+  height: 36px;
+  padding: 0 18px;
+  margin: 0;
+  border: 1px solid var(--color-border-default);
+  border-radius: 999px;
+  background: var(--color-canvas-subtle);
+  color: var(--color-fg-default);
+  font-size: 13px;
+  cursor: pointer;
+}
+.gsc-emoji-button[aria-label$=" +1"]:disabled { cursor: not-allowed; opacity: .55; }
+.gsc-emoji-button[aria-label$=" +1"]::after { content: "点赞"; }
+.gsc-emoji-button[aria-label$=" +1"].has-reacted {
+  color: var(--color-accent-fg);
+  border-color: var(--color-accent-fg);
+  background: var(--color-accent-subtle);
+}
+.gsc-emoji-button[aria-label$=" +1"].has-reacted::after { content: "已点赞"; }
+.gsc-emoji-button .gsc-emoji,
+.gsc-reactions-button svg,
+.gsc-reactions-popover::before,
+.gsc-reactions-popover::after,
+.gsc-reactions-popover > .border-t,
+.gsc-reactions-popover > p:not(:has(a)) { display: none !important; }
+
+/* Older browsers retain a disclosure containing only the like action. */
+.gsc-reactions-button { width: auto; min-width: 64px; padding: 0 14px; }
+.gsc-reactions-button::after { content: "点赞"; }
+.gsc-reactions-popover { width: max-content; max-width: 280px; }
+.gsc-reactions-popover > p { font-size: 12px; }
+.gsc-reactions-popover > div:last-child { margin: 0; }
+
+/* Expose the actual button directly, including when its count is zero.
+ * Do not replace it with a local counter or intercept its OAuth handler.
+ */
+@supports selector(details::details-content) {
+  .gsc-reactions-menu::details-content {
+    display: block;
+    content-visibility: visible !important;
+  }
+  .gsc-reactions-menu > summary { display: none !important; }
+  .gsc-reactions-popover,
+  .gsc-reactions-popover.open {
+    position: static;
+    visibility: visible;
+    transform: none;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 8px;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+    margin: 0;
+    padding: 0;
+  }
+}

@@ -6,7 +6,8 @@ function mount(panel) {
   const script = document.createElement('script');
   let frame;
   let loaded = false;
-  const theme = () => document.documentElement.dataset.theme === 'dark' ? 'dark_dimmed' : 'light';
+  const theme = () => new URL(document.documentElement.dataset.theme === 'dark'
+    ? container.dataset.darkTheme : container.dataset.lightTheme, window.location.origin).href;
   const syncTheme = () => frame?.contentWindow?.postMessage({giscus:{setConfig:{theme:theme()}}}, GISCUS_ORIGIN);
 
   const observer = new MutationObserver(() => {
@@ -22,6 +23,10 @@ function mount(panel) {
   window.addEventListener('message', event => {
     if (event.origin !== GISCUS_ORIGIN || event.source !== frame?.contentWindow || !event.data?.giscus) return;
     const data = event.data.giscus;
+    const likes = data.discussion?.reactions?.THUMBS_UP?.count;
+    if (Number.isSafeInteger(likes) && likes >= 0) {
+      panel.querySelector('[data-like-count]').textContent = likes + ' 人点赞';
+    }
     if (typeof data.resizeHeight === 'number') {
       loaded = true;
       status.hidden = true;
@@ -36,7 +41,7 @@ function mount(panel) {
   script.async = true;
   script.crossOrigin = 'anonymous';
   Object.assign(script.dataset, container.dataset, {
-    strict:'1', reactionsEnabled:'1', emitMetadata:'0', inputPosition:'top',
+    strict:'1', reactionsEnabled:'1', emitMetadata:'1', inputPosition:'top',
     theme:theme(), lang:'zh-CN', loading:'lazy'
   });
   script.addEventListener('error', () => {
