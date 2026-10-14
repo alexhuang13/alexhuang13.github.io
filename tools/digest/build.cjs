@@ -92,6 +92,7 @@ const issues = fs.readdirSync(path.join(out,'issues')).filter(f=>/^\d{4}-\d{2}-\
   fs.writeFileSync(path.join(out,data.date+'.html'),issuePage(data));
   fs.mkdirSync(path.join(out,'mail'),{recursive:true});
   fs.writeFileSync(path.join(out,'mail',data.date+'.html'),newsletter.email(newsletterConfig,data));
+  fs.writeFileSync(path.join(out,'mail',data.date+'.txt'),newsletter.plainText(newsletterConfig,data));
   console.log('Rendered '+data.date+': '+data.articles.length+' updates, '+(data.classic?1:0)+' classic, '+equations+' display equations');
   return data;
 });

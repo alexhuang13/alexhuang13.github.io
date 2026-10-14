@@ -1,0 +1,33 @@
+RESEARCH DIGEST / 2026-10-14
+噪声、方向与实验预算
+Muon 的 batch-size 效应 · Scaling law 的主动实验设计
+
+主读 01
+Batch size 与方向相关的优化动力学
+The Best Optimizer Depends on Batch Size
+https://alexhuang13.github.io/digest/2026-10-14.html#batch-size
+
+相关动态
+噪声可以平滑 sign，也可能改变特征学习顺序
+From Parallel to Sequential: Small-Batch Noise Restores Simplicity Bias of Muon
+https://alexhuang13.github.io/digest/2026-10-14.html#noise-smoothing
+
+主读 02
+发现 scaling law，本身也有算力预算
+SLDBench v2: Active Scaling Law Discovery
+https://alexhuang13.github.io/digest/2026-10-14.html#active-scaling
+
+简讯
+Monarch-Muon：将大矩阵正交化拆成小块
+Monarch-Muon: Structure-Aware Muon for Fast and Memory-Efficient Pretraining
+https://alexhuang13.github.io/digest/2026-10-14.html#monarch
+
+每日精读 · 2022
+S4：一个状态空间，三种计算方式
+https://alexhuang13.github.io/digest/2026-10-14.html#classic-s4
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-10-14.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

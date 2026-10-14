@@ -25,17 +25,18 @@ function mailto(config, unsubscribe = false) {
 
 function page(config, latest) {
   const state = config.enabled
-    ? '<p class="subscription-state">发送申请后，请按确认邮件中的说明完成订阅。</p>'
+    ? '<p class="subscription-state">发送申请，回复确认邮件中的“确认”。完成一次确认后，新一期发布时自动送达。</p>'
     : '<p class="subscription-state" id="subscription-status">邮件订阅准备中，暂未开放。开通后将由专用系统邮箱发送，并提供确认与退订入口。</p>';
   const signup = config.enabled ? '<h2 id="subscribe-heading">从你的邮箱发起订阅</h2>' + state
     + '<a class="subscription-button" href="' + esc(mailto(config)) + '">发送订阅申请 ↗</a>'
-    + '<p class="subscription-hint">按钮会打开邮件应用；请从希望接收日报的邮箱发送这封邮件。</p>'
+    + '<p class="subscription-hint">按钮会打开邮件应用；请从希望接收日报的邮箱发送这封邮件。</p><p class="subscription-hint">日报发件人：' + esc(config.sender) + '</p>'
     + '<details class="subscription-manual"><summary>使用网页版邮箱？</summary><p>新建邮件发送到 ' + esc(config.address) + '，主题填写 ' + esc(config.subscribeSubject) + '。</p></details>'
     : '<h2 id="subscribe-heading">在邮箱里读新一期</h2>' + state;
   return '<main class="archive-main subscription-main" id="main"><div class="archive-hero"><p class="eyebrow">RESEARCH, IN YOUR INBOX</p><h1>邮件订阅<span>A daily note for curious minds.</span></h1><p>研究动态，一篇经典精读。每期一封，送到邮箱。</p></div>'
     + '<section class="subscription-card" aria-labelledby="subscribe-heading"><p class="small-label">EMAIL EDITION</p>' + signup + '</section>'
     + '<section class="subscription-faq"><h2>邮件里有什么？</h2><p>当期研究条目、每日精读和正文链接。完整公式、实验表格与讨论区保留在网页中。</p>'
-    + '<h2>如何确认与退订？</h2><p>开放订阅后，需完成邮箱确认才会收到日报。每封日报附带退订入口；也可向订阅管理邮箱发送主题为 <code>' + esc(config.unsubscribeSubject) + '</code> 的邮件。</p>'
+    + '<h2 id="unsubscribe">如何确认与退订？</h2><p>完成邮箱确认才会收到日报。每封日报附带退订入口；也可向订阅管理邮箱发送主题为 <code>' + esc(config.unsubscribeSubject) + '</code> 的邮件。</p>'
+    + (config.enabled ? '<p><a href="' + esc(mailto(config, true)) + '">发送退订申请 →</a></p>' : '')
     + '<h2>邮箱会公开吗？</h2><p>订阅地址仅用于确认、投递与退订，不会出现在网页或公开仓库中。</p>'
     + '<a class="subscription-read" href="/digest/' + latest.date + '.html">阅读最新一期 · ' + latest.date + ' →</a></section><a class="back-archive" href="/digest/">← 返回日报归档</a></main>';
 }
@@ -52,4 +53,14 @@ function email(config, issue) {
     + '<p style="margin:30px 0">' + link(url, '阅读全文与公式 →') + '</p><p style="border-top:1px solid #e6e2d8;padding-top:18px;font-size:11px;color:#6f6a61">Zixun Huang · 每期一封<br>' + link(mailto(config, true), '退订邮件') + ' · ' + link(origin + '/digest/', '往期归档') + '</p></td></tr></table></td></tr></table></body></html>\n';
 }
 
-module.exports = {readConfig, mailto, page, email};
+function plainText(config, issue) {
+  const url = origin + '/digest/' + issue.date + '.html';
+  const parts = ['RESEARCH DIGEST / ' + issue.date, issue.title, issue.subtitle, ''];
+  for (const a of issue.articles) parts.push(a.kind, a.title, a.paper, url + '#' + a.id, '');
+  if (issue.classic) parts.push('每日精读 · ' + issue.classic.year, issue.classic.title, url + '#' + issue.classic.id, '');
+  parts.push('阅读全文与公式：' + url, '', 'Zixun Huang · 每期一封',
+    '退订邮件：' + mailto(config, true), '往期归档：' + origin + '/digest/');
+  return parts.join('\n') + '\n';
+}
+
+module.exports = {readConfig, mailto, page, email, plainText};

@@ -1,9 +1,9 @@
 {
   "method": "email-request",
-  "enabled": false,
-  "address": null,
+  "enabled": true,
+  "address": "alexhuang13-digest@agentmail.to",
   "subscribeSubject": "[Research Digest] SUBSCRIBE",
   "unsubscribeSubject": "[Research Digest] UNSUBSCRIBE",
   "provider": "agentmail",
-  "sender": null
+  "sender": "alexhuang13-noreply@agentmail.to"
 }
