@@ -24,6 +24,22 @@
       setTimeout(() => { button.textContent = '复制 LaTeX'; }, 1600);
     });
   });
+  document.querySelectorAll('[data-copy-feed]').forEach(button => {
+    button.addEventListener('click', async () => {
+      const field = document.getElementById('feed-address');
+      const status = document.getElementById('feed-copy-status');
+      try {
+        await navigator.clipboard.writeText(field.value);
+        button.textContent = '已复制';
+        status.textContent = '已复制订阅地址。粘贴到阅读器的“添加订阅”即可。';
+      } catch {
+        field.focus();
+        field.select();
+        status.textContent = '地址已选中，请手动复制后粘贴到阅读器。';
+      }
+      setTimeout(() => { button.textContent = '复制订阅地址'; }, 2000);
+    });
+  });
   const progress = document.getElementById('reading-progress');
   const links = Array.from(document.querySelectorAll('.toc a[href^="#"]'));
   const sections = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);

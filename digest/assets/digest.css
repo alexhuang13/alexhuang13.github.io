@@ -151,3 +151,22 @@ figcaption{font-size:11px;line-height:1.8;color:var(--muted);margin-top:9px}
 @media(max-width:500px){body{font-size:16px}.nav-inner{padding:10px 18px;gap:15px}.wordmark>span:last-child{display:none}.monogram{border:0;padding-right:0}.nav-inner nav{gap:18px}.homepage-link{display:none}.issue-layout{padding:27px 20px 45px}.eyebrow{font-size:9px}.issue-date{margin-top:24px;gap:11px;font-size:11px}.deck{font-size:14px}.hero-intro{font-size:12px}h1{font-size:30px}.article h2{font-size:23px}.article p{font-size:15px}.equation{padding:12px 13px 14px;margin:21px -4px 24px}.math-scroll{font-size:15px}.note p,.background p{font-size:13px}.paper-title{font-size:12px}.article-kicker{font-size:10px}.evidence{font-size:9px}th,td{padding:10px;font-size:12px}.issue-row{grid-template-columns:1fr;gap:13px}.archive-date{display:flex;justify-content:space-between}.archive-date span{margin:0}.issue-row h3{font-size:23px}.archive-main{padding:37px 22px 60px}.site-footer{font-size:10px;gap:12px}.site-footer div{gap:14px}.coverage .window{overflow-wrap:anywhere}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 @media print{:root,:root[data-theme=dark]{--bg:#fff;--surface:#fff;--ink:#000;--text:#222;--muted:#555;--line:#ccc;--blue:#174b80;--formula:#f7f7f7}body{font-size:11pt}.site-header,.toc,.copy-tex,#reading-progress,.back-archive,.site-footer,.skip-link{display:none!important}.issue-layout{display:block;max-width:none;padding:0}.issue-hero{padding-bottom:18px}h1{font-size:26pt}.article{padding:22px 0 18px}.article h2{font-size:18pt}.article p{font-size:11pt}.equation,table,.note{break-inside:avoid}.equation{padding:8px 12px;margin:14px 0}.article-kicker{font-size:8pt}.references{break-before:page}.references li{font-size:9pt}.math-scroll{overflow:visible}.coverage{display:none}a{color:var(--blue)}}
+
+.subscription-main{max-width:880px}
+.subscription-card{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:30px}
+.subscription-card h2,.subscription-faq h2{font-family:var(--serif);font-weight:500;font-size:24px;margin:6px 0 20px}
+.subscription-card label{display:block;font-size:11px;color:var(--muted);margin-bottom:7px}
+.feed-address-row{display:flex;gap:10px}
+.feed-address-row input{min-width:0;flex:1;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--text);font:12px ui-monospace,SFMono-Regular,Consolas,monospace;padding:12px}
+.feed-address-row button{border:0;border-radius:4px;background:var(--blue);color:var(--bg);padding:10px 16px;cursor:pointer;white-space:nowrap;font:12px var(--sans)}
+.subscription-hint{font-size:11px;color:var(--muted);min-height:20px}
+.subscription-steps{padding-left:20px;margin:25px 0;font-size:14px;line-height:2.1}
+.subscription-links{display:flex;flex-wrap:wrap;gap:10px 22px;font-size:12px}
+.subscription-faq{margin-top:38px}
+.subscription-faq h2{font-size:20px;margin:26px 0 10px}
+.subscription-faq p{font-size:14px;color:var(--muted);line-height:1.9}
+.subscription-read{font-size:13px}
+.community-inline .giscus{min-height:150px}
+.community-fallback{font-size:11px;text-align:right}
+.community-status[hidden]{display:none}
+@media(max-width:600px){.subscription-card{padding:22px 18px}.feed-address-row{flex-direction:column}.feed-address-row input{width:100%;box-sizing:border-box;font-size:11px}.feed-address-row button{align-self:flex-start}.subscription-card h2{font-size:22px}}

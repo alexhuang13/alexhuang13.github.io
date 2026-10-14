@@ -1,0 +1,58 @@
+const GISCUS_ORIGIN = 'https://giscus.app';
+
+function mount(panel) {
+  const container = panel.querySelector('.giscus');
+  const status = panel.querySelector('[data-giscus-status]');
+  const script = document.createElement('script');
+  let frame;
+  let loaded = false;
+  const theme = () => document.documentElement.dataset.theme === 'dark' ? 'dark_dimmed' : 'light';
+  const syncTheme = () => frame?.contentWindow?.postMessage({giscus:{setConfig:{theme:theme()}}}, GISCUS_ORIGIN);
+
+  const observer = new MutationObserver(() => {
+    const next = container.querySelector('iframe.giscus-frame');
+    if (!next || next === frame) return;
+    frame = next;
+    frame.addEventListener('load', syncTheme);
+    syncTheme();
+  });
+  observer.observe(container, {childList:true, subtree:true});
+  new MutationObserver(syncTheme).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+
+  window.addEventListener('message', event => {
+    if (event.origin !== GISCUS_ORIGIN || event.source !== frame?.contentWindow || !event.data?.giscus) return;
+    const data = event.data.giscus;
+    if (typeof data.resizeHeight === 'number') {
+      loaded = true;
+      status.hidden = true;
+    }
+    if (typeof data.error === 'string' && !data.error.includes('Discussion not found')) {
+      status.hidden = false;
+      status.textContent = '讨论区暂时无法连接。可以使用下方的 GitHub 链接。';
+    }
+  });
+
+  script.src = GISCUS_ORIGIN + '/client.js';
+  script.async = true;
+  script.crossOrigin = 'anonymous';
+  Object.assign(script.dataset, container.dataset, {
+    strict:'1', reactionsEnabled:'1', emitMetadata:'0', inputPosition:'top',
+    theme:theme(), lang:'zh-CN', loading:'lazy'
+  });
+  script.addEventListener('error', () => {
+    status.hidden = false;
+    status.textContent = '讨论区未能加载。可以使用下方的 GitHub 链接。';
+  });
+  container.append(script);
+  setTimeout(() => {
+    if (!loaded) status.textContent = '讨论区仍在加载；若没有出现，可使用下方的 GitHub 链接。';
+  }, 15000);
+}
+
+document.querySelectorAll('[data-giscus-panel]').forEach(panel => {
+  if (!('IntersectionObserver' in window)) return mount(panel);
+  const observer = new IntersectionObserver(entries => {
+    if (entries.some(entry => entry.isIntersecting)) { observer.disconnect(); mount(panel); }
+  }, {rootMargin:'500px'});
+  observer.observe(panel);
+});
