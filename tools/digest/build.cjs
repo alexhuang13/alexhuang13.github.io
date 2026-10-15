@@ -163,7 +163,8 @@ fs.writeFileSync(path.join(out,'manifest.json'),JSON.stringify({timezone:'Americ
 const homeFile=path.join(root,'index.html');
 let home=fs.readFileSync(homeFile,'utf8');
 const start='<!-- research-digest-latest:start -->',end='<!-- research-digest-latest:end -->';
-const teaser=start+'\n      <section id="research-digest">\n        <h2>Research Digest</h2>\n        <div class="card">\n          <p><a href="./digest/'+newest.date+'.html"><strong>'+esc(newest.title)+'</strong></a> <span class="muted">· '+newest.date+'</span></p>\n          <p>'+esc(newest.subtitle)+'</p>\n          <p><a href="./digest/'+newest.date+'.html" lang="zh-CN">中文</a> · <a href="./digest/en/'+newest.date+'.html" lang="en">Read in English →</a> · <a href="./digest/">Browse all issues →</a></p>\n        </div>\n      </section>\n      '+end;
+const homeIssue=englishIssues[0];
+const teaser=start+'\n      <section id="research-digest">\n        <h2>Research Digest</h2>\n        <div class="card">\n          <p><a href="./digest/en/'+homeIssue.date+'.html"><strong>'+esc(homeIssue.title)+'</strong></a> <span class="muted">· '+homeIssue.date+'</span></p>\n          <p>'+esc(homeIssue.subtitle)+'</p>\n          <p><a href="./digest/en/'+homeIssue.date+'.html" lang="en">Read the latest issue →</a> · <a href="./digest/en/">Browse all issues →</a> · <a href="./digest/'+homeIssue.date+'.html" lang="zh-CN">中文</a></p>\n        </div>\n      </section>\n      '+end;
 if(home.includes(start)&&home.includes(end)) {
   const a=home.indexOf(start),b=home.indexOf(end)+end.length;
   home=home.slice(0,a)+teaser+home.slice(b);
@@ -173,9 +174,10 @@ if(home.includes(start)&&home.includes(end)) {
   home=home.replace(anchor,'      '+teaser+'\n\n'+anchor);
 }
 const navAnchor='      <a href="#lecture-notes">Lecture Notes</a>';
-if(!home.includes('<a href="./digest/">Research Digest</a>')) {
+home=home.replace('<a href="./digest/">Research Digest</a>','<a href="./digest/en/">Research Digest</a>');
+if(!home.includes('<a href="./digest/en/">Research Digest</a>')) {
   if(!home.includes(navAnchor)) throw new Error('Homepage nav anchor not found');
-  home=home.replace(navAnchor,navAnchor+'\n      <a href="./digest/">Research Digest</a>');
+  home=home.replace(navAnchor,navAnchor+'\n      <a href="./digest/en/">Research Digest</a>');
 }
 if(!home.includes('/* Digest navigation: keep the full menu reachable on small screens. */')) {
   home=home.replace('  </style>','    /* Digest navigation: keep the full menu reachable on small screens. */\n    .top-nav{overflow-x:auto; scrollbar-width:thin}\n    .top-nav .nav-links{flex-shrink:0}\n    .top-nav a{white-space:nowrap}\n    @media(max-width:960px){.top-nav{padding:10px 20px}.top-nav .nav-links{gap:12px}}\n  </style>');

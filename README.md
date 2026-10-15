@@ -3,7 +3,7 @@ Official personal homepage of Zixun Huang.
 
 ## Shared interaction style
 
-The owner wants soft lighting throughout the personal website: a gentle glow follows the finger or mouse, slightly brightens the nearby surface, and fades on departure. Preserve this across the homepage, project pages, applications, and both language editions of the research digest. Keep the effect subtle and behind readable content, without changing scrolling, selection, links, form controls, or existing layouts. Honor reduced-motion and forced-colors preferences; hide it when printing.
+The owner wants soft lighting throughout the personal website: a small, localized glow follows the finger or mouse, slightly brightens the nearby surface, and fades on departure. Preserve this across the homepage, project pages, applications, and both language editions of the research digest. Keep the effect subtle and behind readable content, without changing scrolling, selection, links, form controls, or existing layouts. Honor reduced-motion and forced-colors preferences; hide it when printing.
 
 `digest/assets/reading-light.css` and `.js` are the shared implementation. They support the site's `data-theme` setting, FlowSD's dark class, and applications declaring a dark color scheme. Surface highlighting also handles dynamically created panels, preserving positioned elements and existing decorations.
 

@@ -18,6 +18,8 @@ Dates and report windows use America/New_York. Preserve original publication dat
 
 Chinese pages remain at `/digest/`; complete English pages are at `/digest/en/`. Each issue, archive, classic-reading archive, and subscription page has a matching language switch and alternate-language metadata. Switching languages preserves the current fragment; internal navigation stays in the chosen language. English is a full translation, not a shorter summary. Both editions retain the same research-note style, evidence limits, formulas, and one daily classic.
 
+The personal homepage's Research Digest section uses the latest English issue title and subtitle. Its navigation, primary reading link, and archive link open the English edition; retain the secondary Chinese link. Keep this English default when generating future issues.
+
 `languages.cjs` checks that the translation preserves all display/inline mathematics, citations, source URLs, article IDs, and discussion identity. It permits translating prose inside `\\text{}`. Missing or inconsistent translations fail the build before pages are written. Keep a single Chinese `reading-log.json` for selection and deduplication; translating a classic does not create a second reading.
 
 Both languages use the same giscus discussion number or the same stable Chinese date key. Localize only the interface (`zh-CN` or `en`), never the mapping key. This keeps likes and comments together.
