@@ -1,0 +1,932 @@
+{
+  "date": "2026-10-15",
+  "number": "002",
+  "publishedAt": "2026-10-15T12:24:05Z",
+  "readingMinutes": 25,
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training",
+    "Statistics",
+    "DDPM"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "title": "Stabilizers, precision, and noise",
+  "subtitle": "Muon’s asymptotic geometry · Mixed-precision scaling · Spork · DDPM close reading",
+  "window": "2026-10-12 08:07 — 2026-10-15 08:07 · America/New_York",
+  "edition": "Daily research notes",
+  "intro": "Three main readings: a stabilizer changes Muon’s asymptotic geometry, quantization leaves persistent error, and Spork improves post-training through specialization and distillation. Briefs retain the remaining research. The DDPM classic connects noise prediction to training weights.",
+  "articles": [
+    {
+      "id": "paper-2610-20112",
+      "paper": "From Spectral to Frobenius: When Muon Loses Its Spectral Implicit Bias",
+      "authors": "Yongtao Wu · Mahdi Mansouri · Zhenyu Zhu",
+      "url": "https://arxiv.org/abs/2610.20112",
+      "kind": "Main reading 01 · Muon",
+      "title": "A stabilizer changes Muon’s asymptotic geometry",
+      "dateNote": "arXiv v1 · 2026-10-14 08:42 America/New_York",
+      "evidence": "Theorem and proof outline read",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "For separable matrix-linear classification with logistic loss, fixed finite NS iterations, a positive stabilizer and a sufficiently small step, Theorem 1 gives Frobenius max-margin bias. We use the momentum-free case.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "L(W)=\\frac1n\\sum_i\\log(1+e^{-\\langle y_iX_i,W\\rangle}),\\qquad \\widehat W_F=\\arg\\min_W\\|W\\|_F\\quad\\text{s.t.}\\quad\\langle y_iX_i,W\\rangle\\ge1",
+          "label": "Setting and limiting direction"
+        },
+        {
+          "type": "text",
+          "text": "Let \\(P_K\\) apply the K-fold odd polynomial \\(p\\) to singular values, with \\(a_K=(p^{\\circ K})^{\\prime}(0)>0\\). The assumption \\(p^{\\circ K}(s)>0\\) for \\(0<s\\le1\\) includes the standard cubic and quintic maps. Near zero, the key is local linearization:[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "P_K\\!\\left(\\frac{G}{\\|G\\|_F+\\varepsilon}\\right)=\\frac{a_K}{\\varepsilon}G+O(\\|G\\|_F^2),\\qquad \\varepsilon>0",
+          "label": "Original Lemma 1 · fixed K and stabilizer"
+        },
+        {
+          "type": "text",
+          "text": "Descent makes squared gradients summable, hence the GD perturbation is summable. Bounded trajectory distance transfers the normalized limit. A sufficient step is \\(\\eta\\le4\\varepsilon/(R^2u_K)\\), where \\(R=\\max_i\\|X_i\\|_F\\) and \\(u_K=\\sup_{0<s\\le1}p^{\\circ K}(s)/s\\).[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "W_{t+1}=W_t-\\frac{\\eta a_K}{\\varepsilon}\\nabla L(W_t)+r_t,\\quad\\sum_t\\|r_t\\|_F<\\infty\\quad\\Longrightarrow\\quad\\frac{W_t}{\\|W_t\\|_F}\\to\\frac{\\widehat W_F}{\\|\\widehat W_F\\|_F}",
+          "label": "Original proof chain · not finite-time equivalence"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "This asymptotic linear-model result does not equate Muon and SGD performance in nonconvex LLM training."
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-17637",
+      "paper": "Mixed Precision Scaling Laws for Quantized Pretraining",
+      "authors": "Jinuk Kim · Rajarshi Saha · Muhammed Fatih Balın · Youngsuk Park",
+      "url": "https://arxiv.org/abs/2610.17637",
+      "kind": "Main reading 02 · Scaling laws",
+      "title": "Low-precision error is not just fewer effective tokens",
+      "dateNote": "arXiv v1 · 2026-10-12 23:05 America/New_York",
+      "evidence": "Sections 3–4 read",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Write forward/backward quantization schemes as \\(\\psi_f,\\psi_b\\), and parameters/tokens as \\(N,D\\). The empirical law separates effective capacity, effective data and persistent optimization error:[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "L=\\left[A(\\rho_N(\\psi_f)N)^{-\\alpha}+B(\\rho_D(\\psi_b)D)^{-\\beta}\\right]^\\gamma+\\epsilon_f(\\psi_f)+\\epsilon_b(\\psi_b)+E",
+          "label": "Original Eq. 1 · fitted model, not an LLM convergence theorem"
+        },
+        {
+          "type": "text",
+          "text": "\\(N\\) excludes embedding parameters; \\(\\rho_N,\\rho_D\\) rescale effective size, \\(\\epsilon_f,\\epsilon_b\\) are persistent errors, and \\(E\\) is irreducible loss.[2]"
+        },
+        {
+          "type": "text",
+          "text": "Convex, differentiable-loss analysis with bounded second moments motivates nonvanishing forward-rounding and backward-gradient errors. With schemes fixed, the fitted law approaches \\(E+\\epsilon_f+\\epsilon_b\\) as model and data grow.[2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Extrapolation",
+            "Training grid",
+            "Quartet MSE → proposed MSE"
+          ],
+          "rows": [
+            [
+              "Model size · Llama",
+              "30M–200M; 25–800 tokens/parameter",
+              "1.6×10⁻⁴ → 1.4×10⁻⁵"
+            ],
+            [
+              "Data · Qwen3",
+              "280M–910M; 12.8B–35.8B tokens",
+              "2.7×10⁻⁵ → 6.1×10⁻⁶"
+            ]
+          ],
+          "caption": "Tables 3–4: BF16/quantized grids; fit smaller models/budgets, predict loss on held-out quantized runs.[2]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The roughly 11-fold improvement concerns loss-prediction MSE, not training speed. Compute-optimal precision depends on the fitted law and hardware cost model."
+        }
+      ]
+    },
+    {
+      "id": "spork-mopd",
+      "paper": "Enriching Domain-Specific Post-Training with Multi-Teacher On-Policy Distillation",
+      "authors": "Atharv Naphade · Sam Denton",
+      "url": "https://www.appliedcompute.com/research/multi-teacher-on-policy-distillation",
+      "kind": "Main reading 03 · Post-training blog",
+      "title": "Spork: share capabilities, specialize, then distill",
+      "dateNote": "2026-10-13 · official technical blog",
+      "evidence": "Method, ablations and compute appendix read",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Low-success-rate GRPO has sparse signal. Spork warms up on the full dataset, specializes partition teachers, then consolidates into a base-initialized student on student-generated trajectories.[38]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal L_{\\mathrm{MOPD}}=\\mathbb E_{i\\sim w,\\,x\\sim D_i,\\,\\tau\\sim\\pi_\\theta}\\left[\\frac1{T_\\tau}\\sum_{t=1}^{T_\\tau}D_{\\mathrm{KL}}\\!\\left(\\pi_\\theta(\\cdot\\mid x,\\tau_{<t})\\,\\Vert\\,\\pi_i(\\cdot\\mid x,\\tau_{<t})\\right)\\right]",
+          "label": "Original objective · student-to-teacher reverse KL"
+        },
+        {
+          "type": "text",
+          "text": "\\(D_i\\) denotes a partition, \\(w\\) its sampling weight, and \\(T_\\tau\\) student tokens only. Implementation uses top-k logits and excludes environment tokens. Warmup uses 40 steps with 8 prompts × 8 rollouts.[38]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Task / model",
+            "Training set; held-out eval",
+            "Versus best GRPO checkpoint"
+          ],
+          "rows": [
+            [
+              "Lichess / Qwen3.5-9B",
+              "8k; 400 tasks × 4 seeds",
+              "80% relative pass@1 gain"
+            ],
+            [
+              "DAPO-MATH / Qwen3-4B",
+              "2k; 256 tasks × 4 seeds",
+              "20% relative pass@4 gain"
+            ]
+          ],
+          "caption": "Validation selects checkpoints; gains are relative, not percentage points or equal-total-FLOP comparisons.[38]"
+        },
+        {
+          "type": "equation",
+          "tex": "F_{\\mathrm{GRPO}}=8PLB,\\qquad F_{\\mathrm{MOPD}}=10PLB,\\qquad F_{\\mathrm{total}}=F_{\\mathrm{warmup}}+\\sum_iF_{\\mathrm{specialist},i}+F_{\\mathrm{distill}}",
+          "label": "Original compute approximation · omits attention FLOPs"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "\\(P,L,B\\) are active parameters, sequence length and rollout count. The 1.25× ratio is per matched distillation step; teacher training is extra. More teachers did not monotonically improve students; a consolidation bottleneck is the authors’ hypothesis.[38]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-20256",
+      "paper": "Long-Horizon RL Needs Muon",
+      "authors": "Kai Ruan · Jinghao Lin · Tao Chen · Ziqi Zhou · Qianshan Wei · Zihe Huang",
+      "url": "https://arxiv.org/abs/2610.20256",
+      "kind": "Brief · Muon",
+      "title": "Long-horizon RL: Muon within an asynchronous recipe",
+      "dateNote": "arXiv v1 · 2026-10-14 10:25 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Combines single-rollout asynchronous learning, token-averaged loss, truncated importance sampling and auxiliary penalties for repository repair across two model families. The abstract supports a full-recipe training-success gain, not attribution entirely to Muon.[8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19844",
+      "paper": "Memory-Efficient Subspace Optimization with Residual Correction: From Momentum SGD to Muon",
+      "authors": "Sifan Yang · Hongyi Tao · Dingzhi Yu · Haomin Bai · Wei Jiang · Silin Gao · Pi Bu · Lijun Zhang",
+      "url": "https://arxiv.org/abs/2610.19844",
+      "kind": "Brief · Muon",
+      "title": "Subspace Muon with orthogonal residual correction",
+      "dateNote": "arXiv v1 · 2026-10-14 05:12 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "PMRC applies matrix sign to projected momentum and restores the orthogonal gradient residual. The authors analyze fixed and refreshed bases; we omit the abstract’s rate because its assumptions and convergence metric have not been checked.[9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19064",
+      "paper": "How Inner Optimizers Shape Replica Scaling",
+      "authors": "Eugene Belilovsky · Stefan Horoi · Edouard Oyallon · Benjamin Thérien",
+      "url": "https://arxiv.org/abs/2610.19064",
+      "kind": "Brief · Muon / Scaling laws",
+      "title": "Replica scaling depends on the inner optimizer",
+      "dateNote": "arXiv v1 · 2026-10-13 15:00 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Under fixed-budget DiLoco replica scaling, pseudo-gradient covariance and batch-dependent noise distinguish inner optimizers including Muon and AdamW. Whitening-based methods perform strongly over 8–96 replicas; this does not eliminate communication costs.[10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-18294",
+      "paper": "Which Optimizer Leaks Most? Optimizer Implicit Bias as a Training-Data Privacy Controller",
+      "authors": "Sagi Habani · Yehonathan Refael · Ofir Lindenbaum",
+      "url": "https://arxiv.org/abs/2610.18294",
+      "kind": "Brief · Muon",
+      "title": "Optimizer implicit bias as a privacy variable",
+      "dateNote": "arXiv v1 · 2026-10-13 08:42 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Relates KKT conditions to training-data reconstruction for SGD, Muon and Adam on MNIST/CIFAR-10. Muon’s reconstructability depends on architecture and regime; Adam’s resistance to the evaluated attacks is not a general privacy guarantee.[11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-20411",
+      "paper": "Compound p-values for competition-based testing",
+      "authors": "Junu Lee · Rina Foygel Barber · Richard J. Samworth · Zhimei Ren",
+      "url": "https://arxiv.org/abs/2610.20411",
+      "kind": "Brief · Wharton",
+      "title": "Compound p-values: aggregate rather than individual validity",
+      "dateNote": "arXiv v1 · 2026-10-14 12:09 America/New_York",
+      "evidence": "Abstract and introduction read",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Zhimei Ren and coauthors connect heterogeneous/shared-control competitions to compound p-values. Bonferroni controls FWER; BH may incur FDR inflation, which the paper bounds. These are different guarantees.[12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-17830",
+      "paper": "Spatial Kernel Restricted Canonical Correlation Analysis: Population Targets, Identifiability, and Stability",
+      "authors": "Zhen Miao · Yilong Qu · Nancy R. Zhang",
+      "url": "https://arxiv.org/abs/2610.17830",
+      "kind": "Brief · Wharton",
+      "title": "What do spatial association axes estimate?",
+      "dateNote": "arXiv v1 · 2026-10-13 02:49 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Nancy R. Zhang and coauthors study skrCCA targets, identifiability and stability. Conditional on locations under a mean-zero model, targets are kernel-weighted cross-covariances; the fixed-direction null variance assumes independence between blocks.[13]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19215",
+      "paper": "Narrowing the Collaboration Gap, Probably",
+      "authors": "Mirah Shi · Marcel Hussing · Ira Globus-Harris · Natalie Collina · Aaron Roth · Surbhi Goel",
+      "url": "https://arxiv.org/abs/2610.19215",
+      "kind": "Brief · Wharton",
+      "title": "Agent communication: probabilities or actions?",
+      "dateNote": "arXiv v1 · 2026-10-13 17:27 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Aaron Roth and coauthors compare action messages with calibrated beliefs in synthetic and maze tasks. Biased probabilities can erase the advantage; post-hoc conversational calibration addresses that mismatch.[14]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19591",
+      "paper": "L3M: A Verifiable Harness and Runtime for Self-Extending and Self-Improving Agents",
+      "authors": "Carson Eisenach · Robert Joseph George · Vincent Quenneville-Belair · Kate Gwimm · Dean Foster",
+      "url": "https://arxiv.org/abs/2610.19591",
+      "kind": "Brief · Wharton",
+      "title": "L3M: a verifiable agent runtime",
+      "dateNote": "First arXiv v1: 2026-10-14 01:03 America/New_York; manuscript dated 2026-09-30",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Dean Foster and coauthors use Lean 4 for a runtime and checked invariants, with recoverable state in Git. The abstract reports Terminal-Bench results with safe tools; formal coverage is unaudited here. The manuscript is dated September 30; this is a first-arXiv listing.[15]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19628",
+      "paper": "Self-Conditioning Enables Deep Sequential Reasoning in Flow Matching",
+      "authors": "Zeyang Zhang · Linxiang Gao · Meiqi Gu · Xingyan Chen · Minrui Luo · Kaifeng Lyu · Tianxing He",
+      "url": "https://arxiv.org/abs/2610.19628",
+      "kind": "Brief · Author subscription",
+      "title": "Flow matching: more steps need not mean deeper reasoning",
+      "dateNote": "arXiv v1 · 2026-10-14 01:56 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Kaifeng Lyu and coauthors show a constant-round parallel simulation of vanilla flow sampling under output regularity assumptions; self-conditioning changes this limitation. The claim is model-dependent, not a blanket impossibility result for diffusion reasoning.[16]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19362",
+      "paper": "Tail Competition Explains Scaling in Best-of-N Sampling for Verifiable Problems",
+      "authors": "Taro Yano · Yoichi Ishibashi · Masafumi Oyamada",
+      "url": "https://arxiv.org/abs/2610.19362",
+      "kind": "Brief · Scaling laws",
+      "title": "Best-of-N is a competition between reward tails",
+      "dateNote": "arXiv v1 · 2026-10-13 21:09 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Sampling a correct answer is insufficient if incorrect answers dominate the reward tail. Extreme-value analysis separates correct-dominant, incorrect-dominant and critical regimes; the abstract does not provide a universal safe sampling threshold.[17]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19281",
+      "paper": "Exact Scaling Laws for a Random-Features Bigram Model",
+      "authors": "Julian Enoch · Elvis Dohmatob",
+      "url": "https://arxiv.org/abs/2610.19281",
+      "kind": "Brief · Scaling laws",
+      "title": "Capacity-driven scaling in a bigram model",
+      "dateNote": "arXiv v1 · 2026-10-13 19:02 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Fixed random embeddings and Zipf token statistics yield tractable width/vocabulary-dependent regret laws, checked on WikiText2/OpenWebText. This isolates capacity, not full Transformer optimization.[18]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19279",
+      "paper": "Dimension-Free Scaling Laws for Size Generalization: An Exponential Separation",
+      "authors": "Behrooz Tahmasebi · Melanie Weber",
+      "url": "https://arxiv.org/abs/2610.19279",
+      "kind": "Brief · Scaling laws",
+      "title": "Size generalization can have an exponential sample cost",
+      "dateNote": "arXiv v1 · 2026-10-13 18:55 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "For sets/graphs, polynomial source decay can yield polynomial in-domain error but only logarithmic size-generalization error. An exponential source condition restores polynomial rates; functional assumptions behind the claimed matching minimax bounds remain unchecked.[19]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-20247",
+      "paper": "Scaling Multilingual Mixture-of-Experts: How Language Coverage Changes Capacity and Compute Allocation",
+      "authors": "Joel Dag · Nikit Srivastava · Hamada M. Zahera · Axel-Cyrille Ngonga Ngomo",
+      "url": "https://arxiv.org/abs/2610.20247",
+      "kind": "Brief · Scaling laws",
+      "title": "Multilingual MoE: language coverage is a budget axis",
+      "dateNote": "arXiv v1 · 2026-10-14 10:20 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Fits active parameters, tokens per language, expert count and language coverage, accounting for repetition, on 26,300 per-language losses from 64 configurations. Reported mitigation from more experts is conditional on the matched settings.[20]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-20533",
+      "paper": "Generative Representation Learning for Scalable Latent Tokenization",
+      "authors": "Alan Baade · Kyle Sargent · Vincent Sitzmann · Eric Ryan Chan · Justin Johnson · Li Fei-Fei · Gordon Wetzstein",
+      "url": "https://arxiv.org/abs/2610.20533",
+      "kind": "Brief · Scaling laws",
+      "title": "Count tokenizer and generative-model FLOPs together",
+      "dateNote": "arXiv v1 · 2026-10-14 13:29 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Generative representation learning uses information differences between conditional predictions to build tokenizers and studies joint compute efficiency. ImageNet/GPIC FLOP extrapolations should not be read as measured end-to-end speedups.[21]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19443",
+      "paper": "More Than Seeing: Vision as Scalable Anchors in Native Multimodal Pre-Training",
+      "authors": "Haoyuan Wu · Aoqi Wu · Jiani Hu · Bei Yu",
+      "url": "https://arxiv.org/abs/2610.19443",
+      "kind": "Brief · Scaling laws",
+      "title": "Visual gains need not lower text-only loss",
+      "dateNote": "arXiv v1 · 2026-10-13 22:33 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Content-free padding replaces image embeddings as a control. Visual content improves image-text prediction with approximately power-law compute gains, without materially changing the text-only loss floor or optimal model/data balance; gains vary by task.[22]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19013",
+      "paper": "Data Density Scaling Laws for Image Self-Distillation",
+      "authors": "Alvard Barseghyan · Ani Vanyan · Hakob Tamazyan · Hrant Khachatrian",
+      "url": "https://arxiv.org/abs/2610.19013",
+      "kind": "Brief · Scaling laws",
+      "title": "Repeating a smaller dataset can sometimes win",
+      "dateNote": "arXiv v1 · 2026-10-13 14:08 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Image self-distillation depends jointly on unique examples and repetition. A modified Chinchilla-style fit helps in some regimes but inconsistently across datasets; deduplication is not uniformly beneficial.[23]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19015",
+      "paper": "Scaling Cheap Synthetic Pretraining Improves Indoor Radio-Map Prediction",
+      "authors": "Khoren Petrosyan · Artashes Mkrtchyan · Rafayel Mkrtchyan · Hrant Khachatrian · Theofanis P. Raptis",
+      "url": "https://arxiv.org/abs/2610.19015",
+      "kind": "Brief · Scaling laws",
+      "title": "Extrapolating cheap synthetic data for radio-map prediction",
+      "dateNote": "arXiv v1 · 2026-10-13 14:09 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Pretrains ResNet-101/Swin-T on up to 128M synthetic examples. Laws fitted at 2M–16M predict downstream normalized RMSE at 32M–128M; simulator mismatch remains a transfer limitation.[24]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19721",
+      "paper": "Articulation Upper Bounds for Language Models",
+      "authors": "Alexander Spangher · Daniel E. Ho · Diyi Yang · Noah Goodman · Sanmi Koyejo",
+      "url": "https://arxiv.org/abs/2610.19721",
+      "kind": "Brief · Scaling laws",
+      "title": "Scaling curves for concept transmissibility",
+      "dateNote": "arXiv v1 · 2026-10-14 03:47 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Optimized messages and prompt recovery probe 1.2k concepts as model capacity grows. Apparent plateaus are observational and sender/receiver-relative, not absolute limits of human language.[25]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-18583",
+      "paper": "Compare to Correct: Pairwise-Guided Logit Adjustment for LLM Test-Time Scaling",
+      "authors": "Cong Hua · Qianqian Xu · Zitai Wang · Zhiyong Yang · Shilong Bao · Linchao Zhang · Qingming Huang",
+      "url": "https://arxiv.org/abs/2610.18583",
+      "kind": "Brief · Scaling laws",
+      "title": "PGLA: correct voting logits with pairwise comparisons",
+      "dateNote": "arXiv v1 · 2026-10-13 11:46 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Combines pairwise evidence and vote support in a KL-regularized objective, evaluated on seven models and ten reasoning benchmarks. Full equal-inference-budget comparisons have not been checked.[26]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-18547",
+      "paper": "Input-Conditioned Search for Efficient Test-Time Scaling of Recursive Reasoners",
+      "authors": "Haochen Shi · Tianwen Fu · Qianggang Ding · Yinhan Lu · Yizhan Li · Huan Zhang · Yajie Zhao · Xingdi Yuan · Hengyang Lu · Bang Liu",
+      "url": "https://arxiv.org/abs/2610.18547",
+      "kind": "Brief · Scaling laws",
+      "title": "Recursive reasoning: change the update map",
+      "dateNote": "arXiv v1 · 2026-10-13 11:25 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "ICS searches input conditions at the same latent state to induce alternative update maps without training. Six-task FLOP comparisons do not imply a universal 100-fold speedup.[27]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-18025",
+      "paper": "SHELDON: Reasoning through Dual Search over Hypothesis and Observation Spaces",
+      "authors": "Harshit Joshi · Priyank Shethia · Monica S. Lam",
+      "url": "https://arxiv.org/abs/2610.18025",
+      "kind": "Brief · Scaling laws",
+      "title": "SHELDON: search hypotheses and observations jointly",
+      "dateNote": "arXiv v1 · 2026-10-13 05:19 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Separates observation discovery from current hypotheses, using unexplained observations to guide search across diagnosis, abstract reasoning and optimization. The abstract does not fully specify comparator inference budgets.[28]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-18760",
+      "paper": "Beyond the Verdict: Agentic Code Judging with Verifiable Feedback",
+      "authors": "Zheye Deng · Sha Li · Changlong Yu · Xin Liu · Qin Lu · Priyanka Nigam · Yangqiu Song",
+      "url": "https://arxiv.org/abs/2610.18760",
+      "kind": "Brief · Scaling laws",
+      "title": "ARBITER: counterexamples for code selection and refinement",
+      "dateNote": "arXiv v1 · 2026-10-13 13:22 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Trains an agentic verifier to produce checkable counterexamples for code selection and revision. The IOI case uses official submission limits; this is evidence under a specific inference-budget protocol, not a universal scaling exponent.[29]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-20456",
+      "paper": "The COUNT: Counting N-grams Unlocks Scaling on Host Memory and Training-Free Adaptation",
+      "authors": "Ian Magnusson · Noah A. Smith · Pang Wei Koh",
+      "url": "https://arxiv.org/abs/2610.20456",
+      "kind": "Brief · Scaling laws",
+      "title": "COUNT: move capacity into host-memory n-gram counts",
+      "dateNote": "arXiv v1 · 2026-10-14 12:38 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Uses offline n-gram counts to combine existing unembeddings without added learned parameters. Fixed-compute 1B pretraining and table-swapping adaptation separate host-storage capacity from GPU compute.[30]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19975",
+      "paper": "LatentLoop: Scaling Looped MoE Models with Asymmetric Compute Allocation",
+      "authors": "Zefeng He · Yunkai Chai · Xiaoyang Chen · Tong Zhu · Zongliang Wu · Yun Luo · Yafu Li · Yu Cheng",
+      "url": "https://arxiv.org/abs/2610.19975",
+      "kind": "Brief · Scaling laws",
+      "title": "LatentLoop: unequal budgets across shared-block visits",
+      "dateNote": "arXiv v1 · 2026-10-14 06:57 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Compresses the first visit’s sequence, retains full resolution on the second and reallocates compute to width. Across fifteen 1.3B–7B configurations, 19.0%/7.9% fixed-NLL savings are fitted predictions against two baselines.[31]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-20104",
+      "paper": "What Do Foundation Models for Market Microstructure Learn? A Controlled Study with Synthetic Limit Order Books",
+      "authors": "Fernando Acero",
+      "url": "https://arxiv.org/abs/2610.20104",
+      "kind": "Brief · Scaling laws",
+      "title": "Negative result: more tokens do not replace regime diversity",
+      "dateNote": "arXiv v1 · 2026-10-14 08:38 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In synthetic limit-order books with known latent states and Bayes predictors, capacity/tokens saturate early and regime diversity governs transfer. The conclusion concerns the controlled simulator family.[32]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19343",
+      "paper": "Counterfactual Gate-Support Decomposition: Separating Selection from Redistribution in Training-Data Filtering",
+      "authors": "Hyojung Han · Jongmin Kim · Seung-Hun Jeon",
+      "url": "https://arxiv.org/abs/2610.19343",
+      "kind": "Brief · Scaling laws",
+      "title": "Data filtering: selection versus redistribution",
+      "dateNote": "arXiv v1 · 2026-10-13 20:36 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A four-arm budget-matched design separates within-support selection, redistribution and interaction. Finite pools may make the design unconstructible; unresolved components in retrieval experiments are not evidence of zero effect.[33]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-17588",
+      "paper": "Taming Softmax at the Limits of Muon: A Unified Approach through Hilbert Geometry",
+      "authors": "Aditya Somasundaram · Charles Guille-Escuret · Alexander Moreno · Zhengzhong Liu · Eric Xing",
+      "url": "https://arxiv.org/abs/2610.17588",
+      "kind": "Brief · Muon",
+      "title": "Softmax geometry: Hilbert distance connects RowNorm and Muon",
+      "dateNote": "arXiv v1 · 2026-10-12 22:07 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Linear-output RMS movement need not track softmax distribution change. Hilbert-distance constraints connect a RowNorm approximation for LM heads with Compositional Muon for query–key updates; this is a unifying account, not a new large-scale benchmark.[34]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-17590",
+      "paper": "Revisiting the 16x Pretraining Compute Gap between Diffusion and Autoregressive Language Models",
+      "authors": "Guanghan Wang · Bing He · Zhan Shi · Benoit Dumoulin · Hanqing Lu · Volodymyr Kuleshov",
+      "url": "https://arxiv.org/abs/2610.17590",
+      "kind": "Brief · Scaling laws",
+      "title": "The diffusion-LM “16× gap” depends on the protocol",
+      "dateNote": "arXiv v1 · 2026-10-12 22:08 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A roughly 1,700-model study changes likelihood evaluation, block diffusion and encoder–decoder architecture. Reported compute gaps depend on block size; training savings at smaller blocks cannot simply be combined with full-parallel decoding benefits.[35]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-17544",
+      "paper": "Many Steps into One: Reasoning Contraction and the Limits of Safe Memory Reuse for LLM Agents",
+      "authors": "Jianghong Zhou · Hao Rong · Chen Lin · Daoan Zhang",
+      "url": "https://arxiv.org/abs/2610.17544",
+      "kind": "Brief · Scaling laws",
+      "title": "Memory reuse is constrained by verification budgets",
+      "dateNote": "arXiv v1 · 2026-10-12 21:16 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Treats cached reasoning as contraction and studies stale memories after facts change. Under outcome-only verification per memory, certification load and Zipf demand determine safe-reuse scaling; this is not an unconditional bound for arbitrary agent memory.[36]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-17221",
+      "paper": "Compute-optimal data scaling for neural surrogates via multi-fidelity training",
+      "authors": "Paul Setinek · Fabian Paischer · Nils Thuerey · Johannes Brandstetter · Felix Koehler",
+      "url": "https://arxiv.org/abs/2610.17221",
+      "kind": "Brief · Scaling laws",
+      "title": "PDE surrogates: budget the compute used to generate data",
+      "dateNote": "arXiv v1 · 2026-10-12 14:00 America/New_York",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Jointly chooses sample count and simulation fidelity across six PDE problems, four surrogate architectures and over 7,000 runs. The reported up-to-6.3-fold saving concerns data-generation compute, not the full training pipeline.[37]"
+        }
+      ]
+    },
+    {
+      "id": "gem-compute",
+      "paper": "Meta’s Generative Ads Model (GEM): Scaling the Central Model and Compute Engine for Frontier Ads AI",
+      "authors": "Huayu Li · Darren Liu · Xiaoyi (Leo) Liu · Ellie Wen · Jackie (Jiaqi) Xu · Chunzhi Yang · Reva Srinivasan",
+      "url": "https://engineering.fb.com/2026/10/13/ml-applications/generative-ads-model-gem-scaling-frontier-ads-ai/",
+      "kind": "Brief · Technical blog",
+      "title": "GEM: jointly scaling context, capacity and systems efficiency",
+      "dateNote": "2026-10-13 · official technical blog; underlying older papers are not new submissions",
+      "evidence": "Full blog read",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Reports longer-history scaling, sparse attention and structured representations transferred downstream. End-to-end MFU is 20–25%; CompSkip’s 43% refers to FLOPs reduction. Architecture, precision, kernels and parallelism change together, preventing single-algorithm attribution.[39]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-ddpm",
+    "paperId": "arxiv:2006.11239",
+    "shortTitle": "DDPM",
+    "year": 2020,
+    "topics": [
+      "Diffusion models"
+    ],
+    "paper": "Denoising Diffusion Probabilistic Models",
+    "authors": "Jonathan Ho · Ajay Jain · Pieter Abbeel",
+    "url": "https://arxiv.org/pdf/2006.11239",
+    "kind": "Daily classic · 002",
+    "title": "DDPM: one conditional mean, different training weights",
+    "dateNote": "Historical classic: first posted 2020-06-19; read v2 dated 2020-12-16; NeurIPS 2020 [5]",
+    "evidence": "Sections 2–4, Table 2 and Appendix B read",
+    "recognition": {
+      "label": "Highly cited · 5,441 citations in the checked OpenAlex record (2026-10-15)",
+      "url": "https://api.openalex.org/works/W3036167779"
+    },
+    "question": "With network size and training FLOPs fixed, can jointly choosing the time-sampling distribution and MSE weights reduce finite-step sampling error, rather than only training noise MSE?",
+    "blocks": [
+      {
+        "type": "background",
+        "title": "Background · earlier work",
+        "text": "Sohl-Dickstein et al. (2015) learned a reverse process after forward corruption; Song–Ermon (2019) learned scores at multiple noise levels. DDPM (2020) connects Gaussian reversal to noise regression.[6,7,3]"
+      },
+      {
+        "type": "text",
+        "text": "For \\(x_0\\sim q_0\\), fix \\(\\beta_t\\in(0,1)\\), \\(\\alpha_t=1-\\beta_t\\) and \\(\\bar\\alpha_t=\\prod_{s=1}^t\\alpha_s\\). Gaussian composition gives direct training samples:[3]"
+      },
+      {
+        "type": "equation",
+        "tex": "x_t=\\sqrt{\\bar\\alpha_t}x_0+\\sqrt{1-\\bar\\alpha_t}\\epsilon,\\qquad\\epsilon\\sim\\mathcal N(0,I)",
+        "label": "Forward marginal · original Eq. 4"
+      },
+      {
+        "type": "text",
+        "text": "Fix reverse variance \\(\\sigma_t^2I\\). Noise prediction parameterizes the reverse mean; sampling starts from a standard Gaussian and follows these reverse transitions.[3]"
+      },
+      {
+        "type": "equation",
+        "tex": "p_\\theta(x_{t-1}\\mid x_t)=\\mathcal N(\\mu_\\theta(x_t,t),\\sigma_t^2I),\\qquad\\mu_\\theta=\\frac1{\\sqrt{\\alpha_t}}\\left(x_t-\\frac{\\beta_t}{\\sqrt{1-\\bar\\alpha_t}}\\epsilon_\\theta(x_t,t)\\right)",
+        "label": "Reverse mean · original Eq. 11"
+      },
+      {
+        "type": "text",
+        "text": "For \\(t\\ge2\\), the Gaussian posterior KL becomes weighted noise MSE, with parameter-independent \\(C_t\\). The discrete image decoder at \\(t=1\\) is handled separately.[3]"
+      },
+      {
+        "type": "equation",
+        "tex": "L_{t-1}=\\mathbb E\\!\\left[\\frac{\\beta_t^2}{2\\sigma_t^2\\alpha_t(1-\\bar\\alpha_t)}\\|\\epsilon-\\epsilon_\\theta(x_t,t)\\|^2\\right]+C_t",
+        "label": "Variational term · original Eq. 12"
+      },
+      {
+        "type": "text",
+        "text": "The simplified objective drops these time weights, reallocating fitting effort across noise levels rather than preserving the original ELBO.[3]"
+      },
+      {
+        "type": "equation",
+        "tex": "L_{\\mathrm{simple}}=\\mathbb E_{t\\sim\\mathrm{Unif}\\{1,\\ldots,T\\},x_0,\\epsilon}\\|\\epsilon-\\epsilon_\\theta(x_t,t)\\|^2",
+        "label": "Simplified training objective · original Eq. 14"
+      },
+      {
+        "type": "text",
+        "text": "Our supplementary derivation: squared loss has the conditional mean as its unlimited-capacity optimum. Differentiating the Gaussian-corruption density yields the score identity. This explains the denoising direction, without guaranteeing exact realization by a finite network."
+      },
+      {
+        "type": "equation",
+        "tex": "\\epsilon^*(x,t)=\\mathbb E[\\epsilon\\mid x_t=x],\\qquad\\nabla_x\\log q_t(x)=-\\frac{\\epsilon^*(x,t)}{\\sqrt{1-\\bar\\alpha_t}}",
+        "label": "Our derivation · conditional mean and score"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Same noise parameterization",
+          "IS ↑",
+          "FID ↓"
+        ],
+        "rows": [
+          [
+            "Variational objective L",
+            "7.67±0.13",
+            "13.51"
+          ],
+          [
+            "Simplified objective",
+            "9.46±0.11",
+            "3.17"
+          ]
+        ],
+        "caption": "Original Table 2: unconditional CIFAR-10, fixed isotropic reverse variance, T=1000; IS/FID use 50,000 samples. This compares sample quality, not training speed.[3]"
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "With unlimited capacity, positive weights can share the same per-time conditional mean; a finite shared network can distribute errors differently. The latter is our interpretation, not a general theorem from the paper."
+      }
+    ]
+  },
+  "sources": [
+    {
+      "title": "From Spectral to Frobenius — v1; Sections 2–3, Theorem 1 and proof outline",
+      "url": "https://arxiv.org/pdf/2610.20112"
+    },
+    {
+      "title": "Mixed Precision Scaling Laws — v1; Sections 3–4, Tables 3–5",
+      "url": "https://arxiv.org/pdf/2610.17637"
+    },
+    {
+      "title": "DDPM — v2; Sections 2–4, Table 2 and Appendix B",
+      "url": "https://arxiv.org/pdf/2006.11239"
+    },
+    {
+      "title": "OpenAlex W3036167779 — citation record checked 2026-10-15",
+      "url": "https://api.openalex.org/works/W3036167779"
+    },
+    {
+      "title": "DDPM — NeurIPS 2020 proceedings",
+      "url": "https://proceedings.neurips.cc/paper/2020/hash/4c5bcfec8584af0d967f1ab10179ca4b-Abstract.html"
+    },
+    {
+      "title": "Background: Sohl-Dickstein et al. (2015)",
+      "url": "https://proceedings.mlr.press/v37/sohl-dickstein15.html"
+    },
+    {
+      "title": "Background: Song & Ermon (2019)",
+      "url": "https://arxiv.org/abs/1907.05600"
+    },
+    {
+      "title": "Long-Horizon RL Needs Muon — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.20256"
+    },
+    {
+      "title": "Memory-Efficient Subspace Optimization with Residual Correction: From Momentum SGD to Muon — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.19844"
+    },
+    {
+      "title": "How Inner Optimizers Shape Replica Scaling — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.19064"
+    },
+    {
+      "title": "Which Optimizer Leaks Most? Optimizer Implicit Bias as a Training-Data Privacy Controller — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.18294"
+    },
+    {
+      "title": "Compound p-values for competition-based testing — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.20411"
+    },
+    {
+      "title": "Spatial Kernel Restricted Canonical Correlation Analysis: Population Targets, Identifiability, and Stability — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.17830"
+    },
+    {
+      "title": "Narrowing the Collaboration Gap, Probably — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.19215"
+    },
+    {
+      "title": "L3M: A Verifiable Harness and Runtime for Self-Extending and Self-Improving Agents — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.19591"
+    },
+    {
+      "title": "Self-Conditioning Enables Deep Sequential Reasoning in Flow Matching — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.19628"
+    },
+    {
+      "title": "Tail Competition Explains Scaling in Best-of-N Sampling for Verifiable Problems — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.19362"
+    },
+    {
+      "title": "Exact Scaling Laws for a Random-Features Bigram Model — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.19281"
+    },
+    {
+      "title": "Dimension-Free Scaling Laws for Size Generalization: An Exponential Separation — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.19279"
+    },
+    {
+      "title": "Scaling Multilingual Mixture-of-Experts: How Language Coverage Changes Capacity and Compute Allocation — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.20247"
+    },
+    {
+      "title": "Generative Representation Learning for Scalable Latent Tokenization — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.20533"
+    },
+    {
+      "title": "More Than Seeing: Vision as Scalable Anchors in Native Multimodal Pre-Training — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.19443"
+    },
+    {
+      "title": "Data Density Scaling Laws for Image Self-Distillation — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.19013"
+    },
+    {
+      "title": "Scaling Cheap Synthetic Pretraining Improves Indoor Radio-Map Prediction — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.19015"
+    },
+    {
+      "title": "Articulation Upper Bounds for Language Models — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.19721"
+    },
+    {
+      "title": "Compare to Correct: Pairwise-Guided Logit Adjustment for LLM Test-Time Scaling — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.18583"
+    },
+    {
+      "title": "Input-Conditioned Search for Efficient Test-Time Scaling of Recursive Reasoners — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.18547"
+    },
+    {
+      "title": "SHELDON: Reasoning through Dual Search over Hypothesis and Observation Spaces — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.18025"
+    },
+    {
+      "title": "Beyond the Verdict: Agentic Code Judging with Verifiable Feedback — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.18760"
+    },
+    {
+      "title": "The COUNT: Counting N-grams Unlocks Scaling on Host Memory and Training-Free Adaptation — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.20456"
+    },
+    {
+      "title": "LatentLoop: Scaling Looped MoE Models with Asymmetric Compute Allocation — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.19975"
+    },
+    {
+      "title": "What Do Foundation Models for Market Microstructure Learn? A Controlled Study with Synthetic Limit Order Books — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.20104"
+    },
+    {
+      "title": "Counterfactual Gate-Support Decomposition: Separating Selection from Redistribution in Training-Data Filtering — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.19343"
+    },
+    {
+      "title": "Taming Softmax at the Limits of Muon: A Unified Approach through Hilbert Geometry — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.17588"
+    },
+    {
+      "title": "Revisiting the 16x Pretraining Compute Gap between Diffusion and Autoregressive Language Models — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.17590"
+    },
+    {
+      "title": "Many Steps into One: Reasoning Contraction and the Limits of Safe Memory Reuse for LLM Agents — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.17544"
+    },
+    {
+      "title": "Compute-optimal data scaling for neural surrogates via multi-fidelity training — arXiv metadata and abstract",
+      "url": "https://arxiv.org/abs/2610.17221"
+    },
+    {
+      "title": "Spork — official technical blog, 2026-10-13; methodology, ablations and compute appendix",
+      "url": "https://www.appliedcompute.com/research/multi-teacher-on-policy-distillation"
+    },
+    {
+      "title": "GEM technical blog — published 2026-10-13; full article read",
+      "url": "https://engineering.fb.com/2026/10/13/ml-applications/generative-ads-model-gem-scaling-frontier-ads-ai/"
+    }
+  ]
+}

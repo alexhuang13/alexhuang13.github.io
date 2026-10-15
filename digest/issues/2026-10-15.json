@@ -1,0 +1,932 @@
+{
+  "date": "2026-10-15",
+  "number": "002",
+  "publishedAt": "2026-10-15T12:24:05Z",
+  "readingMinutes": 25,
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training",
+    "Statistics",
+    "DDPM"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "title": "稳定项、精度与噪声",
+  "subtitle": "Muon 的渐近几何 · 混合精度 scaling · Spork · 精读 DDPM",
+  "window": "2026-10-12 08:07 — 2026-10-15 08:07 · America/New_York",
+  "edition": "每日研究笔记",
+  "intro": "三篇主读：稳定项改变 Muon 的渐近几何，量化留下持续误差，Spork 通过分工与蒸馏改进后训练。其余研究保留为简讯；每日经典用 DDPM 推导噪声预测与训练权重的关系。",
+  "articles": [
+    {
+      "id": "paper-2610-20112",
+      "paper": "From Spectral to Frobenius: When Muon Loses Its Spectral Implicit Bias",
+      "authors": "Yongtao Wu · Mahdi Mansouri · Zhenyu Zhu",
+      "url": "https://arxiv.org/abs/2610.20112",
+      "kind": "主读 01 · Muon",
+      "title": "一个稳定项，改变 Muon 的渐近几何",
+      "dateNote": "arXiv v1 · 2026-10-14 08:42 America/New_York",
+      "evidence": "已读定理与证明提纲",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "设矩阵线性分类数据可分，损失为 logistic。固定有限 NS 次数、正稳定项，且步长足够小：原文定理 1 得到 Frobenius 最大间隔方向。下面取无动量情形。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "L(W)=\\frac1n\\sum_i\\log(1+e^{-\\langle y_iX_i,W\\rangle}),\\qquad \\widehat W_F=\\arg\\min_W\\|W\\|_F\\quad\\text{s.t.}\\quad\\langle y_iX_i,W\\rangle\\ge1",
+          "label": "设定与极限方向"
+        },
+        {
+          "type": "text",
+          "text": "记 \\(P_K\\) 为奇多项式 \\(p\\) 的 K 次谱复合，\\(a_K=(p^{\\circ K})^{\\prime}(0)>0\\)。原文还要求 \\(p^{\\circ K}(s)>0\\)（\\(0<s\\le1\\)）；常用三次、五次多项式满足。小梯度时的关键不是 polar，而是局部线性化：[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "P_K\\!\\left(\\frac{G}{\\|G\\|_F+\\varepsilon}\\right)=\\frac{a_K}{\\varepsilon}G+O(\\|G\\|_F^2),\\qquad \\varepsilon>0",
+          "label": "原文 Lemma 1 · 固定 K 与稳定项"
+        },
+        {
+          "type": "text",
+          "text": "下降性使梯度平方可求和，故相对 GD 的扰动也可求和；轨迹距离有界，继承同一个归一化极限。可取步长 \\(\\eta\\le4\\varepsilon/(R^2u_K)\\)，其中 \\(R=\\max_i\\|X_i\\|_F\\)、\\(u_K=\\sup_{0<s\\le1}p^{\\circ K}(s)/s\\)。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "W_{t+1}=W_t-\\frac{\\eta a_K}{\\varepsilon}\\nabla L(W_t)+r_t,\\quad\\sum_t\\|r_t\\|_F<\\infty\\quad\\Longrightarrow\\quad\\frac{W_t}{\\|W_t\\|_F}\\to\\frac{\\widehat W_F}{\\|\\widehat W_F\\|_F}",
+          "label": "原文证明链 · 不是有限时间等价"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "这是可分线性模型的渐近结论；不推出非凸 LLM 中 Muon 与 SGD 的训练表现相同。"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-17637",
+      "paper": "Mixed Precision Scaling Laws for Quantized Pretraining",
+      "authors": "Jinuk Kim · Rajarshi Saha · Muhammed Fatih Balın · Youngsuk Park",
+      "url": "https://arxiv.org/abs/2610.17637",
+      "kind": "主读 02 · Scaling laws",
+      "title": "低精度误差，不能全换算成更少的 token",
+      "dateNote": "arXiv v1 · 2026-10-12 23:05 America/New_York",
+      "evidence": "已读正文 §3–4",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "将前向、反向量化方案记为 \\(\\psi_f,\\psi_b\\)，参数量与 token 数为 \\(N,D\\)。原文经验律把有效容量、有效数据与持续优化误差分开：[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "L=\\left[A(\\rho_N(\\psi_f)N)^{-\\alpha}+B(\\rho_D(\\psi_b)D)^{-\\beta}\\right]^\\gamma+\\epsilon_f(\\psi_f)+\\epsilon_b(\\psi_b)+E",
+          "label": "原文 Eq. 1 · 拟合模型，并非 LLM 收敛定理"
+        },
+        {
+          "type": "text",
+          "text": "\\(N\\) 不含 embedding 参数；\\(\\rho_N,\\rho_D\\) 为有效规模因子，\\(\\epsilon_f,\\epsilon_b\\) 为持续误差，\\(E\\) 为不可约项。[2]"
+        },
+        {
+          "type": "text",
+          "text": "凸、可微损失与二阶矩有界的分析提供动机：前向舍入偏差和反向梯度偏差可以留下不消失项。固定方案并扩大模型、数据时，该拟合式趋向 \\(E+\\epsilon_f+\\epsilon_b\\)。[2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "外推任务",
+            "训练网格",
+            "Quartet MSE → 新模型 MSE"
+          ],
+          "rows": [
+            [
+              "模型大小 · Llama",
+              "30M–200M；25–800 token/parameter",
+              "1.6×10⁻⁴ → 1.4×10⁻⁵"
+            ],
+            [
+              "数据量 · Qwen3",
+              "280M–910M；12.8B–35.8B tokens",
+              "2.7×10⁻⁵ → 6.1×10⁻⁶"
+            ]
+          ],
+          "caption": "Tables 3–4：BF16 与量化网格；在较小模型/预算拟合，对留出量化运行预测 loss。[2]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "约 11 倍指 loss 预测 MSE 的降低，不是训练提速。提高最优精度的结论依赖拟合律与硬件成本模型。"
+        }
+      ]
+    },
+    {
+      "id": "spork-mopd",
+      "paper": "Enriching Domain-Specific Post-Training with Multi-Teacher On-Policy Distillation",
+      "authors": "Atharv Naphade · Sam Denton",
+      "url": "https://www.appliedcompute.com/research/multi-teacher-on-policy-distillation",
+      "kind": "主读 03 · Post-training 博客",
+      "title": "Spork：先共享能力，再分工，再蒸馏",
+      "dateNote": "2026-10-13 · 官方技术博客",
+      "evidence": "已读方法、消融与算力附录",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "低成功率任务的 GRPO 信号稀疏；Spork 先在全数据做短 warmup，再训练分区专家，最后从原始基座初始化学生、合并专家。这里合并发生在学生自己生成的轨迹上。[38]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal L_{\\mathrm{MOPD}}=\\mathbb E_{i\\sim w,\\,x\\sim D_i,\\,\\tau\\sim\\pi_\\theta}\\left[\\frac1{T_\\tau}\\sum_{t=1}^{T_\\tau}D_{\\mathrm{KL}}\\!\\left(\\pi_\\theta(\\cdot\\mid x,\\tau_{<t})\\,\\Vert\\,\\pi_i(\\cdot\\mid x,\\tau_{<t})\\right)\\right]",
+          "label": "原文目标 · 学生到教师的 reverse KL"
+        },
+        {
+          "type": "text",
+          "text": "\\(D_i\\) 为分区，\\(w\\) 为抽样权重，\\(T_\\tau\\) 只数学生 token。实现用 top-k logits 近似，排除环境 token；首轮 warmup 为 40 步、每批 8 prompts × 8 rollouts。[38]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "任务 / 模型",
+            "训练集；独立 eval",
+            "相对最强 GRPO checkpoint"
+          ],
+          "rows": [
+            [
+              "Lichess / Qwen3.5-9B",
+              "8k；400 tasks × 4 seeds",
+              "pass@1 相对提高 80%"
+            ],
+            [
+              "DAPO-MATH / Qwen3-4B",
+              "2k；256 tasks × 4 seeds",
+              "pass@4 相对提高 20%"
+            ]
+          ],
+          "caption": "以 validation 选 checkpoint；相对提升不是百分点，也不是等总 FLOPs 比较。[38]"
+        },
+        {
+          "type": "equation",
+          "tex": "F_{\\mathrm{GRPO}}=8PLB,\\qquad F_{\\mathrm{MOPD}}=10PLB,\\qquad F_{\\mathrm{total}}=F_{\\mathrm{warmup}}+\\sum_iF_{\\mathrm{specialist},i}+F_{\\mathrm{distill}}",
+          "label": "原文算力近似 · 忽略 attention FLOPs"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "\\(P,L,B\\) 分别为 active parameters、样本长度、rollouts 数；1.25 倍只是同批蒸馏步成本，专家训练另计。增加专家数未持续改善学生，作者把合并瓶颈作为假说。[38]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-20256",
+      "paper": "Long-Horizon RL Needs Muon",
+      "authors": "Kai Ruan · Jinghao Lin · Tao Chen · Ziqi Zhou · Qianshan Wei · Zihe Huang",
+      "url": "https://arxiv.org/abs/2610.20256",
+      "kind": "简讯 · Muon",
+      "title": "长程 RL：Muon 与异步配方",
+      "dateNote": "arXiv v1 · 2026-10-14 10:25 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "单 rollout、token 平均损失、截断重要性采样与长度/工具错误惩罚组成联合配方，在两个模型家族的仓库修复任务中比较优化器。摘要只支持整套配方训练成功率更高，不能把收益全归给 Muon。[8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19844",
+      "paper": "Memory-Efficient Subspace Optimization with Residual Correction: From Momentum SGD to Muon",
+      "authors": "Sifan Yang · Hongyi Tao · Dingzhi Yu · Haomin Bai · Wei Jiang · Silin Gao · Pi Bu · Lijun Zhang",
+      "url": "https://arxiv.org/abs/2610.19844",
+      "kind": "简讯 · Muon",
+      "title": "子空间 Muon 加回正交残差",
+      "dateNote": "arXiv v1 · 2026-10-14 05:12 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "PMRC 在投影动量上作 matrix sign，并把子空间外梯度加回更新；作者报告固定与刷新基底的收敛分析。摘要的速率未在此展开，避免省略其假设及指标。[9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19064",
+      "paper": "How Inner Optimizers Shape Replica Scaling",
+      "authors": "Eugene Belilovsky · Stefan Horoi · Edouard Oyallon · Benjamin Thérien",
+      "url": "https://arxiv.org/abs/2610.19064",
+      "kind": "简讯 · Muon / Scaling laws",
+      "title": "副本扩展取决于内层优化器",
+      "dateNote": "arXiv v1 · 2026-10-13 15:00 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "固定总预算增加 DiLoco 副本时，比较 Muon、AdamW 等内层更新；伪梯度协方差与 batch size 对噪声的影响是两个关键因素。白化类预条件器在 8–96 副本实验中表现较强；不等于通信成本消失。[10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-18294",
+      "paper": "Which Optimizer Leaks Most? Optimizer Implicit Bias as a Training-Data Privacy Controller",
+      "authors": "Sagi Habani · Yehonathan Refael · Ofir Lindenbaum",
+      "url": "https://arxiv.org/abs/2610.18294",
+      "kind": "简讯 · Muon",
+      "title": "优化器隐式偏置也是隐私变量",
+      "dateNote": "arXiv v1 · 2026-10-13 08:42 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "连接 KKT 条件与训练样本重建，比较 SGD、Muon、Adam 在 MNIST/CIFAR-10 上的可重建性。Muon 的优势或泄漏程度依赖架构与训练区域；Adam 对所测攻击更稳健不构成普遍隐私保证。[11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-20411",
+      "paper": "Compound p-values for competition-based testing",
+      "authors": "Junu Lee · Rina Foygel Barber · Richard J. Samworth · Zhimei Ren",
+      "url": "https://arxiv.org/abs/2610.20411",
+      "kind": "简讯 · Wharton",
+      "title": "Compound p-values：整体有效，不必逐个有效",
+      "dateNote": "arXiv v1 · 2026-10-14 12:09 America/New_York",
+      "evidence": "已读摘要与引言",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Zhimei Ren 等将大小不等、可共享负对照的竞争式检验连接到 compound p-values。Bonferroni 控制 FWER；BH 的 FDR 可能膨胀，论文给出界，不能把两者都写成无条件精确控制。[12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-17830",
+      "paper": "Spatial Kernel Restricted Canonical Correlation Analysis: Population Targets, Identifiability, and Stability",
+      "authors": "Zhen Miao · Yilong Qu · Nancy R. Zhang",
+      "url": "https://arxiv.org/abs/2610.17830",
+      "kind": "简讯 · Wharton",
+      "title": "空间关联轴到底估计什么？",
+      "dateNote": "arXiv v1 · 2026-10-13 02:49 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Nancy R. Zhang 等研究 skrCCA 的总体目标、可识别性与稳定性。在给定位置、零均值模型下，目标是核加权交叉协方差；固定方向的零假设方差需块间独立，不是任意空间依赖下的通用保证。[13]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19215",
+      "paper": "Narrowing the Collaboration Gap, Probably",
+      "authors": "Mirah Shi · Marcel Hussing · Ira Globus-Harris · Natalie Collina · Aaron Roth · Surbhi Goel",
+      "url": "https://arxiv.org/abs/2610.19215",
+      "kind": "简讯 · Wharton",
+      "title": "多智能体沟通：传概率还是传动作？",
+      "dateNote": "arXiv v1 · 2026-10-13 17:27 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Aaron Roth 等比较传递动作与校准信念。合成模型与迷宫实验支持概率交流的优势，但有偏概率会消除收益；post-hoc conversational calibration 修正的是这一失配。[14]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19591",
+      "paper": "L3M: A Verifiable Harness and Runtime for Self-Extending and Self-Improving Agents",
+      "authors": "Carson Eisenach · Robert Joseph George · Vincent Quenneville-Belair · Kate Gwimm · Dean Foster",
+      "url": "https://arxiv.org/abs/2610.19591",
+      "kind": "简讯 · Wharton",
+      "title": "L3M：可验证的 agent runtime",
+      "dateNote": "首次 arXiv v1：2026-10-14 01:03 America/New_York；稿面日期 2026-09-30",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Dean Foster 等以 Lean 4 表述 runtime 与可核验不变量，并将可恢复状态放入 Git。摘要报告安全工具下的 Terminal-Bench 表现；尚未审计其形式化安全覆盖范围。稿面日期 9 月 30 日，本条仅记首次 arXiv 入库。[15]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19628",
+      "paper": "Self-Conditioning Enables Deep Sequential Reasoning in Flow Matching",
+      "authors": "Zeyang Zhang · Linxiang Gao · Meiqi Gu · Xingyan Chen · Minrui Luo · Kaifeng Lyu · Tianxing He",
+      "url": "https://arxiv.org/abs/2610.19628",
+      "kind": "简讯 · 作者订阅",
+      "title": "Flow matching：更多采样步不自动等于更深推理",
+      "dateNote": "arXiv v1 · 2026-10-14 01:56 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Kaifeng Lyu 等在输出满足正则条件的复杂度模型中，指出 vanilla flow sampler 可被常数轮并行评估模拟；self-conditioning 改变这一限制。结论需保留模型与正则假设，不推广为所有 diffusion 推理无效。[16]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19362",
+      "paper": "Tail Competition Explains Scaling in Best-of-N Sampling for Verifiable Problems",
+      "authors": "Taro Yano · Yoichi Ishibashi · Masafumi Oyamada",
+      "url": "https://arxiv.org/abs/2610.19362",
+      "kind": "简讯 · Scaling laws",
+      "title": "Best-of-N 的胜负由奖励尾部决定",
+      "dateNote": "arXiv v1 · 2026-10-13 21:09 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "正确答案被采到还不够：选择器的高奖励尾部可能由错误答案主导。极值分析区分正确、错误与临界三种区域；高方差错误奖励可能随采样量增长而取胜，摘要未给普适安全阈值。[17]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19281",
+      "paper": "Exact Scaling Laws for a Random-Features Bigram Model",
+      "authors": "Julian Enoch · Elvis Dohmatob",
+      "url": "https://arxiv.org/abs/2610.19281",
+      "kind": "简讯 · Scaling laws",
+      "title": "Bigram 中，容量本身也能产生 scaling law",
+      "dateNote": "arXiv v1 · 2026-10-13 19:02 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "固定随机 embedding 与 Zipf token 统计形成可解析瓶颈，推导宽度、词表与 Zipf 指数决定的 regret。WikiText2/OpenWebText 用于检验；这是容量模型，不能冒充完整 Transformer 训练理论。[18]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19279",
+      "paper": "Dimension-Free Scaling Laws for Size Generalization: An Exponential Separation",
+      "authors": "Behrooz Tahmasebi · Melanie Weber",
+      "url": "https://arxiv.org/abs/2610.19279",
+      "kind": "简讯 · Scaling laws",
+      "title": "跨输入规模泛化，可能付出指数样本代价",
+      "dateNote": "arXiv v1 · 2026-10-13 18:55 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "集合/图的跨规模学习中，多项式 source 衰减可对应域内多项式误差、跨规模仅对数误差；更强指数条件恢复多项式率。摘要称有匹配 minimax 下界；未逐项核对函数空间假设。[19]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-20247",
+      "paper": "Scaling Multilingual Mixture-of-Experts: How Language Coverage Changes Capacity and Compute Allocation",
+      "authors": "Joel Dag · Nikit Srivastava · Hamada M. Zahera · Axel-Cyrille Ngonga Ngomo",
+      "url": "https://arxiv.org/abs/2610.20247",
+      "kind": "简讯 · Scaling laws",
+      "title": "多语言 MoE：语言覆盖也是预算轴",
+      "dateNote": "arXiv v1 · 2026-10-14 10:20 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "联合建模 active parameters、每语言 tokens、专家数与语言覆盖，并计入重复。64 个配置、26,300 个逐语言 loss 观测支持拟合；更多专家减轻语言扩张损失的比例只适用于论文的匹配条件。[20]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-20533",
+      "paper": "Generative Representation Learning for Scalable Latent Tokenization",
+      "authors": "Alan Baade · Kyle Sargent · Vincent Sitzmann · Eric Ryan Chan · Justin Johnson · Li Fei-Fei · Gordon Wetzstein",
+      "url": "https://arxiv.org/abs/2610.20533",
+      "kind": "简讯 · Scaling laws",
+      "title": "把 tokenizer 与生成模型的 FLOPs 一起算",
+      "dateNote": "arXiv v1 · 2026-10-14 13:29 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "生成式 representation learning 通过条件预测的信息差学习 tokenizer，并研究联合算力效率。摘要报告对 ImageNet/GPIC 的 tokenizer 外推收益；外推 FLOPs 比不能直接视为端到端实测加速。[21]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19443",
+      "paper": "More Than Seeing: Vision as Scalable Anchors in Native Multimodal Pre-Training",
+      "authors": "Haoyuan Wu · Aoqi Wu · Jiani Hu · Bei Yu",
+      "url": "https://arxiv.org/abs/2610.19443",
+      "kind": "简讯 · Scaling laws",
+      "title": "视觉数据收益不必表现为更低 text-only loss",
+      "dateNote": "arXiv v1 · 2026-10-13 22:33 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用无内容 padding 替换图像 embedding 作控制；视觉内容提高 image-text 预测，收益随算力近似幂律增长，却未明显改变 text-only 最低 loss 与模型/数据最优平衡。收益依任务而异。[22]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19013",
+      "paper": "Data Density Scaling Laws for Image Self-Distillation",
+      "authors": "Alvard Barseghyan · Ani Vanyan · Hakob Tamazyan · Hrant Khachatrian",
+      "url": "https://arxiv.org/abs/2610.19013",
+      "kind": "简讯 · Scaling laws",
+      "title": "重复小数据集，有时胜过更多唯一样本",
+      "dateNote": "arXiv v1 · 2026-10-13 14:08 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在图像 self-distillation 中，唯一数据量与重复次数共同决定下游性能；修改 Chinchilla 型拟合式，但改进并不跨所有数据集成立。不能把“去重越多越好”当作无条件规律。[23]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19015",
+      "paper": "Scaling Cheap Synthetic Pretraining Improves Indoor Radio-Map Prediction",
+      "authors": "Khoren Petrosyan · Artashes Mkrtchyan · Rafayel Mkrtchyan · Hrant Khachatrian · Theofanis P. Raptis",
+      "url": "https://arxiv.org/abs/2610.19015",
+      "kind": "简讯 · Scaling laws",
+      "title": "廉价模拟数据的外推：无线电地图预测",
+      "dateNote": "arXiv v1 · 2026-10-13 14:09 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "128M 合成样本用于预训练 ResNet-101/Swin-T。2M–16M 拟合的幂律预测 32M–128M 下游归一化 RMSE；这是机器学习数据 scaling，模拟器失配仍是迁移边界。[24]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19721",
+      "paper": "Articulation Upper Bounds for Language Models",
+      "authors": "Alexander Spangher · Daniel E. Ho · Diyi Yang · Noah Goodman · Sanmi Koyejo",
+      "url": "https://arxiv.org/abs/2610.19721",
+      "kind": "简讯 · Scaling laws",
+      "title": "概念可传达性也有 scaling 曲线",
+      "dateNote": "arXiv v1 · 2026-10-14 03:47 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "通过优化消息与恢复发送者 prompt，研究模型能力增长时 1.2k 个概念的可传达性。部分概念的外推显示平台；这是相对发送/接收模型的观察性证据，不是人类语言的绝对上界。[25]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-18583",
+      "paper": "Compare to Correct: Pairwise-Guided Logit Adjustment for LLM Test-Time Scaling",
+      "authors": "Cong Hua · Qianqian Xu · Zitai Wang · Zhiyong Yang · Shilong Bao · Linchao Zhang · Qingming Huang",
+      "url": "https://arxiv.org/abs/2610.18583",
+      "kind": "简讯 · Scaling laws",
+      "title": "PGLA：用两两比较修正投票 logits",
+      "dateNote": "arXiv v1 · 2026-10-13 11:46 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "把答案间比较证据与票数放进 KL 正则目标，在 7 个模型、10 个推理基准上评估。摘要支持候选排序方法，尚未核对等推理预算下的完整比较。[26]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-18547",
+      "paper": "Input-Conditioned Search for Efficient Test-Time Scaling of Recursive Reasoners",
+      "authors": "Haochen Shi · Tianwen Fu · Qianggang Ding · Yinhan Lu · Yizhan Li · Huan Zhang · Yajie Zhao · Xingdi Yuan · Hengyang Lu · Bang Liu",
+      "url": "https://arxiv.org/abs/2610.18547",
+      "kind": "简讯 · Scaling laws",
+      "title": "递归推理：改变更新映射，而非只加深/加宽",
+      "dateNote": "arXiv v1 · 2026-10-13 11:25 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "ICS 在相同 latent state 上搜索输入条件，诱导不同更新映射以逃离错误吸引子，不额外训练。摘要报告六个任务的 FLOPs 优势；不能将最大局部优势推广为统一 100 倍提速。[27]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-18025",
+      "paper": "SHELDON: Reasoning through Dual Search over Hypothesis and Observation Spaces",
+      "authors": "Harshit Joshi · Priyank Shethia · Monica S. Lam",
+      "url": "https://arxiv.org/abs/2610.18025",
+      "kind": "简讯 · Scaling laws",
+      "title": "SHELDON：假设空间与观测空间共同搜索",
+      "dateNote": "arXiv v1 · 2026-10-13 05:19 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "将新观测的发现与当前假设解绑，用无法解释的观测引导进一步搜索；在诊断、抽象推理与优化中比较。摘要未完整交代各对照推理预算，暂不横向排名。[28]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-18760",
+      "paper": "Beyond the Verdict: Agentic Code Judging with Verifiable Feedback",
+      "authors": "Zheye Deng · Sha Li · Changlong Yu · Xin Liu · Qin Lu · Priyanka Nigam · Yangqiu Song",
+      "url": "https://arxiv.org/abs/2610.18760",
+      "kind": "简讯 · Scaling laws",
+      "title": "ARBITER：把代码选择与修订连接到反例",
+      "dateNote": "arXiv v1 · 2026-10-13 13:22 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "训练 agentic verifier 在 sandbox 中寻找可检验反例，为候选选择与迭代修订提供反馈。IOI 案例受官方提交次数限制；这是特定预算协议下的推理流程证据，不是普适 scaling exponent。[29]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-20456",
+      "paper": "The COUNT: Counting N-grams Unlocks Scaling on Host Memory and Training-Free Adaptation",
+      "authors": "Ian Magnusson · Noah A. Smith · Pang Wei Koh",
+      "url": "https://arxiv.org/abs/2610.20456",
+      "kind": "简讯 · Scaling laws",
+      "title": "COUNT：把容量移到主机 n-gram 计数",
+      "dateNote": "arXiv v1 · 2026-10-14 12:38 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "以离线 n-gram 计数组合模型已有 unembedding，不增加可学习参数。在固定算力的 1B 预训练中比较 loss，并允许换计数表作免训练域适配；需区分主机存储成本与 GPU 算力。[30]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19975",
+      "paper": "LatentLoop: Scaling Looped MoE Models with Asymmetric Compute Allocation",
+      "authors": "Zefeng He · Yunkai Chai · Xiaoyang Chen · Tong Zhu · Zongliang Wu · Yun Luo · Yafu Li · Yu Cheng",
+      "url": "https://arxiv.org/abs/2610.19975",
+      "kind": "简讯 · Scaling laws",
+      "title": "LatentLoop：两次共享层访问不必平分预算",
+      "dateNote": "arXiv v1 · 2026-10-14 06:57 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "先压缩序列、再全分辨率访问共享 MoE，把节省算力分配到宽度。15 个 1.3B–7B 配置用于拟合；固定 NLL 的 19.0%/7.9% 节省是相对两个基线的预测值。[31]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-20104",
+      "paper": "What Do Foundation Models for Market Microstructure Learn? A Controlled Study with Synthetic Limit Order Books",
+      "authors": "Fernando Acero",
+      "url": "https://arxiv.org/abs/2610.20104",
+      "kind": "简讯 · Scaling laws",
+      "title": "负结果：更多 tokens 不替代训练市场的多样性",
+      "dateNote": "arXiv v1 · 2026-10-14 08:38 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "已知潜变量与 Bayes 预测器的合成限价订单簿中，容量与 token 数较早饱和，跨市场泛化主要取决于训练 regime 多样性。结论针对受控模拟族，不是所有金融 foundation model。[32]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19343",
+      "paper": "Counterfactual Gate-Support Decomposition: Separating Selection from Redistribution in Training-Data Filtering",
+      "authors": "Hyojung Han · Jongmin Kim · Seung-Hun Jeon",
+      "url": "https://arxiv.org/abs/2610.19343",
+      "kind": "简讯 · Scaling laws",
+      "title": "数据过滤：区分挑好样本与改变数据混合",
+      "dateNote": "arXiv v1 · 2026-10-13 20:36 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "四臂等预算设计把 gate 效果分成同支持集内筛选、支持集间重分配及交互；有限样本池可能根本无法构造所需对照。检索实验支持部分筛选效应，未解决的分量不能当作零。[33]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-17588",
+      "paper": "Taming Softmax at the Limits of Muon: A Unified Approach through Hilbert Geometry",
+      "authors": "Aditya Somasundaram · Charles Guille-Escuret · Alexander Moreno · Zhengzhong Liu · Eric Xing",
+      "url": "https://arxiv.org/abs/2610.17588",
+      "kind": "简讯 · Muon",
+      "title": "Softmax 的几何：Hilbert 距离连接 RowNorm 与 Muon",
+      "dateNote": "arXiv v1 · 2026-10-12 22:07 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "线性输出的 RMS 变化不总能代表 softmax 分布变化。作者用 Hilbert 距离约束概率重分配，分别连接 LM head 的 RowNorm 近似与 query–key 的 Compositional Muon；这是一种统一解释，不是新大规模 benchmark。[34]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-17590",
+      "paper": "Revisiting the 16x Pretraining Compute Gap between Diffusion and Autoregressive Language Models",
+      "authors": "Guanghan Wang · Bing He · Zhan Shi · Benoit Dumoulin · Hanqing Lu · Volodymyr Kuleshov",
+      "url": "https://arxiv.org/abs/2610.17590",
+      "kind": "简讯 · Scaling laws",
+      "title": "Diffusion LM 的“16 倍训练差距”依赖比较协议",
+      "dateNote": "arXiv v1 · 2026-10-12 22:08 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "约 1,700 个模型的研究同时调整似然评估、block diffusion 与 encoder–decoder 架构。摘要中倍率随 block size 变化：不能把更小 block 的训练收益与原先全并行解码收益直接相乘。[35]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-17544",
+      "paper": "Many Steps into One: Reasoning Contraction and the Limits of Safe Memory Reuse for LLM Agents",
+      "authors": "Jianghong Zhou · Hao Rong · Chen Lin · Daoan Zhang",
+      "url": "https://arxiv.org/abs/2610.17544",
+      "kind": "简讯 · Scaling laws",
+      "title": "记忆复用也受验证预算约束",
+      "dateNote": "arXiv v1 · 2026-10-12 21:16 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "将复用缓存视为 reasoning contraction；事实变更后，成功/失败计数可能滞后。作者在仅依靠每条记忆自身验证结果的条件下，以 certification load 与 Zipf 需求刻画安全跳过推理的 scaling；不是任意 agent memory 的无条件界。[36]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-17221",
+      "paper": "Compute-optimal data scaling for neural surrogates via multi-fidelity training",
+      "authors": "Paul Setinek · Fabian Paischer · Nils Thuerey · Johannes Brandstetter · Felix Koehler",
+      "url": "https://arxiv.org/abs/2610.17221",
+      "kind": "简讯 · Scaling laws",
+      "title": "PDE 代理模型：数据生成算力也是预算",
+      "dateNote": "arXiv v1 · 2026-10-12 14:00 America/New_York",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "联合选择样本量与模拟精度；六类 PDE、四种代理架构、7,000 余次训练支持多保真配置。摘要的最高 6.3 倍节省仅指数据生成算力，不是完整训练流水线。[37]"
+        }
+      ]
+    },
+    {
+      "id": "gem-compute",
+      "paper": "Meta’s Generative Ads Model (GEM): Scaling the Central Model and Compute Engine for Frontier Ads AI",
+      "authors": "Huayu Li · Darren Liu · Xiaoyi (Leo) Liu · Ellie Wen · Jackie (Jiaqi) Xu · Chunzhi Yang · Reva Srinivasan",
+      "url": "https://engineering.fb.com/2026/10/13/ml-applications/generative-ads-model-gem-scaling-frontier-ads-ai/",
+      "kind": "简讯 · 技术博客",
+      "title": "GEM：序列长度、模型容量与系统效率共同扩展",
+      "dateNote": "2026-10-13 · 官方技术博客；不把底层旧论文算作新稿",
+      "evidence": "已读博客全文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "报道更长行为序列的 scaling、稀疏 attention 与向下游模型传递结构化表示。文中端到端 MFU 为 20–25%；CompSkip 的 43% 是 FLOPs 降低。模型、精度、kernel 与并行共同改变，不能归因于单一算法。[39]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-ddpm",
+    "paperId": "arxiv:2006.11239",
+    "shortTitle": "DDPM",
+    "year": 2020,
+    "topics": [
+      "Diffusion models"
+    ],
+    "paper": "Denoising Diffusion Probabilistic Models",
+    "authors": "Jonathan Ho · Ajay Jain · Pieter Abbeel",
+    "url": "https://arxiv.org/pdf/2006.11239",
+    "kind": "每日精读 · 经典 002",
+    "title": "DDPM：同一个条件均值，不同的训练权重",
+    "dateNote": "历史经典：首发 2020-06-19；所读 v2：2020-12-16；NeurIPS 2020 [5]",
+    "evidence": "已读正文 §2–4、Table 2 与附录 B",
+    "recognition": {
+      "label": "高引用 · OpenAlex 所查条目 5,441 次（查询 2026-10-15）",
+      "url": "https://api.openalex.org/works/W3036167779"
+    },
+    "question": "固定网络与训练 FLOPs，若允许同时选择时间采样分布和 MSE 权重，能否减少有限步采样误差，而不是只改善训练噪声 MSE？",
+    "blocks": [
+      {
+        "type": "background",
+        "title": "背景 · 旧文",
+        "text": "Sohl-Dickstein 等（2015）用前向扩散破坏结构，再学习逆过程；Song–Ermon（2019）在多个噪声层级学习 score。DDPM（2020）把高斯逆过程与噪声回归连接起来。[6,7,3]"
+      },
+      {
+        "type": "text",
+        "text": "给定数据 \\(x_0\\sim q_0\\)，固定 \\(\\beta_t\\in(0,1)\\)、\\(\\alpha_t=1-\\beta_t\\)、\\(\\bar\\alpha_t=\\prod_{s=1}^t\\alpha_s\\)。高斯复合让任意时刻的训练样本可直接构造：[3]"
+      },
+      {
+        "type": "equation",
+        "tex": "x_t=\\sqrt{\\bar\\alpha_t}x_0+\\sqrt{1-\\bar\\alpha_t}\\epsilon,\\qquad\\epsilon\\sim\\mathcal N(0,I)",
+        "label": "前向边缘分布 · 原文 Eq. 4"
+      },
+      {
+        "type": "text",
+        "text": "固定逆过程方差 \\(\\sigma_t^2I\\)。预测噪声即可参数化逆均值；采样从标准高斯开始，逐步加入该均值与方差对应的噪声。[3]"
+      },
+      {
+        "type": "equation",
+        "tex": "p_\\theta(x_{t-1}\\mid x_t)=\\mathcal N(\\mu_\\theta(x_t,t),\\sigma_t^2I),\\qquad\\mu_\\theta=\\frac1{\\sqrt{\\alpha_t}}\\left(x_t-\\frac{\\beta_t}{\\sqrt{1-\\bar\\alpha_t}}\\epsilon_\\theta(x_t,t)\\right)",
+        "label": "逆均值 · 原文 Eq. 11"
+      },
+      {
+        "type": "text",
+        "text": "对 \\(t\\ge2\\)，高斯后验 KL 化为加权噪声 MSE，\\(C_t\\) 不依赖参数。\\(t=1\\) 的离散图像解码项另行处理。[3]"
+      },
+      {
+        "type": "equation",
+        "tex": "L_{t-1}=\\mathbb E\\!\\left[\\frac{\\beta_t^2}{2\\sigma_t^2\\alpha_t(1-\\bar\\alpha_t)}\\|\\epsilon-\\epsilon_\\theta(x_t,t)\\|^2\\right]+C_t",
+        "label": "变分项 · 原文 Eq. 12"
+      },
+      {
+        "type": "text",
+        "text": "DDPM 的简化目标去掉上述时间权重；这重新分配各噪声层级的拟合预算，不等于原始 ELBO。[3]"
+      },
+      {
+        "type": "equation",
+        "tex": "L_{\\mathrm{simple}}=\\mathbb E_{t\\sim\\mathrm{Unif}\\{1,\\ldots,T\\},x_0,\\epsilon}\\|\\epsilon-\\epsilon_\\theta(x_t,t)\\|^2",
+        "label": "简化训练目标 · 原文 Eq. 14"
+      },
+      {
+        "type": "text",
+        "text": "我们的补充推导：平方损失的无限容量最优解是条件均值；对高斯扰动密度求导得到 score 恒等式。这解释为何“预测噪声”提供逆向去噪方向，但不保证有限网络精确实现它。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\epsilon^*(x,t)=\\mathbb E[\\epsilon\\mid x_t=x],\\qquad\\nabla_x\\log q_t(x)=-\\frac{\\epsilon^*(x,t)}{\\sqrt{1-\\bar\\alpha_t}}",
+        "label": "我们的推导 · 条件均值与 score"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "同一噪声参数化",
+          "IS ↑",
+          "FID ↓"
+        ],
+        "rows": [
+          [
+            "变分目标 L",
+            "7.67±0.13",
+            "13.51"
+          ],
+          [
+            "简化目标",
+            "9.46±0.11",
+            "3.17"
+          ]
+        ],
+        "caption": "原文 Table 2：无条件 CIFAR-10，固定各向同性逆方差；T=1000，以 50,000 样本计算 IS/FID。这里比较采样质量，不比较训练速度。[3]"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "无限容量下，不同正权重可共享逐时刻条件均值；有限共享网络下，权重会改变误差分配。后一句是我们的理解，不是原文一般化定理。"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "title": "From Spectral to Frobenius — v1; 第 2–3 节、定理 1 与证明提纲",
+      "url": "https://arxiv.org/pdf/2610.20112"
+    },
+    {
+      "title": "Mixed Precision Scaling Laws — v1; 第 3–4 节、表 3–5",
+      "url": "https://arxiv.org/pdf/2610.17637"
+    },
+    {
+      "title": "DDPM — v2; 第 2–4 节、表 2 与附录 B",
+      "url": "https://arxiv.org/pdf/2006.11239"
+    },
+    {
+      "title": "OpenAlex W3036167779 — 引用记录；查询日期 2026-10-15",
+      "url": "https://api.openalex.org/works/W3036167779"
+    },
+    {
+      "title": "DDPM — NeurIPS 2020 官方论文集",
+      "url": "https://proceedings.neurips.cc/paper/2020/hash/4c5bcfec8584af0d967f1ab10179ca4b-Abstract.html"
+    },
+    {
+      "title": "背景旧文： Sohl-Dickstein et al. (2015)",
+      "url": "https://proceedings.mlr.press/v37/sohl-dickstein15.html"
+    },
+    {
+      "title": "背景旧文： Song & Ermon (2019)",
+      "url": "https://arxiv.org/abs/1907.05600"
+    },
+    {
+      "title": "Long-Horizon RL Needs Muon — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.20256"
+    },
+    {
+      "title": "Memory-Efficient Subspace Optimization with Residual Correction: From Momentum SGD to Muon — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.19844"
+    },
+    {
+      "title": "How Inner Optimizers Shape Replica Scaling — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.19064"
+    },
+    {
+      "title": "Which Optimizer Leaks Most? Optimizer Implicit Bias as a Training-Data Privacy Controller — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.18294"
+    },
+    {
+      "title": "Compound p-values for competition-based testing — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.20411"
+    },
+    {
+      "title": "Spatial Kernel Restricted Canonical Correlation Analysis: Population Targets, Identifiability, and Stability — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.17830"
+    },
+    {
+      "title": "Narrowing the Collaboration Gap, Probably — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.19215"
+    },
+    {
+      "title": "L3M: A Verifiable Harness and Runtime for Self-Extending and Self-Improving Agents — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.19591"
+    },
+    {
+      "title": "Self-Conditioning Enables Deep Sequential Reasoning in Flow Matching — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.19628"
+    },
+    {
+      "title": "Tail Competition Explains Scaling in Best-of-N Sampling for Verifiable Problems — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.19362"
+    },
+    {
+      "title": "Exact Scaling Laws for a Random-Features Bigram Model — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.19281"
+    },
+    {
+      "title": "Dimension-Free Scaling Laws for Size Generalization: An Exponential Separation — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.19279"
+    },
+    {
+      "title": "Scaling Multilingual Mixture-of-Experts: How Language Coverage Changes Capacity and Compute Allocation — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.20247"
+    },
+    {
+      "title": "Generative Representation Learning for Scalable Latent Tokenization — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.20533"
+    },
+    {
+      "title": "More Than Seeing: Vision as Scalable Anchors in Native Multimodal Pre-Training — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.19443"
+    },
+    {
+      "title": "Data Density Scaling Laws for Image Self-Distillation — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.19013"
+    },
+    {
+      "title": "Scaling Cheap Synthetic Pretraining Improves Indoor Radio-Map Prediction — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.19015"
+    },
+    {
+      "title": "Articulation Upper Bounds for Language Models — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.19721"
+    },
+    {
+      "title": "Compare to Correct: Pairwise-Guided Logit Adjustment for LLM Test-Time Scaling — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.18583"
+    },
+    {
+      "title": "Input-Conditioned Search for Efficient Test-Time Scaling of Recursive Reasoners — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.18547"
+    },
+    {
+      "title": "SHELDON: Reasoning through Dual Search over Hypothesis and Observation Spaces — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.18025"
+    },
+    {
+      "title": "Beyond the Verdict: Agentic Code Judging with Verifiable Feedback — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.18760"
+    },
+    {
+      "title": "The COUNT: Counting N-grams Unlocks Scaling on Host Memory and Training-Free Adaptation — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.20456"
+    },
+    {
+      "title": "LatentLoop: Scaling Looped MoE Models with Asymmetric Compute Allocation — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.19975"
+    },
+    {
+      "title": "What Do Foundation Models for Market Microstructure Learn? A Controlled Study with Synthetic Limit Order Books — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.20104"
+    },
+    {
+      "title": "Counterfactual Gate-Support Decomposition: Separating Selection from Redistribution in Training-Data Filtering — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.19343"
+    },
+    {
+      "title": "Taming Softmax at the Limits of Muon: A Unified Approach through Hilbert Geometry — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.17588"
+    },
+    {
+      "title": "Revisiting the 16x Pretraining Compute Gap between Diffusion and Autoregressive Language Models — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.17590"
+    },
+    {
+      "title": "Many Steps into One: Reasoning Contraction and the Limits of Safe Memory Reuse for LLM Agents — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.17544"
+    },
+    {
+      "title": "Compute-optimal data scaling for neural surrogates via multi-fidelity training — arXiv 元数据与摘要",
+      "url": "https://arxiv.org/abs/2610.17221"
+    },
+    {
+      "title": "Spork — 2026-10-13 官方技术博客；方法、消融与算力附录",
+      "url": "https://www.appliedcompute.com/research/multi-teacher-on-policy-distillation"
+    },
+    {
+      "title": "GEM technical blog — 发布于 2026-10-13；已读全文",
+      "url": "https://engineering.fb.com/2026/10/13/ml-applications/generative-ads-model-gem-scaling-frontier-ads-ai/"
+    }
+  ]
+}

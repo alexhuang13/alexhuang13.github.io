@@ -4,8 +4,60 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-10-14",
+  "latest": "2026-10-15",
   "issues": [
+    {
+      "date": "2026-10-15",
+      "title": "稳定项、精度与噪声",
+      "url": "/digest/2026-10-15.html",
+      "translations": {
+        "en": {
+          "title": "Stabilizers, precision, and noise",
+          "url": "/digest/en/2026-10-15.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/pdf/2610.20112",
+        "https://arxiv.org/pdf/2610.17637",
+        "https://arxiv.org/pdf/2006.11239",
+        "https://api.openalex.org/works/W3036167779",
+        "https://proceedings.neurips.cc/paper/2020/hash/4c5bcfec8584af0d967f1ab10179ca4b-Abstract.html",
+        "https://proceedings.mlr.press/v37/sohl-dickstein15.html",
+        "https://arxiv.org/abs/1907.05600",
+        "https://arxiv.org/abs/2610.20256",
+        "https://arxiv.org/abs/2610.19844",
+        "https://arxiv.org/abs/2610.19064",
+        "https://arxiv.org/abs/2610.18294",
+        "https://arxiv.org/abs/2610.20411",
+        "https://arxiv.org/abs/2610.17830",
+        "https://arxiv.org/abs/2610.19215",
+        "https://arxiv.org/abs/2610.19591",
+        "https://arxiv.org/abs/2610.19628",
+        "https://arxiv.org/abs/2610.19362",
+        "https://arxiv.org/abs/2610.19281",
+        "https://arxiv.org/abs/2610.19279",
+        "https://arxiv.org/abs/2610.20247",
+        "https://arxiv.org/abs/2610.20533",
+        "https://arxiv.org/abs/2610.19443",
+        "https://arxiv.org/abs/2610.19013",
+        "https://arxiv.org/abs/2610.19015",
+        "https://arxiv.org/abs/2610.19721",
+        "https://arxiv.org/abs/2610.18583",
+        "https://arxiv.org/abs/2610.18547",
+        "https://arxiv.org/abs/2610.18025",
+        "https://arxiv.org/abs/2610.18760",
+        "https://arxiv.org/abs/2610.20456",
+        "https://arxiv.org/abs/2610.19975",
+        "https://arxiv.org/abs/2610.20104",
+        "https://arxiv.org/abs/2610.19343",
+        "https://arxiv.org/abs/2610.17588",
+        "https://arxiv.org/abs/2610.17590",
+        "https://arxiv.org/abs/2610.17544",
+        "https://arxiv.org/abs/2610.17221",
+        "https://www.appliedcompute.com/research/multi-teacher-on-policy-distillation",
+        "https://engineering.fb.com/2026/10/13/ml-applications/generative-ads-model-gem-scaling-frontier-ads-ai/"
+      ]
+    },
     {
       "date": "2026-10-14",
       "title": "噪声、方向与实验预算",

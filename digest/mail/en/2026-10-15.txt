@@ -1,0 +1,186 @@
+RESEARCH DIGEST / 2026-10-15
+Stabilizers, precision, and noise
+Muon’s asymptotic geometry · Mixed-precision scaling · Spork · DDPM close reading
+
+中文: https://alexhuang13.github.io/digest/2026-10-15.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-15.html
+
+Main reading 01 · Muon
+A stabilizer changes Muon’s asymptotic geometry
+From Spectral to Frobenius: When Muon Loses Its Spectral Implicit Bias
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-20112
+
+Main reading 02 · Scaling laws
+Low-precision error is not just fewer effective tokens
+Mixed Precision Scaling Laws for Quantized Pretraining
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-17637
+
+Main reading 03 · Post-training blog
+Spork: share capabilities, specialize, then distill
+Enriching Domain-Specific Post-Training with Multi-Teacher On-Policy Distillation
+https://alexhuang13.github.io/digest/en/2026-10-15.html#spork-mopd
+
+Brief · Muon
+Long-horizon RL: Muon within an asynchronous recipe
+Long-Horizon RL Needs Muon
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-20256
+
+Brief · Muon
+Subspace Muon with orthogonal residual correction
+Memory-Efficient Subspace Optimization with Residual Correction: From Momentum SGD to Muon
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-19844
+
+Brief · Muon / Scaling laws
+Replica scaling depends on the inner optimizer
+How Inner Optimizers Shape Replica Scaling
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-19064
+
+Brief · Muon
+Optimizer implicit bias as a privacy variable
+Which Optimizer Leaks Most? Optimizer Implicit Bias as a Training-Data Privacy Controller
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-18294
+
+Brief · Wharton
+Compound p-values: aggregate rather than individual validity
+Compound p-values for competition-based testing
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-20411
+
+Brief · Wharton
+What do spatial association axes estimate?
+Spatial Kernel Restricted Canonical Correlation Analysis: Population Targets, Identifiability, and Stability
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-17830
+
+Brief · Wharton
+Agent communication: probabilities or actions?
+Narrowing the Collaboration Gap, Probably
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-19215
+
+Brief · Wharton
+L3M: a verifiable agent runtime
+L3M: A Verifiable Harness and Runtime for Self-Extending and Self-Improving Agents
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-19591
+
+Brief · Author subscription
+Flow matching: more steps need not mean deeper reasoning
+Self-Conditioning Enables Deep Sequential Reasoning in Flow Matching
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-19628
+
+Brief · Scaling laws
+Best-of-N is a competition between reward tails
+Tail Competition Explains Scaling in Best-of-N Sampling for Verifiable Problems
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-19362
+
+Brief · Scaling laws
+Capacity-driven scaling in a bigram model
+Exact Scaling Laws for a Random-Features Bigram Model
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-19281
+
+Brief · Scaling laws
+Size generalization can have an exponential sample cost
+Dimension-Free Scaling Laws for Size Generalization: An Exponential Separation
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-19279
+
+Brief · Scaling laws
+Multilingual MoE: language coverage is a budget axis
+Scaling Multilingual Mixture-of-Experts: How Language Coverage Changes Capacity and Compute Allocation
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-20247
+
+Brief · Scaling laws
+Count tokenizer and generative-model FLOPs together
+Generative Representation Learning for Scalable Latent Tokenization
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-20533
+
+Brief · Scaling laws
+Visual gains need not lower text-only loss
+More Than Seeing: Vision as Scalable Anchors in Native Multimodal Pre-Training
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-19443
+
+Brief · Scaling laws
+Repeating a smaller dataset can sometimes win
+Data Density Scaling Laws for Image Self-Distillation
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-19013
+
+Brief · Scaling laws
+Extrapolating cheap synthetic data for radio-map prediction
+Scaling Cheap Synthetic Pretraining Improves Indoor Radio-Map Prediction
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-19015
+
+Brief · Scaling laws
+Scaling curves for concept transmissibility
+Articulation Upper Bounds for Language Models
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-19721
+
+Brief · Scaling laws
+PGLA: correct voting logits with pairwise comparisons
+Compare to Correct: Pairwise-Guided Logit Adjustment for LLM Test-Time Scaling
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-18583
+
+Brief · Scaling laws
+Recursive reasoning: change the update map
+Input-Conditioned Search for Efficient Test-Time Scaling of Recursive Reasoners
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-18547
+
+Brief · Scaling laws
+SHELDON: search hypotheses and observations jointly
+SHELDON: Reasoning through Dual Search over Hypothesis and Observation Spaces
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-18025
+
+Brief · Scaling laws
+ARBITER: counterexamples for code selection and refinement
+Beyond the Verdict: Agentic Code Judging with Verifiable Feedback
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-18760
+
+Brief · Scaling laws
+COUNT: move capacity into host-memory n-gram counts
+The COUNT: Counting N-grams Unlocks Scaling on Host Memory and Training-Free Adaptation
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-20456
+
+Brief · Scaling laws
+LatentLoop: unequal budgets across shared-block visits
+LatentLoop: Scaling Looped MoE Models with Asymmetric Compute Allocation
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-19975
+
+Brief · Scaling laws
+Negative result: more tokens do not replace regime diversity
+What Do Foundation Models for Market Microstructure Learn? A Controlled Study with Synthetic Limit Order Books
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-20104
+
+Brief · Scaling laws
+Data filtering: selection versus redistribution
+Counterfactual Gate-Support Decomposition: Separating Selection from Redistribution in Training-Data Filtering
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-19343
+
+Brief · Muon
+Softmax geometry: Hilbert distance connects RowNorm and Muon
+Taming Softmax at the Limits of Muon: A Unified Approach through Hilbert Geometry
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-17588
+
+Brief · Scaling laws
+The diffusion-LM “16× gap” depends on the protocol
+Revisiting the 16x Pretraining Compute Gap between Diffusion and Autoregressive Language Models
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-17590
+
+Brief · Scaling laws
+Memory reuse is constrained by verification budgets
+Many Steps into One: Reasoning Contraction and the Limits of Safe Memory Reuse for LLM Agents
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-17544
+
+Brief · Scaling laws
+PDE surrogates: budget the compute used to generate data
+Compute-optimal data scaling for neural surrogates via multi-fidelity training
+https://alexhuang13.github.io/digest/en/2026-10-15.html#paper-2610-17221
+
+Brief · Technical blog
+GEM: jointly scaling context, capacity and systems efficiency
+Meta’s Generative Ads Model (GEM): Scaling the Central Model and Compute Engine for Frontier Ads AI
+https://alexhuang13.github.io/digest/en/2026-10-15.html#gem-compute
+
+Daily classic · 2020
+DDPM: one conditional mean, different training weights
+https://alexhuang13.github.io/digest/en/2026-10-15.html#classic-ddpm
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-10-15.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

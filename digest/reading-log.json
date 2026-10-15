@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-10-15",
+    "paperId": "arxiv:2006.11239",
+    "paper": "Denoising Diffusion Probabilistic Models",
+    "shortTitle": "DDPM",
+    "year": 2020,
+    "topics": [
+      "Diffusion models"
+    ],
+    "recognition": {
+      "label": "高引用 · OpenAlex 所查条目 5,441 次（查询 2026-10-15）",
+      "url": "https://api.openalex.org/works/W3036167779"
+    },
+    "source": "https://arxiv.org/pdf/2006.11239",
+    "url": "/digest/2026-10-15.html#classic-ddpm"
+  },
+  {
     "date": "2026-10-14",
     "paperId": "arxiv:2111.00396",
     "paper": "Efficiently Modeling Long Sequences with Structured State Spaces",

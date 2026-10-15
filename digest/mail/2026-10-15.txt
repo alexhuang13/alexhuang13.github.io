@@ -1,0 +1,186 @@
+RESEARCH DIGEST / 2026-10-15
+稳定项、精度与噪声
+Muon 的渐近几何 · 混合精度 scaling · Spork · 精读 DDPM
+
+中文: https://alexhuang13.github.io/digest/2026-10-15.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-15.html
+
+主读 01 · Muon
+一个稳定项，改变 Muon 的渐近几何
+From Spectral to Frobenius: When Muon Loses Its Spectral Implicit Bias
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-20112
+
+主读 02 · Scaling laws
+低精度误差，不能全换算成更少的 token
+Mixed Precision Scaling Laws for Quantized Pretraining
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-17637
+
+主读 03 · Post-training 博客
+Spork：先共享能力，再分工，再蒸馏
+Enriching Domain-Specific Post-Training with Multi-Teacher On-Policy Distillation
+https://alexhuang13.github.io/digest/2026-10-15.html#spork-mopd
+
+简讯 · Muon
+长程 RL：Muon 与异步配方
+Long-Horizon RL Needs Muon
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-20256
+
+简讯 · Muon
+子空间 Muon 加回正交残差
+Memory-Efficient Subspace Optimization with Residual Correction: From Momentum SGD to Muon
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-19844
+
+简讯 · Muon / Scaling laws
+副本扩展取决于内层优化器
+How Inner Optimizers Shape Replica Scaling
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-19064
+
+简讯 · Muon
+优化器隐式偏置也是隐私变量
+Which Optimizer Leaks Most? Optimizer Implicit Bias as a Training-Data Privacy Controller
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-18294
+
+简讯 · Wharton
+Compound p-values：整体有效，不必逐个有效
+Compound p-values for competition-based testing
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-20411
+
+简讯 · Wharton
+空间关联轴到底估计什么？
+Spatial Kernel Restricted Canonical Correlation Analysis: Population Targets, Identifiability, and Stability
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-17830
+
+简讯 · Wharton
+多智能体沟通：传概率还是传动作？
+Narrowing the Collaboration Gap, Probably
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-19215
+
+简讯 · Wharton
+L3M：可验证的 agent runtime
+L3M: A Verifiable Harness and Runtime for Self-Extending and Self-Improving Agents
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-19591
+
+简讯 · 作者订阅
+Flow matching：更多采样步不自动等于更深推理
+Self-Conditioning Enables Deep Sequential Reasoning in Flow Matching
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-19628
+
+简讯 · Scaling laws
+Best-of-N 的胜负由奖励尾部决定
+Tail Competition Explains Scaling in Best-of-N Sampling for Verifiable Problems
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-19362
+
+简讯 · Scaling laws
+Bigram 中，容量本身也能产生 scaling law
+Exact Scaling Laws for a Random-Features Bigram Model
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-19281
+
+简讯 · Scaling laws
+跨输入规模泛化，可能付出指数样本代价
+Dimension-Free Scaling Laws for Size Generalization: An Exponential Separation
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-19279
+
+简讯 · Scaling laws
+多语言 MoE：语言覆盖也是预算轴
+Scaling Multilingual Mixture-of-Experts: How Language Coverage Changes Capacity and Compute Allocation
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-20247
+
+简讯 · Scaling laws
+把 tokenizer 与生成模型的 FLOPs 一起算
+Generative Representation Learning for Scalable Latent Tokenization
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-20533
+
+简讯 · Scaling laws
+视觉数据收益不必表现为更低 text-only loss
+More Than Seeing: Vision as Scalable Anchors in Native Multimodal Pre-Training
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-19443
+
+简讯 · Scaling laws
+重复小数据集，有时胜过更多唯一样本
+Data Density Scaling Laws for Image Self-Distillation
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-19013
+
+简讯 · Scaling laws
+廉价模拟数据的外推：无线电地图预测
+Scaling Cheap Synthetic Pretraining Improves Indoor Radio-Map Prediction
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-19015
+
+简讯 · Scaling laws
+概念可传达性也有 scaling 曲线
+Articulation Upper Bounds for Language Models
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-19721
+
+简讯 · Scaling laws
+PGLA：用两两比较修正投票 logits
+Compare to Correct: Pairwise-Guided Logit Adjustment for LLM Test-Time Scaling
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-18583
+
+简讯 · Scaling laws
+递归推理：改变更新映射，而非只加深/加宽
+Input-Conditioned Search for Efficient Test-Time Scaling of Recursive Reasoners
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-18547
+
+简讯 · Scaling laws
+SHELDON：假设空间与观测空间共同搜索
+SHELDON: Reasoning through Dual Search over Hypothesis and Observation Spaces
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-18025
+
+简讯 · Scaling laws
+ARBITER：把代码选择与修订连接到反例
+Beyond the Verdict: Agentic Code Judging with Verifiable Feedback
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-18760
+
+简讯 · Scaling laws
+COUNT：把容量移到主机 n-gram 计数
+The COUNT: Counting N-grams Unlocks Scaling on Host Memory and Training-Free Adaptation
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-20456
+
+简讯 · Scaling laws
+LatentLoop：两次共享层访问不必平分预算
+LatentLoop: Scaling Looped MoE Models with Asymmetric Compute Allocation
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-19975
+
+简讯 · Scaling laws
+负结果：更多 tokens 不替代训练市场的多样性
+What Do Foundation Models for Market Microstructure Learn? A Controlled Study with Synthetic Limit Order Books
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-20104
+
+简讯 · Scaling laws
+数据过滤：区分挑好样本与改变数据混合
+Counterfactual Gate-Support Decomposition: Separating Selection from Redistribution in Training-Data Filtering
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-19343
+
+简讯 · Muon
+Softmax 的几何：Hilbert 距离连接 RowNorm 与 Muon
+Taming Softmax at the Limits of Muon: A Unified Approach through Hilbert Geometry
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-17588
+
+简讯 · Scaling laws
+Diffusion LM 的“16 倍训练差距”依赖比较协议
+Revisiting the 16x Pretraining Compute Gap between Diffusion and Autoregressive Language Models
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-17590
+
+简讯 · Scaling laws
+记忆复用也受验证预算约束
+Many Steps into One: Reasoning Contraction and the Limits of Safe Memory Reuse for LLM Agents
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-17544
+
+简讯 · Scaling laws
+PDE 代理模型：数据生成算力也是预算
+Compute-optimal data scaling for neural surrogates via multi-fidelity training
+https://alexhuang13.github.io/digest/2026-10-15.html#paper-2610-17221
+
+简讯 · 技术博客
+GEM：序列长度、模型容量与系统效率共同扩展
+Meta’s Generative Ads Model (GEM): Scaling the Central Model and Compute Engine for Frontier Ads AI
+https://alexhuang13.github.io/digest/2026-10-15.html#gem-compute
+
+每日精读 · 2020
+DDPM：同一个条件均值，不同的训练权重
+https://alexhuang13.github.io/digest/2026-10-15.html#classic-ddpm
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-10-15.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/
