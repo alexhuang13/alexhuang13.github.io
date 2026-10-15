@@ -1,6 +1,10 @@
 # alexhuang13.github.io
 Official personal homepage of Zixun Huang.
 
+## Homepage theme
+
+Keep the sun/moon switch at the right edge of the homepage navigation, with the navigation links scrolling independently on narrow screens. The homepage follows the system color scheme until the reader chooses a theme. It shares the existing `digest-theme` preference with the research digest, restores that choice before first paint, and updates the shared glow automatically. Preserve the dark palette, keyboard-accessible switch, and light print palette when updating the homepage.
+
 ## Shared interaction style
 
 The owner wants soft lighting throughout the personal website: a small, localized glow follows the finger or mouse, slightly brightens the nearby surface, and fades on departure. Preserve this across the homepage, project pages, applications, and both language editions of the research digest. Keep the effect subtle and behind readable content, without changing scrolling, selection, links, form controls, or existing layouts. Honor reduced-motion and forced-colors preferences; hide it when printing.

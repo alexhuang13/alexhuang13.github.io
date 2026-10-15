@@ -5,9 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Zixun Huang — Personal Homepage</title>
   <meta name="description" content="Zixun Huang — Profile, Publications, Work Experience, Education & Honors" />
+  <meta name="color-scheme" content="light dark" />
+  <script id="home-theme">
+    (() => {
+      const root = document.documentElement;
+      const system = window.matchMedia('(prefers-color-scheme: dark)');
+      let preference = null;
+      // Share the existing digest preference and apply it before first paint.
+      try {
+        const saved = localStorage.getItem('digest-theme');
+        if (saved === 'light' || saved === 'dark') preference = saved;
+      } catch {}
+      const update = () => {
+        const theme = preference || (system.matches ? 'dark' : 'light');
+        root.dataset.theme = theme;
+        const button = document.getElementById('home-theme-toggle');
+        if (button) {
+          button.setAttribute('aria-checked', String(theme === 'dark'));
+          button.title = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+        }
+      };
+      update();
+      document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('home-theme-toggle')?.addEventListener('click', () => {
+          preference = root.dataset.theme === 'dark' ? 'light' : 'dark';
+          try { localStorage.setItem('digest-theme', preference); } catch {}
+          update();
+        });
+        update();
+      }, {once: true});
+      system.addEventListener('change', () => { if (!preference) update(); });
+      window.addEventListener('storage', event => {
+        if (event.key !== 'digest-theme' && event.key !== null) return;
+        preference = event.newValue === 'light' || event.newValue === 'dark' ? event.newValue : null;
+        update();
+      });
+    })();
+  </script>
   <style>
     :root{
       /* Harness Handbook-inspired warm paper palette */
+      color-scheme:light;
       --bg:#faf9f6;
       --surface:#fdfcfa;
       --ink:#201d18;
@@ -27,6 +65,25 @@
       --card:var(--surface);
       --link:var(--accent-ink);
       --highlight:var(--accent-wash);
+    }
+    @media screen{
+      :root[data-theme="dark"]{
+        color-scheme:dark;
+        --bg:#161719;
+        --surface:#1e2024;
+        --ink:#f0ede6;
+        --ink-soft:#d3cfc7;
+        --muted:#aaa69e;
+        --faint:#96928a;
+        --line:#36383e;
+        --line-soft:#292c32;
+        --accent:#8db9f3;
+        --accent-ink:#a5cafa;
+        --accent-wash:#233349;
+        --sienna:#efb272;
+        --sienna-ink:#f0bb86;
+        --sienna-wash:#372b22;
+      }
     }
     *{box-sizing:border-box}
     html{min-height:100%; margin:0; padding:0}
@@ -58,6 +115,20 @@
     }
     .top-nav a:hover{background:var(--line-soft); color:var(--ink); text-decoration:none}
     .top-nav a.active{font-weight:600; color:var(--accent-ink); background:var(--accent-wash)}
+    .theme-toggle{
+      display:inline-flex; align-items:center; justify-content:center; gap:4px;
+      flex:0 0 80px; width:80px; height:44px; padding:4px;
+      border:1px solid var(--line); border-radius:999px;
+      background:var(--surface); color:var(--muted); cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
+      transition:border-color .2s, background .2s;
+    }
+    .theme-toggle:hover{border-color:var(--accent)}
+    .theme-toggle:focus-visible{outline:2px solid var(--accent-ink); outline-offset:3px}
+    .theme-toggle > span{display:grid; place-items:center; width:32px; height:32px; border-radius:50%; transition:background .2s, color .2s}
+    .theme-toggle svg{width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
+    .theme-toggle[aria-checked="false"] .theme-sun,
+    .theme-toggle[aria-checked="true"] .theme-moon{color:var(--accent-ink); background:var(--accent-wash)}
     .page{
       min-height:100svh; padding:32px 64px; max-width:1560px; margin:0 auto;
     }
@@ -165,7 +236,7 @@
     #pubs details > .muted{border-left:2px solid var(--accent); margin-left:2px; padding:8px 0 4px 16px!important}
     .spotlight{color:var(--sienna-ink)!important}
     @supports not (background:color-mix(in srgb, white 50%, transparent)){
-      .top-nav{background:rgba(250,249,246,.96)}
+      .top-nav{background:var(--bg)}
     }
     @media (max-width: 960px){
       .page{grid-template-columns:1fr; gap:24px; padding:24px}
@@ -175,10 +246,12 @@
       .two-col{grid-template-columns:1fr}
     }
     /* Digest navigation: keep the full menu reachable on small screens. */
-    .top-nav{overflow-x:auto; scrollbar-width:thin}
-    .top-nav .nav-links{flex-shrink:0}
+    .top-nav{gap:16px}
+    .top-nav .nav-links{flex:1; min-width:0; overflow-x:auto; scrollbar-width:thin; padding-block:4px}
     .top-nav a{white-space:nowrap}
     @media(max-width:960px){.top-nav{padding:10px 20px}.top-nav .nav-links{gap:12px}}
+    @media(prefers-reduced-motion:reduce){body,.theme-toggle,.theme-toggle > span{transition:none}}
+    @media print{.theme-toggle{display:none}}
   </style>
   <!-- reading-light:start -->
   <link rel="stylesheet" href="/digest/assets/reading-light.css?v=9af6ee23fdd6">
@@ -196,6 +269,10 @@
       <a href="#lecture-notes">Lecture Notes</a>
       <a href="./digest/en/">Research Digest</a>
     </div>
+    <button class="theme-toggle" id="home-theme-toggle" type="button" role="switch" aria-checked="false" aria-label="Dark mode" title="Switch to dark mode">
+      <span class="theme-sun" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg></span>
+      <span class="theme-moon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M20.9 13.3A9 9 0 0 1 10.7 3.1 9 9 0 1 0 20.9 13.3Z"/></svg></span>
+    </button>
   </nav>
   <main class="page">
     <!-- Content -->
