@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-10-16",
+    "paperId": "arxiv:2305.18290",
+    "paper": "Direct Preference Optimization: Your Language Model is Secretly a Reward Model",
+    "shortTitle": "DPO",
+    "year": 2023,
+    "topics": [
+      "Post-training"
+    ],
+    "recognition": {
+      "label": "NeurIPS 2023 Oral · Outstanding Main Track Runner-Up",
+      "url": "https://media.neurips.cc/Conferences/NeurIPS2023/NeurIPS2023-Press_Release.pdf"
+    },
+    "source": "https://arxiv.org/html/2305.18290v3",
+    "url": "/digest/2026-10-16.html#classic-dpo"
+  },
+  {
     "date": "2026-10-15",
     "paperId": "arxiv:2006.11239",
     "paper": "Denoising Diffusion Probabilistic Models",

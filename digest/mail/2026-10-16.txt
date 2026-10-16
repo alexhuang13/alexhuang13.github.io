@@ -1,0 +1,156 @@
+RESEARCH DIGEST / 2026-10-16
+预算、截断与迁移
+大规模预训练 · Muon 预算对照 · STOPD · 精读 DPO
+
+中文: https://alexhuang13.github.io/digest/2026-10-16.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-16.html
+
+主读 · 新研究
+MAI-Base-2：缩小模型时，也要缩小独立数据
+Frontier Pre-training at Microsoft AI
+https://alexhuang13.github.io/digest/2026-10-16.html#mai-base-2
+
+主读 · 新研究
+Muon 赢在哪一条预算轴上？
+When Does Muon Actually Win? A Paired Data-, Time-, and Tuning-Budget Benchmark
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-21555
+
+主读 · 新研究
+STOPD：无偏的是总和，不一定是更新
+Does On-Policy Distillation Need to Complete Every Rollout?
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-21337
+
+简讯 · 新稿
+Muon 的最优性：径向分布与 minimax 不是同一问题
+When Is Muon Optimal? Radial Fragility and Minimax Geometry
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-21549
+
+简讯 · 新稿
+Hassani：用模型分歧决定是否升级
+Disagreement-Guided Weak-to-Strong Routing
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-22245
+
+简讯 · 新稿
+深线性网络的 depth/width 压缩律
+A Closed Form Depth-Width Law for Neural Collapse in Deep Linear Networks
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-21820
+
+简讯 · 新稿
+集成有两个样本量
+Two Sample Sizes in Test-Time LLM Ensembling: Buffered ERM and Minimax Theory
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-21363
+
+简讯 · 新稿
+TIPS：学习何时揭开、何时重新遮住 token
+TIPS: A Tiny Inference-time Policy for Scaling in Diffusion Language Models
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-22099
+
+简讯 · 新稿
+EMO：上下文优化与 logits steering 交替
+EMO: A Closed-Loop Test-Time Computation Framework via Alternating Context Optimization and Logits Steering
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-22160
+
+简讯 · 新稿
+Byte patch 的预算应花在何处
+Patch where the text is new: a compression view of where byte-level models should spend compute
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-22100
+
+简讯 · 新稿
+LEASH：升级模型后仍需监督
+LEASH: Uncertainty-Aware Weak-to-Strong Escalation and Oversight for Computer-Use Agents
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-22280
+
+简讯 · 新稿
+把“继续想”写成三个动作
+Confidence-Calibrated Inference Expansion for Evaluator-Guided Test-Time Reasoning
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-20836
+
+简讯 · 新稿
+挑选对额外算力有响应的数据
+Beyond Correctness: Compute-Responsive Data Selection for Reasoning Model Post-Training
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-20057
+
+简讯 · 新稿
+搜索算力增长为何需要遗忘
+Scaling Discovery Requires Forgetting
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-20563
+
+简讯 · 新稿
+LoC：检索正确之后的视觉预算
+Loud and Clear: Making Visual Evidence Count in Multimodal Document RAG
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-21318
+
+简讯 · 新稿
+NPO：将推理搜索摊销进训练
+Noise-Space Reward Alignment for Few-Step Generative Models
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-21125
+
+简讯 · 新稿
+DMS：分开锐化路径和答案
+Decoupled Marginal Sharpening for Training-Free Inference-Time Scaling
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-20483
+
+简讯 · 新稿
+Priming：先重建，再做分布训练
+Are We Overthinking One-Step Generation?
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-20331
+
+简讯 · 新稿
+AFCS：合成数据的单位从段落变成事实
+AFCS: Atomic-Fact-Conditioned Synthesis for Factual Knowledge Pretraining
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-20086
+
+简讯 · 新稿
+RLVR：进展和崩溃有不同的时钟
+Two Clocks: Why Larger Rollout Batches Learn Slower but Fail on Schedule in Reinforcement Learning with Verifiable Rewards
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-18853
+
+简讯 · 新稿
+SCRouter：模型与 token 预算联合选择
+Rethinking Quality in Large Language Model Routing: Security-Conditioned Model-and-Budget Selection
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-18566
+
+简讯 · 新稿
+Manacá：数据混合的非单调性与 DPO 负结果
+Manacá-1B-Instruct-2: Reproducible Safety Alignment for a Native Brazilian-Portuguese LLM. Negative DPO Results, a Controlled Composition Scan, and a Silent Failure Mode of the LLM Judge
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-20570
+
+简讯 · 新稿
+Flow matching：耦合 minibatch 也是资源轴
+Scaling Online Optimal Transport Minibatches for Flow Matching
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-18838
+
+简讯 · 新稿
+蛋白语言模型的低算力前沿
+ProtModernBERT: Compute-Efficient Protein Language Modeling
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-19738
+
+简讯 · 新稿
+FedStop：多训练一个 epoch 的边际价值
+Local Epochs as Optimal Stopping: Theory and Evidence in Federated Learning
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2610-21832
+
+简讯 · Post-training 博客
+Nemotron：多教师 on-policy 蒸馏与量化
+NVIDIA Nemotron 3.5 Super VL Powers Specialized Agents with Multimodal Reasoning
+https://alexhuang13.github.io/digest/2026-10-16.html#nemotron-mopd
+
+简讯 · 版本更新
+Kakade：从模型平均到 replay-free 持续学习
+Forget About It: Mitigating Forgetting Without Replay or Auxiliary Objectives
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2501-05559
+
+简讯 · 版本更新
+Cai／Long／Su：混合文本中的水印定位
+Optimal Watermark Localization in Mixed-Source Large Language Model Texts
+https://alexhuang13.github.io/digest/2026-10-16.html#p-2608-14906
+
+每日精读 · 2023
+DPO：一个配分函数，消去一整个奖励模型
+https://alexhuang13.github.io/digest/2026-10-16.html#classic-dpo
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-10-16.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

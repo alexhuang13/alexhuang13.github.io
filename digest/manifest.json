@@ -4,8 +4,52 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-10-15",
+  "latest": "2026-10-16",
   "issues": [
+    {
+      "date": "2026-10-16",
+      "title": "预算、截断与迁移",
+      "url": "/digest/2026-10-16.html",
+      "translations": {
+        "en": {
+          "title": "Budgets, truncation, and transfer",
+          "url": "/digest/en/2026-10-16.html"
+        }
+      },
+      "sources": [
+        "https://microsoft.ai/news/frontier-pre-training-at-microsoft-ai/",
+        "https://arxiv.org/pdf/2610.21555v1",
+        "https://arxiv.org/html/2610.21337v1",
+        "https://arxiv.org/abs/2610.21549v1",
+        "https://arxiv.org/abs/2610.22245v1",
+        "https://arxiv.org/abs/2610.21820v1",
+        "https://arxiv.org/abs/2610.21363v1",
+        "https://arxiv.org/abs/2610.22099v1",
+        "https://arxiv.org/abs/2610.22160v1",
+        "https://arxiv.org/abs/2610.22100v1",
+        "https://arxiv.org/abs/2610.22280v1",
+        "https://arxiv.org/abs/2610.20836v1",
+        "https://arxiv.org/abs/2610.20057v1",
+        "https://arxiv.org/abs/2610.20563v1",
+        "https://arxiv.org/abs/2610.21318v1",
+        "https://arxiv.org/abs/2610.21125v1",
+        "https://arxiv.org/abs/2610.20483v1",
+        "https://arxiv.org/abs/2610.20331v1",
+        "https://arxiv.org/abs/2610.20086v1",
+        "https://arxiv.org/abs/2610.18853v1",
+        "https://arxiv.org/abs/2610.18566v1",
+        "https://arxiv.org/abs/2610.20570v1",
+        "https://arxiv.org/abs/2610.18838v1",
+        "https://arxiv.org/abs/2610.19738v1",
+        "https://arxiv.org/abs/2610.21832v1",
+        "https://developer.nvidia.com/blog/nvidia-nemotron-3-5-super-vl-powers-specialized-agents-with-multimodal-reasoning/",
+        "https://arxiv.org/abs/2501.05559v2",
+        "https://arxiv.org/abs/2608.14906v2",
+        "https://arxiv.org/html/2305.18290v3",
+        "https://media.neurips.cc/Conferences/NeurIPS2023/NeurIPS2023-Press_Release.pdf",
+        "https://arxiv.org/abs/2203.02155"
+      ]
+    },
     {
       "date": "2026-10-15",
       "title": "稳定项、精度与噪声",

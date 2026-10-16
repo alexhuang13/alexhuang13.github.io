@@ -1,0 +1,745 @@
+{
+  "date": "2026-10-16",
+  "number": "003",
+  "publishedAt": "2026-10-16T12:40:48Z",
+  "readingMinutes": 22,
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training",
+    "Statistics",
+    "DPO"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "title": "Budgets, truncation, and transfer",
+  "subtitle": "Frontier pretraining · Muon budget comparisons · STOPD · DPO close reading",
+  "window": "2026-10-13 08:24 — 2026-10-16 08:24 · America/New_York",
+  "edition": "Daily research notes",
+  "intro": "Three focal questions: preserving repetition when scaling experiments, translating Muon’s data efficiency into time efficiency, and identifying which gradient quantity random truncation preserves. Briefs cover additional manuscripts and revisions; the classic derives DPO’s closed-form policy and preference loss.",
+  "articles": [
+    {
+      "id": "mai-base-2",
+      "paper": "Frontier Pre-training at Microsoft AI",
+      "authors": "Microsoft AI",
+      "url": "https://microsoft.ai/news/frontier-pre-training-at-microsoft-ai/",
+      "title": "MAI-Base-2: scale unique data along with the model",
+      "dateNote": "2026-10-15 · Official technical report/blog",
+      "evidence": "Read the scaling, data-mixture, hyperparameter and Muon implementation sections",
+      "kind": "Focus · New research",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Transferring a short scaling run to long training requires preserving repetition. Let \\(N\\) be active parameters, \\(D\\) training tokens and \\(U\\) unique tokens. The report preserves TPP and each source’s repetition rate. A one-source rewrite is: [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\tau=\\frac DN,\\qquad e=\\frac DU,\\qquad \\frac UN=\\frac{\\tau}{e}",
+          "label": "Our notation; preserve repetition separately for each source"
+        },
+        {
+          "type": "text",
+          "text": "With steps \\(s\\), learning rate \\(\\eta\\) and weight decay \\(\\lambda\\), a quadratic fit in log-hyperparameter coordinates gives these empirical optima: [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\eta_\\star\\lambda_\\star=\\frac{17.04}{s},\\qquad \\log\\eta_\\star=-1.51+0.175\\log\\tau-0.573\\log s",
+          "label": "Reported empirical fit, not a universal optimizer theorem"
+        },
+        {
+          "type": "text",
+          "text": "The final model has 2.8T total/80B active parameters and trains on 50T tokens. Momentum resharding, batched all-to-all and specialized Newton–Schulz kernels put the Muon optimizer step at 2.1% of the average iteration (165 ms). [1]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The reported 4.2–12.3× is FLOPs efficiency against DeepSeek-V4-Pro-Base under four held-out BPB fits. Those fits include the final-model point: neither unseen-scale prediction nor an isolated Muon wall-clock gain. [1]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21555",
+      "paper": "When Does Muon Actually Win? A Paired Data-, Time-, and Tuning-Budget Benchmark",
+      "authors": "Mushir Akhtar · Hazem N. Nounou · Majdi Mansouri · Mohamed N. Nounou",
+      "url": "https://arxiv.org/abs/2610.21555v1",
+      "title": "On which budget axis does Muon win?",
+      "dateNote": "First posted 2026-10-15 05:15 EDT · v1 · Overlap-window addition",
+      "evidence": "Read §§2–3, Table 1 and the timing protocol",
+      "kind": "Focus · New research",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "On one A100: 17.7M/33.6M LMs process 20.48M FineWeb-Edu-subset tokens over 5,000 steps; a 2.70M ViT trains for 100 epochs on balanced/100:1 long-tailed CIFAR-100. Each strategy searches 23 configurations with one development seed, then compares five paired seeds. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\operatorname{AUC}_o(H)=\\frac1H\\int_0^H L_o(x)\\,dx,\\qquad g=1-\\frac{\\operatorname{AUC}_{\\mathrm{Muon}}}{\\operatorname{AUC}_{\\mathrm{AdamW}}}",
+          "label": "Common horizon within each task and budget axis; positive favors Muon"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Task",
+            "Equal-data AUC gain",
+            "Equal-time AUC gain"
+          ],
+          "rows": [
+            [
+              "LM 17.7M",
+              "3.25%",
+              "−6.96%"
+            ],
+            [
+              "LM 33.6M",
+              "4.46%",
+              "−3.38%"
+            ],
+            [
+              "ViT balanced",
+              "16.98%",
+              "19.68%"
+            ],
+            [
+              "ViT long-tail",
+              "22.44%",
+              "22.31%"
+            ]
+          ],
+          "caption": "Table 1: validation-loss curve areas, not final accuracy. [2]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Configurations are selected by equal-data AUC, not retuned for time. Timing excludes validation/checkpoint I/O. Reference kernels, small models and auxiliary AdamW limit transfer; these results do not contradict the preceding system’s 2.1%. [2]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21337",
+      "paper": "Does On-Policy Distillation Need to Complete Every Rollout?",
+      "authors": "Zhengxin Zhang · Maosen Tang · Ning Wang · Changhao Li · Jingren Zhou · Bo Dai · Sainyam Galhotra · Alex Townsend · Claire Cardie",
+      "url": "https://arxiv.org/abs/2610.21337v1",
+      "title": "STOPD: unbiased sums need not imply unbiased updates",
+      "dateNote": "First posted 2026-10-15 02:22 EDT · v1 · Overlap-window addition",
+      "evidence": "Read §§3–5, gradient/one-step optimizer discrepancy derivations and cost tables",
+      "kind": "Focus · New research",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "On-policy distillation scores the student’s own trajectories; long suffixes are expensive. STOPD randomly truncates blocks and restores position coverage through inverse-probability weights. With cap \\(L\\), block width \\(K\\), full length \\(T_i\\), cutoff \\(S_i\\) and token gradient \\(h_{it}\\): [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "p_t=\\Pr(S_i\\ge t)=\\frac{L-K\\lfloor(t-1)/K\\rfloor}{L},\\qquad \\widehat G=\\sum_i\\sum_{t\\le\\min(T_i,S_i)}\\frac{h_{it}}{p_t},\\qquad \\mathbb E_S\\widehat G=G",
+          "label": "Paper identity, conditional on full trajectories and training history"
+        },
+        {
+          "type": "text",
+          "text": "Cutoffs must be independent, with generation and teacher feedback unchanged at a shared prefix. Let \\(N=\\sum_iT_i\\) be the complete token count and \\(C\\) the lagged normalizer from the previous step: [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathbb E_S\\widehat g=\\frac GC=\\frac NCg_{\\mathrm V},\\qquad \\mathbb E_S\\|\\Delta\\theta_{\\mathrm S}-\\Delta\\theta_{\\mathrm V}\\|^2\\le\\Lambda_{\\mathrm{opt}}^2\\left(\\frac VC^2+\\left(\\frac NC-1\\right)^2\\|g_{\\mathrm V}\\|^2\\right)",
+          "label": "Paper one-step bound; V is mean-square fluctuation of the truncated gradient sum"
+        },
+        {
+          "type": "text",
+          "text": "Muon has a corresponding optimizer coefficient, but the bound fixes parameters and previous state; it does not equate training trajectories. For Qwen3-1.7B←4B mathematics, AdamW costs 941→513 seconds/step, with 250-step accuracy 30.1→29.4. Time includes generation, teacher scoring and updates. The Muon counterpart costs 1,029→542 seconds/step. [3]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21549",
+      "paper": "When Is Muon Optimal? Radial Fragility and Minimax Geometry",
+      "authors": "Ao Xu",
+      "url": "https://arxiv.org/abs/2610.21549v1",
+      "title": "Muon optimality: radial laws versus minimax geometry",
+      "dateNote": "First posted 2026-10-15 05:13 EDT · v1 · Overlap-window addition",
+      "evidence": "Read the abstract, introduction and theoretical setting; not every proof checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "For convex nondecreasing radial objectives, exact polar optimality is fragile under a fixed atomless radial law, while worst-case optimization over radial laws can recover the polar direction. Full-column-rank and other assumptions matter; this is not a general nonconvex training guarantee. [4]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22245",
+      "paper": "Disagreement-Guided Weak-to-Strong Routing",
+      "authors": "Sima Noorani · Shayan Kiyani · George Pappas · Hamed Hassani",
+      "url": "https://arxiv.org/abs/2610.22245v1",
+      "title": "Hassani: escalation from model disagreement",
+      "dateNote": "First posted 2026-10-15 13:19 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Approximates optimal weak-to-strong routing through response disagreement without correctness labels. The approximation improves as the strong model better approximates the ground-truth distribution; the strong model is a proxy, not truth. [5]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21820",
+      "paper": "A Closed Form Depth-Width Law for Neural Collapse in Deep Linear Networks",
+      "authors": "Pankhil Gawade · Kirsten Fischer · Guy Wolf · Ewa Szczurek",
+      "url": "https://arxiv.org/abs/2610.21820v1",
+      "title": "A depth/width compression law in deep linear networks",
+      "dateNote": "First posted 2026-10-15 09:06 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Expresses neural collapse through a feature kernel in deep linear models with exchangeable class structure. Accumulated compression depends on \\(L/N\\) at large width, not a universal power law for nonlinear networks. [6]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21363",
+      "paper": "Two Sample Sizes in Test-Time LLM Ensembling: Buffered ERM and Minimax Theory",
+      "authors": "Zhi Zhang · Arash A. Amini",
+      "url": "https://arxiv.org/abs/2610.21363v1",
+      "title": "Ensembling has two sample sizes",
+      "dateNote": "First posted 2026-10-15 02:41 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "For fixed model/answer counts and margin exponent \\(\\beta\\), buffered ERM bounds clean excess risk by \\(\\widetilde O(Q^{-1/2}+N^{-\\beta/2})\\): \\(Q\\) labeled questions and \\(N\\) generations per model/question. A two-model/two-answer submodel has an \\(N^{-\\beta}\\) identification floor. [7]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22099",
+      "paper": "TIPS: A Tiny Inference-time Policy for Scaling in Diffusion Language Models",
+      "authors": "Ya-Shi Zhang · Jian Tang · Pierre-André Noël · Oleksiy Ostapenko",
+      "url": "https://arxiv.org/abs/2610.22099v1",
+      "title": "TIPS: learn when to reveal and remask",
+      "dateNote": "First posted 2026-10-15 11:46 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A 600K controller learns unmasking/remasking over frozen LLaDA-8B. At 32 decoder evaluations, two variants achieve 58.46%/57.97% micro-average on GSM8K/MATH-500; the controller incurs separate SFT/RL training costs. [8]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22160",
+      "paper": "EMO: A Closed-Loop Test-Time Computation Framework via Alternating Context Optimization and Logits Steering",
+      "authors": "Wei Xia · Yehui Tang · Zhi-Hong Deng",
+      "url": "https://arxiv.org/abs/2610.22160v1",
+      "title": "EMO: alternate context optimization and logit steering",
+      "dateNote": "First posted 2026-10-15 12:23 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "An external judge revises context, followed by constrained steering from before/after logit differences. One-round target-KL improvement assumes context improvement and faithful steering; matched target-model generations need not match total judge cost. [9]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22100",
+      "paper": "Patch where the text is new: a compression view of where byte-level models should spend compute",
+      "authors": "Nicolás Vera Zúñiga",
+      "url": "https://arxiv.org/abs/2610.22100v1",
+      "title": "Where should a byte-patching budget go?",
+      "dateNote": "First posted 2026-10-15 11:47 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Compares entropy and novelty patching at about 11% matched patch rate across three seeds and 1M/12M/50M BLT-style models. Gains concentrate in mathematical text and shrink on prose/code; local surprisal alone need not identify valuable computation. [10]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22280",
+      "paper": "LEASH: Uncertainty-Aware Weak-to-Strong Escalation and Oversight for Computer-Use Agents",
+      "authors": "Qingni Wang · Changdae Oh · Yuzhe Yang · Sharon Li · Jiachen Yang · Ang Li · Xin Eric Wang",
+      "url": "https://arxiv.org/abs/2610.22280v1",
+      "title": "LEASH: oversight after escalation",
+      "dateNote": "First posted 2026-10-15 13:40 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Uses weak-model hidden-state comparisons with successful/failed trajectories to trigger escalation and continue oversight afterward. OSWorld gains hold against random routing at matched escalation rates; cost savings depend on the specified backbones, prices and tasks. [11]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20836",
+      "paper": "Confidence-Calibrated Inference Expansion for Evaluator-Guided Test-Time Reasoning",
+      "authors": "Weida Liang · Kenji Kawaguchi",
+      "url": "https://arxiv.org/abs/2610.20836v1",
+      "title": "Three actions for deciding whether to think longer",
+      "dateNote": "First posted 2026-10-14 15:25 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Chooses between the current answer, a fallback and further expansion with action-specific confidence calibration. Online compute falls about 30%/16% versus fixed policies; utility changes against fitted Q are small and mixed. [12]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20057",
+      "paper": "Beyond Correctness: Compute-Responsive Data Selection for Reasoning Model Post-Training",
+      "authors": "Liang He · Xiangyu Li · Yuxin Wang · Hanbin Zhang · Mingyu Cao · Zhaomiao Guo · Xilu Wang",
+      "url": "https://arxiv.org/abs/2610.20057v1",
+      "title": "Select data responsive to additional compute",
+      "dateNote": "First posted 2026-10-14 07:57 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Prioritizes examples that fail with short reasoning but succeed with more compute. Qwen3-8B improves its 512–4,096-token frontier over matched non-CR data. The 45.3% figure is recovery of low-compute failures, not overall accuracy. [13]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20563",
+      "paper": "Scaling Discovery Requires Forgetting",
+      "authors": "Shangyin Tan · Ben Zhou · Lakshya A Agrawal · Jialin Zhang · Yilin Chen · Qiuyang Mang · Donghyun Lee · Dennis Jacob · Koushik Sen · Alex Dimakis · Matei Zaharia",
+      "url": "https://arxiv.org/abs/2610.20563v1",
+      "title": "Why scaling search may require forgetting",
+      "dateNote": "First posted 2026-10-14 13:49 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Across four automated-research tasks, accumulated history anchors search. Restarting sessions/history from the best candidate improves outcomes at matched budgets; this does not imply that all memory is harmful. [14]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21318",
+      "paper": "Loud and Clear: Making Visual Evidence Count in Multimodal Document RAG",
+      "authors": "Eunchan Jo · Seounghyun Jang · Sangwoo Mo",
+      "url": "https://arxiv.org/abs/2610.21318v1",
+      "title": "LoC: the visual budget after correct retrieval",
+      "dateNote": "First posted 2026-10-15 02:08 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "On SciEGQA oracle pages, raising visual tokens from 1K to 32K adds 15.22 accuracy points; ground-truth crops add 3.75 points at fixed 16K. These measure reading-budget effects and an oracle diagnostic, not improved retrieval. [15]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21125",
+      "paper": "Noise-Space Reward Alignment for Few-Step Generative Models",
+      "authors": "Woocheol Shin · Taeyoung Yun · Jiwon Sung · Hyeongyu Kang · Jeongmin Park · Jaewoo Lee · Kyuil Sim · Dohyun Kim · Yutong He · Jinkyoo Park",
+      "url": "https://arxiv.org/abs/2610.21125v1",
+      "title": "NPO: amortize inference search into training",
+      "dateNote": "First posted 2026-10-14 22:30 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Freezes a few-step generator and trains a flow policy over initial noise toward a reward-tilted distribution. Search moves into training; the abstract’s 16–549× compares inference costs, not total training-plus-inference expenditure. [16]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20483",
+      "paper": "Decoupled Marginal Sharpening for Training-Free Inference-Time Scaling",
+      "authors": "Weixin Wang · Wei Deng · Anderson Schneider · Yuriy Nevmyvaka · Pan Xu · Andrew Bennett",
+      "url": "https://arxiv.org/abs/2610.20483v1",
+      "title": "DMS: sharpen paths and answers separately",
+      "dateNote": "First posted 2026-10-14 12:55 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Mildly sharpens reasoning paths before aggregating and sharpening the answer marginal, with annealed SMC to mitigate path collapse. A base-model-likely answer need not be correct; no external ground truth is introduced. [17]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20331",
+      "paper": "Are We Overthinking One-Step Generation?",
+      "authors": "Woobin Park · Jaeyeon Kim · Yilun Du · Sitan Chen · Bohyung Han",
+      "url": "https://arxiv.org/abs/2610.20331v1",
+      "title": "Priming: reconstruction before distributional training",
+      "dateNote": "First posted 2026-10-14 11:14 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A one-step generator first learns fixed-noise reconstruction, then feature-space distributional post-training. ImageNet-256 FID 1.19 at about one-tenth the training compute is the authors’ comparison with similar-FID methods, not an independent replication. [18]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20086",
+      "paper": "AFCS: Atomic-Fact-Conditioned Synthesis for Factual Knowledge Pretraining",
+      "authors": "Yunhao Wang · Feng Zhang · Tinghao Yu · Xing Wu · Jiang Zhou",
+      "url": "https://arxiv.org/abs/2610.20086v1",
+      "title": "AFCS: synthesize from facts, not just passages",
+      "dateNote": "First posted 2026-10-14 08:24 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "From the same FineWiki source, extracts/verifies atomic facts before generation, comparing fact/paragraph/chunk/entity granularity for OLMo-3-7B and 32B continued pretraining. A data-quality study, not a universal scaling exponent. [19]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-18853",
+      "paper": "Two Clocks: Why Larger Rollout Batches Learn Slower but Fail on Schedule in Reinforcement Learning with Verifiable Rewards",
+      "authors": "Yuante Li · Junwei Quan · Kai Qiu · Kate Zhang · Yicheng Tao",
+      "url": "https://arxiv.org/abs/2610.18853v1",
+      "title": "RLVR: progress and collapse have different clocks",
+      "dateNote": "First posted 2026-10-13 13:58 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In a local quadratic model, square-root learning-rate scaling preserves first-order drift per sample, not curvature-adjusted progress. An invariant collapse sample count comes from a separate drift-threshold hypothesis. Experiments span 16× batch sizes; these are not one theorem. [20]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-18566",
+      "paper": "Rethinking Quality in Large Language Model Routing: Security-Conditioned Model-and-Budget Selection",
+      "authors": "Yichi Zhang · Zhenxiang Huang · Yuyang Zhang · Yuchen Yang",
+      "url": "https://arxiv.org/abs/2610.18566v1",
+      "title": "SCRouter: jointly choose model and token budget",
+      "dateNote": "First posted 2026-10-13 11:36 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Separately predicts utility, security and completion-within-budget probability, then weights them by task to select model/tokens. The benchmark has 38,869 queries and 12 models × 12 budgets; security preferences are task-conditioned, not a single universal quality score. [21]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20570",
+      "paper": "Manacá-1B-Instruct-2: Reproducible Safety Alignment for a Native Brazilian-Portuguese LLM. Negative DPO Results, a Controlled Composition Scan, and a Silent Failure Mode of the LLM Judge",
+      "authors": "Bruno Leonardo Santos Menezes · Carlos Leonardo Souza Cardoso · Fabio André Machado Porto",
+      "url": "https://arxiv.org/abs/2610.20570v1",
+      "title": "Manacá: nonmonotone data mixing and negative DPO results",
+      "dateNote": "First posted 2026-10-14 13:53 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Scanning 10%–60% general data in safety SFT gives nonmonotone over-refusal, with a knee around 40%–50%; three DPO attempts report negative results. Rising training reward margin need not improve free generation. Evidence is specific to this PT-BR model and protocol. [22]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-18838",
+      "paper": "Scaling Online Optimal Transport Minibatches for Flow Matching",
+      "authors": "Peter Chen · Sergey Levine",
+      "url": "https://arxiv.org/abs/2610.18838v1",
+      "title": "Flow matching: coupling minibatch is a resource axis",
+      "dateNote": "First posted 2026-10-13 13:56 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "An online entropic-OT approximation enables larger source/target couplings. The abstract claims strict reductions in full stochastic-gradient variance and integration error versus independent pairing, improving with coupling batch size. Proof conditions have not been checked. [23]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-19738",
+      "paper": "ProtModernBERT: Compute-Efficient Protein Language Modeling",
+      "authors": "Alberto Martínez · Natalia Flechas Manrique · Llorenç Espinosa-Portalés · Luc Andrea",
+      "url": "https://arxiv.org/abs/2610.19738v1",
+      "title": "The low-compute frontier for protein language models",
+      "dateNote": "First posted 2026-10-14 03:59 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "ProtModernBERT separates architecture, data and parameter count using controlled pretraining and cluster-based validation. Some tasks approach Amplify-120M/ProtBert at as little as 10%–20% of pretraining FLOPs: model-training efficiency, not a biological scaling law. [24]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21832",
+      "paper": "Local Epochs as Optimal Stopping: Theory and Evidence in Federated Learning",
+      "authors": "Ke Xiao · Qiyuan Wang · Christos Anagnostopoulos",
+      "url": "https://arxiv.org/abs/2610.21832v1",
+      "title": "FedStop: the marginal value of another local epoch",
+      "dateNote": "First posted 2026-10-15 09:15 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not independently checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Models federated local training as finite-horizon stopping: continue while expected next-epoch loss reduction exceeds priced drift. One-step look-ahead optimality requires nested stopping decisions; closed forms treat geometric and power-law returns separately. [25]"
+        }
+      ]
+    },
+    {
+      "id": "nemotron-mopd",
+      "paper": "NVIDIA Nemotron 3.5 Super VL Powers Specialized Agents with Multimodal Reasoning",
+      "authors": "Chris Alexiuk · Chintan Patel",
+      "url": "https://developer.nvidia.com/blog/nvidia-nemotron-3-5-super-vl-powers-specialized-agents-with-multimodal-reasoning/",
+      "title": "Nemotron: multi-teacher on-policy distillation and quantization",
+      "dateNote": "2026-10-15 · Technical blog",
+      "evidence": "Read training and under-the-hood sections; full technical-report tables not checked",
+      "kind": "Brief · Post-training blog",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Technical sections describe two-stage visual/language SFT, specialized teachers scoring student rollouts, and NVFP4 quantization-aware distillation. Multiple components change together; the blog does not isolate MOPD causally. Projected customer cost savings are not treated as research findings. [26]"
+        }
+      ]
+    },
+    {
+      "id": "p-2501-05559",
+      "paper": "Forget About It: Mitigating Forgetting Without Replay or Auxiliary Objectives",
+      "authors": "Anat Kleiman · Gintare Karolina Dziugaite · Jonathan Frankle · Sham Kakade · Mansheej Paul",
+      "url": "https://arxiv.org/abs/2501.05559v2",
+      "title": "Kakade: model averaging for replay-free continual learning",
+      "dateNote": "First posted 2025-01-09 15:11 EDT; v2: 2026-10-13 21:34 EDT",
+      "evidence": "Based on version abstracts/author revision notes; full experiments not read",
+      "kind": "Brief · Revision",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Comparing v1/v2 abstracts: Soup to go is retitled Forget About It, adding Lookahead and Qwen3-14B adapter continual-learning descriptions. Periodic parameter interpolation avoids replay; up to 36.3% lower task-training time is protocol-specific, not universal. [27]"
+        }
+      ]
+    },
+    {
+      "id": "p-2608-14906",
+      "paper": "Optimal Watermark Localization in Mixed-Source Large Language Model Texts",
+      "authors": "Jose H. Blanchet · T. Tony Cai · Xiang Li · Hao Liu · Qi Long · Weijie J. Su",
+      "url": "https://arxiv.org/abs/2608.14906v2",
+      "title": "Cai/Long/Su: watermark localization in mixed text",
+      "dateNote": "First posted 2026-08-14 17:41 EDT; v2: 2026-10-15 13:29 EDT",
+      "evidence": "Based on version abstracts/author revision notes; full experiments not read",
+      "kind": "Brief · Revision",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The authors note updated experiments and supplementary material; exact version differences remain unchecked. The current abstract casts token localization as multiple testing and separates detection, discovery and classification boundaries. Existing boundaries are not claimed as new in this revision. [28]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-dpo",
+    "paperId": "arxiv:2305.18290",
+    "shortTitle": "DPO",
+    "year": 2023,
+    "topics": [
+      "Post-training"
+    ],
+    "paper": "Direct Preference Optimization: Your Language Model is Secretly a Reward Model",
+    "authors": "Rafael Rafailov · Archit Sharma · Eric Mitchell · Stefano Ermon · Christopher D. Manning · Chelsea Finn",
+    "url": "https://arxiv.org/html/2305.18290v3",
+    "kind": "Daily close reading · Classic 003",
+    "title": "DPO: a partition function that eliminates an explicit reward model",
+    "dateNote": "Historical classic: first posted 2023-05-29; read v3, 2024-07-29; NeurIPS 2023",
+    "evidence": "Read §§3–4, Appendices A.1–A.2 and the gradient derivation; no unchecked experiment claims",
+    "recognition": {
+      "label": "NeurIPS 2023 Oral · Outstanding Main Track Runner-Up",
+      "url": "https://media.neurips.cc/Conferences/NeurIPS2023/NeurIPS2023-Press_Release.pdf"
+    },
+    "question": "If preference pairs are selected by best-of-N rather than independent sampling, how does selection change the identifiable preference relation? When can DPO’s implicit score rank answers without representing their probability of correctness?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "InstructGPT (2022) separates preference fitting from policy optimization in RLHF. DPO (2023) uses the KL-regularized optimum to fit preferences directly. The key is reparameterization, not equating reward with correctness. [31,29]"
+      },
+      {
+        "type": "text",
+        "text": "Fix prompt \\(x\\), \\(\\beta>0\\), a positive reference policy on the relevant support and a finite partition function. Suppressing \\(x\\), the nonparametric policy objective is: [29]"
+      },
+      {
+        "type": "equation",
+        "tex": "J(\\pi)=\\mathbb E_{y\\sim\\pi}r(y)-\\beta D_{\\mathrm{KL}}(\\pi\\|\\pi_{\\mathrm{ref}}),\\qquad Z=\\sum_y\\pi_{\\mathrm{ref}}(y)e^{r(y)/\\beta}",
+        "label": "Paper: KL-regularized reward objective"
+      },
+      {
+        "type": "equation",
+        "tex": "\\pi^*(y)=\\frac{\\pi_{\\mathrm{ref}}(y)e^{r(y)/\\beta}}Z,\\qquad J(\\pi)=\\beta\\log Z-\\beta D_{\\mathrm{KL}}(\\pi\\|\\pi^*)",
+        "label": "Appendix A.1: KL nonnegativity identifies the optimal policy"
+      },
+      {
+        "type": "text",
+        "text": "Invert the reward and substitute into the Bradley–Terry preference model. The partition term depending only on \\(x\\) cancels in pairwise differences: [29]"
+      },
+      {
+        "type": "equation",
+        "tex": "r(x,y)=\\beta\\log\\frac{\\pi^*(y\\mid x)}{\\pi_{\\mathrm{ref}}(y\\mid x)}+\\beta\\log Z(x),\\qquad p(y_w\\succ y_l\\mid x)=\\sigma\\!\\left(r(x,y_w)-r(x,y_l)\\right)",
+        "label": "Eqs. 5–6: the preference model is an assumption, not correctness by definition"
+      },
+      {
+        "type": "equation",
+        "tex": "\\Delta_\\theta=\\log\\frac{\\pi_\\theta(y_w\\mid x)}{\\pi_{\\mathrm{ref}}(y_w\\mid x)}-\\log\\frac{\\pi_\\theta(y_l\\mid x)}{\\pi_{\\mathrm{ref}}(y_l\\mid x)},\\qquad \\mathcal L_{\\mathrm{DPO}}=-\\mathbb E_{\\mathcal D}\\log\\sigma(\\beta\\Delta_\\theta)",
+        "label": "Eq. 7: a fixed offline preference dataset"
+      },
+      {
+        "type": "equation",
+        "tex": "\\nabla_\\theta\\ell=-\\beta\\sigma(-\\beta\\Delta_\\theta)\\left[\\nabla_\\theta\\log\\pi_\\theta(y_w\\mid x)-\\nabla_\\theta\\log\\pi_\\theta(y_l\\mid x)\\right]",
+        "label": "Paper gradient: already-explained relative preferences receive less weight"
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "The nonparametric identity does not guarantee global optimality for finite networks and finite preference data. Removing an explicit reward model does not remove preference-model or coverage assumptions. Recognition: NeurIPS 2023 Oral and Outstanding Main Track Runner-Up, not the main award winner. [29,30]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "title": "Frontier Pre-training at Microsoft AI · technical report/blog",
+      "url": "https://microsoft.ai/news/frontier-pre-training-at-microsoft-ai/"
+    },
+    {
+      "title": "When Does Muon Actually Win? A Paired Data-, Time-, and Tuning-Budget Benchmark",
+      "url": "https://arxiv.org/pdf/2610.21555v1"
+    },
+    {
+      "title": "Does On-Policy Distillation Need to Complete Every Rollout?",
+      "url": "https://arxiv.org/html/2610.21337v1"
+    },
+    {
+      "title": "When Is Muon Optimal? Radial Fragility and Minimax Geometry",
+      "url": "https://arxiv.org/abs/2610.21549v1"
+    },
+    {
+      "title": "Disagreement-Guided Weak-to-Strong Routing",
+      "url": "https://arxiv.org/abs/2610.22245v1"
+    },
+    {
+      "title": "A Closed Form Depth-Width Law for Neural Collapse in Deep Linear Networks",
+      "url": "https://arxiv.org/abs/2610.21820v1"
+    },
+    {
+      "title": "Two Sample Sizes in Test-Time LLM Ensembling: Buffered ERM and Minimax Theory",
+      "url": "https://arxiv.org/abs/2610.21363v1"
+    },
+    {
+      "title": "TIPS: A Tiny Inference-time Policy for Scaling in Diffusion Language Models",
+      "url": "https://arxiv.org/abs/2610.22099v1"
+    },
+    {
+      "title": "EMO: A Closed-Loop Test-Time Computation Framework via Alternating Context Optimization and Logits Steering",
+      "url": "https://arxiv.org/abs/2610.22160v1"
+    },
+    {
+      "title": "Patch where the text is new: a compression view of where byte-level models should spend compute",
+      "url": "https://arxiv.org/abs/2610.22100v1"
+    },
+    {
+      "title": "LEASH: Uncertainty-Aware Weak-to-Strong Escalation and Oversight for Computer-Use Agents",
+      "url": "https://arxiv.org/abs/2610.22280v1"
+    },
+    {
+      "title": "Confidence-Calibrated Inference Expansion for Evaluator-Guided Test-Time Reasoning",
+      "url": "https://arxiv.org/abs/2610.20836v1"
+    },
+    {
+      "title": "Beyond Correctness: Compute-Responsive Data Selection for Reasoning Model Post-Training",
+      "url": "https://arxiv.org/abs/2610.20057v1"
+    },
+    {
+      "title": "Scaling Discovery Requires Forgetting",
+      "url": "https://arxiv.org/abs/2610.20563v1"
+    },
+    {
+      "title": "Loud and Clear: Making Visual Evidence Count in Multimodal Document RAG",
+      "url": "https://arxiv.org/abs/2610.21318v1"
+    },
+    {
+      "title": "Noise-Space Reward Alignment for Few-Step Generative Models",
+      "url": "https://arxiv.org/abs/2610.21125v1"
+    },
+    {
+      "title": "Decoupled Marginal Sharpening for Training-Free Inference-Time Scaling",
+      "url": "https://arxiv.org/abs/2610.20483v1"
+    },
+    {
+      "title": "Are We Overthinking One-Step Generation?",
+      "url": "https://arxiv.org/abs/2610.20331v1"
+    },
+    {
+      "title": "AFCS: Atomic-Fact-Conditioned Synthesis for Factual Knowledge Pretraining",
+      "url": "https://arxiv.org/abs/2610.20086v1"
+    },
+    {
+      "title": "Two Clocks: Why Larger Rollout Batches Learn Slower but Fail on Schedule in Reinforcement Learning with Verifiable Rewards",
+      "url": "https://arxiv.org/abs/2610.18853v1"
+    },
+    {
+      "title": "Rethinking Quality in Large Language Model Routing: Security-Conditioned Model-and-Budget Selection",
+      "url": "https://arxiv.org/abs/2610.18566v1"
+    },
+    {
+      "title": "Manacá-1B-Instruct-2: Reproducible Safety Alignment for a Native Brazilian-Portuguese LLM. Negative DPO Results, a Controlled Composition Scan, and a Silent Failure Mode of the LLM Judge",
+      "url": "https://arxiv.org/abs/2610.20570v1"
+    },
+    {
+      "title": "Scaling Online Optimal Transport Minibatches for Flow Matching",
+      "url": "https://arxiv.org/abs/2610.18838v1"
+    },
+    {
+      "title": "ProtModernBERT: Compute-Efficient Protein Language Modeling",
+      "url": "https://arxiv.org/abs/2610.19738v1"
+    },
+    {
+      "title": "Local Epochs as Optimal Stopping: Theory and Evidence in Federated Learning",
+      "url": "https://arxiv.org/abs/2610.21832v1"
+    },
+    {
+      "title": "Nemotron 3.5 Super VL · training and inference mechanisms",
+      "url": "https://developer.nvidia.com/blog/nvidia-nemotron-3-5-super-vl-powers-specialized-agents-with-multimodal-reasoning/"
+    },
+    {
+      "title": "Forget About It: Mitigating Forgetting Without Replay or Auxiliary Objectives",
+      "url": "https://arxiv.org/abs/2501.05559v2"
+    },
+    {
+      "title": "Optimal Watermark Localization in Mixed-Source Large Language Model Texts",
+      "url": "https://arxiv.org/abs/2608.14906v2"
+    },
+    {
+      "title": "DPO · NeurIPS 2023 · read v3 (2024-07-29)",
+      "url": "https://arxiv.org/html/2305.18290v3"
+    },
+    {
+      "title": "NeurIPS 2023 official awards and oral announcement",
+      "url": "https://media.neurips.cc/Conferences/NeurIPS2023/NeurIPS2023-Press_Release.pdf"
+    },
+    {
+      "title": "InstructGPT · Ouyang et al. (2022) · historical background",
+      "url": "https://arxiv.org/abs/2203.02155"
+    }
+  ]
+}

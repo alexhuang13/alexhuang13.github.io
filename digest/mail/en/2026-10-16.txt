@@ -1,0 +1,156 @@
+RESEARCH DIGEST / 2026-10-16
+Budgets, truncation, and transfer
+Frontier pretraining · Muon budget comparisons · STOPD · DPO close reading
+
+中文: https://alexhuang13.github.io/digest/2026-10-16.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-16.html
+
+Focus · New research
+MAI-Base-2: scale unique data along with the model
+Frontier Pre-training at Microsoft AI
+https://alexhuang13.github.io/digest/en/2026-10-16.html#mai-base-2
+
+Focus · New research
+On which budget axis does Muon win?
+When Does Muon Actually Win? A Paired Data-, Time-, and Tuning-Budget Benchmark
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-21555
+
+Focus · New research
+STOPD: unbiased sums need not imply unbiased updates
+Does On-Policy Distillation Need to Complete Every Rollout?
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-21337
+
+Brief · New manuscript
+Muon optimality: radial laws versus minimax geometry
+When Is Muon Optimal? Radial Fragility and Minimax Geometry
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-21549
+
+Brief · New manuscript
+Hassani: escalation from model disagreement
+Disagreement-Guided Weak-to-Strong Routing
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-22245
+
+Brief · New manuscript
+A depth/width compression law in deep linear networks
+A Closed Form Depth-Width Law for Neural Collapse in Deep Linear Networks
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-21820
+
+Brief · New manuscript
+Ensembling has two sample sizes
+Two Sample Sizes in Test-Time LLM Ensembling: Buffered ERM and Minimax Theory
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-21363
+
+Brief · New manuscript
+TIPS: learn when to reveal and remask
+TIPS: A Tiny Inference-time Policy for Scaling in Diffusion Language Models
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-22099
+
+Brief · New manuscript
+EMO: alternate context optimization and logit steering
+EMO: A Closed-Loop Test-Time Computation Framework via Alternating Context Optimization and Logits Steering
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-22160
+
+Brief · New manuscript
+Where should a byte-patching budget go?
+Patch where the text is new: a compression view of where byte-level models should spend compute
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-22100
+
+Brief · New manuscript
+LEASH: oversight after escalation
+LEASH: Uncertainty-Aware Weak-to-Strong Escalation and Oversight for Computer-Use Agents
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-22280
+
+Brief · New manuscript
+Three actions for deciding whether to think longer
+Confidence-Calibrated Inference Expansion for Evaluator-Guided Test-Time Reasoning
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-20836
+
+Brief · New manuscript
+Select data responsive to additional compute
+Beyond Correctness: Compute-Responsive Data Selection for Reasoning Model Post-Training
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-20057
+
+Brief · New manuscript
+Why scaling search may require forgetting
+Scaling Discovery Requires Forgetting
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-20563
+
+Brief · New manuscript
+LoC: the visual budget after correct retrieval
+Loud and Clear: Making Visual Evidence Count in Multimodal Document RAG
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-21318
+
+Brief · New manuscript
+NPO: amortize inference search into training
+Noise-Space Reward Alignment for Few-Step Generative Models
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-21125
+
+Brief · New manuscript
+DMS: sharpen paths and answers separately
+Decoupled Marginal Sharpening for Training-Free Inference-Time Scaling
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-20483
+
+Brief · New manuscript
+Priming: reconstruction before distributional training
+Are We Overthinking One-Step Generation?
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-20331
+
+Brief · New manuscript
+AFCS: synthesize from facts, not just passages
+AFCS: Atomic-Fact-Conditioned Synthesis for Factual Knowledge Pretraining
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-20086
+
+Brief · New manuscript
+RLVR: progress and collapse have different clocks
+Two Clocks: Why Larger Rollout Batches Learn Slower but Fail on Schedule in Reinforcement Learning with Verifiable Rewards
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-18853
+
+Brief · New manuscript
+SCRouter: jointly choose model and token budget
+Rethinking Quality in Large Language Model Routing: Security-Conditioned Model-and-Budget Selection
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-18566
+
+Brief · New manuscript
+Manacá: nonmonotone data mixing and negative DPO results
+Manacá-1B-Instruct-2: Reproducible Safety Alignment for a Native Brazilian-Portuguese LLM. Negative DPO Results, a Controlled Composition Scan, and a Silent Failure Mode of the LLM Judge
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-20570
+
+Brief · New manuscript
+Flow matching: coupling minibatch is a resource axis
+Scaling Online Optimal Transport Minibatches for Flow Matching
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-18838
+
+Brief · New manuscript
+The low-compute frontier for protein language models
+ProtModernBERT: Compute-Efficient Protein Language Modeling
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-19738
+
+Brief · New manuscript
+FedStop: the marginal value of another local epoch
+Local Epochs as Optimal Stopping: Theory and Evidence in Federated Learning
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2610-21832
+
+Brief · Post-training blog
+Nemotron: multi-teacher on-policy distillation and quantization
+NVIDIA Nemotron 3.5 Super VL Powers Specialized Agents with Multimodal Reasoning
+https://alexhuang13.github.io/digest/en/2026-10-16.html#nemotron-mopd
+
+Brief · Revision
+Kakade: model averaging for replay-free continual learning
+Forget About It: Mitigating Forgetting Without Replay or Auxiliary Objectives
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2501-05559
+
+Brief · Revision
+Cai/Long/Su: watermark localization in mixed text
+Optimal Watermark Localization in Mixed-Source Large Language Model Texts
+https://alexhuang13.github.io/digest/en/2026-10-16.html#p-2608-14906
+
+Daily classic · 2023
+DPO: a partition function that eliminates an explicit reward model
+https://alexhuang13.github.io/digest/en/2026-10-16.html#classic-dpo
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-10-16.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

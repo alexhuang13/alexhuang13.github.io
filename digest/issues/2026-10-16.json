@@ -1,0 +1,745 @@
+{
+  "date": "2026-10-16",
+  "number": "003",
+  "publishedAt": "2026-10-16T12:40:48Z",
+  "readingMinutes": 22,
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training",
+    "Statistics",
+    "DPO"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "title": "预算、截断与迁移",
+  "subtitle": "大规模预训练 · Muon 预算对照 · STOPD · 精读 DPO",
+  "window": "2026-10-13 08:24 — 2026-10-16 08:24 · America/New_York",
+  "edition": "每日研究笔记",
+  "intro": "三个主读分别追问：小规模 scaling 实验如何保持数据重复率，Muon 的数据效率是否转化为时间效率，随机截断究竟保留哪一种梯度。其余新稿与版本更新列为简讯；经典精读 DPO 的闭式策略与偏好损失。",
+  "articles": [
+    {
+      "id": "mai-base-2",
+      "paper": "Frontier Pre-training at Microsoft AI",
+      "authors": "Microsoft AI",
+      "url": "https://microsoft.ai/news/frontier-pre-training-at-microsoft-ai/",
+      "title": "MAI-Base-2：缩小模型时，也要缩小独立数据",
+      "dateNote": "2026-10-15 · 官方技术报告／博客",
+      "evidence": "已读 scaling、数据混合、超参数与 Muon 实现章节",
+      "kind": "主读 · 新研究",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "将小规模实验外推到长训练，重复次数不能悄悄改变。记活跃参数为 \\(N\\)、训练 token 为 \\(D\\)、独立 token 为 \\(U\\)；报告固定 TPP 与各数据源重复率。下式是单一数据源的说明性重写：[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\tau=\\frac DN,\\qquad e=\\frac DU,\\qquad \\frac UN=\\frac{\\tau}{e}",
+          "label": "我们的记号重写；多源时逐源固定重复率"
+        },
+        {
+          "type": "text",
+          "text": "令 \\(s\\) 为训练步数、\\(\\eta\\) 为学习率、\\(\\lambda\\) 为 weight decay。作者在对数超参数坐标拟合二次曲面，报告的经验最优律为：[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\eta_\\star\\lambda_\\star=\\frac{17.04}{s},\\qquad \\log\\eta_\\star=-1.51+0.175\\log\\tau-0.573\\log s",
+          "label": "原文经验拟合；不是优化器普适定理"
+        },
+        {
+          "type": "text",
+          "text": "最终模型 2.8T 总参数／80B 活跃参数，训练 50T tokens。Muon 采用动量重分片、批量 all-to-all 与专用 Newton–Schulz kernel，优化器步骤占平均迭代 2.1%（165 ms）。[1]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "4.2–12.3× 是四项 held-out BPB 拟合下、相对 DeepSeek-V4-Pro-Base 的 FLOPs 效率；拟合包含最终模型点，不是未见尺度预测，也不是 Muon 单独带来的端到端加速。[1]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21555",
+      "paper": "When Does Muon Actually Win? A Paired Data-, Time-, and Tuning-Budget Benchmark",
+      "authors": "Mushir Akhtar · Hazem N. Nounou · Majdi Mansouri · Mohamed N. Nounou",
+      "url": "https://arxiv.org/abs/2610.21555v1",
+      "title": "Muon 赢在哪一条预算轴上？",
+      "dateNote": "首发 2026-10-15 05:15 EDT · v1 · 重叠窗口补收",
+      "evidence": "已读正文 §2–3、Table 1 与计时协议",
+      "kind": "主读 · 新研究",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "单卡 A100：17.7M／33.6M LM 在 FineWeb-Edu 子集训练 5,000 步（20.48M 已处理 tokens）；2.70M ViT 在平衡／100:1 长尾 CIFAR-100 训练 100 epochs。每种策略先用单开发种子搜索 23 个配置，再用 5 个配对种子比较。[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\operatorname{AUC}_o(H)=\\frac1H\\int_0^H L_o(x)\\,dx,\\qquad g=1-\\frac{\\operatorname{AUC}_{\\mathrm{Muon}}}{\\operatorname{AUC}_{\\mathrm{AdamW}}}",
+          "label": "同一任务、同一预算轴的共同区间；正值表示 Muon 更好"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "任务",
+            "等数据 AUC 改善",
+            "等时间 AUC 改善"
+          ],
+          "rows": [
+            [
+              "LM 17.7M",
+              "3.25%",
+              "−6.96%"
+            ],
+            [
+              "LM 33.6M",
+              "4.46%",
+              "−3.38%"
+            ],
+            [
+              "ViT balanced",
+              "16.98%",
+              "19.68%"
+            ],
+            [
+              "ViT long-tail",
+              "22.44%",
+              "22.31%"
+            ]
+          ],
+          "caption": "原文 Table 1；均为验证 loss 曲线面积，不是最终准确率。[2]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "配置按等数据 AUC 选择，并未另做等时间调参；计时排除验证与 checkpoint I/O。参考 kernel、小模型、辅助 AdamW 的成本限制外推：它与上篇大规模系统的 2.1% 并不矛盾。[2]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21337",
+      "paper": "Does On-Policy Distillation Need to Complete Every Rollout?",
+      "authors": "Zhengxin Zhang · Maosen Tang · Ning Wang · Changhao Li · Jingren Zhou · Bo Dai · Sainyam Galhotra · Alex Townsend · Claire Cardie",
+      "url": "https://arxiv.org/abs/2610.21337v1",
+      "title": "STOPD：无偏的是总和，不一定是更新",
+      "dateNote": "首发 2026-10-15 02:22 EDT · v1 · 重叠窗口补收",
+      "evidence": "已读 §3–5、梯度／单步优化器误差推导及成本表",
+      "kind": "主读 · 新研究",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "On-policy distillation 让教师评估学生自己的轨迹；长回复贵在后缀。STOPD 随机按块截断，再用逆概率权重保留每个位置的监督。最大长度 \\(L\\)、块宽 \\(K\\)、完整长度 \\(T_i\\)、截点 \\(S_i\\)，记逐 token 梯度为 \\(h_{it}\\)：[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "p_t=\\Pr(S_i\\ge t)=\\frac{L-K\\lfloor(t-1)/K\\rfloor}{L},\\qquad \\widehat G=\\sum_i\\sum_{t\\le\\min(T_i,S_i)}\\frac{h_{it}}{p_t},\\qquad \\mathbb E_S\\widehat G=G",
+          "label": "原文恒等式：条件于完整轨迹与训练历史"
+        },
+        {
+          "type": "text",
+          "text": "截点须独立；截断不能改变同前缀的生成与教师反馈。令完整 token 数 \\(N=\\sum_iT_i\\)，滞后归一化量 \\(C\\) 来自前一步：[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathbb E_S\\widehat g=\\frac GC=\\frac NCg_{\\mathrm V},\\qquad \\mathbb E_S\\|\\Delta\\theta_{\\mathrm S}-\\Delta\\theta_{\\mathrm V}\\|^2\\le\\Lambda_{\\mathrm{opt}}^2\\left(\\frac VC^2+\\left(\\frac NC-1\\right)^2\\|g_{\\mathrm V}\\|^2\\right)",
+          "label": "原文单步界；V 是截断梯度总和的均方波动"
+        },
+        {
+          "type": "text",
+          "text": "Muon 也有对应优化器系数，但比较固定同一参数与历史状态，不证明两条完整训练轨迹等价。Qwen3-1.7B←4B 数学任务中，AdamW 每步 941→513 秒，250 步准确率 30.1→29.4；时间包含生成、教师评分与更新。换 Muon 的对应每步成本为 1,029→542 秒。[3]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21549",
+      "paper": "When Is Muon Optimal? Radial Fragility and Minimax Geometry",
+      "authors": "Ao Xu",
+      "url": "https://arxiv.org/abs/2610.21549v1",
+      "title": "Muon 的最优性：径向分布与 minimax 不是同一问题",
+      "dateNote": "首发 2026-10-15 05:13 EDT · v1 · 重叠窗口补收",
+      "evidence": "已读摘要、引言与理论设定；未逐项核验全部证明",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "研究凸、非降径向目标下的矩阵几何：固定无原子径向分布时，精确 polar 最优性很苛刻；对径向分布做最坏情形优化可恢复 polar 方向。结论依赖满列秩等假设，不是一般非凸训练收敛保证。[4]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22245",
+      "paper": "Disagreement-Guided Weak-to-Strong Routing",
+      "authors": "Sima Noorani · Shayan Kiyani · George Pappas · Hamed Hassani",
+      "url": "https://arxiv.org/abs/2610.22245v1",
+      "title": "Hassani：用模型分歧决定是否升级",
+      "dateNote": "首发 2026-10-15 13:19 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "以弱／强模型的回答分歧近似最优路由，无需正确性标签；强模型越接近真实分布，近似越准确。强模型是代理而非真值。[5]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21820",
+      "paper": "A Closed Form Depth-Width Law for Neural Collapse in Deep Linear Networks",
+      "authors": "Pankhil Gawade · Kirsten Fischer · Guy Wolf · Ewa Szczurek",
+      "url": "https://arxiv.org/abs/2610.21820v1",
+      "title": "深线性网络的 depth/width 压缩律",
+      "dateNote": "首发 2026-10-15 09:06 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在可交换类别结构的深线性模型中，用 feature kernel 表达 neural collapse；大宽度下累积压缩由 \\(L/N\\) 控制。不能直接当作非线性网络的普适幂律。[6]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21363",
+      "paper": "Two Sample Sizes in Test-Time LLM Ensembling: Buffered ERM and Minimax Theory",
+      "authors": "Zhi Zhang · Arash A. Amini",
+      "url": "https://arxiv.org/abs/2610.21363v1",
+      "title": "集成有两个样本量",
+      "dateNote": "首发 2026-10-15 02:41 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "固定模型／答案数、margin 指数 \\(\\beta\\)，buffered ERM 的 clean excess risk 上界为 \\(\\widetilde O(Q^{-1/2}+N^{-\\beta/2})\\)：\\(Q\\) 是标注题数，\\(N\\) 是每模型每题生成数。二模型二答案子模型还存在 \\(N^{-\\beta}\\) 识别下限。[7]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22099",
+      "paper": "TIPS: A Tiny Inference-time Policy for Scaling in Diffusion Language Models",
+      "authors": "Ya-Shi Zhang · Jian Tang · Pierre-André Noël · Oleksiy Ostapenko",
+      "url": "https://arxiv.org/abs/2610.22099v1",
+      "title": "TIPS：学习何时揭开、何时重新遮住 token",
+      "dateNote": "首发 2026-10-15 11:46 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "600K 控制器冻结 LLaDA-8B，学习 unmask/remask。32 次 decoder evaluations 下，两种变体在 GSM8K／MATH-500 的 micro-average 为 58.46%／57.97%；控制器另有 SFT／RL 训练成本。[8]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22160",
+      "paper": "EMO: A Closed-Loop Test-Time Computation Framework via Alternating Context Optimization and Logits Steering",
+      "authors": "Wei Xia · Yehui Tang · Zhi-Hong Deng",
+      "url": "https://arxiv.org/abs/2610.22160v1",
+      "title": "EMO：上下文优化与 logits steering 交替",
+      "dateNote": "首发 2026-10-15 12:23 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "外部 judge 改写上下文，再用前后上下文的 logits 差做受限 steering。目标 KL 的单轮下降依赖上下文改善与 faithful-steering 假设；匹配目标模型生成预算不自动匹配 judge 总成本。[9]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22100",
+      "paper": "Patch where the text is new: a compression view of where byte-level models should spend compute",
+      "authors": "Nicolás Vera Zúñiga",
+      "url": "https://arxiv.org/abs/2610.22100v1",
+      "title": "Byte patch 的预算应花在何处",
+      "dateNote": "首发 2026-10-15 11:47 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "约 11% 相同 patch 率、3 seeds、1M／12M／50M BLT 式模型比较 entropy 与 novelty 分块。数学文本收益明显，散文／代码收益变小；不能仅用局部 surprisal 解释算力价值。[10]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22280",
+      "paper": "LEASH: Uncertainty-Aware Weak-to-Strong Escalation and Oversight for Computer-Use Agents",
+      "authors": "Qingni Wang · Changdae Oh · Yuzhe Yang · Sharon Li · Jiachen Yang · Ang Li · Xin Eric Wang",
+      "url": "https://arxiv.org/abs/2610.22280v1",
+      "title": "LEASH：升级模型后仍需监督",
+      "dateNote": "首发 2026-10-15 13:40 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用弱模型成功／失败轨迹的 hidden-state 距离控制升级，并在强模型运行后继续观察。OSWorld 同升级率优于随机路由；报告的成本节约只针对给定 backbone／价格与任务设置。[11]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20836",
+      "paper": "Confidence-Calibrated Inference Expansion for Evaluator-Guided Test-Time Reasoning",
+      "authors": "Weida Liang · Kenji Kawaguchi",
+      "url": "https://arxiv.org/abs/2610.20836v1",
+      "title": "把“继续想”写成三个动作",
+      "dateNote": "首发 2026-10-14 15:25 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "比较返回当前答案、返回 fallback、继续展开；置信度按动作分别校准。相对固定策略在线 compute 降约 30%／16%，但相对 fitted Q 的 utility 改善小且不一致。[12]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20057",
+      "paper": "Beyond Correctness: Compute-Responsive Data Selection for Reasoning Model Post-Training",
+      "authors": "Liang He · Xiangyu Li · Yuxin Wang · Hanbin Zhang · Mingyu Cao · Zhaomiao Guo · Xilu Wang",
+      "url": "https://arxiv.org/abs/2610.20057v1",
+      "title": "挑选对额外算力有响应的数据",
+      "dateNote": "首发 2026-10-14 07:57 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "优先训练短推理失败、增加预算后成功的样本。Qwen3-8B 的 512–4,096 token 前沿优于匹配非 CR 数据；45.3% 是低算力失败的恢复率，不是整体准确率。[13]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20563",
+      "paper": "Scaling Discovery Requires Forgetting",
+      "authors": "Shangyin Tan · Ben Zhou · Lakshya A Agrawal · Jialin Zhang · Yilin Chen · Qiuyang Mang · Donghyun Lee · Dennis Jacob · Koushik Sen · Alex Dimakis · Matei Zaharia",
+      "url": "https://arxiv.org/abs/2610.20563v1",
+      "title": "搜索算力增长为何需要遗忘",
+      "dateNote": "首发 2026-10-14 13:49 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "四类自动研究任务中，历史会造成搜索锚定；定期清空 session／候选历史、保留最佳解再启动，在同预算下改善结果。这不是“所有记忆都有害”。[14]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21318",
+      "paper": "Loud and Clear: Making Visual Evidence Count in Multimodal Document RAG",
+      "authors": "Eunchan Jo · Seounghyun Jang · Sangwoo Mo",
+      "url": "https://arxiv.org/abs/2610.21318v1",
+      "title": "LoC：检索正确之后的视觉预算",
+      "dateNote": "首发 2026-10-15 02:08 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "SciEGQA 已知正确页面上，视觉 tokens 从 1K 增至 32K 提高 15.22 个准确率百分点；固定 16K 时真值 crop 再提高 3.75 点。前者是读图预算效应，后者是 oracle 诊断，不是检索改进。[15]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21125",
+      "paper": "Noise-Space Reward Alignment for Few-Step Generative Models",
+      "authors": "Woocheol Shin · Taeyoung Yun · Jiwon Sung · Hyeongyu Kang · Jeongmin Park · Jaewoo Lee · Kyuil Sim · Dohyun Kim · Yutong He · Jinkyoo Park",
+      "url": "https://arxiv.org/abs/2610.21125v1",
+      "title": "NPO：将推理搜索摊销进训练",
+      "dateNote": "首发 2026-10-14 22:30 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "冻结少步生成器，训练初始噪声上的 flow policy 逼近 reward-tilted 分布；将搜索移到训练。摘要的 16–549× 是推理成本对比，不能视为训练加推理总成本节约。[16]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20483",
+      "paper": "Decoupled Marginal Sharpening for Training-Free Inference-Time Scaling",
+      "authors": "Weixin Wang · Wei Deng · Anderson Schneider · Yuriy Nevmyvaka · Pan Xu · Andrew Bennett",
+      "url": "https://arxiv.org/abs/2610.20483v1",
+      "title": "DMS：分开锐化路径和答案",
+      "dateNote": "首发 2026-10-14 12:55 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "先温和锐化推理路径，再聚合并锐化答案边缘；annealed SMC 缓解粒子路径塌缩。基模型更可能的答案未必更正确，方法不引入外部真值。[17]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20331",
+      "paper": "Are We Overthinking One-Step Generation?",
+      "authors": "Woobin Park · Jaeyeon Kim · Yilun Du · Sitan Chen · Bohyung Han",
+      "url": "https://arxiv.org/abs/2610.20331v1",
+      "title": "Priming：先重建，再做分布训练",
+      "dateNote": "首发 2026-10-14 11:14 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "两阶段单步生成：固定噪声重建预训练，再 feature-space 分布后训练。ImageNet 256 的 FID 1.19、约十分之一训练 compute 是作者相对可比 FID 方法的报告，不是独立复现。[18]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20086",
+      "paper": "AFCS: Atomic-Fact-Conditioned Synthesis for Factual Knowledge Pretraining",
+      "authors": "Yunhao Wang · Feng Zhang · Tinghao Yu · Xing Wu · Jiang Zhou",
+      "url": "https://arxiv.org/abs/2610.20086v1",
+      "title": "AFCS：合成数据的单位从段落变成事实",
+      "dateNote": "首发 2026-10-14 08:24 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "同一 FineWiki 来源，先提取／核验原子事实再生成；在 OLMo-3-7B 与 32B continued pretraining 比较事实、段落、chunk、实体粒度。属于数据质量研究，未给普适 scaling 指数。[19]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-18853",
+      "paper": "Two Clocks: Why Larger Rollout Batches Learn Slower but Fail on Schedule in Reinforcement Learning with Verifiable Rewards",
+      "authors": "Yuante Li · Junwei Quan · Kai Qiu · Kate Zhang · Yicheng Tao",
+      "url": "https://arxiv.org/abs/2610.18853v1",
+      "title": "RLVR：进展和崩溃有不同的时钟",
+      "dateNote": "首发 2026-10-13 13:58 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "局部二次模型中，平方根学习率缩放保留每样本一阶 drift，却不保留曲率修正后的进展；崩溃样本数不变则来自另一个 drift-threshold 假说。16× batch 实验支持，但两者不是同一个定理。[20]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-18566",
+      "paper": "Rethinking Quality in Large Language Model Routing: Security-Conditioned Model-and-Budget Selection",
+      "authors": "Yichi Zhang · Zhenxiang Huang · Yuyang Zhang · Yuchen Yang",
+      "url": "https://arxiv.org/abs/2610.18566v1",
+      "title": "SCRouter：模型与 token 预算联合选择",
+      "dateNote": "首发 2026-10-13 11:36 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "分别预测 utility、security 和预算内完成概率，再按任务加权分配模型／tokens。38,869 个问题、12 模型×12 预算；不要把任务条件下的安全偏好压成单一“质量”。[21]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20570",
+      "paper": "Manacá-1B-Instruct-2: Reproducible Safety Alignment for a Native Brazilian-Portuguese LLM. Negative DPO Results, a Controlled Composition Scan, and a Silent Failure Mode of the LLM Judge",
+      "authors": "Bruno Leonardo Santos Menezes · Carlos Leonardo Souza Cardoso · Fabio André Machado Porto",
+      "url": "https://arxiv.org/abs/2610.20570v1",
+      "title": "Manacá：数据混合的非单调性与 DPO 负结果",
+      "dateNote": "首发 2026-10-14 13:53 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "安全 SFT 中一般数据占比扫 10%–60%，过度拒绝并非单调，拐点约 40%–50%；三次 DPO 尝试均报告负结果。训练 reward margin 上升不保证自由生成改善。结论限 PT-BR 模型与所测协议。[22]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-18838",
+      "paper": "Scaling Online Optimal Transport Minibatches for Flow Matching",
+      "authors": "Peter Chen · Sergey Levine",
+      "url": "https://arxiv.org/abs/2610.18838v1",
+      "title": "Flow matching：耦合 minibatch 也是资源轴",
+      "dateNote": "首发 2026-10-13 13:56 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在线 entropic OT 近似支持更大的源／目标耦合；原文声称完整随机梯度方差与积分误差相对独立配对严格降低，并随 coupling batch 增大改善。未读证明，不能省略其条件。[23]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-19738",
+      "paper": "ProtModernBERT: Compute-Efficient Protein Language Modeling",
+      "authors": "Alberto Martínez · Natalia Flechas Manrique · Llorenç Espinosa-Portalés · Luc Andrea",
+      "url": "https://arxiv.org/abs/2610.19738v1",
+      "title": "蛋白语言模型的低算力前沿",
+      "dateNote": "首发 2026-10-14 03:59 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "ProtModernBERT 在控制预训练与 cluster-based 验证下比较架构、数据和参数量；部分任务接近 Amplify-120M／ProtBert，预训练 FLOPs 低至其 10%–20%。这是模型训练效率，不是生物尺度规律。[24]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21832",
+      "paper": "Local Epochs as Optimal Stopping: Theory and Evidence in Federated Learning",
+      "authors": "Ke Xiao · Qiyuan Wang · Christos Anagnostopoulos",
+      "url": "https://arxiv.org/abs/2610.21832v1",
+      "title": "FedStop：多训练一个 epoch 的边际价值",
+      "dateNote": "首发 2026-10-15 09:15 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "将联邦本地训练视为有限期最优停止：下一 epoch 的期望 loss 降低大于定价后的漂移成本才继续。单步前瞻最优需要停止决策嵌套；闭式解分别讨论几何与幂律收益。[25]"
+        }
+      ]
+    },
+    {
+      "id": "nemotron-mopd",
+      "paper": "NVIDIA Nemotron 3.5 Super VL Powers Specialized Agents with Multimodal Reasoning",
+      "authors": "Chris Alexiuk · Chintan Patel",
+      "url": "https://developer.nvidia.com/blog/nvidia-nemotron-3-5-super-vl-powers-specialized-agents-with-multimodal-reasoning/",
+      "title": "Nemotron：多教师 on-policy 蒸馏与量化",
+      "dateNote": "2026-10-15 · 技术博客",
+      "evidence": "已读训练与 under-the-hood 段落；未核验技术报告全表",
+      "kind": "简讯 · Post-training 博客",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "技术部分介绍两阶段视觉／语言 SFT、多教师对学生 rollout 的反馈，以及 NVFP4 quantization-aware distillation。多个组件同时变化，博客未提供隔离 MOPD 的因果消融；不将客户案例的预期降本数字当研究结论。[26]"
+        }
+      ]
+    },
+    {
+      "id": "p-2501-05559",
+      "paper": "Forget About It: Mitigating Forgetting Without Replay or Auxiliary Objectives",
+      "authors": "Anat Kleiman · Gintare Karolina Dziugaite · Jonathan Frankle · Sham Kakade · Mansheej Paul",
+      "url": "https://arxiv.org/abs/2501.05559v2",
+      "title": "Kakade：从模型平均到 replay-free 持续学习",
+      "dateNote": "首发 2025-01-09 15:11 EDT；v2：2026-10-13 21:34 EDT",
+      "evidence": "基于版本摘要对比／作者修订说明；未读全篇实验",
+      "kind": "简讯 · 版本更新",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "对比 v1／v2 摘要：标题由 Soup to go 改为 Forget About It，新增 Lookahead 与 Qwen3-14B adapter 持续学习描述。周期参数插值不需要历史样本 replay；36.3% 是所测任务训练时间上限改善，不是普适加速。[27]"
+        }
+      ]
+    },
+    {
+      "id": "p-2608-14906",
+      "paper": "Optimal Watermark Localization in Mixed-Source Large Language Model Texts",
+      "authors": "Jose H. Blanchet · T. Tony Cai · Xiang Li · Hao Liu · Qi Long · Weijie J. Su",
+      "url": "https://arxiv.org/abs/2608.14906v2",
+      "title": "Cai／Long／Su：混合文本中的水印定位",
+      "dateNote": "首发 2026-08-14 17:41 EDT；v2：2026-10-15 13:29 EDT",
+      "evidence": "基于版本摘要对比／作者修订说明；未读全篇实验",
+      "kind": "简讯 · 版本更新",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "作者注明更新实验与补充材料；具体版本差异尚未逐项核实。当前摘要把 token 定位写成多重检验，区分检测、发现与分类边界；不把既有边界当作本次新定理。[28]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-dpo",
+    "paperId": "arxiv:2305.18290",
+    "shortTitle": "DPO",
+    "year": 2023,
+    "topics": [
+      "Post-training"
+    ],
+    "paper": "Direct Preference Optimization: Your Language Model is Secretly a Reward Model",
+    "authors": "Rafael Rafailov · Archit Sharma · Eric Mitchell · Stefano Ermon · Christopher D. Manning · Chelsea Finn",
+    "url": "https://arxiv.org/html/2305.18290v3",
+    "kind": "每日精读 · 经典 003",
+    "title": "DPO：一个配分函数，消去一整个奖励模型",
+    "dateNote": "历史经典：首发 2023-05-29；所读 v3：2024-07-29；NeurIPS 2023",
+    "evidence": "已读正文 §3–4 与附录 A.1–A.2、梯度推导；不报告未核验实验",
+    "recognition": {
+      "label": "NeurIPS 2023 Oral · Outstanding Main Track Runner-Up",
+      "url": "https://media.neurips.cc/Conferences/NeurIPS2023/NeurIPS2023-Press_Release.pdf"
+    },
+    "question": "若偏好对来自 best-of-N 筛选，而非独立抽样，数据选择怎样改变可识别的偏好关系？什么时候 DPO 的隐式分数可用于排序，却不能解释为答案正确概率？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "InstructGPT（2022）的 RLHF 将偏好拟合与策略优化分开；DPO（2023）利用 KL 正则目标的闭式解，直接拟合偏好。这里精读的是重参数化，而非“奖励已等于正确率”。[31,29]"
+      },
+      {
+        "type": "text",
+        "text": "固定 prompt \\(x\\)，\\(\\beta>0\\)，参考策略在所考虑支持集上为正，且配分函数有限。省略 \\(x\\) 时，非参数策略目标为：[29]"
+      },
+      {
+        "type": "equation",
+        "tex": "J(\\pi)=\\mathbb E_{y\\sim\\pi}r(y)-\\beta D_{\\mathrm{KL}}(\\pi\\|\\pi_{\\mathrm{ref}}),\\qquad Z=\\sum_y\\pi_{\\mathrm{ref}}(y)e^{r(y)/\\beta}",
+        "label": "原文 KL 正则奖励目标"
+      },
+      {
+        "type": "equation",
+        "tex": "\\pi^*(y)=\\frac{\\pi_{\\mathrm{ref}}(y)e^{r(y)/\\beta}}Z,\\qquad J(\\pi)=\\beta\\log Z-\\beta D_{\\mathrm{KL}}(\\pi\\|\\pi^*)",
+        "label": "原文附录 A.1；KL 非负直接给出最优策略"
+      },
+      {
+        "type": "text",
+        "text": "反解 reward，并代入 Bradley–Terry 偏好模型；只依赖 \\(x\\) 的配分项在成对差中消失：[29]"
+      },
+      {
+        "type": "equation",
+        "tex": "r(x,y)=\\beta\\log\\frac{\\pi^*(y\\mid x)}{\\pi_{\\mathrm{ref}}(y\\mid x)}+\\beta\\log Z(x),\\qquad p(y_w\\succ y_l\\mid x)=\\sigma\\!\\left(r(x,y_w)-r(x,y_l)\\right)",
+        "label": "原文 Eq. 5–6；偏好模型是假设，不是定义上的正确率"
+      },
+      {
+        "type": "equation",
+        "tex": "\\Delta_\\theta=\\log\\frac{\\pi_\\theta(y_w\\mid x)}{\\pi_{\\mathrm{ref}}(y_w\\mid x)}-\\log\\frac{\\pi_\\theta(y_l\\mid x)}{\\pi_{\\mathrm{ref}}(y_l\\mid x)},\\qquad \\mathcal L_{\\mathrm{DPO}}=-\\mathbb E_{\\mathcal D}\\log\\sigma(\\beta\\Delta_\\theta)",
+        "label": "原文 Eq. 7；固定离线偏好数据集"
+      },
+      {
+        "type": "equation",
+        "tex": "\\nabla_\\theta\\ell=-\\beta\\sigma(-\\beta\\Delta_\\theta)\\left[\\nabla_\\theta\\log\\pi_\\theta(y_w\\mid x)-\\nabla_\\theta\\log\\pi_\\theta(y_l\\mid x)\\right]",
+        "label": "原文梯度；相对参考策略已解释的偏好，权重更小"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "非参数恒等式不保证有限网络、有限偏好数据的全局最优；移除显式 reward model 没有移除偏好模型与数据覆盖假设。入选依据是 NeurIPS 2023 Oral 与 Outstanding Main Track Runner-Up，不是主奖得主。[29,30]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "title": "Frontier Pre-training at Microsoft AI · technical report/blog",
+      "url": "https://microsoft.ai/news/frontier-pre-training-at-microsoft-ai/"
+    },
+    {
+      "title": "When Does Muon Actually Win? A Paired Data-, Time-, and Tuning-Budget Benchmark",
+      "url": "https://arxiv.org/pdf/2610.21555v1"
+    },
+    {
+      "title": "Does On-Policy Distillation Need to Complete Every Rollout?",
+      "url": "https://arxiv.org/html/2610.21337v1"
+    },
+    {
+      "title": "When Is Muon Optimal? Radial Fragility and Minimax Geometry",
+      "url": "https://arxiv.org/abs/2610.21549v1"
+    },
+    {
+      "title": "Disagreement-Guided Weak-to-Strong Routing",
+      "url": "https://arxiv.org/abs/2610.22245v1"
+    },
+    {
+      "title": "A Closed Form Depth-Width Law for Neural Collapse in Deep Linear Networks",
+      "url": "https://arxiv.org/abs/2610.21820v1"
+    },
+    {
+      "title": "Two Sample Sizes in Test-Time LLM Ensembling: Buffered ERM and Minimax Theory",
+      "url": "https://arxiv.org/abs/2610.21363v1"
+    },
+    {
+      "title": "TIPS: A Tiny Inference-time Policy for Scaling in Diffusion Language Models",
+      "url": "https://arxiv.org/abs/2610.22099v1"
+    },
+    {
+      "title": "EMO: A Closed-Loop Test-Time Computation Framework via Alternating Context Optimization and Logits Steering",
+      "url": "https://arxiv.org/abs/2610.22160v1"
+    },
+    {
+      "title": "Patch where the text is new: a compression view of where byte-level models should spend compute",
+      "url": "https://arxiv.org/abs/2610.22100v1"
+    },
+    {
+      "title": "LEASH: Uncertainty-Aware Weak-to-Strong Escalation and Oversight for Computer-Use Agents",
+      "url": "https://arxiv.org/abs/2610.22280v1"
+    },
+    {
+      "title": "Confidence-Calibrated Inference Expansion for Evaluator-Guided Test-Time Reasoning",
+      "url": "https://arxiv.org/abs/2610.20836v1"
+    },
+    {
+      "title": "Beyond Correctness: Compute-Responsive Data Selection for Reasoning Model Post-Training",
+      "url": "https://arxiv.org/abs/2610.20057v1"
+    },
+    {
+      "title": "Scaling Discovery Requires Forgetting",
+      "url": "https://arxiv.org/abs/2610.20563v1"
+    },
+    {
+      "title": "Loud and Clear: Making Visual Evidence Count in Multimodal Document RAG",
+      "url": "https://arxiv.org/abs/2610.21318v1"
+    },
+    {
+      "title": "Noise-Space Reward Alignment for Few-Step Generative Models",
+      "url": "https://arxiv.org/abs/2610.21125v1"
+    },
+    {
+      "title": "Decoupled Marginal Sharpening for Training-Free Inference-Time Scaling",
+      "url": "https://arxiv.org/abs/2610.20483v1"
+    },
+    {
+      "title": "Are We Overthinking One-Step Generation?",
+      "url": "https://arxiv.org/abs/2610.20331v1"
+    },
+    {
+      "title": "AFCS: Atomic-Fact-Conditioned Synthesis for Factual Knowledge Pretraining",
+      "url": "https://arxiv.org/abs/2610.20086v1"
+    },
+    {
+      "title": "Two Clocks: Why Larger Rollout Batches Learn Slower but Fail on Schedule in Reinforcement Learning with Verifiable Rewards",
+      "url": "https://arxiv.org/abs/2610.18853v1"
+    },
+    {
+      "title": "Rethinking Quality in Large Language Model Routing: Security-Conditioned Model-and-Budget Selection",
+      "url": "https://arxiv.org/abs/2610.18566v1"
+    },
+    {
+      "title": "Manacá-1B-Instruct-2: Reproducible Safety Alignment for a Native Brazilian-Portuguese LLM. Negative DPO Results, a Controlled Composition Scan, and a Silent Failure Mode of the LLM Judge",
+      "url": "https://arxiv.org/abs/2610.20570v1"
+    },
+    {
+      "title": "Scaling Online Optimal Transport Minibatches for Flow Matching",
+      "url": "https://arxiv.org/abs/2610.18838v1"
+    },
+    {
+      "title": "ProtModernBERT: Compute-Efficient Protein Language Modeling",
+      "url": "https://arxiv.org/abs/2610.19738v1"
+    },
+    {
+      "title": "Local Epochs as Optimal Stopping: Theory and Evidence in Federated Learning",
+      "url": "https://arxiv.org/abs/2610.21832v1"
+    },
+    {
+      "title": "Nemotron 3.5 Super VL · training and inference mechanisms",
+      "url": "https://developer.nvidia.com/blog/nvidia-nemotron-3-5-super-vl-powers-specialized-agents-with-multimodal-reasoning/"
+    },
+    {
+      "title": "Forget About It: Mitigating Forgetting Without Replay or Auxiliary Objectives",
+      "url": "https://arxiv.org/abs/2501.05559v2"
+    },
+    {
+      "title": "Optimal Watermark Localization in Mixed-Source Large Language Model Texts",
+      "url": "https://arxiv.org/abs/2608.14906v2"
+    },
+    {
+      "title": "DPO · NeurIPS 2023 · read v3 (2024-07-29)",
+      "url": "https://arxiv.org/html/2305.18290v3"
+    },
+    {
+      "title": "NeurIPS 2023 official awards and oral announcement",
+      "url": "https://media.neurips.cc/Conferences/NeurIPS2023/NeurIPS2023-Press_Release.pdf"
+    },
+    {
+      "title": "InstructGPT · Ouyang et al. (2022) · historical background",
+      "url": "https://arxiv.org/abs/2203.02155"
+    }
+  ]
+}
