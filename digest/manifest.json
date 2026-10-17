@@ -4,8 +4,53 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-10-16",
+  "latest": "2026-10-17",
   "issues": [
+    {
+      "date": "2026-10-17",
+      "title": "删去什么，保留什么",
+      "url": "/digest/2026-10-17.html",
+      "translations": {
+        "en": {
+          "title": "What to prune, what to preserve",
+          "url": "/digest/en/2026-10-17.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2610.21201v1",
+        "https://arxiv.org/html/2610.20588v1",
+        "https://arxiv.org/abs/2206.14486",
+        "https://huggingface.co/blog/nvidia/scaling-indic-pretraining",
+        "https://huggingface.co/blog/reflection-beam",
+        "https://huggingface.co/blog/meta-muse-spark-open",
+        "https://huggingface.co/blog/swiss-ai/apertus-v15-release-notes",
+        "https://huggingface.co/blog/BunsDev/when-agents-improve-themselves-what-should-stay",
+        "https://arxiv.org/abs/2610.22353v1",
+        "https://arxiv.org/abs/2610.22322v1",
+        "https://arxiv.org/abs/2610.22273v1",
+        "https://arxiv.org/abs/2610.21882v1",
+        "https://arxiv.org/abs/2610.21656v1",
+        "https://arxiv.org/abs/2610.21492v1",
+        "https://arxiv.org/abs/2610.21286v1",
+        "https://arxiv.org/abs/2610.21167v1",
+        "https://arxiv.org/abs/2610.21030v1",
+        "https://arxiv.org/abs/2610.20832v1",
+        "https://arxiv.org/abs/2610.20193v1",
+        "https://arxiv.org/abs/2610.21480v1",
+        "https://arxiv.org/abs/2610.22130v1",
+        "https://arxiv.org/abs/2610.20865v1",
+        "https://arxiv.org/abs/2610.20582v1",
+        "https://arxiv.org/abs/2610.20584v1",
+        "https://arxiv.org/abs/2610.20518v1",
+        "https://arxiv.org/abs/2610.22339v1",
+        "https://arxiv.org/abs/2610.21916v1",
+        "https://arxiv.org/abs/2609.01431v3",
+        "https://arxiv.org/abs/2605.30348v2",
+        "https://arxiv.org/pdf/2203.15556v1",
+        "https://papers.nips.cc/paper_files/paper/2022/hash/c1e2faff6f588870935f114ebe04a3e5-Abstract-Conference.html",
+        "https://arxiv.org/abs/2001.08361"
+      ]
+    },
     {
       "date": "2026-10-16",
       "title": "预算、截断与迁移",

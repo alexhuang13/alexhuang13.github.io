@@ -1,0 +1,755 @@
+{
+  "date": "2026-10-17",
+  "number": "004",
+  "publishedAt": "2026-10-17T12:53:04Z",
+  "readingMinutes": 22,
+  "tags": [
+    "Scaling laws",
+    "Data curation",
+    "Post-training",
+    "Chinchilla"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "title": "删去什么，保留什么",
+  "subtitle": "样本筛选 · 弹性模型 · 后训练博客 · 精读 Chinchilla",
+  "window": "2026-10-14 08:39 — 2026-10-17 08:39 · America/New_York",
+  "edition": "每日研究笔记",
+  "intro": "两篇主读研究训练样本与模型单元的删减；技术博客更新合成数据和后训练细节。10月14–15日论文均为重叠窗口补收，不标作今日首发。经典精读 Chinchilla：最优分配能推导，但前提是经验曲面可信。",
+  "articles": [
+    {
+      "id": "p-2610-21201",
+      "paper": "Hard Way, The Only Way: Provable Merits of Training on Hardest Examples",
+      "authors": "Elvis Dohmatob",
+      "url": "https://arxiv.org/abs/2610.21201v1",
+      "title": "2N：不是简单留下最难的样本",
+      "dateNote": "首发 2026-10-15 00:00 EDT · v1 · 重叠窗口补收",
+      "evidence": "已读 §2、§4–5 与附录 E；聚焦平方损失特例",
+      "kind": "主读 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Sorscher 等（2022）提出数据筛选可改变学习曲线。[3] 本文在高维高斯线性分类中研究其最优性：维数 \\(N\\)、样本数 \\(P\\)，生成、测试与筛选方向完全对齐；平方损失取无正则极限。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\phi=\\frac NP,\\quad T=|G|,\\ G\\sim\\mathcal N(0,1),\\quad p=\\Pr(T\\in A),\\quad \\mu_k=\\mathbb E[T^k\\mid T\\in A],\\quad\\nu=\\operatorname{Var}(T\\mid T\\in A)",
+          "label": "先取比例高维极限，再令 φ→0；A 为保留的 margin 集合"
+        },
+        {
+          "type": "text",
+          "text": "原文将误分类率化为一个角度；保留比例须大于维样比。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "E_{\\rm test}\\simeq\\frac1\\pi\\arctan\\sqrt{K(A)},\\qquad K(A)=\\frac{\\phi}{p-\\phi}\\frac{\\mu_2\\nu}{\\mu_1^2},\\quad p>\\phi",
+          "label": "原文式 (32)、(36)"
+        },
+        {
+          "type": "text",
+          "text": "条件密度的上界给出方差下界，再对保留比例优化。这是原文附录 E 的关键链条：[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\nu\\ge\\frac{\\pi p^2}{24},\\quad\\frac{\\mu_2}{\\mu_1^2}\\ge1\\ \\Longrightarrow\\ K(A)\\ge\\frac{\\pi\\phi p^2}{24(p-\\phi)}\\ge\\frac{\\pi\\phi^2}{6},\\qquad p_\\star\\simeq2\\phi,\\quad E_\\star\\sim\\frac{\\phi}{\\sqrt{6\\pi}}",
+          "label": "最后一界在 p=2φ 最小；薄带渐近达到，保留约 2N 个样本"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "最优集合是靠近边界但避开原点的薄带，不是 \\([0,c]\\)。完美筛选器并非免费；此处不是 LLM 定理。一般凸损失部分使用 replica 方法；本文仅展开可解特例，原稿若干带宽记号不一致，以上采用密度界而非照抄带宽。[1]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20588",
+      "paper": "Your Transformer Is Secretly Elastic",
+      "authors": "Walter Simoncini · Dheeraj Varghese · Gertjan J. Burghouts · Cees G. M. Snoek",
+      "url": "https://arxiv.org/abs/2610.20588v1",
+      "title": "冻结权重，学习一张跨预算排序",
+      "dateNote": "首发 2026-10-14 13:58 EDT · v1 · 重叠窗口补收",
+      "evidence": "已读方法、Table 3 与附录校准协议",
+      "kind": "主读 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "固定目标剪枝通常为每个预算重做一次。本文只学习 MLP 神经元与 attention head 的全局分数 \\(z\\)，冻结骨干 \\(\\theta\\)。\\(b\\) 表示移除的 FLOPs 比例，\\(\\kappa_b\\) 是按成本累计得到的阈值。[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "M_b(z)=\\sigma\\!\\left(\\frac{z-\\operatorname{sg}(\\kappa_b(z))}{\\tau}\\right),\\qquad \\min_z\\frac1{|\\mathcal B|}\\sum_{b\\in\\mathcal B}\\mathbb E_{\\mathcal D}\\ell(f_{\\theta,M_b(z)}(x),y)",
+          "label": "方法的紧凑重写；sg 截断阈值梯度，部署时硬阈值化"
+        },
+        {
+          "type": "text",
+          "text": "14 个目标（5%–70%），300 个 Adam 校准步；ViT-B 的 batch=32、默认 2,000 张不同图像。一次排序产生嵌套子网络，不等于无需优化。[2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "移除 FLOPs",
+            "剩余 GFLOPs",
+            "单预算 → 弹性"
+          ],
+          "rows": [
+            [
+              "20%",
+              "28.2",
+              "79.7 → 80.1"
+            ],
+            [
+              "40%",
+              "21.2",
+              "67.2 → 69.1"
+            ],
+            [
+              "60%",
+              "14.2",
+              "41.6 → 45.2"
+            ]
+          ],
+          "caption": "原文 Table 3：AugReg ViT-B/16，ImageNet-1k top-1 k-NN 准确率（%）。[2]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "证据主要支持视觉／双向编码器；不应外推成自回归语言生成结论。校准成本和推理 FLOPs 是不同预算轴。[2]"
+        }
+      ]
+    },
+    {
+      "id": "indic-data",
+      "paper": "Scaling Indic Pretraining: 2.8 Trillion Tokens and an Open Data Generation Pipeline",
+      "authors": "AI4Bharat · NVIDIA",
+      "url": "https://huggingface.co/blog/nvidia/scaling-indic-pretraining",
+      "title": "Indic：语料库存不等于训练预算",
+      "dateNote": "2026-10-16 · 技术博客；博客日期不等于模型首发",
+      "evidence": "已读所述技术章节；未独立复现",
+      "kind": "简讯 · 技术博客",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "翻译→评分→修复→转写；75/100 是 rubric 门槛，不是正确率。2.8T tokens 包含同源语言／文字变体，修复回收的 438.4B 已计入总量。Nemotron CPT 仅用 10B 印度语言 tokens（自然＋合成）；阶段增益不能单独归因合成数据。本文补充昨日 Nemotron 条目的数据侧，语料仍注明待发布。[4]"
+        }
+      ]
+    },
+    {
+      "id": "beam-posttraining",
+      "paper": "Welcome Beam: a 501B open model you can own, customize, and scale",
+      "authors": "Ben Burtenshaw · Merve Noyan · Pedro Cuenca",
+      "url": "https://huggingface.co/blog/reflection-beam",
+      "title": "Beam：小样本语言遵循，不是推理准确率",
+      "dateNote": "2026-10-16 · 技术博客；博客日期不等于模型首发",
+      "evidence": "已读所述技术章节；未独立复现",
+      "kind": "简讯 · 技术博客",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "LoRA SFT 在 Multilingual-Thinking 训练一轮，16 个 held-out prompts 的指定语言遵循由 3/16→16/16；样本小且不评判推理正确性。GRPO 配方另用每步 32 prompts×8 responses、分组优势与截断重要性采样，无 KL／熵惩罚；配方可运行不等于已证实下游收益。[5]"
+        }
+      ]
+    },
+    {
+      "id": "muse-sft",
+      "paper": "Welcome Muse Spark Open: open-weight frontier multimodal mixture-of-experts model from Meta",
+      "authors": "Hugging Face team",
+      "url": "https://huggingface.co/blog/meta-muse-spark-open",
+      "title": "Muse Spark：816B 的 attention-only LoRA 实验",
+      "dateNote": "2026-10-15 · 技术博客；博客日期不等于模型首发",
+      "evidence": "已读所述技术章节；未独立复现",
+      "kind": "简讯 · 技术博客",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "冻结 experts，只适配四个 attention projections；64 H100、500 步、长度 2,048、packing，报告约2小时。训练 token accuracy 72%→84%、loss 1.26→0.57；这些是训练指标，不是 held-out 能力增益。[6]"
+        }
+      ]
+    },
+    {
+      "id": "apertus-posttraining",
+      "paper": "Apertus 1.5 Release Notes",
+      "authors": "Hanna Yukhymenko · Oleg Lavrovsky · Y Metz",
+      "url": "https://huggingface.co/blog/swiss-ai/apertus-v15-release-notes",
+      "title": "Apertus：后训练会侵蚀长上下文能力",
+      "dateNote": "2026-10-15 · 技术博客；博客日期不等于模型首发",
+      "evidence": "已读所述技术章节；未独立复现",
+      "kind": "简讯 · 技术博客",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "模型权重7月24日已发布，本轮收录新技术解读。五阶段为 SFT→长上下文 SFT→RL→DPO→SDPO；仅对无需思考无法解出的 prompt 加推理轨迹，工具数据限执行核验轨迹。长上下文 SFT 恢复短上下文 SFT 后退化的能力；未见各阶段独立因果消融。[7]"
+        }
+      ]
+    },
+    {
+      "id": "agent-continuity",
+      "paper": "When agents self-improve, what should persist?",
+      "authors": "Val Alexander",
+      "url": "https://huggingface.co/blog/BunsDev/when-agents-improve-themselves-what-should-stay",
+      "title": "自改进：保护测试，而非只保存指令",
+      "dateNote": "2026-10-14 · 技术博客；博客日期不等于模型首发",
+      "evidence": "已读所述技术章节；未独立复现",
+      "kind": "简讯 · 技术博客",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "技术综合提出分开评估目标、角色、记忆与行为策略；开发、接受与最终审计集合分离，且评测器不可由候选代理修改。LIP-Eval 是尚无 pilot 数据、未校准门槛的提案，不是已验证的稳定性保证。[8]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22353",
+      "paper": "Rethinking Routing Exploration in Modern Mixture-of-Experts",
+      "authors": "Bingcong Li · Hao Ma · Michael Muehlebach · Niao He · Yi Ma",
+      "url": "https://arxiv.org/abs/2610.22353v1",
+      "title": "MirrorMoE：更多专家组合不保证被探索",
+      "dateNote": "首发 2026-10-15 13:58 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "共享专家降低表示变化，却与细粒度分割增大的路由空间冲突；按 token 抑制不必要专家以缩小探索空间。摘要报告跨模型尺度改善，未给可外推 scaling 指数。[9]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22322",
+      "paper": "Learning Self-Orchestration in Decentralized Agent Swarms",
+      "authors": "Guowei Xu · Zhenting Qi · Amani Kiruga · Himabindu Lakkaraju · Yilun Du",
+      "url": "https://arxiv.org/abs/2610.22322v1",
+      "title": "MPT：扩大推理时代理群体",
+      "dateNote": "首发 2026-10-15 13:51 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "同时学习动作与参与竞价，局部信用来自集体结果；更大推理群体改善表现且更耐代理 dropout。不能由此推断固定总 compute 下仍优于单体。[10]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22273",
+      "paper": "Librarian Agents: Training LLMs to Curate Long-Context Workspaces that Anticipate Future Queries",
+      "authors": "Anikait Singh · Teresa Zhang · Yoonho Lee · Roshen Sanjay Nair · Aviral Kumar · Chelsea Finn",
+      "url": "https://arxiv.org/abs/2610.22273v1",
+      "title": "Librarian Agents：预计算工作区的摊销",
+      "dateNote": "首发 2026-10-15 13:35 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "RL builder 在查询前将文档重组为合成文件／引用层级；作者报告相对最强基线 BrowseComp-Plus +33、BRIGHT +31 个准确率百分点。前置建库成本须由重复查询摊销，不是免费检索。[11]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21882",
+      "paper": "Anvil: Scaling Embodied Spatial Intelligence through Knowledge Recirculation",
+      "authors": "Weilin Ruan · Bohan Zhou · Jinghao Li · Yangkai Wei · Wenqian Li · Peiran Dong · Yingjie Xu · Leyi Wu · Haojian Huang · Binghui Xie · Han Yang · Kaiwen Zhou · Yinchuan Li · Ying-Cong Chen · James Cheng",
+      "url": "https://arxiv.org/abs/2610.21882v1",
+      "title": "Anvil：合成数据修复与首错蒸馏",
+      "dateNote": "首发 2026-10-15 09:47 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "5.8M 源文档落地记录／160K 图像，5.22M 用于训练；9B 学生按最早语义错误选择专长教师，逐阶段归一化。覆盖、选择性迁移与反馈修复均有控制实验；这是一项数据质量研究。[12]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21656",
+      "paper": "Data World: Scaling Data Environments from Scratch",
+      "authors": "Zhanli Li · Zeyuan Xu · Chaoxu Pang · Zeyuan Liu · Anyang Ji · Te Sun · Kongcheng Zhang · Wenbo Xu · Xubin Yue · Shipeng Luo · Junjie Zhao · Yingfan Hua · Jingqing Ruan · Zhongda Su · Feng Hong · Zhizhao Zeng · Ke Zeng · Xunliang Cai · Hanjia Ye",
+      "url": "https://arxiv.org/abs/2610.21656v1",
+      "title": "Data World：先定义机制，再合成文件",
+      "dateNote": "首发 2026-10-15 06:35 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "从显式生成机制产生环境、任务与评分标准，再独立审计目标可恢复性；1,037 个世界产生2,135训练任务。避免把数据量增加与“任务确实可解”混为一谈；不是普适规模定律。[13]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21492",
+      "paper": "MetaExp: Learning to Self-Improve through Experience via Verifiable Cross-Task Environment Scaling",
+      "authors": "Renhao Li · Xinjie Shen · Yang Su · Jianhong Tu · Derek F. Wong · Dayiheng Liu · Min Yang",
+      "url": "https://arxiv.org/abs/2610.21492v1",
+      "title": "MetaExp：跨任务结构也是数据设计",
+      "dateNote": "首发 2026-10-15 04:29 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "1,000 个任务族／4,956 轨迹：固定工具或潜在流程，改变具体任务，训练经验迁移；下游参数冻结。Domain-excluded 测试支持迁移，不等于无限自改进或环境数量的幂律。[14]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21286",
+      "paper": "The Density of Thought: Predicting and Steering Reasoning in Large Language Models",
+      "authors": "Tanush Kalhan · Anupam Chattopadhyay · Sriram Ranga · Amritendu Mukherjee",
+      "url": "https://arxiv.org/abs/2610.21286v1",
+      "title": "Density of Thought：代理指标会随训练方式翻转",
+      "dateNote": "首发 2026-10-15 01:31 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "六种模型尺度、两种训练范式、仅60道 GSM8K：信息密度方差与正确性的关系随尺度减弱、在 RL 蒸馏后翻转。直接 steering 的准确率60.0%→8.3%；小样本负结果不能当作普遍定律。[15]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21167",
+      "paper": "GRADS: Graph-Regulated Agentic Data Synthesis with Controllable Difficulty",
+      "authors": "Gaocheng Yang · Ruijie Tao · Kai Ye · Senhua Zhang · Zhengqin Zhu · Ziyang Li",
+      "url": "https://arxiv.org/abs/2610.21167v1",
+      "title": "GRADS：用依赖图控制合成任务难度",
+      "dateNote": "首发 2026-10-14 23:24 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "维护必需证据／推理图，避免靠无关上下文制造表面难度；独立 solver 验证难度分离。等训练预算下 SFT 终止率超过95%，工具调用／轮次至多减少75%；不是总体训练成本减少75%。[16]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21030",
+      "paper": "Learning When to Think: Utility-Guided Adaptive Reasoning for Efficient Text Retrieval",
+      "authors": "Yingtao Luo · Kangyi Zhao · Shiyi Du · Yubo Li",
+      "url": "https://arxiv.org/abs/2610.21030v1",
+      "title": "AURA：用检索效用决定何时停止思考",
+      "dateNote": "首发 2026-10-14 20:04 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "中间 embedding 区分相关文档与难负例，另训轻量效用估计器。BRIGHT 上4B模型34.7 nDCG@10、平均2.8步／96 tokens；匹配部署条件下延迟4.6→0.76秒，限该检索协议。[17]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20832",
+      "paper": "Amortizing Sequential Experimental Design in Reasoning LLMs",
+      "authors": "Anita Kriz · Antonin Berthon · Nicolás Astorga · Mihaela van der Schaar",
+      "url": "https://arxiv.org/abs/2610.20832v1",
+      "title": "实验设计：把信息增益搜索摊销进策略",
+      "dateNote": "首发 2026-10-14 15:15 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用独立于 LLM 自身信念的生成模型定义信息增益奖励；Twenty Questions 中训练推理／行动策略，比较训练及推理期 BED 成本。迁移到 Medi-Q 不构成临床有效性证据。[18]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20193",
+      "paper": "SWE-Stream: Scaling Executable Training Data for SWE Agents via Progressive Construction and Elastic Streaming",
+      "authors": "Chengyang Liu · Wen Yang · Shifeng Chen · Delai Qiu · Ji Yang · Junnan Zhu · Yining Wang · Shengping Liu",
+      "url": "https://arxiv.org/abs/2610.20193v1",
+      "title": "SWE-Stream：分开数据质量和全量训练结果",
+      "dateNote": "首发 2026-10-14 09:41 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "80,874 个可执行任务、118,688 条成功轨迹。等训练预算 SWE-bench Verified 45.6%，全量训练69.0%，不是同一对照；1.45× 是被接受任务的构建吞吐量，非模型训练加速。[19]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21480",
+      "paper": "Kolmogorov-Arnold Networks: Curse of Dimensionality and Structural Bias",
+      "authors": "Yunhao Ni · Yuxin Guo · Jie Luo · Wenjun Wu · Lei Huang",
+      "url": "https://arxiv.org/abs/2610.21480v1",
+      "title": "KAN：好指数来自架构，还是目标函数？",
+      "dateNote": "首发 2026-10-15 04:21 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "对任意深度标准 spline-KAN，摘要给出 isotropic Sobolev ball 上系数需求随维数指数增长的最坏情形下界。低元组合结构可有好指数，但并非 KAN 独享；未读完整证明，不省略目标类与误差阈值。[20]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22130",
+      "paper": "DropKV: Decoupling Residual-Output Perturbation for Near-Optimal KV-Cache Eviction",
+      "authors": "Aozhong Zhang · Selcuk Gurses · Yanxia Deng · Naigang Wang · Chi-Chun Liu · Davis Wertheimer · Derrick Liu · Xin Li · Zi Yang · Felix X. -F. Ye · Penghang Yin",
+      "url": "https://arxiv.org/abs/2610.22130v1",
+      "title": "DropKV：kernel 提速不是端到端提速",
+      "dateNote": "首发 2026-10-15 12:05 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "将联合 eviction 近似为逐 token 分数，常数因子保证需要 cone condition。评分 kernel 19.8× 对应匹配 batch 下 prefill 至多9.9%加速；等 cache 预算改善 RULER／LongBench。[21]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20865",
+      "paper": "Long-Context Drafting Does Not Require Long-Context Drafters",
+      "authors": "Aref Jafari · Vansh Bhatia · Matt Qin · Subhajit Dutta Chowdhury · Ben Lee · Vikram Appia · Ali Ghodsi · Mehdi Rezagholizadeh",
+      "url": "https://arxiv.org/abs/2610.20865v1",
+      "title": "短 drafter：维持长上下文下的加速曲线",
+      "dateNote": "首发 2026-10-14 15:54 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "冻结短上下文 drafter，限制其 attention cache 并重置 rotary 索引；三组模型、五语料测试到2M上下文。主张是加速比随长度保持平坦，不是固定倍数；仍要求每输出 token 的投机成本低于 target-only。[22]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20582",
+      "paper": "Latent Compaction with Test-Time Training",
+      "authors": "Yingfa Chen · Xingyu Shen · Chaojun Xiao · Xu Han",
+      "url": "https://arxiv.org/abs/2610.20582v1",
+      "title": "Latent Compaction：压缩缓存也可以先训练",
+      "dateNote": "首发 2026-10-14 13:57 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "冻结模型，先拟合 full-cache attention 与归一化量，再端到端蒸馏文档 cache；不访问下游问题。摘要报告 RULER 32×压缩下96.7% vs KVZip+ 40.0%；压缩预算匹配不表示计入 test-time training 总成本。[23]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20584",
+      "paper": "Player-1: Learning to Play from Synthetic Experience",
+      "authors": "Mingyu Ouyang · Yiran Wang · Siyuan Hu · Xingyilang Yin · Huiqiang Sun · Guangzhi Wang · Junfu Pu · Cheng Cheng · Honghao Chen · Ying Shan · Mike Zheng Shou · Hwee Tou Ng",
+      "url": "https://arxiv.org/abs/2610.20584v1",
+      "title": "Player-1：合成环境覆盖与迁移",
+      "dateNote": "首发 2026-10-14 13:57 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "6,044 条示范初始化，16个合成2D／3D环境提供可核验奖励与随机控制动态；环境覆盖更广时迁移改善。9B、35B-A3B 相对各自 SFT 的 MineDojo-300 成功率增益为27.8、17.7个百分点，非等预算架构对比。[24]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20518",
+      "paper": "The Wealth of Agents: Scaling Agentic AI Across Developers",
+      "authors": "Austin W. Hanjie · Carlos E. Jimenez · Zirui Wang · Karthik Narasimhan",
+      "url": "https://arxiv.org/abs/2610.20518v1",
+      "title": "多开发者：开发预算也是规模轴",
+      "dateNote": "首发 2026-10-14 13:19 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "GAIA 上单个专长代理不超过35%，组合达到70%，比开发预算数倍于每位专长开发者的通用单体中位数高12个百分点。不能忽略聚合开发成本与推理成本；理论激励模型未逐项核验。[25]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22339",
+      "paper": "Lean Graph Search for Formal Theorem Proving",
+      "authors": "Yihan Xu · Jia-Chen Gu · Junyi Zhang · Di Wu · Haikang Deng · Po-Nien Kung · Kai-Wei Chang · Amit Sahai · Wei Wang · Nanyun Peng",
+      "url": "https://arxiv.org/abs/2610.22339v1",
+      "title": "LeanGraphSearch：等反思轮数下的检索收益",
+      "dateNote": "首发 2026-10-15 13:55 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "沿 Mathlib 依赖传播相关性，再重排序；8／16／32反思轮数下比较证明 pass rate。检索成本仍需计入总预算；这是主题订阅，不归入 Wharton 作者动态。[26]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21916",
+      "paper": "Prescreen, Then Subsample: Efficient model training for large-scale biomedical data with correlated covariates",
+      "authors": "Subhadra Dasgupta · Christian Staerk",
+      "url": "https://arxiv.org/abs/2610.21916v1",
+      "title": "PTS：先筛变量，再挑样本",
+      "dateNote": "首发 2026-10-15 10:01 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要；未逐项核验定理或实验",
+      "kind": "简讯 · 新稿",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "SuSiE 相关性知情筛选后，在低维空间运行 IBOSS；相关高斯与 biobank-scale 合成基因型实验报告近似全量预测表现及更低训练时间。属于样本／变量预算设计，不是生物领域同名 scaling law。[27]"
+        }
+      ]
+    },
+    {
+      "id": "p-2609-01431",
+      "paper": "Efficiently Estimating Optimal Hyperparameter Scaling Laws through Power-Law Entropy Search",
+      "authors": "Zhiliang Chen · Sebastian Ament · David Eriksson · Maximilian Balandat · Bryan Kian Hsiang Low · Eytan Bakshy · Jihao Andreas Lin",
+      "url": "https://arxiv.org/abs/2609.01431v3",
+      "title": "PLES v3：版本差异待核实",
+      "dateNote": "2026-10-15 · 版本记录；实质差异未确认",
+      "evidence": "仅摘要及版本元数据",
+      "kind": "版本记录 · 非新结论",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "9月1日首发，10月15日更新 v3。方法按单位实验成本的信息增益选择 scaling-law 实验；未核验版本差异，摘要的低于十分之一预算结论不标作本次新增结果。[28]"
+        }
+      ]
+    },
+    {
+      "id": "p-2605-30348",
+      "paper": "LLMSurgeon: Diagnosing Data Mixture of Large Language Models",
+      "authors": "Yaxin Luo · Jiacheng Cui · Xiaohan Zhao · Xinyi Shang · Jiacheng Liu · Xinyue Bi · Zhaoyi Li · Zhiqiang Shen",
+      "url": "https://arxiv.org/abs/2605.30348v2",
+      "title": "LLMSurgeon v2：反推数据混合的假设",
+      "dateNote": "2026-10-15 · 版本记录；实质差异未确认",
+      "evidence": "仅摘要及版本元数据",
+      "kind": "版本记录 · 非新结论",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "5月28日首发，10月15日更新 v2。以 label shift 与校准 soft confusion matrix 反推预训练域混合；未核验版本差异。生成文本的域分布不能无条件等同训练分布。[29]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-chinchilla",
+    "paperId": "arxiv:2203.15556",
+    "shortTitle": "Chinchilla",
+    "year": 2022,
+    "topics": [
+      "Scaling laws"
+    ],
+    "kind": "每日精读 · 经典 004",
+    "title": "Chinchilla：从经验曲面到最优分配",
+    "paper": "Training Compute-Optimal Large Language Models",
+    "authors": "Jordan Hoffmann · Sebastian Borgeaud · Arthur Mensch et al.",
+    "url": "https://arxiv.org/pdf/2203.15556v1",
+    "dateNote": "历史经典：首发／所读 v1 为2022-03-29；NeurIPS 2022",
+    "evidence": "已读 §1–3.4、§4.1 与 Tables 2–3；核对 PDF 表格",
+    "recognition": {
+      "label": "NeurIPS 2022 · scaling laws 重要历史工作",
+      "url": "https://papers.nips.cc/paper_files/paper/2022/hash/c1e2faff6f588870935f114ebe04a3e5-Abstract-Conference.html"
+    },
+    "question": "讨论：若加入部署预算 \\(C_{\\rm total}=6ND+\\kappa NQ\\)，其中 \\(Q\\) 是服务期生成 tokens，最优模型量如何随 Q 改变？哪项数据能识别 κ，而不把硬件吞吐当作 FLOPs？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Kaplan 等（2020）主张固定算力下偏向大模型、较少数据。[32] Chinchilla 用400余次训练重新估计最优分配；重点不是“训练到收敛”，而是让有限 FLOPs 对 loss 最有用。[30,31]"
+      },
+      {
+        "type": "text",
+        "text": "令 \\(N\\) 为参数量、\\(D\\) 为训练 tokens、\\(C\\) 为训练 FLOPs。下面是原文经验模型，所有系数为正；不是神经网络定理。[30]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widehat L(N,D)=E+A N^{-\\alpha}+B D^{-\\beta},\\qquad C\\simeq6ND",
+        "label": "原文参数拟合；E 为不可约项"
+      },
+      {
+        "type": "text",
+        "text": "将预算约束代入后求导，两个边际收益平衡，而非两个 loss 项直接相等："
+      },
+      {
+        "type": "equation",
+        "tex": "\\frac{\\partial}{\\partial\\log N}\\left[A N^{-\\alpha}+B\\left(\\frac C{6N}\\right)^{-\\beta}\\right]=0\\quad\\Longleftrightarrow\\quad\\alpha A N^{-\\alpha}=\\beta B D^{-\\beta}",
+        "label": "给定经验模型后的代数推导"
+      },
+      {
+        "type": "equation",
+        "tex": "G=\\left(\\frac{\\alpha A}{\\beta B}\\right)^{1/(\\alpha+\\beta)},\\qquad N_\\star=G(C/6)^{\\beta/(\\alpha+\\beta)},\\qquad D_\\star=G^{-1}(C/6)^{\\alpha/(\\alpha+\\beta)}",
+        "label": "原文最优分配；连续 N、D 近似"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "估计方法",
+          "参数指数 a",
+          "数据指数 b"
+        ],
+        "rows": [
+          [
+            "训练曲线下包络",
+            "0.50",
+            "0.50"
+          ],
+          [
+            "IsoFLOP",
+            "0.49",
+            "0.51"
+          ],
+          [
+            "参数化 loss",
+            "0.46",
+            "0.54"
+          ]
+        ],
+        "caption": "原文 Table 2：N*∝C^a，D*∝C^b。三种估计接近但不相同。[30]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\frac{D_\\star}{N_\\star}=G^{-2}(C/6)^{(\\alpha-\\beta)/(\\alpha+\\beta)}",
+        "label": "我们的直接推论：token/参数比恒定还要求 α=β"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "“约20 tokens/参数”不是普适常数。训练时长须与学习率衰减匹配；长 schedule 的中间点不能直接代替优化过的短训练。数据混合、重复与推理成本都可能改变适用前提。[30]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "title": "Hard Way, The Only Way: Provable Merits of Training on Hardest Examples",
+      "url": "https://arxiv.org/html/2610.21201v1"
+    },
+    {
+      "title": "Your Transformer Is Secretly Elastic",
+      "url": "https://arxiv.org/html/2610.20588v1"
+    },
+    {
+      "title": "Sorscher et al. (2022) · historical background",
+      "url": "https://arxiv.org/abs/2206.14486"
+    },
+    {
+      "title": "Scaling Indic Pretraining: 2.8 Trillion Tokens and an Open Data Generation Pipeline",
+      "url": "https://huggingface.co/blog/nvidia/scaling-indic-pretraining"
+    },
+    {
+      "title": "Welcome Beam: a 501B open model you can own, customize, and scale",
+      "url": "https://huggingface.co/blog/reflection-beam"
+    },
+    {
+      "title": "Welcome Muse Spark Open: open-weight frontier multimodal mixture-of-experts model from Meta",
+      "url": "https://huggingface.co/blog/meta-muse-spark-open"
+    },
+    {
+      "title": "Apertus 1.5 Release Notes",
+      "url": "https://huggingface.co/blog/swiss-ai/apertus-v15-release-notes"
+    },
+    {
+      "title": "When agents self-improve, what should persist?",
+      "url": "https://huggingface.co/blog/BunsDev/when-agents-improve-themselves-what-should-stay"
+    },
+    {
+      "title": "Rethinking Routing Exploration in Modern Mixture-of-Experts",
+      "url": "https://arxiv.org/abs/2610.22353v1"
+    },
+    {
+      "title": "Learning Self-Orchestration in Decentralized Agent Swarms",
+      "url": "https://arxiv.org/abs/2610.22322v1"
+    },
+    {
+      "title": "Librarian Agents: Training LLMs to Curate Long-Context Workspaces that Anticipate Future Queries",
+      "url": "https://arxiv.org/abs/2610.22273v1"
+    },
+    {
+      "title": "Anvil: Scaling Embodied Spatial Intelligence through Knowledge Recirculation",
+      "url": "https://arxiv.org/abs/2610.21882v1"
+    },
+    {
+      "title": "Data World: Scaling Data Environments from Scratch",
+      "url": "https://arxiv.org/abs/2610.21656v1"
+    },
+    {
+      "title": "MetaExp: Learning to Self-Improve through Experience via Verifiable Cross-Task Environment Scaling",
+      "url": "https://arxiv.org/abs/2610.21492v1"
+    },
+    {
+      "title": "The Density of Thought: Predicting and Steering Reasoning in Large Language Models",
+      "url": "https://arxiv.org/abs/2610.21286v1"
+    },
+    {
+      "title": "GRADS: Graph-Regulated Agentic Data Synthesis with Controllable Difficulty",
+      "url": "https://arxiv.org/abs/2610.21167v1"
+    },
+    {
+      "title": "Learning When to Think: Utility-Guided Adaptive Reasoning for Efficient Text Retrieval",
+      "url": "https://arxiv.org/abs/2610.21030v1"
+    },
+    {
+      "title": "Amortizing Sequential Experimental Design in Reasoning LLMs",
+      "url": "https://arxiv.org/abs/2610.20832v1"
+    },
+    {
+      "title": "SWE-Stream: Scaling Executable Training Data for SWE Agents via Progressive Construction and Elastic Streaming",
+      "url": "https://arxiv.org/abs/2610.20193v1"
+    },
+    {
+      "title": "Kolmogorov-Arnold Networks: Curse of Dimensionality and Structural Bias",
+      "url": "https://arxiv.org/abs/2610.21480v1"
+    },
+    {
+      "title": "DropKV: Decoupling Residual-Output Perturbation for Near-Optimal KV-Cache Eviction",
+      "url": "https://arxiv.org/abs/2610.22130v1"
+    },
+    {
+      "title": "Long-Context Drafting Does Not Require Long-Context Drafters",
+      "url": "https://arxiv.org/abs/2610.20865v1"
+    },
+    {
+      "title": "Latent Compaction with Test-Time Training",
+      "url": "https://arxiv.org/abs/2610.20582v1"
+    },
+    {
+      "title": "Player-1: Learning to Play from Synthetic Experience",
+      "url": "https://arxiv.org/abs/2610.20584v1"
+    },
+    {
+      "title": "The Wealth of Agents: Scaling Agentic AI Across Developers",
+      "url": "https://arxiv.org/abs/2610.20518v1"
+    },
+    {
+      "title": "Lean Graph Search for Formal Theorem Proving",
+      "url": "https://arxiv.org/abs/2610.22339v1"
+    },
+    {
+      "title": "Prescreen, Then Subsample: Efficient model training for large-scale biomedical data with correlated covariates",
+      "url": "https://arxiv.org/abs/2610.21916v1"
+    },
+    {
+      "title": "Efficiently Estimating Optimal Hyperparameter Scaling Laws through Power-Law Entropy Search",
+      "url": "https://arxiv.org/abs/2609.01431v3"
+    },
+    {
+      "title": "LLMSurgeon: Diagnosing Data Mixture of Large Language Models",
+      "url": "https://arxiv.org/abs/2605.30348v2"
+    },
+    {
+      "title": "Chinchilla · Hoffmann et al. (2022) · read v1",
+      "url": "https://arxiv.org/pdf/2203.15556v1"
+    },
+    {
+      "title": "NeurIPS 2022 official proceedings · Chinchilla",
+      "url": "https://papers.nips.cc/paper_files/paper/2022/hash/c1e2faff6f588870935f114ebe04a3e5-Abstract-Conference.html"
+    },
+    {
+      "title": "Kaplan et al. (2020) · historical background",
+      "url": "https://arxiv.org/abs/2001.08361"
+    }
+  ]
+}

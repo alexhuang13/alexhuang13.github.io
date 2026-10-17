@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-10-17",
+    "paperId": "arxiv:2203.15556",
+    "paper": "Training Compute-Optimal Large Language Models",
+    "shortTitle": "Chinchilla",
+    "year": 2022,
+    "topics": [
+      "Scaling laws"
+    ],
+    "recognition": {
+      "label": "NeurIPS 2022 · scaling laws 重要历史工作",
+      "url": "https://papers.nips.cc/paper_files/paper/2022/hash/c1e2faff6f588870935f114ebe04a3e5-Abstract-Conference.html"
+    },
+    "source": "https://arxiv.org/pdf/2203.15556v1",
+    "url": "/digest/2026-10-17.html#classic-chinchilla"
+  },
+  {
     "date": "2026-10-16",
     "paperId": "arxiv:2305.18290",
     "paper": "Direct Preference Optimization: Your Language Model is Secretly a Reward Model",

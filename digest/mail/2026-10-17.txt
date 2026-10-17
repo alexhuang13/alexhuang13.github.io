@@ -1,0 +1,156 @@
+RESEARCH DIGEST / 2026-10-17
+删去什么，保留什么
+样本筛选 · 弹性模型 · 后训练博客 · 精读 Chinchilla
+
+中文: https://alexhuang13.github.io/digest/2026-10-17.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-17.html
+
+主读 · 新稿
+2N：不是简单留下最难的样本
+Hard Way, The Only Way: Provable Merits of Training on Hardest Examples
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-21201
+
+主读 · 新稿
+冻结权重，学习一张跨预算排序
+Your Transformer Is Secretly Elastic
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-20588
+
+简讯 · 技术博客
+Indic：语料库存不等于训练预算
+Scaling Indic Pretraining: 2.8 Trillion Tokens and an Open Data Generation Pipeline
+https://alexhuang13.github.io/digest/2026-10-17.html#indic-data
+
+简讯 · 技术博客
+Beam：小样本语言遵循，不是推理准确率
+Welcome Beam: a 501B open model you can own, customize, and scale
+https://alexhuang13.github.io/digest/2026-10-17.html#beam-posttraining
+
+简讯 · 技术博客
+Muse Spark：816B 的 attention-only LoRA 实验
+Welcome Muse Spark Open: open-weight frontier multimodal mixture-of-experts model from Meta
+https://alexhuang13.github.io/digest/2026-10-17.html#muse-sft
+
+简讯 · 技术博客
+Apertus：后训练会侵蚀长上下文能力
+Apertus 1.5 Release Notes
+https://alexhuang13.github.io/digest/2026-10-17.html#apertus-posttraining
+
+简讯 · 技术博客
+自改进：保护测试，而非只保存指令
+When agents self-improve, what should persist?
+https://alexhuang13.github.io/digest/2026-10-17.html#agent-continuity
+
+简讯 · 新稿
+MirrorMoE：更多专家组合不保证被探索
+Rethinking Routing Exploration in Modern Mixture-of-Experts
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-22353
+
+简讯 · 新稿
+MPT：扩大推理时代理群体
+Learning Self-Orchestration in Decentralized Agent Swarms
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-22322
+
+简讯 · 新稿
+Librarian Agents：预计算工作区的摊销
+Librarian Agents: Training LLMs to Curate Long-Context Workspaces that Anticipate Future Queries
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-22273
+
+简讯 · 新稿
+Anvil：合成数据修复与首错蒸馏
+Anvil: Scaling Embodied Spatial Intelligence through Knowledge Recirculation
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-21882
+
+简讯 · 新稿
+Data World：先定义机制，再合成文件
+Data World: Scaling Data Environments from Scratch
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-21656
+
+简讯 · 新稿
+MetaExp：跨任务结构也是数据设计
+MetaExp: Learning to Self-Improve through Experience via Verifiable Cross-Task Environment Scaling
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-21492
+
+简讯 · 新稿
+Density of Thought：代理指标会随训练方式翻转
+The Density of Thought: Predicting and Steering Reasoning in Large Language Models
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-21286
+
+简讯 · 新稿
+GRADS：用依赖图控制合成任务难度
+GRADS: Graph-Regulated Agentic Data Synthesis with Controllable Difficulty
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-21167
+
+简讯 · 新稿
+AURA：用检索效用决定何时停止思考
+Learning When to Think: Utility-Guided Adaptive Reasoning for Efficient Text Retrieval
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-21030
+
+简讯 · 新稿
+实验设计：把信息增益搜索摊销进策略
+Amortizing Sequential Experimental Design in Reasoning LLMs
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-20832
+
+简讯 · 新稿
+SWE-Stream：分开数据质量和全量训练结果
+SWE-Stream: Scaling Executable Training Data for SWE Agents via Progressive Construction and Elastic Streaming
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-20193
+
+简讯 · 新稿
+KAN：好指数来自架构，还是目标函数？
+Kolmogorov-Arnold Networks: Curse of Dimensionality and Structural Bias
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-21480
+
+简讯 · 新稿
+DropKV：kernel 提速不是端到端提速
+DropKV: Decoupling Residual-Output Perturbation for Near-Optimal KV-Cache Eviction
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-22130
+
+简讯 · 新稿
+短 drafter：维持长上下文下的加速曲线
+Long-Context Drafting Does Not Require Long-Context Drafters
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-20865
+
+简讯 · 新稿
+Latent Compaction：压缩缓存也可以先训练
+Latent Compaction with Test-Time Training
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-20582
+
+简讯 · 新稿
+Player-1：合成环境覆盖与迁移
+Player-1: Learning to Play from Synthetic Experience
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-20584
+
+简讯 · 新稿
+多开发者：开发预算也是规模轴
+The Wealth of Agents: Scaling Agentic AI Across Developers
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-20518
+
+简讯 · 新稿
+LeanGraphSearch：等反思轮数下的检索收益
+Lean Graph Search for Formal Theorem Proving
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-22339
+
+简讯 · 新稿
+PTS：先筛变量，再挑样本
+Prescreen, Then Subsample: Efficient model training for large-scale biomedical data with correlated covariates
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2610-21916
+
+版本记录 · 非新结论
+PLES v3：版本差异待核实
+Efficiently Estimating Optimal Hyperparameter Scaling Laws through Power-Law Entropy Search
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2609-01431
+
+版本记录 · 非新结论
+LLMSurgeon v2：反推数据混合的假设
+LLMSurgeon: Diagnosing Data Mixture of Large Language Models
+https://alexhuang13.github.io/digest/2026-10-17.html#p-2605-30348
+
+每日精读 · 2022
+Chinchilla：从经验曲面到最优分配
+https://alexhuang13.github.io/digest/2026-10-17.html#classic-chinchilla
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-10-17.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

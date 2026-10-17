@@ -1,0 +1,755 @@
+{
+  "date": "2026-10-17",
+  "number": "004",
+  "publishedAt": "2026-10-17T12:53:04Z",
+  "readingMinutes": 22,
+  "tags": [
+    "Scaling laws",
+    "Data curation",
+    "Post-training",
+    "Chinchilla"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "title": "What to prune, what to preserve",
+  "subtitle": "Data pruning · Elastic models · Post-training blogs · Chinchilla close reading",
+  "window": "2026-10-14 08:39 — 2026-10-17 08:39 · America/New_York",
+  "edition": "Daily research notes",
+  "intro": "Two focal papers study pruning training examples and model units; technical blogs add synthetic-data and post-training details. Papers dated October 14–15 are overlap-window additions, not today’s releases. The Chinchilla classic derives optimal allocation conditional on a credible empirical loss surface.",
+  "articles": [
+    {
+      "id": "p-2610-21201",
+      "paper": "Hard Way, The Only Way: Provable Merits of Training on Hardest Examples",
+      "authors": "Elvis Dohmatob",
+      "url": "https://arxiv.org/abs/2610.21201v1",
+      "title": "2N: not simply the hardest examples",
+      "dateNote": "First posted 2026-10-15 00:00 EDT · v1 · Overlap-window addition",
+      "evidence": "Read §§2, 4–5 and Appendix E; focus on squared loss",
+      "kind": "Focus · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Sorscher et al. (2022) studied pruning-induced changes to learning curves. [3] Here the setting is Gaussian linear classification: dimension \\(N\\), sample count \\(P\\), perfectly aligned generator/test/pruner directions, and ridgeless squared loss. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\phi=\\frac NP,\\quad T=|G|,\\ G\\sim\\mathcal N(0,1),\\quad p=\\Pr(T\\in A),\\quad \\mu_k=\\mathbb E[T^k\\mid T\\in A],\\quad\\nu=\\operatorname{Var}(T\\mid T\\in A)",
+          "label": "Proportional high-dimensional limit, then small phi; A selects margins"
+        },
+        {
+          "type": "text",
+          "text": "The paper reduces classification error to an angle; retention must exceed the dimension/sample ratio. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "E_{\\rm test}\\simeq\\frac1\\pi\\arctan\\sqrt{K(A)},\\qquad K(A)=\\frac{\\phi}{p-\\phi}\\frac{\\mu_2\\nu}{\\mu_1^2},\\quad p>\\phi",
+          "label": "Original equations (32), (36)"
+        },
+        {
+          "type": "text",
+          "text": "A conditional-density bound yields a variance bound; optimization over retention gives the key chain from Appendix E: [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\nu\\ge\\frac{\\pi p^2}{24},\\quad\\frac{\\mu_2}{\\mu_1^2}\\ge1\\ \\Longrightarrow\\ K(A)\\ge\\frac{\\pi\\phi p^2}{24(p-\\phi)}\\ge\\frac{\\pi\\phi^2}{6},\\qquad p_\\star\\simeq2\\phi,\\quad E_\\star\\sim\\frac{\\phi}{\\sqrt{6\\pi}}",
+          "label": "The bound minimizes at p=2phi; a thin band asymptotically attains it, retaining about 2N samples"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The optimal set is a near-boundary thin band excluding the origin, not \\([0,c]\\). A perfect pruner is not free, and this is not an LLM theorem. General convex-loss analysis uses replicas. We focus on the solvable case; inconsistent bandwidth notation in the manuscript is avoided by using the density bound. [1]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20588",
+      "paper": "Your Transformer Is Secretly Elastic",
+      "authors": "Walter Simoncini · Dheeraj Varghese · Gertjan J. Burghouts · Cees G. M. Snoek",
+      "url": "https://arxiv.org/abs/2610.20588v1",
+      "title": "Freeze weights, learn one cross-budget ranking",
+      "dateNote": "First posted 2026-10-14 13:58 EDT · v1 · Overlap-window addition",
+      "evidence": "Read the method, Table 3 and appendix calibration protocol",
+      "kind": "Focus · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Fixed-target pruning typically repeats work for each budget. Here only global MLP-neuron/head scores \\(z\\) are learned; backbone \\(\\theta\\) stays frozen. Let \\(b\\) denote removed FLOPs and \\(\\kappa_b\\) the cost-weighted ranking threshold. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "M_b(z)=\\sigma\\!\\left(\\frac{z-\\operatorname{sg}(\\kappa_b(z))}{\\tau}\\right),\\qquad \\min_z\\frac1{|\\mathcal B|}\\sum_{b\\in\\mathcal B}\\mathbb E_{\\mathcal D}\\ell(f_{\\theta,M_b(z)}(x),y)",
+          "label": "Compact method rewrite; sg stops threshold gradients; hard masks at deployment"
+        },
+        {
+          "type": "text",
+          "text": "Fourteen targets (5%–70%), 300 Adam calibration steps; ViT-B uses batch 32 and 2,000 unique images by default. One ranking yields nested subnetworks, not optimization-free adaptation. [2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Removed FLOPs",
+            "Remaining GFLOPs",
+            "Single-budget → Elastic"
+          ],
+          "rows": [
+            [
+              "20%",
+              "28.2",
+              "79.7 → 80.1"
+            ],
+            [
+              "40%",
+              "21.2",
+              "67.2 → 69.1"
+            ],
+            [
+              "60%",
+              "14.2",
+              "41.6 → 45.2"
+            ]
+          ],
+          "caption": "Table 3: AugReg ViT-B/16, ImageNet-1k top-1 k-NN accuracy (%). [2]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Evidence mainly supports vision/bidirectional encoders, not autoregressive language generation. Calibration cost and inference FLOPs are distinct budget axes. [2]"
+        }
+      ]
+    },
+    {
+      "id": "indic-data",
+      "paper": "Scaling Indic Pretraining: 2.8 Trillion Tokens and an Open Data Generation Pipeline",
+      "authors": "AI4Bharat · NVIDIA",
+      "url": "https://huggingface.co/blog/nvidia/scaling-indic-pretraining",
+      "title": "Indic: corpus inventory is not training budget",
+      "dateNote": "2026-10-16 · Technical blog; blog date is not model release date",
+      "evidence": "Read the cited technical sections; not independently reproduced",
+      "kind": "Brief · Technical blog",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Translate, judge, repair, transliterate: 75/100 is a rubric threshold, not accuracy. The 2.8T-token inventory includes shared-source language/script variants and already includes 438.4B recovered tokens. Nemotron CPT uses 10B Indic tokens, natural plus synthetic, so stage gains do not isolate synthetic data. This adds the data side to yesterday’s Nemotron coverage; the corpus is still marked forthcoming. [4]"
+        }
+      ]
+    },
+    {
+      "id": "beam-posttraining",
+      "paper": "Welcome Beam: a 501B open model you can own, customize, and scale",
+      "authors": "Ben Burtenshaw · Merve Noyan · Pedro Cuenca",
+      "url": "https://huggingface.co/blog/reflection-beam",
+      "title": "Beam: language adherence, not reasoning accuracy",
+      "dateNote": "2026-10-16 · Technical blog; blog date is not model release date",
+      "evidence": "Read the cited technical sections; not independently reproduced",
+      "kind": "Brief · Technical blog",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "One epoch of Multilingual-Thinking LoRA SFT changes requested-language adherence from 3/16 to 16/16 held-out prompts: tiny sample, no reasoning-correctness evaluation. Separately, the GRPO recipe uses 32 prompts × 8 responses, group advantages and truncated importance sampling, without KL/entropy penalties. A runnable recipe is not demonstrated downstream improvement. [5]"
+        }
+      ]
+    },
+    {
+      "id": "muse-sft",
+      "paper": "Welcome Muse Spark Open: open-weight frontier multimodal mixture-of-experts model from Meta",
+      "authors": "Hugging Face team",
+      "url": "https://huggingface.co/blog/meta-muse-spark-open",
+      "title": "Muse Spark: attention-only LoRA on 816B",
+      "dateNote": "2026-10-15 · Technical blog; blog date is not model release date",
+      "evidence": "Read the cited technical sections; not independently reproduced",
+      "kind": "Brief · Technical blog",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Experts remain frozen; LoRA targets four attention projections. The reported run uses 64 H100s, 500 steps, length 2,048 and packing, taking about two hours. Training token accuracy rises 72%→84% and loss falls 1.26→0.57; these are training metrics, not held-out capability gains. [6]"
+        }
+      ]
+    },
+    {
+      "id": "apertus-posttraining",
+      "paper": "Apertus 1.5 Release Notes",
+      "authors": "Hanna Yukhymenko · Oleg Lavrovsky · Y Metz",
+      "url": "https://huggingface.co/blog/swiss-ai/apertus-v15-release-notes",
+      "title": "Apertus: post-training can erode long-context ability",
+      "dateNote": "2026-10-15 · Technical blog; blog date is not model release date",
+      "evidence": "Read the cited technical sections; not independently reproduced",
+      "kind": "Brief · Technical blog",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Weights were released July 24; this is a new technical write-up. Five stages: SFT → long-context SFT → RL → DPO → SDPO. Reasoning traces are added only where non-thinking fails; tool trajectories require execution verification. Long-context SFT restores ability eroded by short-context SFT; no isolated causal ablation is established here. [7]"
+        }
+      ]
+    },
+    {
+      "id": "agent-continuity",
+      "paper": "When agents self-improve, what should persist?",
+      "authors": "Val Alexander",
+      "url": "https://huggingface.co/blog/BunsDev/when-agents-improve-themselves-what-should-stay",
+      "title": "Self-improvement: protect tests, not just instructions",
+      "dateNote": "2026-10-14 · Technical blog; blog date is not model release date",
+      "evidence": "Read the cited technical sections; not independently reproduced",
+      "kind": "Brief · Technical blog",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "This technical synthesis proposes separate tests for goals, role, memory and behavior, separating development, acceptance and final audits while keeping evaluators outside candidate mutation scope. LIP-Eval is a proposal without pilot data or calibrated thresholds, not a validated stability guarantee. [8]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22353",
+      "paper": "Rethinking Routing Exploration in Modern Mixture-of-Experts",
+      "authors": "Bingcong Li · Hao Ma · Michael Muehlebach · Niao He · Yi Ma",
+      "url": "https://arxiv.org/abs/2610.22353v1",
+      "title": "MirrorMoE: more expert combinations need not be explored",
+      "dateNote": "First posted 2026-10-15 13:58 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Shared experts reduce representation variability while fine-grained segmentation enlarges routing space. Token-adaptive expert suppression shrinks exploration. The abstract reports gains across model scales, not an extrapolatable scaling exponent. [9]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22322",
+      "paper": "Learning Self-Orchestration in Decentralized Agent Swarms",
+      "authors": "Guowei Xu · Zhenting Qi · Amani Kiruga · Himabindu Lakkaraju · Yilun Du",
+      "url": "https://arxiv.org/abs/2610.22322v1",
+      "title": "MPT: expand the inference-time agent population",
+      "dateNote": "First posted 2026-10-15 13:51 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Jointly learns actions and participation bids, assigning local credit from collective outcomes. Larger inference populations improve performance and dropout robustness; this does not establish superiority at fixed total compute. [10]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22273",
+      "paper": "Librarian Agents: Training LLMs to Curate Long-Context Workspaces that Anticipate Future Queries",
+      "authors": "Anikait Singh · Teresa Zhang · Yoonho Lee · Roshen Sanjay Nair · Aviral Kumar · Chelsea Finn",
+      "url": "https://arxiv.org/abs/2610.22273v1",
+      "title": "Librarian Agents: amortize a curated workspace",
+      "dateNote": "First posted 2026-10-15 13:35 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "An RL builder organizes documents into synthetic files and reference hierarchies before queries. Authors report +33 accuracy points on BrowseComp-Plus and +31 on BRIGHT versus strongest baselines. Repeated queries must amortize construction; retrieval is not free. [11]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21882",
+      "paper": "Anvil: Scaling Embodied Spatial Intelligence through Knowledge Recirculation",
+      "authors": "Weilin Ruan · Bohan Zhou · Jinghao Li · Yangkai Wei · Wenqian Li · Peiran Dong · Yingjie Xu · Leyi Wu · Haojian Huang · Binghui Xie · Han Yang · Kaiwen Zhou · Yinchuan Li · Ying-Cong Chen · James Cheng",
+      "url": "https://arxiv.org/abs/2610.21882v1",
+      "title": "Anvil: data repair and first-fault distillation",
+      "dateNote": "First posted 2026-10-15 09:47 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Uses 5.8M source-grounded records over 160K images, with 5.22M for training. A 9B student routes to specialist teachers at the earliest semantic fault and normalizes stages. Controlled studies examine coverage, selective transfer and feedback repair: a data-quality study. [12]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21656",
+      "paper": "Data World: Scaling Data Environments from Scratch",
+      "authors": "Zhanli Li · Zeyuan Xu · Chaoxu Pang · Zeyuan Liu · Anyang Ji · Te Sun · Kongcheng Zhang · Wenbo Xu · Xubin Yue · Shipeng Luo · Junjie Zhao · Yingfan Hua · Jingqing Ruan · Zhongda Su · Feng Hong · Zhizhao Zeng · Ke Zeng · Xunliang Cai · Hanjia Ye",
+      "url": "https://arxiv.org/abs/2610.21656v1",
+      "title": "Data World: specify mechanisms before files",
+      "dateNote": "First posted 2026-10-15 06:35 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Explicit generative mechanisms produce environments, tasks and rubrics; independent audits check target recoverability. There are 2,135 training tasks from 1,037 worlds. More data and genuinely solvable tasks are distinct; no universal scaling law is claimed. [13]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21492",
+      "paper": "MetaExp: Learning to Self-Improve through Experience via Verifiable Cross-Task Environment Scaling",
+      "authors": "Renhao Li · Xinjie Shen · Yang Su · Jianhong Tu · Derek F. Wong · Dayiheng Liu · Min Yang",
+      "url": "https://arxiv.org/abs/2610.21492v1",
+      "title": "MetaExp: cross-task structure as data design",
+      "dateNote": "First posted 2026-10-15 04:29 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Across 1,000 task families/4,956 trajectories, fixed tools or latent workflows coexist with changing tasks to train experience transfer; downstream weights stay frozen. Domain-excluded tests support transfer, not unlimited self-improvement or a power law in environment count. [14]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21286",
+      "paper": "The Density of Thought: Predicting and Steering Reasoning in Large Language Models",
+      "authors": "Tanush Kalhan · Anupam Chattopadhyay · Sriram Ranga · Amritendu Mukherjee",
+      "url": "https://arxiv.org/abs/2610.21286v1",
+      "title": "Density of Thought: a proxy can reverse across training regimes",
+      "dateNote": "First posted 2026-10-15 01:31 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Six model scales, two training paradigms, only 60 GSM8K problems: the density-variance/correctness relation weakens with scale and reverses after RL distillation. Direct steering changes accuracy 60.0%→8.3%; a small-sample negative result, not a universal law. [15]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21167",
+      "paper": "GRADS: Graph-Regulated Agentic Data Synthesis with Controllable Difficulty",
+      "authors": "Gaocheng Yang · Ruijie Tao · Kai Ye · Senhua Zhang · Zhengqin Zhu · Ziyang Li",
+      "url": "https://arxiv.org/abs/2610.21167v1",
+      "title": "GRADS: dependency-controlled synthetic difficulty",
+      "dateNote": "First posted 2026-10-14 23:24 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Maintains necessary evidence/inference dependencies instead of padding irrelevant context; independent solvers assess difficulty separation. At matched training budgets, SFT termination exceeds 95% and calls/turns fall by up to 75%, not total training cost. [16]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21030",
+      "paper": "Learning When to Think: Utility-Guided Adaptive Reasoning for Efficient Text Retrieval",
+      "authors": "Yingtao Luo · Kangyi Zhao · Shiyi Du · Yubo Li",
+      "url": "https://arxiv.org/abs/2610.21030v1",
+      "title": "AURA: stop reasoning using retrieval utility",
+      "dateNote": "First posted 2026-10-14 20:04 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Intermediate embeddings separate relevant documents from hard distractors; a lightweight utility estimator controls depth. On BRIGHT, 4B achieves 34.7 nDCG@10 at 2.8 steps/96 tokens on average; matched-deployment latency drops 4.6→0.76 seconds within this retrieval protocol. [17]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20832",
+      "paper": "Amortizing Sequential Experimental Design in Reasoning LLMs",
+      "authors": "Anita Kriz · Antonin Berthon · Nicolás Astorga · Mihaela van der Schaar",
+      "url": "https://arxiv.org/abs/2610.20832v1",
+      "title": "Experimental design: amortize information-gain search",
+      "dateNote": "First posted 2026-10-14 15:15 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Defines information-gain rewards under a generative model independent of the LLM’s beliefs, training reasoning/action policies on Twenty Questions against training- and inference-time BED baselines. Transfer to Medi-Q is not evidence of clinical effectiveness. [18]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20193",
+      "paper": "SWE-Stream: Scaling Executable Training Data for SWE Agents via Progressive Construction and Elastic Streaming",
+      "authors": "Chengyang Liu · Wen Yang · Shifeng Chen · Delai Qiu · Ji Yang · Junnan Zhu · Yining Wang · Shengping Liu",
+      "url": "https://arxiv.org/abs/2610.20193v1",
+      "title": "SWE-Stream: separate data quality from full-scale results",
+      "dateNote": "First posted 2026-10-14 09:41 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Constructs 80,874 executable tasks and 118,688 successful trajectories. SWE-bench Verified is 45.6% under matched training budgets versus 69.0% with full training: different comparisons. The 1.45× gain is accepted-task construction throughput, not model-training speed. [19]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21480",
+      "paper": "Kolmogorov-Arnold Networks: Curse of Dimensionality and Structural Bias",
+      "authors": "Yunhao Ni · Yuxin Guo · Jie Luo · Wenjun Wu · Lei Huang",
+      "url": "https://arxiv.org/abs/2610.21480v1",
+      "title": "KAN: favorable exponents from architecture or target structure?",
+      "dateNote": "First posted 2026-10-15 04:21 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "For arbitrary-depth standard spline-KANs, the abstract states a worst-case exponential-in-dimension coefficient lower bound on isotropic Sobolev balls. Favorable exponents for low-arity composition are not KAN-exclusive. Full proof unchecked; target class and accuracy threshold matter. [20]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22130",
+      "paper": "DropKV: Decoupling Residual-Output Perturbation for Near-Optimal KV-Cache Eviction",
+      "authors": "Aozhong Zhang · Selcuk Gurses · Yanxia Deng · Naigang Wang · Chi-Chun Liu · Davis Wertheimer · Derrick Liu · Xin Li · Zi Yang · Felix X. -F. Ye · Penghang Yin",
+      "url": "https://arxiv.org/abs/2610.22130v1",
+      "title": "DropKV: kernel speed is not end-to-end speed",
+      "dateNote": "First posted 2026-10-15 12:05 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Decouples joint eviction into per-token scores; the constant-factor guarantee requires a cone condition. A 19.8× scoring-kernel gain translates to at most 9.9% matched-batch prefill acceleration, with improved RULER/LongBench at equal cache budgets. [21]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20865",
+      "paper": "Long-Context Drafting Does Not Require Long-Context Drafters",
+      "authors": "Aref Jafari · Vansh Bhatia · Matt Qin · Subhajit Dutta Chowdhury · Ben Lee · Vikram Appia · Ali Ghodsi · Mehdi Rezagholizadeh",
+      "url": "https://arxiv.org/abs/2610.20865v1",
+      "title": "Short drafters: preserve speedup across context lengths",
+      "dateNote": "First posted 2026-10-14 15:54 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Freezes short-context drafters, caps their attention cache and rebases rotary indices; three model pairs/five corpora reach 2M context. The claim is flatness of speedup, not a fixed multiple; speculative cost per emitted token must remain below target-only cost. [22]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20582",
+      "paper": "Latent Compaction with Test-Time Training",
+      "authors": "Yingfa Chen · Xingyu Shen · Chaojun Xiao · Xu Han",
+      "url": "https://arxiv.org/abs/2610.20582v1",
+      "title": "Latent Compaction: train the compressed cache",
+      "dateNote": "First posted 2026-10-14 13:57 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "With weights frozen, fits full-cache attention/log-normalizers before end-to-end cache distillation, without downstream questions. Reported RULER accuracy at 32× compression is 96.7% versus KVZip+ 40.0%; matched compression budgets do not imply matched total test-time-training cost. [23]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20584",
+      "paper": "Player-1: Learning to Play from Synthetic Experience",
+      "authors": "Mingyu Ouyang · Yiran Wang · Siyuan Hu · Xingyilang Yin · Huiqiang Sun · Guangzhi Wang · Junfu Pu · Cheng Cheng · Honghao Chen · Ying Shan · Mike Zheng Shou · Hwee Tou Ng",
+      "url": "https://arxiv.org/abs/2610.20584v1",
+      "title": "Player-1: synthetic-environment coverage and transfer",
+      "dateNote": "First posted 2026-10-14 13:57 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Initializes from 6,044 demonstrations; 16 synthetic 2D/3D environments supply verifiable rewards and randomized control dynamics. Broader coverage improves transfer. MineDojo-300 gains over each model’s SFT baseline are 27.8/17.7 points for 9B/35B-A3B, not equal-budget architecture comparisons. [24]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-20518",
+      "paper": "The Wealth of Agents: Scaling Agentic AI Across Developers",
+      "authors": "Austin W. Hanjie · Carlos E. Jimenez · Zirui Wang · Karthik Narasimhan",
+      "url": "https://arxiv.org/abs/2610.20518v1",
+      "title": "Multiple developers: development budget as a scaling axis",
+      "dateNote": "First posted 2026-10-14 13:19 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "On GAIA, specialists individually at at most 35% combine to reach 70%, 12 points above the median general-purpose system built at several times each specialist’s development budget. Aggregate development and inference costs still matter; incentive-theory conditions are unchecked. [25]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22339",
+      "paper": "Lean Graph Search for Formal Theorem Proving",
+      "authors": "Yihan Xu · Jia-Chen Gu · Junyi Zhang · Di Wu · Haikang Deng · Po-Nien Kung · Kai-Wei Chang · Amit Sahai · Wei Wang · Nanyun Peng",
+      "url": "https://arxiv.org/abs/2610.22339v1",
+      "title": "LeanGraphSearch: retrieval gains at matched reflection counts",
+      "dateNote": "First posted 2026-10-15 13:55 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Propagates relevance along Mathlib dependencies before reranking, comparing proof pass rates at 8/16/32 reflection turns. Retrieval costs must still enter total budgets; included through topic coverage, not as a Wharton-author update. [26]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21916",
+      "paper": "Prescreen, Then Subsample: Efficient model training for large-scale biomedical data with correlated covariates",
+      "authors": "Subhadra Dasgupta · Christian Staerk",
+      "url": "https://arxiv.org/abs/2610.21916v1",
+      "title": "PTS: screen variables, then choose observations",
+      "dateNote": "First posted 2026-10-15 10:01 EDT · v1 · Overlap-window addition",
+      "evidence": "Based on the abstract; theorem and experiment details not checked",
+      "kind": "Brief · New manuscript",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Uses correlation-aware SuSiE screening followed by IBOSS in the screened space. Correlated-Gaussian and biobank-scale synthetic-genotype studies report near-full-data prediction at lower training time: sample/feature budget design, not a biological scaling law. [27]"
+        }
+      ]
+    },
+    {
+      "id": "p-2609-01431",
+      "paper": "Efficiently Estimating Optimal Hyperparameter Scaling Laws through Power-Law Entropy Search",
+      "authors": "Zhiliang Chen · Sebastian Ament · David Eriksson · Maximilian Balandat · Bryan Kian Hsiang Low · Eytan Bakshy · Jihao Andreas Lin",
+      "url": "https://arxiv.org/abs/2609.01431v3",
+      "title": "PLES v3: revision differences unverified",
+      "dateNote": "2026-10-15 · Version record; substantive differences unconfirmed",
+      "evidence": "Abstract and version metadata only",
+      "kind": "Version record · No new-result claim",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "First posted September 1; v3 updated October 15. PLES selects scaling-law experiments by information gain per unit cost. Revision differences are unverified; the abstract’s below-one-tenth budget claim is not presented as a newly added result. [28]"
+        }
+      ]
+    },
+    {
+      "id": "p-2605-30348",
+      "paper": "LLMSurgeon: Diagnosing Data Mixture of Large Language Models",
+      "authors": "Yaxin Luo · Jiacheng Cui · Xiaohan Zhao · Xinyi Shang · Jiacheng Liu · Xinyue Bi · Zhaoyi Li · Zhiqiang Shen",
+      "url": "https://arxiv.org/abs/2605.30348v2",
+      "title": "LLMSurgeon v2: assumptions behind mixture inversion",
+      "dateNote": "2026-10-15 · Version record; substantive differences unconfirmed",
+      "evidence": "Abstract and version metadata only",
+      "kind": "Version record · No new-result claim",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "First posted May 28; v2 updated October 15. Infers pretraining domain mixtures using label shift and a calibrated soft confusion matrix. Revision differences are unverified; generated-text domain frequencies do not unconditionally equal training frequencies. [29]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-chinchilla",
+    "paperId": "arxiv:2203.15556",
+    "shortTitle": "Chinchilla",
+    "year": 2022,
+    "topics": [
+      "Scaling laws"
+    ],
+    "kind": "Daily close reading · Classic 004",
+    "title": "Chinchilla: from an empirical surface to optimal allocation",
+    "paper": "Training Compute-Optimal Large Language Models",
+    "authors": "Jordan Hoffmann · Sebastian Borgeaud · Arthur Mensch et al.",
+    "url": "https://arxiv.org/pdf/2203.15556v1",
+    "dateNote": "Historical classic: first posted/read v1, 2022-03-29; NeurIPS 2022",
+    "evidence": "Read §§1–3.4, 4.1 and Tables 2–3; visually checked the PDF tables",
+    "recognition": {
+      "label": "NeurIPS 2022 · historical scaling-laws landmark",
+      "url": "https://papers.nips.cc/paper_files/paper/2022/hash/c1e2faff6f588870935f114ebe04a3e5-Abstract-Conference.html"
+    },
+    "question": "Discussion: with deployment budget \\(C_{\\rm total}=6ND+\\kappa NQ\\), where \\(Q\\) is lifetime generated tokens, how does optimal model size vary with Q? What measurements identify kappa without conflating hardware throughput and FLOPs?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Kaplan et al. (2020) favored larger models and less data under fixed compute. [32] Chinchilla re-estimates allocation with over 400 runs: the goal is not convergence, but maximal loss reduction per finite FLOPs budget. [30,31]"
+      },
+      {
+        "type": "text",
+        "text": "Let \\(N\\) be parameters, \\(D\\) training tokens and \\(C\\) training FLOPs. This is an empirical model with positive coefficients, not a neural-network theorem. [30]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widehat L(N,D)=E+A N^{-\\alpha}+B D^{-\\beta},\\qquad C\\simeq6ND",
+        "label": "Original parametric fit; E is the irreducible term"
+      },
+      {
+        "type": "text",
+        "text": "Substitution of the budget constraint balances marginal gains, not the two loss terms themselves:"
+      },
+      {
+        "type": "equation",
+        "tex": "\\frac{\\partial}{\\partial\\log N}\\left[A N^{-\\alpha}+B\\left(\\frac C{6N}\\right)^{-\\beta}\\right]=0\\quad\\Longleftrightarrow\\quad\\alpha A N^{-\\alpha}=\\beta B D^{-\\beta}",
+        "label": "Algebra conditional on the empirical model"
+      },
+      {
+        "type": "equation",
+        "tex": "G=\\left(\\frac{\\alpha A}{\\beta B}\\right)^{1/(\\alpha+\\beta)},\\qquad N_\\star=G(C/6)^{\\beta/(\\alpha+\\beta)},\\qquad D_\\star=G^{-1}(C/6)^{\\alpha/(\\alpha+\\beta)}",
+        "label": "Original allocation; continuous N,D approximation"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Estimation method",
+          "Parameter exponent a",
+          "Data exponent b"
+        ],
+        "rows": [
+          [
+            "Training-curve envelope",
+            "0.50",
+            "0.50"
+          ],
+          [
+            "IsoFLOP",
+            "0.49",
+            "0.51"
+          ],
+          [
+            "Parametric loss",
+            "0.46",
+            "0.54"
+          ]
+        ],
+        "caption": "Original Table 2: N* proportional to C^a and D* to C^b. The three estimates are close, not identical. [30]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\frac{D_\\star}{N_\\star}=G^{-2}(C/6)^{(\\alpha-\\beta)/(\\alpha+\\beta)}",
+        "label": "Our direct consequence: a constant token/parameter ratio additionally requires alpha=beta"
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "“About 20 tokens per parameter” is not universal. Schedule length must match training duration; intermediate points on a long schedule are not optimized short runs. Data mixture, repetition and inference cost can change applicability. [30]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "title": "Hard Way, The Only Way: Provable Merits of Training on Hardest Examples",
+      "url": "https://arxiv.org/html/2610.21201v1"
+    },
+    {
+      "title": "Your Transformer Is Secretly Elastic",
+      "url": "https://arxiv.org/html/2610.20588v1"
+    },
+    {
+      "title": "Sorscher et al. (2022) · historical background",
+      "url": "https://arxiv.org/abs/2206.14486"
+    },
+    {
+      "title": "Scaling Indic Pretraining: 2.8 Trillion Tokens and an Open Data Generation Pipeline",
+      "url": "https://huggingface.co/blog/nvidia/scaling-indic-pretraining"
+    },
+    {
+      "title": "Welcome Beam: a 501B open model you can own, customize, and scale",
+      "url": "https://huggingface.co/blog/reflection-beam"
+    },
+    {
+      "title": "Welcome Muse Spark Open: open-weight frontier multimodal mixture-of-experts model from Meta",
+      "url": "https://huggingface.co/blog/meta-muse-spark-open"
+    },
+    {
+      "title": "Apertus 1.5 Release Notes",
+      "url": "https://huggingface.co/blog/swiss-ai/apertus-v15-release-notes"
+    },
+    {
+      "title": "When agents self-improve, what should persist?",
+      "url": "https://huggingface.co/blog/BunsDev/when-agents-improve-themselves-what-should-stay"
+    },
+    {
+      "title": "Rethinking Routing Exploration in Modern Mixture-of-Experts",
+      "url": "https://arxiv.org/abs/2610.22353v1"
+    },
+    {
+      "title": "Learning Self-Orchestration in Decentralized Agent Swarms",
+      "url": "https://arxiv.org/abs/2610.22322v1"
+    },
+    {
+      "title": "Librarian Agents: Training LLMs to Curate Long-Context Workspaces that Anticipate Future Queries",
+      "url": "https://arxiv.org/abs/2610.22273v1"
+    },
+    {
+      "title": "Anvil: Scaling Embodied Spatial Intelligence through Knowledge Recirculation",
+      "url": "https://arxiv.org/abs/2610.21882v1"
+    },
+    {
+      "title": "Data World: Scaling Data Environments from Scratch",
+      "url": "https://arxiv.org/abs/2610.21656v1"
+    },
+    {
+      "title": "MetaExp: Learning to Self-Improve through Experience via Verifiable Cross-Task Environment Scaling",
+      "url": "https://arxiv.org/abs/2610.21492v1"
+    },
+    {
+      "title": "The Density of Thought: Predicting and Steering Reasoning in Large Language Models",
+      "url": "https://arxiv.org/abs/2610.21286v1"
+    },
+    {
+      "title": "GRADS: Graph-Regulated Agentic Data Synthesis with Controllable Difficulty",
+      "url": "https://arxiv.org/abs/2610.21167v1"
+    },
+    {
+      "title": "Learning When to Think: Utility-Guided Adaptive Reasoning for Efficient Text Retrieval",
+      "url": "https://arxiv.org/abs/2610.21030v1"
+    },
+    {
+      "title": "Amortizing Sequential Experimental Design in Reasoning LLMs",
+      "url": "https://arxiv.org/abs/2610.20832v1"
+    },
+    {
+      "title": "SWE-Stream: Scaling Executable Training Data for SWE Agents via Progressive Construction and Elastic Streaming",
+      "url": "https://arxiv.org/abs/2610.20193v1"
+    },
+    {
+      "title": "Kolmogorov-Arnold Networks: Curse of Dimensionality and Structural Bias",
+      "url": "https://arxiv.org/abs/2610.21480v1"
+    },
+    {
+      "title": "DropKV: Decoupling Residual-Output Perturbation for Near-Optimal KV-Cache Eviction",
+      "url": "https://arxiv.org/abs/2610.22130v1"
+    },
+    {
+      "title": "Long-Context Drafting Does Not Require Long-Context Drafters",
+      "url": "https://arxiv.org/abs/2610.20865v1"
+    },
+    {
+      "title": "Latent Compaction with Test-Time Training",
+      "url": "https://arxiv.org/abs/2610.20582v1"
+    },
+    {
+      "title": "Player-1: Learning to Play from Synthetic Experience",
+      "url": "https://arxiv.org/abs/2610.20584v1"
+    },
+    {
+      "title": "The Wealth of Agents: Scaling Agentic AI Across Developers",
+      "url": "https://arxiv.org/abs/2610.20518v1"
+    },
+    {
+      "title": "Lean Graph Search for Formal Theorem Proving",
+      "url": "https://arxiv.org/abs/2610.22339v1"
+    },
+    {
+      "title": "Prescreen, Then Subsample: Efficient model training for large-scale biomedical data with correlated covariates",
+      "url": "https://arxiv.org/abs/2610.21916v1"
+    },
+    {
+      "title": "Efficiently Estimating Optimal Hyperparameter Scaling Laws through Power-Law Entropy Search",
+      "url": "https://arxiv.org/abs/2609.01431v3"
+    },
+    {
+      "title": "LLMSurgeon: Diagnosing Data Mixture of Large Language Models",
+      "url": "https://arxiv.org/abs/2605.30348v2"
+    },
+    {
+      "title": "Chinchilla · Hoffmann et al. (2022) · read v1",
+      "url": "https://arxiv.org/pdf/2203.15556v1"
+    },
+    {
+      "title": "NeurIPS 2022 official proceedings · Chinchilla",
+      "url": "https://papers.nips.cc/paper_files/paper/2022/hash/c1e2faff6f588870935f114ebe04a3e5-Abstract-Conference.html"
+    },
+    {
+      "title": "Kaplan et al. (2020) · historical background",
+      "url": "https://arxiv.org/abs/2001.08361"
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+RESEARCH DIGEST / 2026-10-17
+What to prune, what to preserve
+Data pruning · Elastic models · Post-training blogs · Chinchilla close reading
+
+中文: https://alexhuang13.github.io/digest/2026-10-17.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-17.html
+
+Focus · New manuscript
+2N: not simply the hardest examples
+Hard Way, The Only Way: Provable Merits of Training on Hardest Examples
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-21201
+
+Focus · New manuscript
+Freeze weights, learn one cross-budget ranking
+Your Transformer Is Secretly Elastic
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-20588
+
+Brief · Technical blog
+Indic: corpus inventory is not training budget
+Scaling Indic Pretraining: 2.8 Trillion Tokens and an Open Data Generation Pipeline
+https://alexhuang13.github.io/digest/en/2026-10-17.html#indic-data
+
+Brief · Technical blog
+Beam: language adherence, not reasoning accuracy
+Welcome Beam: a 501B open model you can own, customize, and scale
+https://alexhuang13.github.io/digest/en/2026-10-17.html#beam-posttraining
+
+Brief · Technical blog
+Muse Spark: attention-only LoRA on 816B
+Welcome Muse Spark Open: open-weight frontier multimodal mixture-of-experts model from Meta
+https://alexhuang13.github.io/digest/en/2026-10-17.html#muse-sft
+
+Brief · Technical blog
+Apertus: post-training can erode long-context ability
+Apertus 1.5 Release Notes
+https://alexhuang13.github.io/digest/en/2026-10-17.html#apertus-posttraining
+
+Brief · Technical blog
+Self-improvement: protect tests, not just instructions
+When agents self-improve, what should persist?
+https://alexhuang13.github.io/digest/en/2026-10-17.html#agent-continuity
+
+Brief · New manuscript
+MirrorMoE: more expert combinations need not be explored
+Rethinking Routing Exploration in Modern Mixture-of-Experts
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-22353
+
+Brief · New manuscript
+MPT: expand the inference-time agent population
+Learning Self-Orchestration in Decentralized Agent Swarms
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-22322
+
+Brief · New manuscript
+Librarian Agents: amortize a curated workspace
+Librarian Agents: Training LLMs to Curate Long-Context Workspaces that Anticipate Future Queries
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-22273
+
+Brief · New manuscript
+Anvil: data repair and first-fault distillation
+Anvil: Scaling Embodied Spatial Intelligence through Knowledge Recirculation
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-21882
+
+Brief · New manuscript
+Data World: specify mechanisms before files
+Data World: Scaling Data Environments from Scratch
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-21656
+
+Brief · New manuscript
+MetaExp: cross-task structure as data design
+MetaExp: Learning to Self-Improve through Experience via Verifiable Cross-Task Environment Scaling
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-21492
+
+Brief · New manuscript
+Density of Thought: a proxy can reverse across training regimes
+The Density of Thought: Predicting and Steering Reasoning in Large Language Models
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-21286
+
+Brief · New manuscript
+GRADS: dependency-controlled synthetic difficulty
+GRADS: Graph-Regulated Agentic Data Synthesis with Controllable Difficulty
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-21167
+
+Brief · New manuscript
+AURA: stop reasoning using retrieval utility
+Learning When to Think: Utility-Guided Adaptive Reasoning for Efficient Text Retrieval
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-21030
+
+Brief · New manuscript
+Experimental design: amortize information-gain search
+Amortizing Sequential Experimental Design in Reasoning LLMs
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-20832
+
+Brief · New manuscript
+SWE-Stream: separate data quality from full-scale results
+SWE-Stream: Scaling Executable Training Data for SWE Agents via Progressive Construction and Elastic Streaming
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-20193
+
+Brief · New manuscript
+KAN: favorable exponents from architecture or target structure?
+Kolmogorov-Arnold Networks: Curse of Dimensionality and Structural Bias
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-21480
+
+Brief · New manuscript
+DropKV: kernel speed is not end-to-end speed
+DropKV: Decoupling Residual-Output Perturbation for Near-Optimal KV-Cache Eviction
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-22130
+
+Brief · New manuscript
+Short drafters: preserve speedup across context lengths
+Long-Context Drafting Does Not Require Long-Context Drafters
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-20865
+
+Brief · New manuscript
+Latent Compaction: train the compressed cache
+Latent Compaction with Test-Time Training
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-20582
+
+Brief · New manuscript
+Player-1: synthetic-environment coverage and transfer
+Player-1: Learning to Play from Synthetic Experience
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-20584
+
+Brief · New manuscript
+Multiple developers: development budget as a scaling axis
+The Wealth of Agents: Scaling Agentic AI Across Developers
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-20518
+
+Brief · New manuscript
+LeanGraphSearch: retrieval gains at matched reflection counts
+Lean Graph Search for Formal Theorem Proving
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-22339
+
+Brief · New manuscript
+PTS: screen variables, then choose observations
+Prescreen, Then Subsample: Efficient model training for large-scale biomedical data with correlated covariates
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2610-21916
+
+Version record · No new-result claim
+PLES v3: revision differences unverified
+Efficiently Estimating Optimal Hyperparameter Scaling Laws through Power-Law Entropy Search
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2609-01431
+
+Version record · No new-result claim
+LLMSurgeon v2: assumptions behind mixture inversion
+LLMSurgeon: Diagnosing Data Mixture of Large Language Models
+https://alexhuang13.github.io/digest/en/2026-10-17.html#p-2605-30348
+
+Daily classic · 2022
+Chinchilla: from an empirical surface to optimal allocation
+https://alexhuang13.github.io/digest/en/2026-10-17.html#classic-chinchilla
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-10-17.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/
