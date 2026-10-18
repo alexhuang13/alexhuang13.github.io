@@ -1,0 +1,339 @@
+{
+  "date": "2026-10-18",
+  "number": "005",
+  "publishedAt": "2026-10-18T12:45:00Z",
+  "readingMinutes": 14,
+  "tags": [
+    "Post-training",
+    "Inference scaling",
+    "Data scaling",
+    "NTK"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "title": "同一策略，不同轨迹",
+  "subtitle": "长程 RL 的一致性 · 选择器与预算 · 精读 NTK",
+  "window": "2026-10-15 08:37 — 2026-10-18 08:37 · America/New_York",
+  "edition": "每日研究笔记",
+  "intro": "本期主读长程 RL 的训练—采样一致性，以及 3D 生成中选择与反馈的预算边界。窗口内补收5条论文／博客、1条技术补充，另列2条差异待核实的版本记录；均非今日首发。经典精读 NTK：从 Jacobian 到谱滤波。",
+  "articles": [
+    {
+      "id": "on-policy-harness",
+      "paper": "Mo’ turns, mo’ problems",
+      "authors": "Ian Barber",
+      "url": "https://ianbarber.blog/2026/10/15/mo-turns-mo-problems/",
+      "title": "同一套权重，不一定是同一个策略",
+      "kind": "主读 · 技术博客",
+      "dateNote": "2026-10-15 · 重叠窗口补收；下引 QwenGyre、renderers 为背景",
+      "evidence": "已读全文，并核对 QwenGyre 附录 B 与 renderers 的前缀约束",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "长程 RL 的误差不只来自参数陈旧：工具解析可改变 tokens，重建轨迹可改变上下文，推理与训练内核可改变概率。博客把这些问题放在同一条执行链上。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\rho_u(\\theta)=\\frac{\\pi_\\theta(y_u\\mid c_u)}{p_u^{\\rm roll}},\\qquad \\theta=\\theta_{\\rm roll}\\ \\not\\Rightarrow\\ \\rho_u=1",
+          "label": "解释性记号：cᵤ 是原始上下文；等号还要求输入、采样分布和计算一致"
+        },
+        {
+          "type": "text",
+          "text": "QwenGyre 保留实际行为概率，不在 trainer 上重算分母；同一执行树的训练 tokens 去重。其目标按执行归一化，而非让分支多的任务获得更大权重：[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "s_i=\\operatorname{sg}\\exp\\!\\left(\\frac1{L_i}\\sum_{u\\in\\mathcal T_i}\\log\\rho_u\\right),\\quad \\bar\\rho_u=\\operatorname{sg}\\min(\\rho_u,5),\\qquad \\mathcal L_i=\\frac1{L_i}\\sum_{u\\in\\mathcal T_i}\\ell_u",
+          "label": "原文附录 B；Lᵢ 为去重目标 token 数，ℓᵤ 含优势、截断与共享 mask"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "Token-in/token-out 能防止重分词漂移，但不能单独保证数值一致；强行重算 old log-prob 令比值为 1，也不把实际采样分布变成 trainer 分布。[1,3]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22360",
+      "paper": "Grounding Generative Verification in 3D Content",
+      "authors": "Shuanglin Li · Jiaying Lin · Shuquan Ye",
+      "url": "https://arxiv.org/html/2610.22360v1",
+      "title": "更多候选，还是更可靠的反馈？",
+      "kind": "主读 · 新稿",
+      "dateNote": "首发 2026-10-15 13:59 EDT · v1 · 重叠窗口补收",
+      "evidence": "已读 §5.5、Table 4、附录 G.2–G.5",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Best-of-N 的收益取决于候选池和选择器，不能只报 oracle。40 个输入，每个用 Pixal3D 与 Hunyuan3D-2.1 各生成 8 个候选；七项事实在生成前固定。[4]"
+        },
+        {
+          "type": "equation",
+          "tex": "f_{ij}=\\prod_{k=1}^{7}a_{ijk},\\qquad h_{ij}=f_{ij}(1-d_{ij})r_{ij}",
+          "label": "原文 G.2：a 为事实满足指示；d 为严重缺陷，r 为源图保真"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "同一 16 候选池",
+            "Full (%)",
+            "Strict (%)"
+          ],
+          "rows": [
+            [
+              "均匀随机",
+              "26.7",
+              "16.6"
+            ],
+            [
+              "GPT-6 Astra 选择",
+              "55.0",
+              "45.0"
+            ],
+            [
+              "人类 oracle",
+              "90.0",
+              "85.0"
+            ]
+          ],
+          "caption": "Full=七项均满足；Strict 另要求无严重缺陷且保真。[4]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "另一个 8 输入实验：人类反馈递归修改 Full=8/8，严格条件仅 6/8；并行 Oracle@8 为 3/8。输出个数对齐不等于算力或人工成本对齐，不能据此宣称递归 scaling 更 compute-optimal。[4]"
+        }
+      ]
+    },
+    {
+      "id": "nemotron-task-construction",
+      "paper": "Post-Training Nemotron 3.5 Super VL for Long-Horizon Enterprise Work",
+      "authors": "Radhika Gaonkar · Florian Brand · Anirudh Ravichandran · Christian Munley · Daniele Molinari",
+      "url": "https://www.primeintellect.ai/blog/nemotron-3-5-super-vl",
+      "title": "Nemotron 补充：先保证奖励真的奖励了任务",
+      "kind": "简讯 · 技术博客补充",
+      "dateNote": "2026-10-15 · 补充已收录模型的任务构造实验，不另计模型发布",
+      "evidence": "已读任务生成、奖励审计及训练结果",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "先写可执行解，再导出检查器；测试捷径与等价正确解。2,500 项任务，128×GB200、约11小时／100个 GRPO steps，公开 held-out AutomationBench-AA 分数 34.0→57.7；报告选择了最好 checkpoint，不是私有榜单结果。[5]"
+        },
+        {
+          "type": "equation",
+          "tex": "R_i=\\frac{\\#\\{\\text{objectives met}\\}}{\\#\\{\\text{objectives}\\}}\\mathbf1\\{\\text{no guardrail violated}\\}",
+          "label": "原文评分：部分完成率乘约束门；57.7% 不是完整任务成功率"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22342",
+      "paper": "Spark-0: Scaling Spatially Aligned Tactile Pretraining for Robot Dexterous Manipulation",
+      "authors": "Tianxing Chen · Wenwei Lin · Chuqiao Lyu et al.",
+      "url": "https://arxiv.org/abs/2610.22342v1",
+      "title": "相同数据与算力，触觉监督是否值得保留？",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-15 13:56 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "1,000小时 HumanTouch；保留触觉预训练监督，相对同数据／算力但丢弃触觉的对照，Ego Humanoid 视觉部署成功率 52.5→71.7%。这是监督质量对照，不是拟合出的数据 scaling 指数；真实机器人结果还使用部署时触觉，不能混为同一归因。[6]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21993",
+      "paper": "Data-Efficient ConvNeXt Pretraining for High-Resolution Sentinel-1 GRD SAR Representation Learning",
+      "authors": "Yuki Natsume · Sang-Ho Yun · Chai Kiat Yeo",
+      "url": "https://arxiv.org/abs/2610.21993v1",
+      "title": "同一预训练语料，不同任务的饱和点",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-15 10:40 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "SparK-SAR 的数据量扫描：分类在 SSL4EO-S12 v1.1 的10–25%附近趋于饱和，密集预测到25–50%仍获益。不能把任务差异压成单一指数；27.8M微调编码器与139M冻结编码器的比较也不是同训练协议对照。[7]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21985",
+      "paper": "VeriVLA: Adaptive Test-Time Verification for Flow-Based VLAs with Latent World Models",
+      "authors": "Xueli Sun · Yuxiang Lu · Yantong Liu · Xianzhe Fan · Xi Chen · Zhe Liu · Hengshuang Zhao",
+      "url": "https://arxiv.org/abs/2610.21985v1",
+      "title": "只在关键状态花额外推理预算",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-15 10:34 EDT · v1 · 重叠窗口补收",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "两个初始 action chunks 的时间变化／样本间方差触发更多采样，再由 JEPA 潜在世界模型排序。三项实机任务平均完成分数50.8→65.5%；RTX4090 每次触发额外326ms。是条件性延迟，不是每步固定开销，也不是完整任务成功率。[8]"
+        }
+      ]
+    },
+    {
+      "id": "p-2604-11575",
+      "paper": "MIXAR: Scaling Autoregressive Pixel-based Language Models to Multiple Languages and Scripts",
+      "authors": "Chen Hu · Yintao Tai · Antonio Vergari · Frank Keller · Alessandro Suglia",
+      "url": "https://arxiv.org/abs/2604.11575v2",
+      "title": "MIXAR v2：版本记录",
+      "kind": "版本记录 · 差异待核实",
+      "dateNote": "首发 2026-04-13；v2 更新 2026-10-15 13:46 EDT",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "多语言像素语言模型、跨模型规模与 GRPO 生成训练；本轮确认 v2 日期，尚未逐项比较 v1/v2，不把摘要结论称为新结果。[9]"
+        }
+      ]
+    },
+    {
+      "id": "p-2605-19376",
+      "paper": "Generative Recursive Reasoning",
+      "authors": "Junyeob Baek · Mingyu Jo · Minsu Kim · Mengye Ren · Yoshua Bengio · Sungjin Ahn",
+      "url": "https://arxiv.org/abs/2605.19376v4",
+      "title": "GRAM v4：深度与并行两条推理轴",
+      "kind": "版本记录 · 差异待核实",
+      "dateNote": "首发 2026-05-19；v4 更新 2026-10-15 11:32 EDT",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "随机潜在轨迹同时支持递归深度和并行采样；v4与10月7日v3的实质差异未核实，仅作版本记录，不重述旧性能为新进展。[10]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-ntk",
+    "paperId": "arxiv:1806.07572",
+    "shortTitle": "Neural Tangent Kernel",
+    "year": 2018,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "paper": "Neural Tangent Kernel: Convergence and Generalization in Neural Networks",
+    "authors": "Arthur Jacot · Franck Gabriel · Clément Hongler",
+    "url": "https://arxiv.org/pdf/1806.07572v4",
+    "title": "NTK：把非线性训练投影到一个线性流",
+    "kind": "每日精读 · 经典 005",
+    "dateNote": "历史经典：首发2018-06-20；所读 v4 为2020-02-10；NeurIPS 2018",
+    "evidence": "已读 §2–5、§6.1–6.2及附录极限设定；核对 PDF 定理页",
+    "recognition": {
+      "label": "NeurIPS 2018 · 深度学习理论重要历史工作",
+      "url": "https://papers.neurips.cc/paper_files/paper/2018/hash/5a4be1fa34e62bb8a6ec6b91d2462f5a-Abstract.html"
+    },
+    "question": "讨论：若 \\(\\|K_t-K_0\\|_{\\rm op}/\\|K_0\\|_{\\rm op}\\) 很小，但 \\(\\lambda_{\\min}(K_0)\\) 更小，能否保证慢模态上的核预测准确？应测哪一种相对漂移？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "NNGP（Lee等，ICLR 2018）描述随机初始化的函数分布。[13] NTK 则问：优化开始之后，函数如何移动？将参数梯度映到有限训练集，非凸参数化与函数动力学可以分开看。[11,12]"
+      },
+      {
+        "type": "equation",
+        "tex": "f_t=(f_{\\theta_t}(x_i))_{i=1}^n,\\quad r_t=f_t-y,\\quad J_t=\\frac{\\partial f_t}{\\partial\\theta},\\quad \\mathcal L=\\frac{\\|r_t\\|^2}{2n},\\qquad \\dot r_t=-\\frac1nK_t r_t,\\quad K_t=J_tJ_t^\\top",
+        "label": "标量输出、全批梯度流；链式法则给出的有限宽精确恒等式"
+      },
+      {
+        "type": "text",
+        "text": "原文定理2：固定深度、Gaussian初始化、NTK参数化，激活 Lipschitz、二次可微且二阶导有界；逐层宽度依次趋于无穷，训练方向时间积分随机有界，则有限时间内核保持常数。[11]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widetilde\\alpha^{(\\ell+1)}=\\frac{W^{(\\ell)}\\alpha^{(\\ell)}}{\\sqrt{m_\\ell}}+\\beta b^{(\\ell)},\\qquad \\sup_{t\\le T}\\|K_t-K_\\infty\\|_{\\rm op}\\xrightarrow{\\mathbb P}0",
+        "label": "原文参数化与定理在固定有限训练集上的矩阵表述；T 固定"
+      },
+      {
+        "type": "text",
+        "text": "固定核后，平方损失变为线性常系数系统；下面两式是其直接求解。令特征向量为正交单位向量：[11]"
+      },
+      {
+        "type": "equation",
+        "tex": "K_\\infty v_j=\\lambda_jv_j,\\qquad r_t=e^{-tK_\\infty/n}r_0=\\sum_{j=1}^n e^{-\\lambda_jt/n}\\langle v_j,r_0\\rangle v_j",
+        "label": "λ=0 的残差不消失；仅半正定不足以保证拟合全部标签"
+      },
+      {
+        "type": "equation",
+        "tex": "g_t(\\lambda)=1-e^{-\\lambda t/n},\\qquad K_\\infty\\succ0\\ \\Longrightarrow\\ \\|r_t\\|_2\\le e^{-\\lambda_{\\min}t/n}\\|r_0\\|_2",
+        "label": "直接推论：早停是谱滤波；大核特征值先学，并非普遍的输入低频优先"
+      },
+      {
+        "type": "text",
+        "text": "令 \\(k(x,X)\\) 为测试点到训练集的极限核行向量。可逆时，训练外预测仍保留初始化项：[11]"
+      },
+      {
+        "type": "equation",
+        "tex": "f_t(x)=f_0(x)+k(x,X)K_\\infty^{-1}(I-e^{-tK_\\infty/n})(y-f_0(X))",
+        "label": "由训练集解积分得到；标量输出重写"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "训练收敛不等于泛化保证。原文用 ReLU 做有限宽数值实验，但这不取消定理2的光滑假设；固定核极限也不解释所有有限宽特征学习。[11]"
+      },
+      {
+        "type": "note",
+        "title": "讨论问题",
+        "text": "讨论：若 \\(\\|K_t-K_0\\|_{\\rm op}/\\|K_0\\|_{\\rm op}\\) 很小，但 \\(\\lambda_{\\min}(K_0)\\) 更小，能否保证慢模态上的核预测准确？应测哪一种相对漂移？"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "title": "Ian Barber · 2026-10-15 · 技术综述",
+      "url": "https://ianbarber.blog/2026/10/15/mo-turns-mo-problems/"
+    },
+    {
+      "title": "QwenGyre · 2026-09-27 · 背景，§5、附录 B",
+      "url": "https://arxiv.org/html/2609.33848v1"
+    },
+    {
+      "title": "renderers · 2026-05-12 · 背景",
+      "url": "https://www.primeintellect.ai/blog/renderers"
+    },
+    {
+      "title": "3DVerifier · v1 · §5.5、附录 G",
+      "url": "https://arxiv.org/html/2610.22360v1"
+    },
+    {
+      "title": "Prime Intellect / NVIDIA · 2026-10-15 · 任务构造与训练",
+      "url": "https://www.primeintellect.ai/blog/nemotron-3-5-super-vl"
+    },
+    {
+      "title": "Spark-0 · v1 · 摘要",
+      "url": "https://arxiv.org/abs/2610.22342v1"
+    },
+    {
+      "title": "SparK-SAR · v1 · 摘要",
+      "url": "https://arxiv.org/abs/2610.21993v1"
+    },
+    {
+      "title": "VeriVLA · v1 · 摘要",
+      "url": "https://arxiv.org/abs/2610.21985v1"
+    },
+    {
+      "title": "MIXAR · v2 · 版本记录与摘要",
+      "url": "https://arxiv.org/abs/2604.11575v2"
+    },
+    {
+      "title": "GRAM · v4 · 版本记录与摘要",
+      "url": "https://arxiv.org/abs/2605.19376v4"
+    },
+    {
+      "title": "NTK · Jacot、Gabriel、Hongler · 所读 v4",
+      "url": "https://arxiv.org/pdf/1806.07572v4"
+    },
+    {
+      "title": "NeurIPS 2018 官方论文集 · NTK",
+      "url": "https://papers.neurips.cc/paper_files/paper/2018/hash/5a4be1fa34e62bb8a6ec6b91d2462f5a-Abstract.html"
+    },
+    {
+      "title": "Jaehoon Lee 等 · ICLR 2018 · 历史背景",
+      "url": "https://arxiv.org/abs/1711.00165"
+    }
+  ]
+}

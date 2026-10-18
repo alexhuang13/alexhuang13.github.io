@@ -1,0 +1,339 @@
+{
+  "date": "2026-10-18",
+  "number": "005",
+  "publishedAt": "2026-10-18T12:45:00Z",
+  "readingMinutes": 14,
+  "tags": [
+    "Post-training",
+    "Inference scaling",
+    "Data scaling",
+    "NTK"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "title": "Same Policy, Different Trajectories",
+  "subtitle": "Consistency in long-horizon RL · Selectors and budgets · Reading NTK",
+  "window": "2026-10-15 08:37 — 2026-10-18 08:37 · America/New_York",
+  "edition": "Daily research notes",
+  "intro": "This issue examines training–sampling consistency in long-horizon RL and the budget boundaries of selection and feedback in 3D generation. Five papers/blogs and one technical follow-up are overlap-window additions, alongside two version records with unverified changes; none is presented as first released today. Our classic is NTK: from Jacobians to spectral filtering.",
+  "articles": [
+    {
+      "id": "on-policy-harness",
+      "paper": "Mo’ turns, mo’ problems",
+      "authors": "Ian Barber",
+      "url": "https://ianbarber.blog/2026/10/15/mo-turns-mo-problems/",
+      "title": "Same weights, different policy",
+      "kind": "Focus · technical blog",
+      "dateNote": "2026-10-15 · overlap-window addition; QwenGyre and renderers below are background",
+      "evidence": "Full blog read; checked QwenGyre Appendix B and the prefix invariant in renderers",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Long-horizon RL mismatch extends beyond stale weights: tool parsing can change tokens, trajectory reconstruction can change contexts, and numerical kernels can change probabilities. The blog connects these failure modes across execution.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\rho_u(\\theta)=\\frac{\\pi_\\theta(y_u\\mid c_u)}{p_u^{\\rm roll}},\\qquad \\theta=\\theta_{\\rm roll}\\ \\not\\Rightarrow\\ \\rho_u=1",
+          "label": "Explanatory notation: cᵤ is the original context; equality also requires matching inputs, sampling distributions, and computation"
+        },
+        {
+          "type": "text",
+          "text": "QwenGyre retains recorded behavior probabilities instead of recomputing the denominator on the trainer, and deduplicates trainable tokens across an execution tree. It normalizes by execution rather than rewarding tasks with more branches:[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "s_i=\\operatorname{sg}\\exp\\!\\left(\\frac1{L_i}\\sum_{u\\in\\mathcal T_i}\\log\\rho_u\\right),\\quad \\bar\\rho_u=\\operatorname{sg}\\min(\\rho_u,5),\\qquad \\mathcal L_i=\\frac1{L_i}\\sum_{u\\in\\mathcal T_i}\\ell_u",
+          "label": "Original Appendix B; Lᵢ counts deduplicated target tokens, and ℓᵤ includes the advantage, clipping, and shared mask"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Token-in/token-out prevents retokenization drift, not numerical mismatch by itself. Recomputing old log-probabilities to force a unit ratio does not change the actual sampling distribution into the trainer distribution.[1,3]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22360",
+      "paper": "Grounding Generative Verification in 3D Content",
+      "authors": "Shuanglin Li · Jiaying Lin · Shuquan Ye",
+      "url": "https://arxiv.org/html/2610.22360v1",
+      "title": "More candidates, or more reliable feedback?",
+      "kind": "Focus · new preprint",
+      "dateNote": "First posted 2026-10-15 13:59 EDT · v1 · overlap-window addition",
+      "evidence": "Read Section 5.5, Table 4, and Appendix G.2–G.5",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Best-of-N gains depend on both the pool and the selector, not just an oracle. For each of 40 inputs, Pixal3D and Hunyuan3D-2.1 each generate eight candidates; seven factual requirements are fixed beforehand.[4]"
+        },
+        {
+          "type": "equation",
+          "tex": "f_{ij}=\\prod_{k=1}^{7}a_{ijk},\\qquad h_{ij}=f_{ij}(1-d_{ij})r_{ij}",
+          "label": "Original G.2: a marks satisfied facts; d marks a severe defect and r source fidelity"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Same pool of 16",
+            "Full (%)",
+            "Strict (%)"
+          ],
+          "rows": [
+            [
+              "Uniform random",
+              "26.7",
+              "16.6"
+            ],
+            [
+              "GPT-6 Astra selection",
+              "55.0",
+              "45.0"
+            ],
+            [
+              "Human oracle",
+              "90.0",
+              "85.0"
+            ]
+          ],
+          "caption": "Full requires all seven facts; Strict additionally requires no severe defects and source fidelity.[4]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "In a separate eight-input study, human-guided refinement achieves Full=8/8 but only 6/8 under strict criteria; parallel Oracle@8 reaches 3/8. Matching output counts does not match compute or human effort, so this does not establish compute-optimal recursive scaling.[4]"
+        }
+      ]
+    },
+    {
+      "id": "nemotron-task-construction",
+      "paper": "Post-Training Nemotron 3.5 Super VL for Long-Horizon Enterprise Work",
+      "authors": "Radhika Gaonkar · Florian Brand · Anirudh Ravichandran · Christian Munley · Daniele Molinari",
+      "url": "https://www.primeintellect.ai/blog/nemotron-3-5-super-vl",
+      "title": "Nemotron follow-up: make the reward measure the task",
+      "kind": "Brief · technical follow-up",
+      "dateNote": "2026-10-15 · task-construction experiment for an already covered model, not another model release",
+      "evidence": "Read task generation, reward audits, and training results",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Write an executable solution before deriving checks; test both shortcuts and equivalent valid solutions. With 2,500 tasks, 128×GB200, and about 11 hours / 100 GRPO steps, public held-out AutomationBench-AA scores rise from 34.0 to 57.7. The report selects the best checkpoint; this is not the private leaderboard.[5]"
+        },
+        {
+          "type": "equation",
+          "tex": "R_i=\\frac{\\#\\{\\text{objectives met}\\}}{\\#\\{\\text{objectives}\\}}\\mathbf1\\{\\text{no guardrail violated}\\}",
+          "label": "Original score: partial objective credit gated by constraints; 57.7% is not full-task success"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-22342",
+      "paper": "Spark-0: Scaling Spatially Aligned Tactile Pretraining for Robot Dexterous Manipulation",
+      "authors": "Tianxing Chen · Wenwei Lin · Chuqiao Lyu et al.",
+      "url": "https://arxiv.org/abs/2610.22342v1",
+      "title": "At matched data and compute, does tactile supervision help?",
+      "kind": "Brief · new preprint",
+      "dateNote": "First posted 2026-10-15 13:56 EDT · v1 · overlap-window addition",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Using 1,000 hours of HumanTouch, retaining tactile pretraining supervision raises vision-only Ego Humanoid success from 52.5 to 71.7% against a same-data/compute baseline that discards touch. This tests supervision quality, not a fitted data-scaling exponent. Real-robot results also use deployment-time touch and have a different attribution.[6]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21993",
+      "paper": "Data-Efficient ConvNeXt Pretraining for High-Resolution Sentinel-1 GRD SAR Representation Learning",
+      "authors": "Yuki Natsume · Sang-Ho Yun · Chai Kiat Yeo",
+      "url": "https://arxiv.org/abs/2610.21993v1",
+      "title": "One pretraining corpus, different saturation points",
+      "kind": "Brief · new preprint",
+      "dateNote": "First posted 2026-10-15 10:40 EDT · v1 · overlap-window addition",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In SparK-SAR data sweeps, classification saturates around 10–25% of SSL4EO-S12 v1.1, while dense prediction still benefits up to 25–50%. Task differences should not be compressed into one exponent. Comparing a fine-tuned 27.8M encoder with a frozen 139M encoder also changes the adaptation protocol.[7]"
+        }
+      ]
+    },
+    {
+      "id": "p-2610-21985",
+      "paper": "VeriVLA: Adaptive Test-Time Verification for Flow-Based VLAs with Latent World Models",
+      "authors": "Xueli Sun · Yuxiang Lu · Yantong Liu · Xianzhe Fan · Xi Chen · Zhe Liu · Hengshuang Zhao",
+      "url": "https://arxiv.org/abs/2610.21985v1",
+      "title": "Spend extra inference budget at critical states",
+      "kind": "Brief · new preprint",
+      "dateNote": "First posted 2026-10-15 10:34 EDT · v1 · overlap-window addition",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Temporal variation and cross-sample variance from two initial action chunks trigger extra sampling, ranked by a JEPA latent world model. Mean completion score across three real tasks rises from 50.8 to 65.5%, adding 326 ms per triggered decision on an RTX4090. This is conditional latency, not a fixed per-step cost or full-task success rate.[8]"
+        }
+      ]
+    },
+    {
+      "id": "p-2604-11575",
+      "paper": "MIXAR: Scaling Autoregressive Pixel-based Language Models to Multiple Languages and Scripts",
+      "authors": "Chen Hu · Yintao Tai · Antonio Vergari · Frank Keller · Alessandro Suglia",
+      "url": "https://arxiv.org/abs/2604.11575v2",
+      "title": "MIXAR v2: version record",
+      "kind": "Version record · changes unverified",
+      "dateNote": "First posted 2026-04-13; v2 updated 2026-10-15 13:46 EDT",
+      "evidence": "Abstract and version history only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Multilingual pixel language modeling, model-scale comparisons, and GRPO generation training. The v2 date is verified, but v1/v2 changes have not been checked item by item; abstract claims are not presented as new results.[9]"
+        }
+      ]
+    },
+    {
+      "id": "p-2605-19376",
+      "paper": "Generative Recursive Reasoning",
+      "authors": "Junyeob Baek · Mingyu Jo · Minsu Kim · Mengye Ren · Yoshua Bengio · Sungjin Ahn",
+      "url": "https://arxiv.org/abs/2605.19376v4",
+      "title": "GRAM v4: recursive depth and parallel inference",
+      "kind": "Version record · changes unverified",
+      "dateNote": "First posted 2026-05-19; v4 updated 2026-10-15 11:32 EDT",
+      "evidence": "Abstract and version history only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Stochastic latent trajectories support both recursive depth and parallel sampling. Substantive changes from October 7 v3 to v4 remain unverified; this is a version record, not a new performance claim.[10]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-ntk",
+    "paperId": "arxiv:1806.07572",
+    "shortTitle": "Neural Tangent Kernel",
+    "year": 2018,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "paper": "Neural Tangent Kernel: Convergence and Generalization in Neural Networks",
+    "authors": "Arthur Jacot · Franck Gabriel · Clément Hongler",
+    "url": "https://arxiv.org/pdf/1806.07572v4",
+    "title": "NTK: nonlinear training becomes a linear flow",
+    "kind": "Daily classic · 005",
+    "dateNote": "Historical classic: first posted 2018-06-20; read v4 dated 2020-02-10; NeurIPS 2018",
+    "evidence": "Read Sections 2–5, 6.1–6.2, and the appendix limit setup; checked the PDF theorem page",
+    "recognition": {
+      "label": "NeurIPS 2018 · foundational deep-learning theory",
+      "url": "https://papers.neurips.cc/paper_files/paper/2018/hash/5a4be1fa34e62bb8a6ec6b91d2462f5a-Abstract.html"
+    },
+    "question": "Discussion: if \\(\\|K_t-K_0\\|_{\\rm op}/\\|K_0\\|_{\\rm op}\\) is small but \\(\\lambda_{\\min}(K_0)\\) is smaller still, are kernel predictions accurate on slow modes? Which relative drift should we measure?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "NNGP (Lee et al., ICLR 2018) describes the function distribution at initialization.[13] NTK asks how functions move once optimization starts, separating nonlinear parameterization from dynamics on a finite training set.[11,12]"
+      },
+      {
+        "type": "equation",
+        "tex": "f_t=(f_{\\theta_t}(x_i))_{i=1}^n,\\quad r_t=f_t-y,\\quad J_t=\\frac{\\partial f_t}{\\partial\\theta},\\quad \\mathcal L=\\frac{\\|r_t\\|^2}{2n},\\qquad \\dot r_t=-\\frac1nK_t r_t,\\quad K_t=J_tJ_t^\\top",
+        "label": "Scalar output and full-batch gradient flow; an exact finite-width chain-rule identity"
+      },
+      {
+        "type": "text",
+        "text": "Theorem 2 assumes fixed depth, Gaussian initialization, NTK parameterization, a Lipschitz twice-differentiable activation with bounded second derivative, sequential width limits, and a stochastically bounded time-integrated training direction. The kernel then becomes constant on finite time intervals.[11]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widetilde\\alpha^{(\\ell+1)}=\\frac{W^{(\\ell)}\\alpha^{(\\ell)}}{\\sqrt{m_\\ell}}+\\beta b^{(\\ell)},\\qquad \\sup_{t\\le T}\\|K_t-K_\\infty\\|_{\\rm op}\\xrightarrow{\\mathbb P}0",
+        "label": "Original parameterization and a matrix formulation of the theorem on a fixed finite training set; T is fixed"
+      },
+      {
+        "type": "text",
+        "text": "With the kernel fixed, squared-loss dynamics form a linear constant-coefficient system. The next two formulas solve it directly, using orthonormal eigenvectors:[11]"
+      },
+      {
+        "type": "equation",
+        "tex": "K_\\infty v_j=\\lambda_jv_j,\\qquad r_t=e^{-tK_\\infty/n}r_0=\\sum_{j=1}^n e^{-\\lambda_jt/n}\\langle v_j,r_0\\rangle v_j",
+        "label": "Residuals with λ=0 persist; positive semidefiniteness alone does not ensure fitting every label"
+      },
+      {
+        "type": "equation",
+        "tex": "g_t(\\lambda)=1-e^{-\\lambda t/n},\\qquad K_\\infty\\succ0\\ \\Longrightarrow\\ \\|r_t\\|_2\\le e^{-\\lambda_{\\min}t/n}\\|r_0\\|_2",
+        "label": "Direct consequence: early stopping is spectral filtering; large kernel eigenvalues learn first, not universally low input frequencies"
+      },
+      {
+        "type": "text",
+        "text": "Let \\(k(x,X)\\) be the limiting kernel row from a test point to the training set. When invertible, off-training predictions retain an initialization term:[11]"
+      },
+      {
+        "type": "equation",
+        "tex": "f_t(x)=f_0(x)+k(x,X)K_\\infty^{-1}(I-e^{-tK_\\infty/n})(y-f_0(X))",
+        "label": "Obtained by integrating the training-set solution; scalar-output rewrite"
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "Training convergence is not a generalization guarantee. Finite-width ReLU experiments do not remove Theorem 2’s smoothness assumptions; the fixed-kernel limit does not explain all finite-width feature learning.[11]"
+      },
+      {
+        "type": "note",
+        "title": "Discussion question",
+        "text": "Discussion: if \\(\\|K_t-K_0\\|_{\\rm op}/\\|K_0\\|_{\\rm op}\\) is small but \\(\\lambda_{\\min}(K_0)\\) is smaller still, are kernel predictions accurate on slow modes? Which relative drift should we measure?"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "title": "Ian Barber · 2026-10-15 · technical synthesis",
+      "url": "https://ianbarber.blog/2026/10/15/mo-turns-mo-problems/"
+    },
+    {
+      "title": "QwenGyre · 2026-09-27 · background, Section 5 and Appendix B",
+      "url": "https://arxiv.org/html/2609.33848v1"
+    },
+    {
+      "title": "renderers · 2026-05-12 · background",
+      "url": "https://www.primeintellect.ai/blog/renderers"
+    },
+    {
+      "title": "3DVerifier · v1 · Section 5.5 and Appendix G",
+      "url": "https://arxiv.org/html/2610.22360v1"
+    },
+    {
+      "title": "Prime Intellect / NVIDIA · 2026-10-15 · task construction and training",
+      "url": "https://www.primeintellect.ai/blog/nemotron-3-5-super-vl"
+    },
+    {
+      "title": "Spark-0 · v1 · abstract",
+      "url": "https://arxiv.org/abs/2610.22342v1"
+    },
+    {
+      "title": "SparK-SAR · v1 · abstract",
+      "url": "https://arxiv.org/abs/2610.21993v1"
+    },
+    {
+      "title": "VeriVLA · v1 · abstract",
+      "url": "https://arxiv.org/abs/2610.21985v1"
+    },
+    {
+      "title": "MIXAR · v2 · version record and abstract",
+      "url": "https://arxiv.org/abs/2604.11575v2"
+    },
+    {
+      "title": "GRAM · v4 · version record and abstract",
+      "url": "https://arxiv.org/abs/2605.19376v4"
+    },
+    {
+      "title": "NTK · Jacot, Gabriel, Hongler · read v4",
+      "url": "https://arxiv.org/pdf/1806.07572v4"
+    },
+    {
+      "title": "NeurIPS 2018 official proceedings · NTK",
+      "url": "https://papers.neurips.cc/paper_files/paper/2018/hash/5a4be1fa34e62bb8a6ec6b91d2462f5a-Abstract.html"
+    },
+    {
+      "title": "Jaehoon Lee et al. · ICLR 2018 · historical background",
+      "url": "https://arxiv.org/abs/1711.00165"
+    }
+  ]
+}

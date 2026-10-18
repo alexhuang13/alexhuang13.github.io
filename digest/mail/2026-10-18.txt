@@ -1,0 +1,56 @@
+RESEARCH DIGEST / 2026-10-18
+同一策略，不同轨迹
+长程 RL 的一致性 · 选择器与预算 · 精读 NTK
+
+中文: https://alexhuang13.github.io/digest/2026-10-18.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-18.html
+
+主读 · 技术博客
+同一套权重，不一定是同一个策略
+Mo’ turns, mo’ problems
+https://alexhuang13.github.io/digest/2026-10-18.html#on-policy-harness
+
+主读 · 新稿
+更多候选，还是更可靠的反馈？
+Grounding Generative Verification in 3D Content
+https://alexhuang13.github.io/digest/2026-10-18.html#p-2610-22360
+
+简讯 · 技术博客补充
+Nemotron 补充：先保证奖励真的奖励了任务
+Post-Training Nemotron 3.5 Super VL for Long-Horizon Enterprise Work
+https://alexhuang13.github.io/digest/2026-10-18.html#nemotron-task-construction
+
+简讯 · 新稿
+相同数据与算力，触觉监督是否值得保留？
+Spark-0: Scaling Spatially Aligned Tactile Pretraining for Robot Dexterous Manipulation
+https://alexhuang13.github.io/digest/2026-10-18.html#p-2610-22342
+
+简讯 · 新稿
+同一预训练语料，不同任务的饱和点
+Data-Efficient ConvNeXt Pretraining for High-Resolution Sentinel-1 GRD SAR Representation Learning
+https://alexhuang13.github.io/digest/2026-10-18.html#p-2610-21993
+
+简讯 · 新稿
+只在关键状态花额外推理预算
+VeriVLA: Adaptive Test-Time Verification for Flow-Based VLAs with Latent World Models
+https://alexhuang13.github.io/digest/2026-10-18.html#p-2610-21985
+
+版本记录 · 差异待核实
+MIXAR v2：版本记录
+MIXAR: Scaling Autoregressive Pixel-based Language Models to Multiple Languages and Scripts
+https://alexhuang13.github.io/digest/2026-10-18.html#p-2604-11575
+
+版本记录 · 差异待核实
+GRAM v4：深度与并行两条推理轴
+Generative Recursive Reasoning
+https://alexhuang13.github.io/digest/2026-10-18.html#p-2605-19376
+
+每日精读 · 2018
+NTK：把非线性训练投影到一个线性流
+https://alexhuang13.github.io/digest/2026-10-18.html#classic-ntk
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-10-18.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

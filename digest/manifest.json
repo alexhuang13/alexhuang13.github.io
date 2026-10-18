@@ -4,8 +4,34 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-10-17",
+  "latest": "2026-10-18",
   "issues": [
+    {
+      "date": "2026-10-18",
+      "title": "同一策略，不同轨迹",
+      "url": "/digest/2026-10-18.html",
+      "translations": {
+        "en": {
+          "title": "Same Policy, Different Trajectories",
+          "url": "/digest/en/2026-10-18.html"
+        }
+      },
+      "sources": [
+        "https://ianbarber.blog/2026/10/15/mo-turns-mo-problems/",
+        "https://arxiv.org/html/2609.33848v1",
+        "https://www.primeintellect.ai/blog/renderers",
+        "https://arxiv.org/html/2610.22360v1",
+        "https://www.primeintellect.ai/blog/nemotron-3-5-super-vl",
+        "https://arxiv.org/abs/2610.22342v1",
+        "https://arxiv.org/abs/2610.21993v1",
+        "https://arxiv.org/abs/2610.21985v1",
+        "https://arxiv.org/abs/2604.11575v2",
+        "https://arxiv.org/abs/2605.19376v4",
+        "https://arxiv.org/pdf/1806.07572v4",
+        "https://papers.neurips.cc/paper_files/paper/2018/hash/5a4be1fa34e62bb8a6ec6b91d2462f5a-Abstract.html",
+        "https://arxiv.org/abs/1711.00165"
+      ]
+    },
     {
       "date": "2026-10-17",
       "title": "删去什么，保留什么",

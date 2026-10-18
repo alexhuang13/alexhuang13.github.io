@@ -1,0 +1,56 @@
+RESEARCH DIGEST / 2026-10-18
+Same Policy, Different Trajectories
+Consistency in long-horizon RL · Selectors and budgets · Reading NTK
+
+中文: https://alexhuang13.github.io/digest/2026-10-18.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-18.html
+
+Focus · technical blog
+Same weights, different policy
+Mo’ turns, mo’ problems
+https://alexhuang13.github.io/digest/en/2026-10-18.html#on-policy-harness
+
+Focus · new preprint
+More candidates, or more reliable feedback?
+Grounding Generative Verification in 3D Content
+https://alexhuang13.github.io/digest/en/2026-10-18.html#p-2610-22360
+
+Brief · technical follow-up
+Nemotron follow-up: make the reward measure the task
+Post-Training Nemotron 3.5 Super VL for Long-Horizon Enterprise Work
+https://alexhuang13.github.io/digest/en/2026-10-18.html#nemotron-task-construction
+
+Brief · new preprint
+At matched data and compute, does tactile supervision help?
+Spark-0: Scaling Spatially Aligned Tactile Pretraining for Robot Dexterous Manipulation
+https://alexhuang13.github.io/digest/en/2026-10-18.html#p-2610-22342
+
+Brief · new preprint
+One pretraining corpus, different saturation points
+Data-Efficient ConvNeXt Pretraining for High-Resolution Sentinel-1 GRD SAR Representation Learning
+https://alexhuang13.github.io/digest/en/2026-10-18.html#p-2610-21993
+
+Brief · new preprint
+Spend extra inference budget at critical states
+VeriVLA: Adaptive Test-Time Verification for Flow-Based VLAs with Latent World Models
+https://alexhuang13.github.io/digest/en/2026-10-18.html#p-2610-21985
+
+Version record · changes unverified
+MIXAR v2: version record
+MIXAR: Scaling Autoregressive Pixel-based Language Models to Multiple Languages and Scripts
+https://alexhuang13.github.io/digest/en/2026-10-18.html#p-2604-11575
+
+Version record · changes unverified
+GRAM v4: recursive depth and parallel inference
+Generative Recursive Reasoning
+https://alexhuang13.github.io/digest/en/2026-10-18.html#p-2605-19376
+
+Daily classic · 2018
+NTK: nonlinear training becomes a linear flow
+https://alexhuang13.github.io/digest/en/2026-10-18.html#classic-ntk
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-10-18.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/
