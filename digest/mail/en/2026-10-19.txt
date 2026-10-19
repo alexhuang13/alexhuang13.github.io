@@ -1,0 +1,61 @@
+RESEARCH DIGEST / 2026-10-19
+Budgets Shape Geometry; States Compress History
+BMuon · Small-scale extrapolation · Async RL · Linear Transformers
+
+中文: https://alexhuang13.github.io/digest/2026-10-19.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-19.html
+
+Main reading · New paper
+BMuon: hidden channels compete for update budget
+BMuon: Budgeting Muon's Spectral Geometry for Structured Compressibility
+https://alexhuang13.github.io/digest/en/2026-10-19.html#bmuon
+
+Main reading · New paper
+Extrapolate relative gaps, not absolute loss
+Predictable Scaling: Efficient Model Exploration via Scaling-Law Prediction
+https://alexhuang13.github.io/digest/en/2026-10-19.html#predictable-scaling
+
+Main reading · Technical blog
+Stale rollouts: zero-mean is not on-policy
+Score Function Centering: Your Stale Rollout Does Not Have to Be Importance Sampled and Stabilize Your Async RL Training with Trainer-Generator KL
+https://alexhuang13.github.io/digest/en/2026-10-19.html#sfc-kl
+
+Brief · Inference scaling
+PONDER: spend extra compute on which positions to revise
+PONDER: Learning to Generate in the Right Order
+https://alexhuang13.github.io/digest/en/2026-10-19.html#ponder
+
+Brief · New paper
+Federated Muon: combine local steps with communication compression
+Bridging Compressed Communication and Local Steps via Spectral Method in Federated Learning
+https://alexhuang13.github.io/digest/en/2026-10-19.html#federated-muon
+
+Brief · Data mixing
+MaSS: why mixed-domain data can hurt depth estimation
+Learning to Discriminate Scene Structures Makes Self-Supervised Depth Learning Scalable
+https://alexhuang13.github.io/digest/en/2026-10-19.html#mass-depth
+
+Brief · Technical follow-up
+A different readout at fixed weights still costs compute
+Jebadiah v2.1: two open decision models, where they stand, and how to run them
+https://alexhuang13.github.io/digest/en/2026-10-19.html#jebadiah-readout
+
+Version record · Changes unverified
+Version record: Reward-Guided Stitching
+Test-Time Scaling with Diffusion Language Models via Reward-Guided Stitching
+https://alexhuang13.github.io/digest/en/2026-10-19.html#stitching-version
+
+Version record · Changes unverified
+Version record: scaling phases of sparse momentum
+Dynamics of Stochastic Momentum with Sparse Updates in High Dimensions
+https://alexhuang13.github.io/digest/en/2026-10-19.html#sparse-momentum-version
+
+Daily classic · 2020
+Linear Transformers: turning history into state
+https://alexhuang13.github.io/digest/en/2026-10-19.html#classic-linear-transformers
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-10-19.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

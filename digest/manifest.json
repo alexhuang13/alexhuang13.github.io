@@ -4,8 +4,33 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-10-18",
+  "latest": "2026-10-19",
   "issues": [
+    {
+      "date": "2026-10-19",
+      "title": "预算改变几何，状态压缩历史",
+      "url": "/digest/2026-10-19.html",
+      "translations": {
+        "en": {
+          "title": "Budgets Shape Geometry; States Compress History",
+          "url": "/digest/en/2026-10-19.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2610.23571v1",
+        "https://arxiv.org/html/2610.23453v1",
+        "https://huggingface.co/blog/NormalUhr/sfc-kl",
+        "https://arxiv.org/html/2610.23531v1",
+        "https://arxiv.org/abs/2610.23434v1",
+        "https://arxiv.org/abs/2610.23600v1",
+        "https://huggingface.co/blog/frontier-infra/jebadiah-v2-1",
+        "https://arxiv.org/abs/2602.22871v3",
+        "https://arxiv.org/abs/2605.28961v2",
+        "https://proceedings.mlr.press/v119/katharopoulos20a/katharopoulos20a.pdf",
+        "https://arxiv.org/abs/1706.03762",
+        "https://proceedings.mlr.press/v119/katharopoulos20a.html"
+      ]
+    },
     {
       "date": "2026-10-18",
       "title": "同一策略，不同轨迹",

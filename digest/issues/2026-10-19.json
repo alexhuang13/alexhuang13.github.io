@@ -1,0 +1,382 @@
+{
+  "date": "2026-10-19",
+  "number": "006",
+  "publishedAt": "2026-10-19T13:07:28Z",
+  "readingMinutes": 15,
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training",
+    "Linear attention"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "title": "预算改变几何，状态压缩历史",
+  "subtitle": "BMuon · 小规模外推 · 异步 RL · 精读 Linear Transformers",
+  "window": "2026-10-16 08:57 — 2026-10-19 08:57 · America/New_York",
+  "edition": "每日研究笔记",
+  "intro": "主读通道预算、小模型外推与旧 rollout 的梯度偏差；补收7条新研究／技术文章，另记2条差异尚未核实的版本更新。均标原始日期，不作为今日首发。经典精读线性注意力：怎样把不断增长的历史变成固定大小的状态。",
+  "articles": [
+    {
+      "id": "bmuon",
+      "paper": "BMuon: Budgeting Muon's Spectral Geometry for Structured Compressibility",
+      "authors": "Rida Assalouh · Tom Jacobs · Rebekka Burkholz · Yani Ioannou · Umut Şimşekli",
+      "url": "https://arxiv.org/html/2610.23571v1",
+      "title": "BMuon：让隐藏通道竞争更新预算",
+      "kind": "主读 · 新稿",
+      "dateNote": "首发 2026-10-16 10:52 EDT · v1",
+      "evidence": "已读 §2–4、Theorem 2 与附录 E.1",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在 MLP 中，删除一个通道要同时删除上投影的一行与下投影的一列。BMuon 对这对切片共享分配量；预算作用于更新几何，不是前向门控。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal K_K=\\{\\mu\\in[0,1]^N:\\textstyle\\sum_{\\ell,j}\\mu_j^\\ell=K\\},\\quad D_\\ell=\\operatorname{diag}(\\mu^\\ell),\\qquad \\mu^\\star\\in\\arg\\max_{\\mu\\in\\mathcal K_K}\\sum_\\ell\\left(\\|D_\\ell^\\alpha M_1^\\ell\\|_*+\\|M_2^\\ell D_\\ell^\\alpha\\|_*\\right)",
+          "label": "原文精确 oracle；M 为动量，N 为总通道数，* 表示核范数"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Delta_1^\\ell=D_\\ell^\\alpha\\operatorname{Polar}(D_\\ell^\\alpha M_1^\\ell),\\quad \\Delta_2^\\ell=\\operatorname{Polar}(M_2^\\ell D_\\ell^\\alpha)D_\\ell^\\alpha,\\qquad W_i^\\ell\\leftarrow W_i^\\ell-\\eta\\Delta_i^\\ell",
+          "label": "这里 D 取最优分配；实际算法用 MM 近似分配、Newton–Schulz 近似 polar"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "MLP 剪枝率",
+            "Muon Top-1 (%)",
+            "BMuon Top-1 (%)"
+          ],
+          "rows": [
+            [
+              "0%",
+              "75.230 ± 0.022",
+              "74.174 ± 0.220"
+            ],
+            [
+              "70%",
+              "0.185 ± 0.062",
+              "74.083 ± 0.324"
+            ]
+          ],
+          "caption": "ViT-S/16 / ImageNet-1K；150 epochs、batch 4096，3 seeds；同一幅值剪枝，无恢复训练。[1]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "最小宽度结论针对固定线性映射的最小代价分解，并要求预算足够稀缺；不保证非凸训练收敛到该解。剪枝鲁棒性也不是端到端提速证明。"
+        }
+      ]
+    },
+    {
+      "id": "predictable-scaling",
+      "paper": "Predictable Scaling: Efficient Model Exploration via Scaling-Law Prediction",
+      "authors": "Aishwarya Wesanekar · Sheng-Tao Yang · Jiawei Zhang et al.",
+      "url": "https://arxiv.org/html/2610.23453v1",
+      "title": "外推相对差距，而非绝对 loss",
+      "kind": "主读 · 新稿",
+      "dateNote": "首发 2026-10-16 09:35 EDT · v1",
+      "evidence": "已读 §3–4、附录 A–B 与实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "相较于语言模型的绝对 loss scaling，这里预测推荐模型改架构、特征或数据后的相对收益。设 NE 为交叉熵除以标签基率熵；0 为基线，i 为候选，j 为缩小配置。[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Delta_i=\\frac{\\ell_i-\\ell_0}{\\ell_0},\\quad d_i=(\\Delta_i^{(1)},\\ldots,\\Delta_i^{(M)}),\\quad \\widehat\\Delta_i=f_\\theta(d_i),\\qquad \\mathcal E=\\frac1n\\sum_i|\\widehat\\Delta_i-\\Delta_i|",
+          "label": "负差距更好；实验均用 M=1；原始代理、线性回归和经验 GP 比较"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "模型 / 留出候选",
+            "Raw → GP MAE / τAA",
+            "代理 compute 减少"
+          ],
+          "rows": [
+            [
+              "TS-1 / 14",
+              "0.865 → 0.738",
+              "88%"
+            ],
+            [
+              "FM-1 / 7 (CTR-1)",
+              "2.150 → 0.701",
+              "79%"
+            ]
+          ],
+          "caption": "H100；全规模训练样本 80B / 122B。τAA 为重复基线实验的噪声阈值；成本按 trainer 数、样本量与吞吐估计。[2]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "依赖收敛稳定、差距可迁移、符号保真和低维预测结构。TS-1 的完美排序仅针对6个超过噪声阈值的候选；79–88%是代理评估成本减少，不是最终模型训练成本减少。"
+        }
+      ]
+    },
+    {
+      "id": "sfc-kl",
+      "paper": "Score Function Centering: Your Stale Rollout Does Not Have to Be Importance Sampled and Stabilize Your Async RL Training with Trainer-Generator KL",
+      "authors": "Yihua Zhang (NormalUhr)",
+      "url": "https://huggingface.co/blog/NormalUhr/sfc-kl",
+      "title": "旧 rollout：恢复零均值，不等于恢复 on-policy",
+      "kind": "主读 · 技术博客",
+      "dateNote": "发布 2026-10-16 · 页面未给时分",
+      "evidence": "已读 §1–6、§10–11 的推导、设置与 payload 对照",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "固定 prefix 与条件优势 A；q 是生成器，pθ 是当前 trainer，Jθ 为 logit 梯度。标准 score 在 q 下不必零均值，SFC 改为按 q 中心化：[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\widetilde s=J_\\theta-\\mathbb E_qJ_\\theta,\\qquad g_q=\\mathbb E_q[A\\widetilde s]=\\operatorname{Cov}_q(A,J_\\theta),\\qquad g_{\\rm total}=g_q-\\beta\\nabla_\\theta D_{\\rm KL}(q\\|p_\\theta)",
+          "label": "作者的局部更新；q 固定，KL 限制 trainer 与实际生成分布的偏离"
+        },
+        {
+          "type": "equation",
+          "tex": "\\sup_a\\|(A(a)-\\mathbb E_qA)\\nabla_\\theta\\log p_\\theta(a)\\|\\le B\\quad\\Longrightarrow\\quad\\|g_q-g_p\\|\\le B\\sqrt{2D_{\\rm KL}(q\\|p_\\theta)}",
+          "label": "原文用 Pinsker 推得；gₚ 为固定 prefix 下的局部更新，不是完整轨迹梯度"
+        },
+        {
+          "type": "text",
+          "text": "Qwen3-0.6B / Countdown、SGD、3200 steps：top-16 payload 在2992步崩溃；同宽的 top-8 + 8个尾部样本稳定到结束。只比较早期峰值会漏掉这种失败。[3]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "这是局部偏差控制动机，不是全轨迹无偏性或长期收敛保证；按样本年龄衰减 KL 系数是启发式。实验为作者报告，未独立复现。"
+        }
+      ]
+    },
+    {
+      "id": "ponder",
+      "paper": "PONDER: Learning to Generate in the Right Order",
+      "authors": "Julius Erbach · Dominik Narnhofer · Bernt Schiele · Jan Eric Lenssen · Konrad Schindler",
+      "url": "https://arxiv.org/html/2610.23531v1",
+      "title": "PONDER：把额外预算花在重写哪些位置",
+      "kind": "简讯 · Inference scaling",
+      "dateNote": "首发 2026-10-16 10:29 EDT · v1",
+      "evidence": "已读 §3.3、§4 与附录 A.3–A.4",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "冻结生成器，训练填入／移除位置的策略。空画布 N 个位置、R 次移除，需要 N+2R 次位置决策，不等于同样多次 backbone 调用。固定 Sudoku 策略（训练 R=9）的 hard accuracy 从 R=0 的56.60%升至 R=9 的96.68%、R=128 的98.61%；30,000个留出棋盘，三难度均衡。不是等算力比较。[4]"
+        }
+      ]
+    },
+    {
+      "id": "federated-muon",
+      "paper": "Bridging Compressed Communication and Local Steps via Spectral Method in Federated Learning",
+      "authors": "Dmitriy Bystrov · George Chirkov · Daniil Medyakov · Dmitry Bylinkin · Aleksandr Beznosikov",
+      "url": "https://arxiv.org/abs/2610.23434v1",
+      "title": "联邦 Muon：本地步与通信压缩一起处理",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-16 09:19 EDT · v1",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "作者提出同时支持本地更新与压缩的谱方法，并称其收敛分析不要求有界异质性。尚未核对完整假设、压缩算子和通信轮数，不外推到任意客户端分布。[5]"
+        }
+      ]
+    },
+    {
+      "id": "mass-depth",
+      "paper": "Learning to Discriminate Scene Structures Makes Self-Supervised Depth Learning Scalable",
+      "authors": "Mengtan Zhang · Yuchuan Cui · Yu Ma · Zizhan Guo · Wei Ye · Rui Fan",
+      "url": "https://arxiv.org/abs/2610.23600v1",
+      "title": "MaSS：混合数据为何可能让深度估计变差",
+      "kind": "简讯 · Data mixing",
+      "dateNote": "首发 2026-10-16 11:17 EDT · v1",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "将场景结构表征与上下文分离，缓解混合域训练的冲突；报告4个训练域单独／联合训练和另8域零样本评估。按数据混合订阅纳入，不把它称为已拟合出普适幂律；未核对等样本预算。[6]"
+        }
+      ]
+    },
+    {
+      "id": "jebadiah-readout",
+      "paper": "Jebadiah v2.1: two open decision models, where they stand, and how to run them",
+      "authors": "Jason Brashear / Frontier Infrastructure",
+      "url": "https://huggingface.co/blog/frontier-infra/jebadiah-v2-1",
+      "title": "固定权重，换读出方式也有预算代价",
+      "kind": "简讯 · 技术补充",
+      "dateNote": "博客 2026-10-16；模型已于10-10发布，不计作新模型",
+      "evidence": "已读作者博客；未重跑公开结果",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "作者的 T1e 配置把27B在 public sets 的分数从57.03提至60.46，但处理输入 tokens 约3.8倍，平均答复时间247→976 ms。后者是作者提交的实验，不是已确认榜单结果；不能与 Full 指标混用。[7]"
+        }
+      ]
+    },
+    {
+      "id": "stitching-version",
+      "paper": "Test-Time Scaling with Diffusion Language Models via Reward-Guided Stitching",
+      "authors": "Roy Miles · Aysim Toker · Andreea-Maria Oncescu · Jiankang Deng · Ismail Elezi",
+      "url": "https://arxiv.org/abs/2602.22871v3",
+      "title": "版本记录：Reward-Guided Stitching",
+      "kind": "版本记录 · 差异待核实",
+      "dateNote": "首发 2026-02-26；v3 为 2026-10-16 09:55 EDT",
+      "evidence": "基于摘要与版本历史；未逐项比较 v2/v3",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "研究用过程奖励筛选并拼接 diffusion reasoning 的中间步骤。仅记录窗口内版本，不把旧方法或摘要数值当作本轮新增结果。[8]"
+        }
+      ]
+    },
+    {
+      "id": "sparse-momentum-version",
+      "paper": "Dynamics of Stochastic Momentum with Sparse Updates in High Dimensions",
+      "authors": "Katie Everett · Elliot Paquette",
+      "url": "https://arxiv.org/abs/2605.28961v2",
+      "title": "版本记录：稀疏更新与动量的尺度相图",
+      "kind": "版本记录 · 差异待核实",
+      "dateNote": "首发 2026-05-27；v2 为 2026-10-16 09:22 EDT",
+      "evidence": "基于摘要与版本历史；未逐项比较 v1/v2",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在稀疏输入最小二乘与稀有类别 logistic 模型中，比较动量保留和学习两个时间尺度，分析稀疏度、batch 与衰减的高维缩放。不是一般 Transformer 定理，亦未确认哪些结论是 v2 新增。[9]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "BMuon v1：方法、理论与剪枝设置",
+      "url": "https://arxiv.org/html/2610.23571v1"
+    },
+    {
+      "title": "Predictable Scaling v1：预测与资源预算",
+      "url": "https://arxiv.org/html/2610.23453v1"
+    },
+    {
+      "title": "Yihua Zhang：SFC + Trainer–Generator KL（2026-10-16）",
+      "url": "https://huggingface.co/blog/NormalUhr/sfc-kl"
+    },
+    {
+      "title": "PONDER v1：预算、实验与附录",
+      "url": "https://arxiv.org/html/2610.23531v1"
+    },
+    {
+      "title": "联邦谱方法 v1：摘要与首发日期",
+      "url": "https://arxiv.org/abs/2610.23434v1"
+    },
+    {
+      "title": "MaSS v1：摘要与首发日期",
+      "url": "https://arxiv.org/abs/2610.23600v1"
+    },
+    {
+      "title": "Jebadiah：作者的读出实验与成本",
+      "url": "https://huggingface.co/blog/frontier-infra/jebadiah-v2-1"
+    },
+    {
+      "title": "Reward-Guided Stitching：v3 与版本历史",
+      "url": "https://arxiv.org/abs/2602.22871v3"
+    },
+    {
+      "title": "Sparse Momentum：v2 与版本历史",
+      "url": "https://arxiv.org/abs/2605.28961v2"
+    },
+    {
+      "title": "历史精读：Linear Transformers，ICML 2020 正文",
+      "url": "https://proceedings.mlr.press/v119/katharopoulos20a/katharopoulos20a.pdf"
+    },
+    {
+      "title": "背景：Attention Is All You Need（2017）",
+      "url": "https://arxiv.org/abs/1706.03762"
+    },
+    {
+      "title": "经典入选依据：ICML 2020 官方论文集记录",
+      "url": "https://proceedings.mlr.press/v119/katharopoulos20a.html"
+    }
+  ],
+  "classic": {
+    "id": "classic-linear-transformers",
+    "paperId": "arxiv:2006.16236",
+    "shortTitle": "Linear Transformers",
+    "year": 2020,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "paper": "Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention",
+    "authors": "Angelos Katharopoulos · Apoorv Vyas · Nikolaos Pappas · François Fleuret",
+    "url": "https://proceedings.mlr.press/v119/katharopoulos20a/katharopoulos20a.pdf",
+    "kind": "每日经典 · 历史论文",
+    "title": "Linear Transformers：历史怎样变成状态",
+    "dateNote": "首发 2020-06-29；本次读 ICML 2020 / PMLR 119 会议版",
+    "evidence": "已读 §3.1–3.4、Algorithm 1 与 §4.2.1；核对公式页和 Table 1",
+    "recognition": {
+      "label": "ICML 2020 · 线性注意力的重要历史工作",
+      "url": "https://proceedings.mlr.press/v119/katharopoulos20a.html"
+    },
+    "question": "若两段不同历史产生相同的 (Sₜ,zₜ)，但下一次 query 应返回不同答案，这一层必然无法区分。能否构造最短的冲突例子，并明确需要增加哪种状态？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Transformer（2017）让每个 query 检索全部历史；缓存仍随序列增长。这篇 ICML 2020 工作改用有限维核特征，将历史压成矩阵状态；重要的是改变 attention kernel，而非把 softmax 免费精确线性化。[10,11]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\phi:\\mathbb R^{d_k}\\to\\mathbb R^m,\\quad \\phi(x)=\\operatorname{ELU}(x)+1,\\qquad y_t=\\frac{\\sum_{j\\le t}\\phi(k_j)^\\top\\phi(q_t)v_j}{\\sum_{j\\le t}\\phi(k_j)^\\top\\phi(q_t)}",
+        "label": "设 q、k 为 query/key，v∈ℝᵈᵛ；正特征保证分母为正。本文实验选用此核"
+      },
+      {
+        "type": "equation",
+        "tex": "S_t=\\sum_{j\\le t}\\phi(k_j)v_j^\\top\\in\\mathbb R^{m\\times d_v},\\quad z_t=\\sum_{j\\le t}\\phi(k_j),\\qquad y_t=\\frac{S_t^\\top\\phi(q_t)}{z_t^\\top\\phi(q_t)}",
+        "label": "原文式 (9)–(12)，统一成列向量记号；先聚合 KV，再响应 query"
+      },
+      {
+        "type": "equation",
+        "tex": "S_t=S_{t-1}+\\phi(k_t)v_t^\\top,\\quad z_t=z_{t-1}+\\phi(k_t),\\qquad \\mathrm{time/token}=O(md_v),\\quad\\mathrm{state}=O(md_v+m)",
+        "label": "S₀=z₀=0；固定特征维度时，推理状态与序列长度无关（不含投影与其他层）"
+      },
+      {
+        "type": "text",
+        "text": "训练也不必缓存所有前缀矩阵。对未归一化输出，设 g 为反向传入梯度；前缀／后缀扫描给出：[10]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\bar y_t=S_t^\\top\\phi(q_t),\\quad g_t=\\nabla_{\\bar y_t}\\mathcal L,\\quad T_j=\\sum_{t\\ge j}\\phi(q_t)g_t^\\top;\\qquad \\nabla_{\\phi(q_t)}\\mathcal L=S_tg_t,\\quad \\nabla_{\\phi(k_j)}\\mathcal L=T_jv_j,\\quad \\nabla_{v_j}\\mathcal L=T_j^\\top\\phi(k_j)",
+        "label": "原文式 (13)–(15) 的分子梯度；分母另行求导。扫描累积器恒定，不代表全部训练激活恒定"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "MNIST 自回归",
+          "bits/dim ↓"
+        ],
+        "rows": [
+          [
+            "Softmax",
+            "0.621"
+          ],
+          [
+            "Linear",
+            "0.644"
+          ]
+        ],
+        "caption": "原文 Table 1；8层、8头、宽256、RAdam、250 epochs、训练 batch 10。核替换并非无损；不沿用旧实现下的吞吐倍数作现代硬件结论。[10]"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "有限 m 的 ELU 核不等于 softmax 的指数核。固定状态提供计算优势，也把历史信息压缩到同一组统计量；上述恒等式不保证任意长距离检索都保真。"
+      },
+      {
+        "type": "note",
+        "title": "讨论问题",
+        "text": "若两段不同历史产生相同的 (Sₜ,zₜ)，但下一次 query 应返回不同答案，这一层必然无法区分。能否构造最短的冲突例子，并明确需要增加哪种状态？"
+      }
+    ]
+  }
+}

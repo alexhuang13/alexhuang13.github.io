@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-10-19",
+    "paperId": "arxiv:2006.16236",
+    "paper": "Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention",
+    "shortTitle": "Linear Transformers",
+    "year": 2020,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "recognition": {
+      "label": "ICML 2020 · 线性注意力的重要历史工作",
+      "url": "https://proceedings.mlr.press/v119/katharopoulos20a.html"
+    },
+    "source": "https://proceedings.mlr.press/v119/katharopoulos20a/katharopoulos20a.pdf",
+    "url": "/digest/2026-10-19.html#classic-linear-transformers"
+  },
+  {
     "date": "2026-10-18",
     "paperId": "arxiv:1806.07572",
     "paper": "Neural Tangent Kernel: Convergence and Generalization in Neural Networks",

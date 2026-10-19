@@ -1,0 +1,382 @@
+{
+  "date": "2026-10-19",
+  "number": "006",
+  "publishedAt": "2026-10-19T13:07:28Z",
+  "readingMinutes": 15,
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training",
+    "Linear attention"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "title": "Budgets Shape Geometry; States Compress History",
+  "subtitle": "BMuon · Small-scale extrapolation · Async RL · Linear Transformers",
+  "window": "October 16, 2026 08:57 — October 19, 2026 08:57 · America/New_York",
+  "edition": "Daily research notes",
+  "intro": "Channel budgets, small-model extrapolation, and gradient bias from stale rollouts: seven newly collected research items and technical articles, plus two version records whose substantive changes remain unverified. Original dates are retained; none is presented as first published today. The classic asks how linear attention compresses a growing history into a fixed-size state.",
+  "articles": [
+    {
+      "id": "bmuon",
+      "paper": "BMuon: Budgeting Muon's Spectral Geometry for Structured Compressibility",
+      "authors": "Rida Assalouh · Tom Jacobs · Rebekka Burkholz · Yani Ioannou · Umut Şimşekli",
+      "url": "https://arxiv.org/html/2610.23571v1",
+      "title": "BMuon: hidden channels compete for update budget",
+      "kind": "Main reading · New paper",
+      "dateNote": "First posted October 16, 2026, 10:52 EDT · v1",
+      "evidence": "Read Sections 2–4, Theorem 2, and Appendix E.1",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Pruning an MLP channel removes an up-projection row and a down-projection column together. BMuon couples their allocations in update geometry, not through forward gates.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal K_K=\\{\\mu\\in[0,1]^N:\\textstyle\\sum_{\\ell,j}\\mu_j^\\ell=K\\},\\quad D_\\ell=\\operatorname{diag}(\\mu^\\ell),\\qquad \\mu^\\star\\in\\arg\\max_{\\mu\\in\\mathcal K_K}\\sum_\\ell\\left(\\|D_\\ell^\\alpha M_1^\\ell\\|_*+\\|M_2^\\ell D_\\ell^\\alpha\\|_*\\right)",
+          "label": "Exact oracle; M denotes momentum, N total channels, and * the nuclear norm"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Delta_1^\\ell=D_\\ell^\\alpha\\operatorname{Polar}(D_\\ell^\\alpha M_1^\\ell),\\quad \\Delta_2^\\ell=\\operatorname{Polar}(M_2^\\ell D_\\ell^\\alpha)D_\\ell^\\alpha,\\qquad W_i^\\ell\\leftarrow W_i^\\ell-\\eta\\Delta_i^\\ell",
+          "label": "D uses the optimal allocation; practical training approximates allocation by MM and polar factors by Newton–Schulz"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "MLP pruning",
+            "Muon Top-1 (%)",
+            "BMuon Top-1 (%)"
+          ],
+          "rows": [
+            [
+              "0%",
+              "75.230 ± 0.022",
+              "74.174 ± 0.220"
+            ],
+            [
+              "70%",
+              "0.185 ± 0.062",
+              "74.083 ± 0.324"
+            ]
+          ],
+          "caption": "ViT-S/16 / ImageNet-1K; 150 epochs, batch 4096, 3 seeds; identical magnitude pruning, no recovery training.[1]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The width-minimality result concerns minimum-cost factorizations of fixed linear maps under sufficiently scarce budgets, not convergence of nonconvex training. Pruning robustness does not establish end-to-end speedup."
+        }
+      ]
+    },
+    {
+      "id": "predictable-scaling",
+      "paper": "Predictable Scaling: Efficient Model Exploration via Scaling-Law Prediction",
+      "authors": "Aishwarya Wesanekar · Sheng-Tao Yang · Jiawei Zhang et al.",
+      "url": "https://arxiv.org/html/2610.23453v1",
+      "title": "Extrapolate relative gaps, not absolute loss",
+      "kind": "Main reading · New paper",
+      "dateNote": "First posted October 16, 2026, 09:35 EDT · v1",
+      "evidence": "Read Sections 3–4, Appendices A–B, and experimental tables",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Unlike absolute-loss scaling for language models, this predicts relative gains from changing recommendation architectures, features, or data. NE is cross-entropy divided by label base-rate entropy; 0 indexes the baseline, i a candidate, and j a reduced configuration.[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Delta_i=\\frac{\\ell_i-\\ell_0}{\\ell_0},\\quad d_i=(\\Delta_i^{(1)},\\ldots,\\Delta_i^{(M)}),\\quad \\widehat\\Delta_i=f_\\theta(d_i),\\qquad \\mathcal E=\\frac1n\\sum_i|\\widehat\\Delta_i-\\Delta_i|",
+          "label": "Negative gaps are better; every reported evaluation uses M=1; compare raw proxy, linear regression, and empirical GP"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Model / held-out candidates",
+            "Raw → GP MAE / τAA",
+            "Proxy compute reduction"
+          ],
+          "rows": [
+            [
+              "TS-1 / 14",
+              "0.865 → 0.738",
+              "88%"
+            ],
+            [
+              "FM-1 / 7 (CTR-1)",
+              "2.150 → 0.701",
+              "79%"
+            ]
+          ],
+          "caption": "H100; full-scale training uses 80B / 122B samples. τAA is the repeated-baseline noise threshold; cost is estimated from trainers, samples, and throughput.[2]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Requires stable convergence, transferable gaps, sign preservation, and low-dimensional prediction. Perfect TS-1 ranking concerns only 6 candidates above the noise threshold; 79–88% refers to proxy-evaluation cost, not final-model training."
+        }
+      ]
+    },
+    {
+      "id": "sfc-kl",
+      "paper": "Score Function Centering: Your Stale Rollout Does Not Have to Be Importance Sampled and Stabilize Your Async RL Training with Trainer-Generator KL",
+      "authors": "Yihua Zhang (NormalUhr)",
+      "url": "https://huggingface.co/blog/NormalUhr/sfc-kl",
+      "title": "Stale rollouts: zero-mean is not on-policy",
+      "kind": "Main reading · Technical blog",
+      "dateNote": "Published October 16, 2026 · No time of day provided",
+      "evidence": "Read Sections 1–6 and 10–11: derivation, setup, and payload comparisons",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Fix a prefix and conditional advantage A. Let q be the generator, pθ the current trainer, and Jθ the logit gradient. The standard score need not have zero mean under q; SFC centers under q instead:[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\widetilde s=J_\\theta-\\mathbb E_qJ_\\theta,\\qquad g_q=\\mathbb E_q[A\\widetilde s]=\\operatorname{Cov}_q(A,J_\\theta),\\qquad g_{\\rm total}=g_q-\\beta\\nabla_\\theta D_{\\rm KL}(q\\|p_\\theta)",
+          "label": "Author's local update; q is fixed and KL constrains drift from the actual generating distribution"
+        },
+        {
+          "type": "equation",
+          "tex": "\\sup_a\\|(A(a)-\\mathbb E_qA)\\nabla_\\theta\\log p_\\theta(a)\\|\\le B\\quad\\Longrightarrow\\quad\\|g_q-g_p\\|\\le B\\sqrt{2D_{\\rm KL}(q\\|p_\\theta)}",
+          "label": "Pinsker-based bound in the post; gₚ is a fixed-prefix local update, not the full trajectory gradient"
+        },
+        {
+          "type": "text",
+          "text": "With Qwen3-0.6B / Countdown, SGD, and 3200 steps, top-16 payload collapsed at step 2992; top-8 plus 8 tail samples at the same width remained stable through completion. Early peak scores miss this failure.[3]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "This motivates local bias control, not full-trajectory unbiasedness or long-run convergence. Age-decayed KL strength is heuristic. Experiments are author-reported, not independently reproduced."
+        }
+      ]
+    },
+    {
+      "id": "ponder",
+      "paper": "PONDER: Learning to Generate in the Right Order",
+      "authors": "Julius Erbach · Dominik Narnhofer · Bernt Schiele · Jan Eric Lenssen · Konrad Schindler",
+      "url": "https://arxiv.org/html/2610.23531v1",
+      "title": "PONDER: spend extra compute on which positions to revise",
+      "kind": "Brief · Inference scaling",
+      "dateNote": "First posted October 16, 2026, 10:29 EDT · v1",
+      "evidence": "Read Section 3.3, Section 4, and Appendices A.3–A.4",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Freeze the generator and train a fill/remove position policy. N empty positions and R removals require N+2R position decisions, not that many backbone calls. For a fixed Sudoku policy trained at R=9, hard accuracy rises from 56.60% at R=0 to 96.68% at R=9 and 98.61% at R=128; evaluation uses 30,000 held-out boards balanced across three difficulty levels. This is not a compute-matched comparison.[4]"
+        }
+      ]
+    },
+    {
+      "id": "federated-muon",
+      "paper": "Bridging Compressed Communication and Local Steps via Spectral Method in Federated Learning",
+      "authors": "Dmitriy Bystrov · George Chirkov · Daniil Medyakov · Dmitry Bylinkin · Aleksandr Beznosikov",
+      "url": "https://arxiv.org/abs/2610.23434v1",
+      "title": "Federated Muon: combine local steps with communication compression",
+      "kind": "Brief · New paper",
+      "dateNote": "First posted October 16, 2026, 09:19 EDT · v1",
+      "evidence": "Based on the abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The authors propose a spectral method supporting both local updates and compression, and report convergence without bounded heterogeneity. Full assumptions, compressor details, and communication-round bounds have not been checked; no claim is made for arbitrary client distributions.[5]"
+        }
+      ]
+    },
+    {
+      "id": "mass-depth",
+      "paper": "Learning to Discriminate Scene Structures Makes Self-Supervised Depth Learning Scalable",
+      "authors": "Mengtan Zhang · Yuchuan Cui · Yu Ma · Zizhan Guo · Wei Ye · Rui Fan",
+      "url": "https://arxiv.org/abs/2610.23600v1",
+      "title": "MaSS: why mixed-domain data can hurt depth estimation",
+      "kind": "Brief · Data mixing",
+      "dateNote": "First posted October 16, 2026, 11:17 EDT · v1",
+      "evidence": "Based on the abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Separating scene structure from context targets conflicts in mixed-domain training. The authors report separate/joint training on 4 domains and zero-shot evaluation on 8 others. Included under data mixing, not as evidence of a universal fitted power law; matched sample budgets remain unchecked.[6]"
+        }
+      ]
+    },
+    {
+      "id": "jebadiah-readout",
+      "paper": "Jebadiah v2.1: two open decision models, where they stand, and how to run them",
+      "authors": "Jason Brashear / Frontier Infrastructure",
+      "url": "https://huggingface.co/blog/frontier-infra/jebadiah-v2-1",
+      "title": "A different readout at fixed weights still costs compute",
+      "kind": "Brief · Technical follow-up",
+      "dateNote": "Blog October 16, 2026; model released October 10, not a new model release",
+      "evidence": "Read the author's blog; public results were not rerun",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The author's T1e configuration raises the 27B public-set score from 57.03 to 60.46, while processing about 3.8× as many input tokens and raising mean response time from 247 to 976 ms. The latter is an author-submitted experiment, not a confirmed leaderboard result; do not mix it with the Full metric.[7]"
+        }
+      ]
+    },
+    {
+      "id": "stitching-version",
+      "paper": "Test-Time Scaling with Diffusion Language Models via Reward-Guided Stitching",
+      "authors": "Roy Miles · Aysim Toker · Andreea-Maria Oncescu · Jiankang Deng · Ismail Elezi",
+      "url": "https://arxiv.org/abs/2602.22871v3",
+      "title": "Version record: Reward-Guided Stitching",
+      "kind": "Version record · Changes unverified",
+      "dateNote": "First posted February 26, 2026; v3 October 16, 2026, 09:55 EDT",
+      "evidence": "Abstract and version history only; v2/v3 differences not checked",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Studies process-reward selection and stitching of intermediate diffusion reasoning steps. This records the in-window version only; neither the method nor abstract metrics are presented as newly added results.[8]"
+        }
+      ]
+    },
+    {
+      "id": "sparse-momentum-version",
+      "paper": "Dynamics of Stochastic Momentum with Sparse Updates in High Dimensions",
+      "authors": "Katie Everett · Elliot Paquette",
+      "url": "https://arxiv.org/abs/2605.28961v2",
+      "title": "Version record: scaling phases of sparse momentum",
+      "kind": "Version record · Changes unverified",
+      "dateNote": "First posted May 27, 2026; v2 October 16, 2026, 09:22 EDT",
+      "evidence": "Abstract and version history only; v1/v2 differences not checked",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Analyzes high-dimensional scaling of sparsity, batch size, and decay via momentum-retention versus learning timescales in sparse-input least squares and rare-class logistic models. This is not a general Transformer theorem; which results are new in v2 remains unverified.[9]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "BMuon v1: method, theory, and pruning setup",
+      "url": "https://arxiv.org/html/2610.23571v1"
+    },
+    {
+      "title": "Predictable Scaling v1: prediction and resource budgets",
+      "url": "https://arxiv.org/html/2610.23453v1"
+    },
+    {
+      "title": "Yihua Zhang: SFC + Trainer–Generator KL (October 16, 2026)",
+      "url": "https://huggingface.co/blog/NormalUhr/sfc-kl"
+    },
+    {
+      "title": "PONDER v1: budgets, experiments, and appendix",
+      "url": "https://arxiv.org/html/2610.23531v1"
+    },
+    {
+      "title": "Federated spectral method v1: abstract and original date",
+      "url": "https://arxiv.org/abs/2610.23434v1"
+    },
+    {
+      "title": "MaSS v1: abstract and original date",
+      "url": "https://arxiv.org/abs/2610.23600v1"
+    },
+    {
+      "title": "Jebadiah: author's readout experiment and cost",
+      "url": "https://huggingface.co/blog/frontier-infra/jebadiah-v2-1"
+    },
+    {
+      "title": "Reward-Guided Stitching: v3 and version history",
+      "url": "https://arxiv.org/abs/2602.22871v3"
+    },
+    {
+      "title": "Sparse Momentum: v2 and version history",
+      "url": "https://arxiv.org/abs/2605.28961v2"
+    },
+    {
+      "title": "Historical reading: Linear Transformers, ICML 2020 full paper",
+      "url": "https://proceedings.mlr.press/v119/katharopoulos20a/katharopoulos20a.pdf"
+    },
+    {
+      "title": "Background: Attention Is All You Need (2017)",
+      "url": "https://arxiv.org/abs/1706.03762"
+    },
+    {
+      "title": "Classic selection: official ICML 2020 proceedings record",
+      "url": "https://proceedings.mlr.press/v119/katharopoulos20a.html"
+    }
+  ],
+  "classic": {
+    "id": "classic-linear-transformers",
+    "paperId": "arxiv:2006.16236",
+    "shortTitle": "Linear Transformers",
+    "year": 2020,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "paper": "Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention",
+    "authors": "Angelos Katharopoulos · Apoorv Vyas · Nikolaos Pappas · François Fleuret",
+    "url": "https://proceedings.mlr.press/v119/katharopoulos20a/katharopoulos20a.pdf",
+    "kind": "Daily classic · Historical paper",
+    "title": "Linear Transformers: turning history into state",
+    "dateNote": "First posted June 29, 2020; read the ICML 2020 / PMLR 119 proceedings version",
+    "evidence": "Read Sections 3.1–3.4, Algorithm 1, and Section 4.2.1; checked the equation page and Table 1",
+    "recognition": {
+      "label": "ICML 2020 · Foundational work in linear attention",
+      "url": "https://proceedings.mlr.press/v119/katharopoulos20a.html"
+    },
+    "question": "If two distinct histories produce identical (Sₜ,zₜ) but the next query requires different answers, this layer cannot distinguish them. Can we construct a minimal collision and identify what additional state is needed?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "The Transformer (2017) lets each query retrieve the entire history, with a growing cache. This ICML 2020 work uses finite-dimensional kernel features to compress history into a matrix state: it changes the attention kernel rather than obtaining exact softmax at no cost.[10,11]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\phi:\\mathbb R^{d_k}\\to\\mathbb R^m,\\quad \\phi(x)=\\operatorname{ELU}(x)+1,\\qquad y_t=\\frac{\\sum_{j\\le t}\\phi(k_j)^\\top\\phi(q_t)v_j}{\\sum_{j\\le t}\\phi(k_j)^\\top\\phi(q_t)}",
+        "label": "q and k are queries/keys, v∈ℝᵈᵛ; positive features ensure a positive denominator. This is the experimental kernel"
+      },
+      {
+        "type": "equation",
+        "tex": "S_t=\\sum_{j\\le t}\\phi(k_j)v_j^\\top\\in\\mathbb R^{m\\times d_v},\\quad z_t=\\sum_{j\\le t}\\phi(k_j),\\qquad y_t=\\frac{S_t^\\top\\phi(q_t)}{z_t^\\top\\phi(q_t)}",
+        "label": "Equations (9)–(12), rewritten in column-vector notation: aggregate KV before answering queries"
+      },
+      {
+        "type": "equation",
+        "tex": "S_t=S_{t-1}+\\phi(k_t)v_t^\\top,\\quad z_t=z_{t-1}+\\phi(k_t),\\qquad \\mathrm{time/token}=O(md_v),\\quad\\mathrm{state}=O(md_v+m)",
+        "label": "S₀=z₀=0; at fixed feature dimensions, inference state is independent of sequence length (excluding projections and other layers)"
+      },
+      {
+        "type": "text",
+        "text": "Training need not cache every prefix matrix either. For unnormalized outputs, let g be the incoming gradient; prefix/suffix scans give:[10]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\bar y_t=S_t^\\top\\phi(q_t),\\quad g_t=\\nabla_{\\bar y_t}\\mathcal L,\\quad T_j=\\sum_{t\\ge j}\\phi(q_t)g_t^\\top;\\qquad \\nabla_{\\phi(q_t)}\\mathcal L=S_tg_t,\\quad \\nabla_{\\phi(k_j)}\\mathcal L=T_jv_j,\\quad \\nabla_{v_j}\\mathcal L=T_j^\\top\\phi(k_j)",
+        "label": "Numerator gradients from equations (13)–(15); differentiate the denominator separately. Constant scan accumulators do not mean constant total training activations"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Autoregressive MNIST",
+          "bits/dim ↓"
+        ],
+        "rows": [
+          [
+            "Softmax",
+            "0.621"
+          ],
+          [
+            "Linear",
+            "0.644"
+          ]
+        ],
+        "caption": "Table 1; 8 layers, 8 heads, width 256, RAdam, 250 epochs, training batch 10. Changing the kernel is not lossless; historical implementation speedups are not extrapolated to modern hardware.[10]"
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "A finite-m ELU kernel is not the exponential softmax kernel. Fixed state saves computation while compressing history into the same statistics; these identities do not guarantee lossless arbitrary long-range retrieval."
+      },
+      {
+        "type": "note",
+        "title": "Discussion question",
+        "text": "If two distinct histories produce identical (Sₜ,zₜ) but the next query requires different answers, this layer cannot distinguish them. Can we construct a minimal collision and identify what additional state is needed?"
+      }
+    ]
+  }
+}

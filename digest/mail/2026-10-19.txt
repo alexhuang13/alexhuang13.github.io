@@ -1,0 +1,61 @@
+RESEARCH DIGEST / 2026-10-19
+预算改变几何，状态压缩历史
+BMuon · 小规模外推 · 异步 RL · 精读 Linear Transformers
+
+中文: https://alexhuang13.github.io/digest/2026-10-19.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-19.html
+
+主读 · 新稿
+BMuon：让隐藏通道竞争更新预算
+BMuon: Budgeting Muon's Spectral Geometry for Structured Compressibility
+https://alexhuang13.github.io/digest/2026-10-19.html#bmuon
+
+主读 · 新稿
+外推相对差距，而非绝对 loss
+Predictable Scaling: Efficient Model Exploration via Scaling-Law Prediction
+https://alexhuang13.github.io/digest/2026-10-19.html#predictable-scaling
+
+主读 · 技术博客
+旧 rollout：恢复零均值，不等于恢复 on-policy
+Score Function Centering: Your Stale Rollout Does Not Have to Be Importance Sampled and Stabilize Your Async RL Training with Trainer-Generator KL
+https://alexhuang13.github.io/digest/2026-10-19.html#sfc-kl
+
+简讯 · Inference scaling
+PONDER：把额外预算花在重写哪些位置
+PONDER: Learning to Generate in the Right Order
+https://alexhuang13.github.io/digest/2026-10-19.html#ponder
+
+简讯 · 新稿
+联邦 Muon：本地步与通信压缩一起处理
+Bridging Compressed Communication and Local Steps via Spectral Method in Federated Learning
+https://alexhuang13.github.io/digest/2026-10-19.html#federated-muon
+
+简讯 · Data mixing
+MaSS：混合数据为何可能让深度估计变差
+Learning to Discriminate Scene Structures Makes Self-Supervised Depth Learning Scalable
+https://alexhuang13.github.io/digest/2026-10-19.html#mass-depth
+
+简讯 · 技术补充
+固定权重，换读出方式也有预算代价
+Jebadiah v2.1: two open decision models, where they stand, and how to run them
+https://alexhuang13.github.io/digest/2026-10-19.html#jebadiah-readout
+
+版本记录 · 差异待核实
+版本记录：Reward-Guided Stitching
+Test-Time Scaling with Diffusion Language Models via Reward-Guided Stitching
+https://alexhuang13.github.io/digest/2026-10-19.html#stitching-version
+
+版本记录 · 差异待核实
+版本记录：稀疏更新与动量的尺度相图
+Dynamics of Stochastic Momentum with Sparse Updates in High Dimensions
+https://alexhuang13.github.io/digest/2026-10-19.html#sparse-momentum-version
+
+每日精读 · 2020
+Linear Transformers：历史怎样变成状态
+https://alexhuang13.github.io/digest/2026-10-19.html#classic-linear-transformers
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-10-19.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/
