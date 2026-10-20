@@ -1,0 +1,1169 @@
+{
+  "date": "2026-10-20",
+  "number": "007",
+  "publishedAt": "2026-10-20T12:24:17Z",
+  "readingMinutes": 24,
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training",
+    "Diffusion models"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "title": "多算哪一步，多看哪种数据",
+  "subtitle": "Polar Switch · 循环深度 · 表格数据扩展 · 精读 Score-SDE",
+  "window": "2026-10-17 08:11 — 2026-10-20 08:11 · America/New_York",
+  "edition": "每日研究笔记",
+  "intro": "三篇主读：极分解电路、前向／反向计算预算、数据扩展下的分布偏移。另列31条新稿／技术博客简讯，以及25篇差异未核实的版本记录；均保留首发日期。经典精读 Score-SDE，推导概率流中 1/2 的来源。",
+  "articles": [
+    {
+      "id": "paper-2610-26742",
+      "paper": "Polar Switch: Fast Muon Orthogonalization with Polynomial Circuits",
+      "authors": "Zhehang Du · Weijie Su",
+      "url": "https://arxiv.org/html/2610.26742v1",
+      "title": "Polar Switch：先优化计算电路，再近似 polar",
+      "kind": "主读 · 新稿",
+      "dateNote": "首发 2026-10-19 13:06 EDT · v1",
+      "evidence": "已读 §3–4 与实验表；非逐项复现",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Muon 的代价不只在多项式次数，也在怎样复用矩阵乘法。对归一化矩阵 X，Polar Switch 搜索有限缓冲区中的多项式电路；标量谱变换对应同一组奇多项式。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "X=U\\Sigma V^\\top,\\qquad X\\leftarrow h(XX^\\top)X=U[\\Sigma h(\\Sigma^2)]V^\\top,\\qquad p(\\sigma)=\\sigma h(\\sigma^2)",
+          "label": "精确算术下的谱变换；不是一般非交换缓冲区的逐元素更新"
+        },
+        {
+          "type": "equation",
+          "tex": "B_w\\leftarrow aB_iB_j+bB_r+cI,\\qquad \\deg p\\le 2^{k+1}+1",
+          "label": "原文受限电路：k 次矩阵乘法；系数与缓冲区连接均参与搜索"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "方法",
+            "FLOPs / n³",
+            "最终奇异值区间"
+          ],
+          "rows": [
+            [
+              "Polar Express",
+              "15α + 5",
+              "[0.858872, 1.141128]"
+            ],
+            [
+              "PS2-55",
+              "6α + 10",
+              "[0.872263, 1.106236]"
+            ],
+            [
+              "PS3-55",
+              "6α + 10",
+              "[0.898309, 1.080954]"
+            ]
+          ],
+          "caption": "n×m，n≤m，α=m/n；输入奇异值 [0.001,1]，精确算术。PS2/3 分别用2/3个缓冲区。[1]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "方阵 kernel 相对 Polar Express 的耗时下降15.5–18.7%，不是端到端训练提速。Qwen-0.6B / Gemma-1B 的长训练各仅1个 seed；舍入模型不包含全部加性误差。[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-26030",
+      "paper": "Truncate or Not? A Scaling Study of Looped Transformers with Truncated Backpropagation",
+      "authors": "Xuyuan Xiong · Siyu Chen · Zihan Shao · Yue Su · Weiyang Jin · Ping Luo · Zhuoran Yang · Xihui Liu",
+      "url": "https://arxiv.org/html/2610.26030v1",
+      "title": "循环深度与反传深度：省掉梯度未必省算力",
+      "kind": "主读 · 新稿",
+      "dateNote": "首发 2026-10-19 04:52 EDT · v1",
+      "evidence": "已读设置、拟合律、预算分析与验证实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "令 T 为前向循环数，B≤T 为反传循环数。592次训练、58–919M非嵌入参数的实验，把重复计算折算成有效参数量；N_once / N_rec 是非循环／循环部分参数数。[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "L=E+\\left[A(N_{\\rm eff}/N_0)^{-\\alpha}+H(D/D_0)^{-\\beta}\\right]^\\kappa,\\quad N_{\\rm eff}=N_{\\rm once}+g(T,B)N_{\\rm rec}",
+          "label": "经验拟合；D 为训练 token 数，不是普适 scaling 定理"
+        },
+        {
+          "type": "equation",
+          "tex": "g(T,B)=\\exp\\{c(1-T^{-p}B^{-q})\\},\\qquad C\\approx6D\\left[N_{\\rm once}+\\frac{T+2B}{3}N_{\\rm rec}\\right]",
+          "label": "拟合 p=0.23677、q=1.02181；C 是主导 FLOPs 近似"
+        },
+        {
+          "type": "equation",
+          "tex": "q>2p\\quad\\Longrightarrow\\quad \\arg\\max_{1\\le B\\le T,\\ T+2B=S}g(T,B)=(S/3,S/3)",
+          "label": "在可行的连续松弛预算下：T、B 同时可选时，拟合模型偏好完整反传"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "参数 / tokens",
+            "(T,B)=(8,2) loss",
+            "(4,4) loss"
+          ],
+          "rows": [
+            [
+              "60M / 17.2B",
+              "2.5211",
+              "2.4933"
+            ],
+            [
+              "240M / 17.2B",
+              "2.2778",
+              "2.2642"
+            ]
+          ],
+          "caption": "FineWeb-Edu，匹配理论 FLOPs；矩阵参数用 MuonH。[2]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "固定 T 与同时优化 T、B 是不同问题；若参数量也自由，该拟合在研究预算内偏好非循环模型。结论依赖有界的 g、架构和训练区间，不等于所有循环模型都无益。[2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-26794",
+      "paper": "On Data Scaling in Tabular ML: More Data, Better Generalization?",
+      "authors": "Ivan Rubachev · Nikita Lazarev · Artem Babenko",
+      "url": "https://arxiv.org/html/2610.26794v1",
+      "title": "数据越多，验证集选得越重要",
+      "kind": "主读 · 新稿",
+      "dateNote": "首发 2026-10-19 13:40 EDT · v1",
+      "evidence": "已读 §3–5 与附录拟合细节",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在8个真实表格任务中，训练样本扩展至千万级；评估包含随机划分与时间／群体偏移。误差按数据集 d、方法 m 分解为可下降项与平台项：[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal E_{d,m}(N)=a_{d,m}(N/10^4)^{-b}+c_{d,m},\\qquad b=b_d\\ \\text{or}\\ b_{d,m}",
+          "label": "E 为 RMSE 或 1−AP；指数只在同一数据集内共享"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "任务",
+            "各方法独立指数 R²",
+            "共享指数 R²"
+          ],
+          "rows": [
+            [
+              "Cooking",
+              "0.9938",
+              "0.9931"
+            ],
+            [
+              "Jane Street",
+              "0.9312",
+              "0.9024"
+            ]
+          ],
+          "caption": "71条曲线，9种方法；7/8任务共享指数后的平均 R² 降幅小于0.01。均为样本内拟合。[3]"
+        },
+        {
+          "type": "text",
+          "text": "按同分布验证集调参，可能随训练数据增加而让分布外表现恶化；代表部署分布的验证集能在 MLP 实验中缓解该现象。PFN 上下文中加入分布外样本并不总能解决问题。[3]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "高拟合 R² 不是可靠外推证明；指数共享也不是跨任务通用常数。这里没有证明“更多数据必然损害泛化”。"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-24938",
+      "paper": "T-MUON: Tensorizing Muon via t-SVD for Large Language Model Pre-training",
+      "authors": "Dongyang Li · Mingsong Yan · Zheng Zhang · Sui Tang",
+      "url": "https://arxiv.org/abs/2610.24938v1",
+      "title": "T-MUON：张量化的谱更新",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-17 21:20 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用 t-SVD 与变换域算子推广 Muon；51M–1.3B 预训练中，优选的张量组织随模型而变，不能把一种变换的优势视为普适。 [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-24839",
+      "paper": "A Statistical Viewpoint on Adam, Shampoo and Muon",
+      "authors": "Tetiana Parshakova · Robert M. Gower · Paulo Orenstein",
+      "url": "https://arxiv.org/abs/2610.24839v1",
+      "title": "从统计模型看 Muon",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-17 15:41 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用结构化梯度协方差联系 Adam、Shampoo、Muon，提出 MN-Muon；小 GPT 对照优于 Muon，但中等规模最佳配置与 NorMuon 相近或略逊。 [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-24736",
+      "paper": "How Does Muon Work in Private Deep Learning? Scalable Differentially Private Training via Orthogonalization",
+      "authors": "Alexander Gaponov · Grigory Malinovsky · Egor Shulgin · Peter Richtarik",
+      "url": "https://arxiv.org/abs/2610.24736v1",
+      "title": "DP-Muon：隐私噪声之外，还有裁剪",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-17 11:00 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "把梯度裁剪与正交化放在一起分析；语言模型实验中最优优化器仍依赖 batch size。摘要不能支持无条件收敛率或全面优于 DP-Adam 的说法。 [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-26863",
+      "paper": "Text-to-Image Generative Modeling Without Language Pretraining",
+      "authors": "Keshigeyan Chandrasegaran · Yue Zhao · Armin W. Thomas · Ehsan Adeli · Jiajun Wu · Juan Carlos Niebles · Li Fei-Fei · Michael Poli",
+      "url": "https://arxiv.org/abs/2610.26863v1",
+      "title": "Halcyon：文生图是否需要语言预训练？",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 13:59 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在100M图文对上从头训练；控制实验中，额外纯文本预训练未改善文生图。跨模型算力比含不同训练路线，不是同模型严格消融。 [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-26855",
+      "paper": "Ropedia W0: Scaling Loco-Manipulation World Models across Embodiments with Human Experience",
+      "authors": "Tianqi Liu · Hanfei Zhao · Qifeng Liang · Hui En Pang · Jiarui Xu · Sayang Mu · Penghao Qiu · YingSheng Zhang · Jun Wang · Ziang Cao · Mingze Sun · Yukang Cao · Fangzhou Hong · Zhaoxi Chen · Ziwei Liu",
+      "url": "https://arxiv.org/abs/2610.26855v1",
+      "title": "Ropedia W0：人类经验与机器人数据",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 13:59 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用约10k小时人类视频与3k小时机器人经验训练跨具身世界模型，报告两类数据扩展的正向收益；这不等于已核验幂律指数。 [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-26848",
+      "paper": "Where is Physical RSI capability from? An Observational Scaling Law of LLM-as-policy",
+      "authors": "Zekai Li · Jiayi Yu · Jinlu Zhang · Luyang Niu · Zekun Qi · Jun Zheng · Xuchuan Chen · Dairu Liu · Yintianrun Zhang · He Wang · Li Yi",
+      "url": "https://arxiv.org/abs/2610.26848v1",
+      "title": "Physical RSI：观测式能力外推",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 13:59 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在固定交互预算和18个操控任务中，用模型能力代理与早期反馈预测自改进进展；观测关系不构成某个扩展轴的因果效应。 [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-26384",
+      "paper": "Answer Delivery Under a Shared Token Budget: An Audited Study of Stopping and Finalization",
+      "authors": "Yupeng Chang · Linyuan Gao · Zhiyuan Li · Yuan Wu · Yi Chang",
+      "url": "https://arxiv.org/abs/2610.26384v1",
+      "title": "答案交付也消耗 token",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 09:35 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "把最终作答提示计入共享预算；两个 checkpoint 各100道新 GSM8K 题上，正确率升8/7个百分点，但实际槽位节约不足1%。 [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-26383",
+      "paper": "BOSS: Token-Budgeted Online Sampling and Selection for LLM Reasoning",
+      "authors": "Yupeng Chang · Yahan Li · Chenlu Guo · Diana Inkpen · Yuan Wu · Yi Chang",
+      "url": "https://arxiv.org/abs/2610.26383v1",
+      "title": "BOSS：共同预算下生成、评判与停止",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 09:34 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "同时计入 prompt 与 completion，在线分配候选生成、评判和停止；24个配置中22个最好。该结论限于所比较策略和预算格点。 [11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-26339",
+      "paper": "Large-Scale Biomedical RAG: Corpus Scaling, Document Representation, and Efficiency Trade-offs",
+      "authors": "Adrián Sánchez-Freire · Gonzalo Pérez-Gómez · Aitziber Atutxa · Ander Barrena",
+      "url": "https://arxiv.org/abs/2610.26339v1",
+      "title": "RAG：扩语料也在扩干扰项",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 09:08 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "固定相关文档、增加干扰文档，检验检索方法排名与存储／检索粒度的变化；这是语料规模效应，不是模型参数 scaling。 [12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-26006",
+      "paper": "Scaling Synthetic Pre-training Data and Evaluation for Indic LLMs",
+      "authors": "Abhinav Khattar · Aishwarya Chhabra · Ameya Velingker · Anusha Kamath · Brandon Norick · Kanishk Singla · Kiran Praveen · Markus Kliegl · Mohammad Qazim Bhat · Mostofa Patwary · Niket Agarwal · Rajpreet Thethy · Ramani Akkati · Raviraj Joshi · Sai Nishanth Padala · Shuoyang Ding · Sriharsha Niverty · Utkarsh Vaidya · Vitaly Lavrukhin · Yev Meyer · Anoop Kunchukuttan · Mitesh Khapra · Mohammed Safi Ur Rahman Khan · Rudra Murthy · Sumanth Doddapaneni · Thanmay Jayakumar · Ujjwal Sharma",
+      "url": "https://arxiv.org/abs/2610.26006v1",
+      "title": "Indic：合成预训练数据的配比",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 04:30 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "构建2.83T tokens、22种语言的资源，比较合成／自然文本和英语混合的持续预训练；配比收益需要连同语言与评测分布解读。 [13]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-25932",
+      "paper": "Keep the Lineages Alive: Diversity-Preserving SMC for Diffusion LLM Decoding",
+      "authors": "Minoo Ahmadi · Seyedarmin Azizi · Mehdi Kamal · Massoud Pedram",
+      "url": "https://arxiv.org/abs/2610.25932v1",
+      "title": "LP-SMC：粒子数不等于祖先多样性",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 03:30 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用 Chopthin 与保留机制减轻扩散语言解码中的谱系坍缩；oracle 覆盖提高，最终准确率改善11/12项。ESS 重置不能单独证明多样性恢复。 [14]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-25860",
+      "paper": "Adaptive Decoding Methods for Token-Efficient Reinforcement Learning",
+      "authors": "Zhaonan Li · Zelei Cheng · Amritansh Mishra · Chia-Hsuan Lee · Mann Patel · Sambit Sahu · Ben Zhou · William M. Campbell",
+      "url": "https://arxiv.org/abs/2610.25860v1",
+      "title": "RLVR：动态解码支持集的边界",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 02:13 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "4B代码模型、150M-token预算下逐步扩大 top-k；优于固定 k=10，但接近最佳固定 k=20，单次测试结果相同。不能据此宣称普遍优于固定策略。 [15]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-25768",
+      "paper": "Truncated Reasoning Under a Budget: Evaluating System-1 Models as Decision-makers",
+      "authors": "Zhongyin Wang · Zhaoqian Xue · Junting Mu · Haozheng Liu · Ye Yuan · Haolun Wu · Lingyao Li",
+      "url": "https://arxiv.org/abs/2610.25768v1",
+      "title": "截断推理后的决策模型",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 00:29 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "以小型决策模型读取截断轨迹，在预算下评估35种模型组合；成本收益是留出集上的离线估计，不能直接等同在线部署节省。 [16]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-25646",
+      "paper": "Spherical Fixed-Point Reasoners: Adaptive Loop Halting on the Hypersphere",
+      "authors": "Arber Zela · Artavazd Maranjyan · Pol Puigdemont · David Berghaus · Valentyn Boreiko · Volkan Cevher",
+      "url": "https://arxiv.org/abs/2610.25646v1",
+      "title": "球面固定点推理与自适应停机",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-18 21:45 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "把递归状态限制在球面，并按固定点残差决定计算深度；摘要提及有条件稳定性，未读完整假设，故不转述为无条件收敛。 [17]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-25612",
+      "paper": "Curriculum Learning Teaches LLMs Long-Horizon Implicit Reasoning, Up To A Limit",
+      "authors": "Jimson Huang · Maxwell Nickell · Ruowang Zhang · Abulhair Saparov",
+      "url": "https://arxiv.org/abs/2610.25612v1",
+      "title": "课程学习的推理跨度上限",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-18 20:32 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "匹配算力下，课程学习改善隐式长程推理，但前瞻跨度呈饱和趋势；扩大训练并未消除所测任务中的能力上限。 [18]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-25519",
+      "paper": "ATEST: Adaptive Resource-Aware Test-Time Scaling for LLM Inference",
+      "authors": "Mobina Kashaniyan · Ali Jannesari",
+      "url": "https://arxiv.org/abs/2610.25519v1",
+      "title": "ATEST：预算随系统负载改变",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-18 16:23 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "把 GPU 负载与能耗纳入推理预算控制，联合权衡准确率、时延和吞吐；同一 token 预算不意味着相同系统成本。 [19]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-25479",
+      "paper": "Test-Time Scaling of Text-to-Image Flow Matching Models with Noise-Rejuvenated Sequential Monte Carlo",
+      "authors": "Wenyi Lian · Zheng Zhao · Thomas B. Sch{ö}n",
+      "url": "https://arxiv.org/abs/2610.25479v1",
+      "title": "Flow matching 的噪声更新 SMC",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-18 15:05 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "通过潜变量噪声更新保持搜索多样性，对确定性 flow matching 做 test-time scaling；不要把它误述成直接把原 ODE 改成反向扩散 SDE。 [20]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-25474",
+      "paper": "P(Yes): 15$\\times$ Improvements via Test-Time Scaling of Decision Models",
+      "authors": "Lev Stambler",
+      "url": "https://arxiv.org/abs/2610.25474v1",
+      "title": "P(Yes)：15倍的基线是什么？",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-18 15:01 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用冻结决策模型的 yes 分数驱动搜索；128个谜题完整解出数从2到30。15倍来自低基数，不能替代绝对成功率。 [21]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-25390",
+      "paper": "ATLAS: Attention-Guided Test-Time Latent Selection for Compositional Visual Autoregressive Generation",
+      "authors": "Hossein Shahabadi · Raya Namazi · Mahdieh Soleymani Baghshah",
+      "url": "https://arxiv.org/abs/2610.25390v1",
+      "title": "ATLAS：把搜索集中到局部潜变量",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-18 12:42 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用注意力定位视觉自回归生成的局部候选，按预算做组合对齐；目标类别的相对增益不应写成整体图像质量提升。 [22]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-25273",
+      "paper": "GeoART: Geometry-Aware Refinement via Test-Time Scaling for Camera-Conditioned Video Diffusion",
+      "authors": "Liudi Yang · Ziyuan Liu",
+      "url": "https://arxiv.org/abs/2610.25273v1",
+      "title": "GeoART：相机条件视频的几何筛选",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-18 09:40 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用几何感知候选修正与置信门控扩展测试时计算，无需额外训练；摘要不足以核对不同方法的严格同预算优势。 [23]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-25254",
+      "paper": "BatchParScale: Sparse Batch-Mixing for Sequence Models",
+      "authors": "Hans Peter Lyngsøe Raaschou-jensen · M. Onurcan Kaya · Desmond Elliott",
+      "url": "https://arxiv.org/abs/2610.25254v1",
+      "title": "BatchParScale：稀疏流间通信",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-18 09:14 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "通过少量位置在并行流间混合状态，提高语言建模表现；loss 收益与事实检索收益并不一致，不应混为一种 scaling 效果。 [24]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-25212",
+      "paper": "Calibration-Free Early Stopping for Chain-of-Thought Reasoning via E-processes",
+      "authors": "Dong-Jae Lee · Gyojin Han · Junmo Kim",
+      "url": "https://arxiv.org/abs/2610.25212v1",
+      "title": "e-process 停止：控制的是什么错误？",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-18 08:10 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用在线信号检验减少推理长度；Ville 型界控制的是相应零假设下的信号误报，不是最终答案错误率。 [25]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-24963",
+      "paper": "DeGMatch: Target-Aware Reasoning Data Selection via Deconfounded Gradient Matching",
+      "authors": "Changho Lee · Janghoon Han · Rajdeep Mukherjee · Yeda Song · Lening Nick Cui · Xinya Du · Honglak Lee",
+      "url": "https://arxiv.org/abs/2610.24963v1",
+      "title": "DeGMatch：预算内的数据匹配",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-17 22:28 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "去中心化梯度、移除主方向并加门控，按目标任务选推理数据；证据是不同预算与模型规模的实验，而非通用最优混合定理。 [26]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-24957",
+      "paper": "Revealing what benchmark scores hide: Jointly measuring the breadth and reliability of LLM capabilities using accessibility profiles",
+      "authors": "Kazem Faghih · Yize Cheng · Shoumik Saha · Mobina Pournemat · Armin Gerami · Soheil Feizi",
+      "url": "https://arxiv.org/abs/2610.24957v1",
+      "title": "扩展模型，也要看能力可靠性分布",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-17 22:15 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "20个模型、6个基准按释义采样区分“至少能答对”与“稳定答对”；平均分提高不能直接说明所有问题的可靠性一起提高。 [27]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-24766",
+      "paper": "ECHO: Efficient Causal Self-Recursion Beyond Auxiliary Multi-Token Prediction",
+      "authors": "Yuxuan Zhou · Junyuan Shang · Tianyu Wang · Chunrui Zheng · Zichang Liu · Wenbin Chang · Shuohuan Wang · Dianhai Yu",
+      "url": "https://arxiv.org/abs/2610.24766v1",
+      "title": "ECHO：复用末层做深度扩展",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-17 12:18 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "以共享末层递归和多步训练目标增加有效深度，比较预算内的预测收益；不能把参数共享直接换算为端到端成本节约。 [28]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-26651",
+      "paper": "The Effectiveness and Durability of Pretraining Data Filtering in Protein Language Models",
+      "authors": "Aaron Maiwald · Roderick McNeill · Jaeyoung Lee · Matthew A. Clarke · Lennart Justen · Alejandro Acelas · Ivo Andrews · Giles Harper-Donnelly · Adam Moore · Sophie Rose · Oliver M. Crook · Felix Jackson",
+      "url": "https://arxiv.org/abs/2610.26651v1",
+      "title": "预训练过滤的收益与持久性",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 12:08 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "蛋白质语言模型中的数据过滤效应随模型规模变化，但后续微调可能削弱其持久性；只记录规模与数据分布结论，不展开操作性细节。 [29]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-25842",
+      "paper": "Not Every Rollout Needs Distillation: Correctness-Filtered On-Policy Self-Distillation",
+      "authors": "Harrison Zhao · Lei Huang · Fei Liu · Wen Shi · Zijian Jin",
+      "url": "https://arxiv.org/abs/2610.25842v1",
+      "title": "C-OPSD：并非每条轨迹都要蒸馏",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 01:55 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "小组样本拟合的信噪模型可外推较大组的梯度对齐；筛掉部分轨迹后，打包实现训练耗时约降40%，但 rollout 生成保持不变。 [30]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-26747",
+      "paper": "recAMPLIFY: Large-Scale Pretraining of Recursive Protein Language Models",
+      "authors": "Saurav Jha · Qianli Liao · Robert Vernon · Sarath Chandar · Quentin Fournier",
+      "url": "https://arxiv.org/abs/2610.26747v1",
+      "title": "recAMPLIFY：蛋白质模型的递归深度",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 13:12 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "155M唯一参数、2T训练 tokens，与350M基线比较；自适应门控进一步降低期望深度，但精度折衷随任务而变。只收测试时计算扩展结论。 [31]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-26797",
+      "paper": "Teacher Supervision, Fixed Representations and Calibration: Exact Risk Calculations for Candidate-Scoring Decision Models",
+      "authors": "Agus Sudjianto · Denis Burakov",
+      "url": "https://arxiv.org/abs/2610.26797v1",
+      "title": "再多学生数据，也可能继承教师偏差",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 13:42 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "高斯代理模型给出有限样本风险：增加学生样本不自动消除教师偏差，固定表示的收益存在样本量阈值。结论需保留代理模型假设。 [32]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-24740",
+      "paper": "Are We Evaluating VLM Token Pruning Right? Looking Beyond Accuracy and Token Count",
+      "authors": "Geng Li · Guohao Chen · Shilin Shan · Jianfei Yang",
+      "url": "https://arxiv.org/abs/2610.24740v1",
+      "title": "视觉 token 数不是实际算力",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-17 11:15 EDT · v1",
+      "evidence": "基于摘要；未核验完整定理或实验表",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "8种剪枝方法、3个 VLM、9个基准显示，同 token 数对应不同端到端成本；在共同能力保留目标下，方法的提速排名会变化。 [33]"
+        }
+      ]
+    },
+    {
+      "id": "nesso3",
+      "paper": "Nesso 3: A 0.4B model that calls tools in Italian and English",
+      "authors": "Alessandro Ercolani · Edoardo Federici",
+      "url": "https://huggingface.co/blog/giux78/nesso3-a-04b-model-that-calls-tools-in-italian-and",
+      "title": "Nesso 3：失败的数据混合也值得记",
+      "kind": "简讯 · 技术博客",
+      "dateNote": "发布 2026-10-19；页面未给时分",
+      "evidence": "已读训练设置、工具调用表与负面结果；未复现",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "0.4B模型经 SFT 在100题工具测试中得到74分。加长链 ToolMind 数据的实验降至49分；较强 on-policy 蒸馏虽得75分，却降低意大利语指令与学术指标，未进入最终版本。作者还记录过度拒答及配比调整；小测试集、未公开合成数据与未充分重复的消融限制泛化判断。 [34]"
+        }
+      ]
+    },
+    {
+      "id": "version-watch",
+      "paper": "Version watch",
+      "authors": "作者逐项列于表内",
+      "url": "https://arxiv.org/abs/2609.09417v3",
+      "title": "版本记录：25篇，差异未核实",
+      "kind": "版本记录 · 不计为新研究",
+      "dateNote": "以下均在检索窗口内更新；逐项列首发与版本日期",
+      "evidence": "基于当前摘要与版本记录；未逐项比较新旧正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "表内主题说明用于定位论文，不表示该结论在此次版本中新出现。前三期已读的 SLDBench、ICS 与 self-orchestration 不重复计入新闻。"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "论文 / 来源",
+            "作者",
+            "首发 / 当前版本",
+            "定位"
+          ],
+          "rows": [
+            [
+              "Vision-language models see more about agriculture than they report, and test-time scaling remains bounded by parametric knowledge [35]",
+              "Earl Ranario · Jared Smith · Lars Lundqvist · Urmil Jatin Chandarana · Bharath Sridhar · J Mason Earles",
+              "首发 2026-09-08 16:15 / v3 2026-10-19 13:56 EDT",
+              "农业 VLM 的受限测试时预算"
+            ],
+            [
+              "ISO: An RLVR-Native Optimization Stack [36]",
+              "Hanqing Zhu · Wenyan Cong · Zhizhou Sha · Sagnik Mukherjee · Xinyuan Song · David González-Martínez · Xiaoxia Wu · Yuandong Tian · Shiwei Liu · David Z. Pan · Zhangyang \"Atlas\" Wang",
+              "首发 2026-07-21 13:51 / v2 2026-10-19 13:46 EDT",
+              "ISO：与 Muon 几何有关的 RLVR 优化"
+            ],
+            [
+              "Test-Time Augmentation for LLMs: Where to Inject Diversity at Inference Time [37]",
+              "Nikita Kozodoi · Zainab Afolabi · Jack Butler",
+              "首发 2026-08-10 05:31 / v2 2026-10-19 09:05 EDT",
+              "测试时增广与推理多样性"
+            ],
+            [
+              "Open-sci-ref-0.02: open reference baselines for reproducible language model and dataset comparison [38]",
+              "Marianna Nezhurina · Harsh Raj · Victor May · Jörg Franke · Taishi Nakamura · Timur Carstensen · Niccolò Ajroldi · Ville Komulainen · David Salinas · Jenia Jitsev",
+              "首发 2025-09-10 17:13 / v4 2026-10-19 07:25 EDT",
+              "多模型、多数据集的开放扩展基线"
+            ],
+            [
+              "Bayesian Preference Learning for Test-Time Steerable Reward Models [39]",
+              "Jiwoo Hong · Shao Tang · Zhipeng Wang",
+              "首发 2026-02-09 10:55 / v3 2026-10-19 03:59 EDT",
+              "偏好奖励模型中的示例数扩展"
+            ],
+            [
+              "Power Distribution Bridges Sampling, Self-Reward RL, and Self-Distillation [40]",
+              "Akiyoshi Tomihari · Issei Sato",
+              "首发 2026-05-06 02:42 / v2 2026-10-19 01:50 EDT",
+              "power sampling 与蒸馏的推理成本"
+            ],
+            [
+              "VISTA: Test-Time Compositional Alignment for Visual Autoregressive Generation [41]",
+              "Hossein Shahabadi · Niki Sepasian · Mahdieh Soleymani Baghshah",
+              "首发 2026-08-23 13:46 / v2 2026-10-19 01:47 EDT",
+              "视觉自回归模型的测试时搜索"
+            ],
+            [
+              "DiMOS: Doob-Guided Inference-Time Multi-Objective Search for Scientific Design [42]",
+              "Ziqing Wang · Qijie Zhu · Weimin Wu · Zeqi Ye · Minshuo Chen · Han Liu · Kaize Ding",
+              "首发 2026-10-05 01:01 / v2 2026-10-19 00:58 EDT",
+              "科学设计中的搜索预算"
+            ],
+            [
+              "Selection, Recombination, or a Fresh Solve? A Candidate-Free Control for Single-Pass Test-Time Aggregation [43]",
+              "Guiv Farmanfarmaian",
+              "首发 2026-08-18 19:17 / v2 2026-10-18 23:10 EDT",
+              "候选聚合需与重新独立求解比较"
+            ],
+            [
+              "Recursive Environment Scaling for General Long-Horizon Agents [44]",
+              "Lingxiao Jing · Zhengbo Jiao · Yichen Xiang · Bofan Zhu · Lingbei Meng · Yan Ni · Haorui Chen · Ran Ran · Zhirong Shen · Yuheng Yang · Chenhang Cui · Yaosong Du · Rui Huang",
+              "首发 2026-10-12 04:39 / v2 2026-10-18 21:14 EDT",
+              "递归环境合成与匹配轨迹预算"
+            ],
+            [
+              "Compute Allocation in Bilinear Contrastive Representation Learning via Scaling Laws [45]",
+              "Ziyan Chen · Zhongzhu Zhou · Ding-Xuan Zhou",
+              "首发 2026-06-25 01:20 / v3 2026-10-18 19:35 EDT",
+              "双线性对比学习的模型／数据扩展"
+            ],
+            [
+              "Linear RNN Scaling Laws: When Longer Sequences Beat More Sequences [46]",
+              "Ziyan Chen · Zhongzhu Zhou · Linhe Zheng · Peilin Liu · Ding-Xuan Zhou",
+              "首发 2026-08-23 09:37 / v2 2026-10-18 19:32 EDT",
+              "线性 RNN 的序列长度与参数扩展"
+            ],
+            [
+              "Escaping Reasoning Basin Collapse with History-Biased Search [47]",
+              "Lu Cheng",
+              "首发 2026-09-01 01:15 / v3 2026-10-18 16:34 EDT",
+              "BASIN：搜索预算与多样性"
+            ],
+            [
+              "On the Role of Batch Size in Stochastic Conditional Gradient Methods [48]",
+              "Rustem Islamov · Roman Machacek · Aurelien Lucchi · Antonio Silveti-Falls · Eduard Gorbunov · Volkan Cevher",
+              "首发 2026-03-22 08:23 / v2 2026-10-18 12:38 EDT",
+              "固定 token 预算下的 batch-size 区间"
+            ],
+            [
+              "Loop-$μ$P: Residual Scaling and Hyperparameter Transfer in Looped Transformers [49]",
+              "Shaowen Wang · Bingrui Li · Tansheng Zhu · Ge Zhang · Wenhao Huang · Shen Yan · Jian Li",
+              "首发 2026-06-16 18:39 / v3 2026-10-18 10:14 EDT",
+              "LoopμP：循环模型的尺度参数化"
+            ],
+            [
+              "Test-Time Compute Games [50]",
+              "Ander Artola Velasco · Dimitrios Rontogiannis · Stratis Tsirtsis · Manuel Gomez-Rodriguez",
+              "首发 2026-01-29 10:18 / v3 2026-10-18 00:59 EDT",
+              "博弈中的测试时计算"
+            ],
+            [
+              "Chopthin-Consensus Power Sampling: A Diversity-Preserving Approach to LLM Decoding [51]",
+              "Minoo Ahmadi · Seyedarmin Azizi · Erfan Baghaei Potraghloo · Mehdi Kamal · Massoud Pedram",
+              "首发 2026-09-10 18:02 / v2 2026-10-17 23:19 EDT",
+              "Chopthin、共识与 power sampling"
+            ],
+            [
+              "OccSim: Multi-kilometer Simulation with Long-horizon Occupancy World Models [52]",
+              "Tianran Liu · Shengwen Zhao · Mozhgan Pourkeshavarz · Weican Li · Nicholas Rhinehart",
+              "首发 2026-03-30 14:13 / v2 2026-10-17 16:45 EDT",
+              "OccSim：合成数据量扩展"
+            ],
+            [
+              "The Dichotomy Between Pattern Recognition and Step-by-Step Reasoning [53]",
+              "Amrut Nadgir · Vijay Balasubramanian · Pratik Chaudhari",
+              "首发 2026-10-06 18:36 / v2 2026-10-17 16:14 EDT",
+              "模式识别与逐步推理的样本扩展"
+            ],
+            [
+              "Stochastic Optimization Under Power-Law Spectra: Tight Bounds and Shuffling Analysis [54]",
+              "Christopher De Sa · Thomas Dybdahl Ahle · Yaroslav Bulatov · Christopher Ré",
+              "首发 2026-09-28 17:01 / v2 2026-10-17 11:43 EDT",
+              "随机优化与幂律谱"
+            ],
+            [
+              "SignMuon: Communication-Efficient Distributed Muon Optimization [55]",
+              "Neel Mishra · Jichao Jiang · Kushagara Trivedi · HanQin Cai · Aritra Dutta · Pawan Kumar",
+              "首发 2026-05-04 09:29 / v2 2026-10-17 09:29 EDT",
+              "SignMuon"
+            ],
+            [
+              "Benchmarking the Limits of In-Context Reinforcement Learning for Ad-Hoc Teamwork [56]",
+              "Yuheng Jing · Kai Li · Ziwen Zhang · Jiajun Zhang · Zeyao Ma · Jiaxi Yang · Lei Zhang · Zhe Wu · Jinmin He · Junliang Xing · Jian Cheng",
+              "首发 2026-05-23 02:39 / v3 2026-10-19 02:05 EDT",
+              "更长历史不必改善 in-context RL"
+            ],
+            [
+              "Learning Self-Orchestration in Decentralized Agent Swarms [57]",
+              "Guowei Xu · Zhenting Qi · Amani Kiruga · Himabindu Lakkaraju · Yilun Du",
+              "首发 2026-10-15 13:51 / v2 2026-10-19 11:18 EDT",
+              "10-17已收录；仅提示 v2"
+            ],
+            [
+              "Input-Conditioned Search for Efficient Test-Time Scaling of Recursive Reasoners [58]",
+              "Haochen Shi · Tianwen Fu · Qianggang Ding · Yinhan Lu · Yizhan Li · Huan Zhang · Yajie Zhao · Xingdi Yuan · Hengyang Lu · Bang Liu",
+              "首发 2026-10-13 11:25 / v2 2026-10-18 01:13 EDT",
+              "10-15已收录；仅提示 v2"
+            ],
+            [
+              "SLDBench v2: Active Scaling Law Discovery [59]",
+              "Lingbei Meng · Rui Huang · Zhirong Shen · Jinxin Liu · Lingxiao Jing · Haorui Chen · Yaosong Du · Haowei Lin",
+              "首发 2026-10-12 03:23 / v2 2026-10-17 08:40 EDT",
+              "10-14已收录；仅提示 arXiv v2"
+            ]
+          ],
+          "caption": "版本时间为 America/New_York；差异尚未核实，不据此宣称实质更新。"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-score-sde",
+    "paperId": "arxiv:2011.13456",
+    "shortTitle": "Score-SDE",
+    "year": 2021,
+    "topics": [
+      "Diffusion models"
+    ],
+    "kind": "每日经典 · 历史论文",
+    "title": "Score-SDE：相同边缘，不同路径",
+    "paper": "Score-Based Generative Modeling through Stochastic Differential Equations",
+    "authors": "Yang Song · Jascha Sohl-Dickstein · Diederik P. Kingma · Abhishek Kumar · Stefano Ermon · Ben Poole",
+    "url": "https://arxiv.org/pdf/2011.13456v2",
+    "dateNote": "首发 2020-11-26；本次读 v2（2021-02-10），ICLR 2021",
+    "evidence": "已读 §3.1–3.4、§4.3，并核对公式页；未重跑实验",
+    "recognition": {
+      "label": "ICLR 2021 Outstanding Paper Award",
+      "url": "https://iclr-conf.medium.com/announcing-iclr-2021-outstanding-paper-awards-9ae0514734ab"
+    },
+    "question": "把精确 score 换成同一个带误差的 sθ 后，反向 SDE 与 probability-flow ODE 是否仍有相同边缘？试写两者密度演化方程，找出不再抵消的项。",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "NCSN（2019）用多噪声层的 score，DDPM（2020）学习离散去噪链；Score-SDE 将二者放进连续时间框架。问题是：能否从同一个 score 同时构造随机采样与确定性流？这是历史论文，不是今日新稿。[60,61]"
+      },
+      {
+        "type": "equation",
+        "tex": "dX_t=f(X_t,t)\\,dt+g(t)\\,dW_t,\\qquad s^*(x,t)=\\nabla_x\\log p_t(x)",
+        "label": "设 pₜ 为前向边缘密度，W 为布朗运动；这里采用仅依赖时间的标量 g"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathcal L(\\theta)=\\mathbb E_{t,X_0,X_t}\\!\\left[\\lambda(t)\\left\\|s_\\theta(X_t,t)-\\nabla_{x_t}\\log p_{0t}(X_t\\mid X_0)\\right\\|^2\\right]",
+        "label": "去噪 score matching；条件扰动核可计算时，用条件 score 监督边缘 score"
+      },
+      {
+        "type": "equation",
+        "tex": "dX_t=\\left[f(X_t,t)-g(t)^2s^*(X_t,t)\\right]dt+g(t)\\,d\\bar W_t,\\qquad t:T\\to0",
+        "label": "原文反向 SDE；沿反向时间积分，dt<0，不能照搬正向 Euler 的符号"
+      },
+      {
+        "type": "text",
+        "text": "一半系数来自概率守恒，而不是删掉噪声：把 Fokker–Planck 方程改写成连续性方程。[60]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\partial_t p_t=-\\nabla\\!\\cdot(fp_t)+\\frac{g^2}{2}\\Delta p_t=-\\nabla\\!\\cdot\\left[\\left(f-\\frac{g^2}{2}\\nabla\\log p_t\\right)p_t\\right]",
+        "label": "原文 probability-flow 关系的简短推导；需密度与系数具有相应光滑性"
+      },
+      {
+        "type": "equation",
+        "tex": "\\frac{dx_t}{dt}=f(x_t,t)-\\frac12g(t)^2s^*(x_t,t)",
+        "label": "Probability-flow ODE：精确 score 下与前向 SDE 共享各时刻边缘分布，不共享路径分布"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "反向生成还要求匹配终端分布。学习误差、有限时间终点近似与数值离散都会破坏理想等价；确定性不意味着无需数值积分。"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "title": "Polar Switch: Fast Muon Orthogonalization with Polynomial Circuits · 原文；已读 §3–4 与实验表；非逐项复现",
+      "url": "https://arxiv.org/html/2610.26742v1"
+    },
+    {
+      "title": "Truncate or Not? A Scaling Study of Looped Transformers with Truncated Backpropagation · 原文；已读设置、拟合律、预算分析与验证实验",
+      "url": "https://arxiv.org/html/2610.26030v1"
+    },
+    {
+      "title": "On Data Scaling in Tabular ML: More Data, Better Generalization? · 原文；已读 §3–5 与附录拟合细节",
+      "url": "https://arxiv.org/html/2610.26794v1"
+    },
+    {
+      "title": "T-MUON: Tensorizing Muon via t-SVD for Large Language Model Pre-training · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.24938v1"
+    },
+    {
+      "title": "A Statistical Viewpoint on Adam, Shampoo and Muon · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.24839v1"
+    },
+    {
+      "title": "How Does Muon Work in Private Deep Learning? Scalable Differentially Private Training via Orthogonalization · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.24736v1"
+    },
+    {
+      "title": "Text-to-Image Generative Modeling Without Language Pretraining · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.26863v1"
+    },
+    {
+      "title": "Ropedia W0: Scaling Loco-Manipulation World Models across Embodiments with Human Experience · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.26855v1"
+    },
+    {
+      "title": "Where is Physical RSI capability from? An Observational Scaling Law of LLM-as-policy · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.26848v1"
+    },
+    {
+      "title": "Answer Delivery Under a Shared Token Budget: An Audited Study of Stopping and Finalization · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.26384v1"
+    },
+    {
+      "title": "BOSS: Token-Budgeted Online Sampling and Selection for LLM Reasoning · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.26383v1"
+    },
+    {
+      "title": "Large-Scale Biomedical RAG: Corpus Scaling, Document Representation, and Efficiency Trade-offs · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.26339v1"
+    },
+    {
+      "title": "Scaling Synthetic Pre-training Data and Evaluation for Indic LLMs · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.26006v1"
+    },
+    {
+      "title": "Keep the Lineages Alive: Diversity-Preserving SMC for Diffusion LLM Decoding · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.25932v1"
+    },
+    {
+      "title": "Adaptive Decoding Methods for Token-Efficient Reinforcement Learning · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.25860v1"
+    },
+    {
+      "title": "Truncated Reasoning Under a Budget: Evaluating System-1 Models as Decision-makers · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.25768v1"
+    },
+    {
+      "title": "Spherical Fixed-Point Reasoners: Adaptive Loop Halting on the Hypersphere · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.25646v1"
+    },
+    {
+      "title": "Curriculum Learning Teaches LLMs Long-Horizon Implicit Reasoning, Up To A Limit · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.25612v1"
+    },
+    {
+      "title": "ATEST: Adaptive Resource-Aware Test-Time Scaling for LLM Inference · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.25519v1"
+    },
+    {
+      "title": "Test-Time Scaling of Text-to-Image Flow Matching Models with Noise-Rejuvenated Sequential Monte Carlo · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.25479v1"
+    },
+    {
+      "title": "P(Yes): 15$\\times$ Improvements via Test-Time Scaling of Decision Models · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.25474v1"
+    },
+    {
+      "title": "ATLAS: Attention-Guided Test-Time Latent Selection for Compositional Visual Autoregressive Generation · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.25390v1"
+    },
+    {
+      "title": "GeoART: Geometry-Aware Refinement via Test-Time Scaling for Camera-Conditioned Video Diffusion · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.25273v1"
+    },
+    {
+      "title": "BatchParScale: Sparse Batch-Mixing for Sequence Models · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.25254v1"
+    },
+    {
+      "title": "Calibration-Free Early Stopping for Chain-of-Thought Reasoning via E-processes · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.25212v1"
+    },
+    {
+      "title": "DeGMatch: Target-Aware Reasoning Data Selection via Deconfounded Gradient Matching · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.24963v1"
+    },
+    {
+      "title": "Revealing what benchmark scores hide: Jointly measuring the breadth and reliability of LLM capabilities using accessibility profiles · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.24957v1"
+    },
+    {
+      "title": "ECHO: Efficient Causal Self-Recursion Beyond Auxiliary Multi-Token Prediction · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.24766v1"
+    },
+    {
+      "title": "The Effectiveness and Durability of Pretraining Data Filtering in Protein Language Models · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.26651v1"
+    },
+    {
+      "title": "Not Every Rollout Needs Distillation: Correctness-Filtered On-Policy Self-Distillation · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.25842v1"
+    },
+    {
+      "title": "recAMPLIFY: Large-Scale Pretraining of Recursive Protein Language Models · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.26747v1"
+    },
+    {
+      "title": "Teacher Supervision, Fixed Representations and Calibration: Exact Risk Calculations for Candidate-Scoring Decision Models · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.26797v1"
+    },
+    {
+      "title": "Are We Evaluating VLM Token Pruning Right? Looking Beyond Accuracy and Token Count · 原始摘要与版本记录",
+      "url": "https://arxiv.org/abs/2610.24740v1"
+    },
+    {
+      "title": "Nesso 3: A 0.4B model that calls tools in Italian and English · 2026-10-19；训练配方、消融与失败记录",
+      "url": "https://huggingface.co/blog/giux78/nesso3-a-04b-model-that-calls-tools-in-italian-and"
+    },
+    {
+      "title": "Vision-language models see more about agriculture than they report, and test-time scaling remains bounded by parametric knowledge · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2609.09417v3"
+    },
+    {
+      "title": "ISO: An RLVR-Native Optimization Stack · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2607.19331v2"
+    },
+    {
+      "title": "Test-Time Augmentation for LLMs: Where to Inject Diversity at Inference Time · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2608.09351v2"
+    },
+    {
+      "title": "Open-sci-ref-0.02: open reference baselines for reproducible language model and dataset comparison · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2509.09009v4"
+    },
+    {
+      "title": "Bayesian Preference Learning for Test-Time Steerable Reward Models · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2602.08819v3"
+    },
+    {
+      "title": "Power Distribution Bridges Sampling, Self-Reward RL, and Self-Distillation · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2605.04542v2"
+    },
+    {
+      "title": "VISTA: Test-Time Compositional Alignment for Visual Autoregressive Generation · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2608.22521v2"
+    },
+    {
+      "title": "DiMOS: Doob-Guided Inference-Time Multi-Objective Search for Scientific Design · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2610.05808v2"
+    },
+    {
+      "title": "Selection, Recombination, or a Fresh Solve? A Candidate-Free Control for Single-Pass Test-Time Aggregation · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2608.18379v2"
+    },
+    {
+      "title": "Recursive Environment Scaling for General Long-Horizon Agents · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2610.16397v2"
+    },
+    {
+      "title": "Compute Allocation in Bilinear Contrastive Representation Learning via Scaling Laws · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2606.26617v3"
+    },
+    {
+      "title": "Linear RNN Scaling Laws: When Longer Sequences Beat More Sequences · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2609.27964v2"
+    },
+    {
+      "title": "Escaping Reasoning Basin Collapse with History-Biased Search · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2609.00738v3"
+    },
+    {
+      "title": "On the Role of Batch Size in Stochastic Conditional Gradient Methods · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2603.21191v2"
+    },
+    {
+      "title": "Loop-$μ$P: Residual Scaling and Hyperparameter Transfer in Looped Transformers · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2606.18524v3"
+    },
+    {
+      "title": "Test-Time Compute Games · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2601.21839v3"
+    },
+    {
+      "title": "Chopthin-Consensus Power Sampling: A Diversity-Preserving Approach to LLM Decoding · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2609.12243v2"
+    },
+    {
+      "title": "OccSim: Multi-kilometer Simulation with Long-horizon Occupancy World Models · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2603.28887v2"
+    },
+    {
+      "title": "The Dichotomy Between Pattern Recognition and Step-by-Step Reasoning · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2610.09186v2"
+    },
+    {
+      "title": "Stochastic Optimization Under Power-Law Spectra: Tight Bounds and Shuffling Analysis · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2609.36271v2"
+    },
+    {
+      "title": "SignMuon: Communication-Efficient Distributed Muon Optimization · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2605.16311v2"
+    },
+    {
+      "title": "Benchmarking the Limits of In-Context Reinforcement Learning for Ad-Hoc Teamwork · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2605.24423v3"
+    },
+    {
+      "title": "Learning Self-Orchestration in Decentralized Agent Swarms · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2610.22322v2"
+    },
+    {
+      "title": "Input-Conditioned Search for Efficient Test-Time Scaling of Recursive Reasoners · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2610.18547v2"
+    },
+    {
+      "title": "SLDBench v2: Active Scaling Law Discovery · 版本日期已核验；差异未核实",
+      "url": "https://arxiv.org/abs/2610.16297v2"
+    },
+    {
+      "title": "历史精读：Score-SDE v2，§3 与 §4.3 · 2021-02-10版本；正文与公式页",
+      "url": "https://arxiv.org/pdf/2011.13456v2"
+    },
+    {
+      "title": "ICLR 2021 官方 Outstanding Paper Awards · 获奖依据；2026-10-20核验",
+      "url": "https://iclr-conf.medium.com/announcing-iclr-2021-outstanding-paper-awards-9ae0514734ab"
+    }
+  ]
+}

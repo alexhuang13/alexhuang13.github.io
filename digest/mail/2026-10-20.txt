@@ -1,0 +1,191 @@
+RESEARCH DIGEST / 2026-10-20
+多算哪一步，多看哪种数据
+Polar Switch · 循环深度 · 表格数据扩展 · 精读 Score-SDE
+
+中文: https://alexhuang13.github.io/digest/2026-10-20.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-20.html
+
+主读 · 新稿
+Polar Switch：先优化计算电路，再近似 polar
+Polar Switch: Fast Muon Orthogonalization with Polynomial Circuits
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-26742
+
+主读 · 新稿
+循环深度与反传深度：省掉梯度未必省算力
+Truncate or Not? A Scaling Study of Looped Transformers with Truncated Backpropagation
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-26030
+
+主读 · 新稿
+数据越多，验证集选得越重要
+On Data Scaling in Tabular ML: More Data, Better Generalization?
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-26794
+
+简讯 · 新稿
+T-MUON：张量化的谱更新
+T-MUON: Tensorizing Muon via t-SVD for Large Language Model Pre-training
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-24938
+
+简讯 · 新稿
+从统计模型看 Muon
+A Statistical Viewpoint on Adam, Shampoo and Muon
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-24839
+
+简讯 · 新稿
+DP-Muon：隐私噪声之外，还有裁剪
+How Does Muon Work in Private Deep Learning? Scalable Differentially Private Training via Orthogonalization
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-24736
+
+简讯 · 新稿
+Halcyon：文生图是否需要语言预训练？
+Text-to-Image Generative Modeling Without Language Pretraining
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-26863
+
+简讯 · 新稿
+Ropedia W0：人类经验与机器人数据
+Ropedia W0: Scaling Loco-Manipulation World Models across Embodiments with Human Experience
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-26855
+
+简讯 · 新稿
+Physical RSI：观测式能力外推
+Where is Physical RSI capability from? An Observational Scaling Law of LLM-as-policy
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-26848
+
+简讯 · 新稿
+答案交付也消耗 token
+Answer Delivery Under a Shared Token Budget: An Audited Study of Stopping and Finalization
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-26384
+
+简讯 · 新稿
+BOSS：共同预算下生成、评判与停止
+BOSS: Token-Budgeted Online Sampling and Selection for LLM Reasoning
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-26383
+
+简讯 · 新稿
+RAG：扩语料也在扩干扰项
+Large-Scale Biomedical RAG: Corpus Scaling, Document Representation, and Efficiency Trade-offs
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-26339
+
+简讯 · 新稿
+Indic：合成预训练数据的配比
+Scaling Synthetic Pre-training Data and Evaluation for Indic LLMs
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-26006
+
+简讯 · 新稿
+LP-SMC：粒子数不等于祖先多样性
+Keep the Lineages Alive: Diversity-Preserving SMC for Diffusion LLM Decoding
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-25932
+
+简讯 · 新稿
+RLVR：动态解码支持集的边界
+Adaptive Decoding Methods for Token-Efficient Reinforcement Learning
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-25860
+
+简讯 · 新稿
+截断推理后的决策模型
+Truncated Reasoning Under a Budget: Evaluating System-1 Models as Decision-makers
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-25768
+
+简讯 · 新稿
+球面固定点推理与自适应停机
+Spherical Fixed-Point Reasoners: Adaptive Loop Halting on the Hypersphere
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-25646
+
+简讯 · 新稿
+课程学习的推理跨度上限
+Curriculum Learning Teaches LLMs Long-Horizon Implicit Reasoning, Up To A Limit
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-25612
+
+简讯 · 新稿
+ATEST：预算随系统负载改变
+ATEST: Adaptive Resource-Aware Test-Time Scaling for LLM Inference
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-25519
+
+简讯 · 新稿
+Flow matching 的噪声更新 SMC
+Test-Time Scaling of Text-to-Image Flow Matching Models with Noise-Rejuvenated Sequential Monte Carlo
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-25479
+
+简讯 · 新稿
+P(Yes)：15倍的基线是什么？
+P(Yes): 15$\times$ Improvements via Test-Time Scaling of Decision Models
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-25474
+
+简讯 · 新稿
+ATLAS：把搜索集中到局部潜变量
+ATLAS: Attention-Guided Test-Time Latent Selection for Compositional Visual Autoregressive Generation
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-25390
+
+简讯 · 新稿
+GeoART：相机条件视频的几何筛选
+GeoART: Geometry-Aware Refinement via Test-Time Scaling for Camera-Conditioned Video Diffusion
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-25273
+
+简讯 · 新稿
+BatchParScale：稀疏流间通信
+BatchParScale: Sparse Batch-Mixing for Sequence Models
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-25254
+
+简讯 · 新稿
+e-process 停止：控制的是什么错误？
+Calibration-Free Early Stopping for Chain-of-Thought Reasoning via E-processes
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-25212
+
+简讯 · 新稿
+DeGMatch：预算内的数据匹配
+DeGMatch: Target-Aware Reasoning Data Selection via Deconfounded Gradient Matching
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-24963
+
+简讯 · 新稿
+扩展模型，也要看能力可靠性分布
+Revealing what benchmark scores hide: Jointly measuring the breadth and reliability of LLM capabilities using accessibility profiles
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-24957
+
+简讯 · 新稿
+ECHO：复用末层做深度扩展
+ECHO: Efficient Causal Self-Recursion Beyond Auxiliary Multi-Token Prediction
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-24766
+
+简讯 · 新稿
+预训练过滤的收益与持久性
+The Effectiveness and Durability of Pretraining Data Filtering in Protein Language Models
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-26651
+
+简讯 · 新稿
+C-OPSD：并非每条轨迹都要蒸馏
+Not Every Rollout Needs Distillation: Correctness-Filtered On-Policy Self-Distillation
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-25842
+
+简讯 · 新稿
+recAMPLIFY：蛋白质模型的递归深度
+recAMPLIFY: Large-Scale Pretraining of Recursive Protein Language Models
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-26747
+
+简讯 · 新稿
+再多学生数据，也可能继承教师偏差
+Teacher Supervision, Fixed Representations and Calibration: Exact Risk Calculations for Candidate-Scoring Decision Models
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-26797
+
+简讯 · 新稿
+视觉 token 数不是实际算力
+Are We Evaluating VLM Token Pruning Right? Looking Beyond Accuracy and Token Count
+https://alexhuang13.github.io/digest/2026-10-20.html#paper-2610-24740
+
+简讯 · 技术博客
+Nesso 3：失败的数据混合也值得记
+Nesso 3: A 0.4B model that calls tools in Italian and English
+https://alexhuang13.github.io/digest/2026-10-20.html#nesso3
+
+版本记录 · 不计为新研究
+版本记录：25篇，差异未核实
+Version watch
+https://alexhuang13.github.io/digest/2026-10-20.html#version-watch
+
+每日精读 · 2021
+Score-SDE：相同边缘，不同路径
+https://alexhuang13.github.io/digest/2026-10-20.html#classic-score-sde
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-10-20.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

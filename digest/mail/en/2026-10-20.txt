@@ -1,0 +1,191 @@
+RESEARCH DIGEST / 2026-10-20
+Which Compute, Which Data?
+Polar Switch · Loop depth · Tabular data scaling · Score-SDE
+
+中文: https://alexhuang13.github.io/digest/2026-10-20.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-20.html
+
+Main reading · New preprint
+Polar Switch: optimize the circuit before approximating polar
+Polar Switch: Fast Muon Orthogonalization with Polynomial Circuits
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-26742
+
+Main reading · New preprint
+Loop depth versus backward depth: truncation need not save compute
+Truncate or Not? A Scaling Study of Looped Transformers with Truncated Backpropagation
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-26030
+
+Main reading · New preprint
+More data makes the validation distribution matter
+On Data Scaling in Tabular ML: More Data, Better Generalization?
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-26794
+
+Brief · New preprint
+T-MUON: tensorized spectral updates
+T-MUON: Tensorizing Muon via t-SVD for Large Language Model Pre-training
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-24938
+
+Brief · New preprint
+A statistical model of Muon
+A Statistical Viewpoint on Adam, Shampoo and Muon
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-24839
+
+Brief · New preprint
+DP-Muon: clipping matters alongside privacy noise
+How Does Muon Work in Private Deep Learning? Scalable Differentially Private Training via Orthogonalization
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-24736
+
+Brief · New preprint
+Halcyon: does text-to-image need language pretraining?
+Text-to-Image Generative Modeling Without Language Pretraining
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-26863
+
+Brief · New preprint
+Ropedia W0: human experience and robot data
+Ropedia W0: Scaling Loco-Manipulation World Models across Embodiments with Human Experience
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-26855
+
+Brief · New preprint
+Physical RSI: observational capability forecasting
+Where is Physical RSI capability from? An Observational Scaling Law of LLM-as-policy
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-26848
+
+Brief · New preprint
+Answer delivery also costs tokens
+Answer Delivery Under a Shared Token Budget: An Audited Study of Stopping and Finalization
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-26384
+
+Brief · New preprint
+BOSS: generate, judge and stop under one budget
+BOSS: Token-Budgeted Online Sampling and Selection for LLM Reasoning
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-26383
+
+Brief · New preprint
+RAG: corpus growth also grows distractors
+Large-Scale Biomedical RAG: Corpus Scaling, Document Representation, and Efficiency Trade-offs
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-26339
+
+Brief · New preprint
+Indic: mixing synthetic pretraining data
+Scaling Synthetic Pre-training Data and Evaluation for Indic LLMs
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-26006
+
+Brief · New preprint
+LP-SMC: particle count is not lineage diversity
+Keep the Lineages Alive: Diversity-Preserving SMC for Diffusion LLM Decoding
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-25932
+
+Brief · New preprint
+RLVR: limits of adaptive decoding support
+Adaptive Decoding Methods for Token-Efficient Reinforcement Learning
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-25860
+
+Brief · New preprint
+Decision models after truncated reasoning
+Truncated Reasoning Under a Budget: Evaluating System-1 Models as Decision-makers
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-25768
+
+Brief · New preprint
+Spherical fixed-point reasoning and adaptive halting
+Spherical Fixed-Point Reasoners: Adaptive Loop Halting on the Hypersphere
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-25646
+
+Brief · New preprint
+A horizon ceiling for curriculum learning
+Curriculum Learning Teaches LLMs Long-Horizon Implicit Reasoning, Up To A Limit
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-25612
+
+Brief · New preprint
+ATEST: budgets respond to system load
+ATEST: Adaptive Resource-Aware Test-Time Scaling for LLM Inference
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-25519
+
+Brief · New preprint
+Noise-rejuvenated SMC for flow matching
+Test-Time Scaling of Text-to-Image Flow Matching Models with Noise-Rejuvenated Sequential Monte Carlo
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-25479
+
+Brief · New preprint
+P(Yes): what is the baseline behind 15×?
+P(Yes): 15$\times$ Improvements via Test-Time Scaling of Decision Models
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-25474
+
+Brief · New preprint
+ATLAS: concentrate search in selected latents
+ATLAS: Attention-Guided Test-Time Latent Selection for Compositional Visual Autoregressive Generation
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-25390
+
+Brief · New preprint
+GeoART: geometric selection for camera-conditioned video
+GeoART: Geometry-Aware Refinement via Test-Time Scaling for Camera-Conditioned Video Diffusion
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-25273
+
+Brief · New preprint
+BatchParScale: sparse communication across streams
+BatchParScale: Sparse Batch-Mixing for Sequence Models
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-25254
+
+Brief · New preprint
+E-process stopping: which error is controlled?
+Calibration-Free Early Stopping for Chain-of-Thought Reasoning via E-processes
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-25212
+
+Brief · New preprint
+DeGMatch: data matching under a budget
+DeGMatch: Target-Aware Reasoning Data Selection via Deconfounded Gradient Matching
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-24963
+
+Brief · New preprint
+Scaling models also changes reliability profiles
+Revealing what benchmark scores hide: Jointly measuring the breadth and reliability of LLM capabilities using accessibility profiles
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-24957
+
+Brief · New preprint
+ECHO: reuse the final block for depth scaling
+ECHO: Efficient Causal Self-Recursion Beyond Auxiliary Multi-Token Prediction
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-24766
+
+Brief · New preprint
+The gains and durability of pretraining filtering
+The Effectiveness and Durability of Pretraining Data Filtering in Protein Language Models
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-26651
+
+Brief · New preprint
+C-OPSD: not every trajectory needs distillation
+Not Every Rollout Needs Distillation: Correctness-Filtered On-Policy Self-Distillation
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-25842
+
+Brief · New preprint
+recAMPLIFY: recurrent depth in protein models
+recAMPLIFY: Large-Scale Pretraining of Recursive Protein Language Models
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-26747
+
+Brief · New preprint
+More student data can still inherit teacher bias
+Teacher Supervision, Fixed Representations and Calibration: Exact Risk Calculations for Candidate-Scoring Decision Models
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-26797
+
+Brief · New preprint
+Visual token count is not actual compute
+Are We Evaluating VLM Token Pruning Right? Looking Beyond Accuracy and Token Count
+https://alexhuang13.github.io/digest/en/2026-10-20.html#paper-2610-24740
+
+Brief · Technical blog
+Nesso 3: failed data mixtures are informative
+Nesso 3: A 0.4B model that calls tools in Italian and English
+https://alexhuang13.github.io/digest/en/2026-10-20.html#nesso3
+
+Version watch · Not counted as new research
+Version watch: 25 papers, changes unverified
+Version watch
+https://alexhuang13.github.io/digest/en/2026-10-20.html#version-watch
+
+Daily classic · 2021
+Score-SDE: same marginals, different paths
+https://alexhuang13.github.io/digest/en/2026-10-20.html#classic-score-sde
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-10-20.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

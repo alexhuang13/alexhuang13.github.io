@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-10-20",
+    "paperId": "arxiv:2011.13456",
+    "paper": "Score-Based Generative Modeling through Stochastic Differential Equations",
+    "shortTitle": "Score-SDE",
+    "year": 2021,
+    "topics": [
+      "Diffusion models"
+    ],
+    "recognition": {
+      "label": "ICLR 2021 Outstanding Paper Award",
+      "url": "https://iclr-conf.medium.com/announcing-iclr-2021-outstanding-paper-awards-9ae0514734ab"
+    },
+    "source": "https://arxiv.org/pdf/2011.13456v2",
+    "url": "/digest/2026-10-20.html#classic-score-sde"
+  },
+  {
     "date": "2026-10-19",
     "paperId": "arxiv:2006.16236",
     "paper": "Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention",
