@@ -1,0 +1,91 @@
+RESEARCH DIGEST / 2026-10-21
+Step Size, Scale, and Pareto Frontiers
+MuPACE · Constant-step Muon · Pareto frontier · InstructGPT
+
+中文: https://alexhuang13.github.io/digest/2026-10-21.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-21.html
+
+Main reading · New preprint
+MuPACE: Muon chooses the direction; the trajectory chooses the step
+MuPACE: Learning to Pace Muon for LoRA Fine-Tuning
+https://alexhuang13.github.io/digest/en/2026-10-21.html#paper-2610-28072
+
+Main reading · New preprint
+Constant-step Muon: gain and length decide convergence
+Constant Step Sizes for Muon-Type Spectral Optimizers on Strongly Convex Quadratics
+https://alexhuang13.github.io/digest/en/2026-10-21.html#paper-2610-27747
+
+Main reading · Subscribed-author preprint
+Do not scalarize first: identify the LLM Pareto frontier at fixed confidence
+Beyond Scalar Leaderboards: Adaptive Sampling for Pareto Frontier Identification in Multi-Objective LLM Arenas
+https://alexhuang13.github.io/digest/en/2026-10-21.html#paper-2610-27447
+
+Brief · New preprint
+DPO hyperparameters do not transfer cleanly from small models
+The Shape of the DPO Hyperparameter Landscape: What to Measure, How It Moves with Scale, and When Not to Transfer It
+https://alexhuang13.github.io/digest/en/2026-10-21.html#paper-2610-27895
+
+Brief · New preprint
+A scaling-law note from geometric approximation to compute allocation
+Foundations of the Scaling Law
+https://alexhuang13.github.io/digest/en/2026-10-21.html#paper-2610-27789
+
+Brief · New preprint
+Synthetic transfer: Wasserstein closeness can still fail completely
+When Does Training on Synthetic Data Provably Work?
+https://alexhuang13.github.io/digest/en/2026-10-21.html#paper-2610-28036
+
+Brief · New preprint
+Under data repetition, random-token replacement is shrinkage
+Benefit and Cost of Random-Token Replacement under Repeated Data
+https://alexhuang13.github.io/digest/en/2026-10-21.html#paper-2610-27590
+
+Brief · New preprint
+Test-time compute: keep revising or resample?
+Adaptive Replay Refinement: Allocating Test-Time Compute Between Revision and Resampling
+https://alexhuang13.github.io/digest/en/2026-10-21.html#paper-2610-28294
+
+Brief · New preprint
+TEX: scale testing agents with a K×K execution matrix
+TEX: Test-Time Scaling Testing Agents via Execution-based Cross-Validation
+https://alexhuang13.github.io/digest/en/2026-10-21.html#paper-2610-27290
+
+Brief · New preprint
+Energy per token from active bytes and realized decode time
+The Token-Energy Law of LLM Decode
+https://alexhuang13.github.io/digest/en/2026-10-21.html#paper-2610-28576
+
+Brief · New preprint
+One policy for arbitrary test-time budgets
+Rewards for Budget-Aware Multi-Turn Agents That Adapt to Arbitrary Test-Time Constraints
+https://alexhuang13.github.io/digest/en/2026-10-21.html#paper-2610-28409
+
+Brief · New preprint
+Subtask-level inverse scaling in VLMs
+On the Limits of Scale: Inverse Scaling in Vision-Language Models
+https://alexhuang13.github.io/digest/en/2026-10-21.html#paper-2610-27360
+
+Brief · New preprint
+Scale graph reasoning by taking adjacency out of the prompt
+Scaling Graph Reasoning in Language Models with Learnable Graph Positional Encodings
+https://alexhuang13.github.io/digest/en/2026-10-21.html#paper-2610-27439
+
+Brief · New preprint
+Negative result: multi-agent collaboration fails a compute-matched test
+Does Multi-Agent Collaboration Pay When Agents Serve Users?
+https://alexhuang13.github.io/digest/en/2026-10-21.html#paper-2610-27655
+
+Brief · New preprint
+LaLa-World: mix heterogeneous world-model data through language
+LaLa-World: Scaling Latent World Models with Natural Language Actions
+https://alexhuang13.github.io/digest/en/2026-10-21.html#paper-2610-27851
+
+Daily classic · 2022
+InstructGPT: preference, KL, and pretraining mix
+https://alexhuang13.github.io/digest/en/2026-10-21.html#classic-instructgpt
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-10-21.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

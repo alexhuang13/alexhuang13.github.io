@@ -1,0 +1,352 @@
+{
+  "date": "2026-10-21",
+  "number": "008",
+  "edition": "Daily research notes",
+  "title": "Step Size, Scale, and Pareto Frontiers",
+  "subtitle": "MuPACE · Constant-step Muon · Pareto frontier · InstructGPT",
+  "window": "2026-10-18 08:13 — 2026-10-21 08:13 · America/New_York",
+  "publishedAt": "2026-10-21T12:13:26Z",
+  "readingMinutes": 22,
+  "tags": ["Muon", "Scaling laws", "Post-training", "Statistical learning"],
+  "intro": "Three main readings: learning Muon's global step size, classifying constant-step spectral optimizers by gain and length, and fixed-confidence identification of a multi-objective LLM Pareto frontier. Twelve scaling, data, and test-time-compute briefs follow. The classic reading derives the RLHF objective in InstructGPT.",
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "articles": [
+    {
+      "id": "paper-2610-28072",
+      "paper": "MuPACE: Learning to Pace Muon for LoRA Fine-Tuning",
+      "authors": "Jan Kobiolka · Christian Frey · Josif Grabocka",
+      "url": "https://arxiv.org/html/2610.28072v1",
+      "title": "MuPACE: Muon chooses the direction; the trajectory chooses the step",
+      "kind": "Main reading · New preprint",
+      "dateNote": "First posted 2026-10-20 07:52 EDT · v1; entered the public list on Oct 21",
+      "evidence": "Read §§3–5 and appendix ablations; meta-training not reproduced",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A normalized spectral update separates direction from scale: Muon approximately supplies the polar direction, while the learning rate controls almost all of the length. MuPACE does not learn a new optimizer; a roughly 20K-parameter LSTM adjusts an analytic schedule from the observed trajectory. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "s_t=U_t\\Sigma_tV_t^\\top,\\qquad d_t\\approx U_tV_t^\\top,\\qquad \\theta_{t+1}=\\theta_t-\\eta_t d_t",
+          "label": "Muon determines the matrix direction; the policy outputs only the global scalar ηₜ"
+        },
+        {
+          "type": "equation",
+          "tex": "\\eta(x)=\\lambda_1\\frac{\\lVert s_0\\rVert_2}{\\lVert s\\rVert_2}s(x),\\qquad \\lambda_{i,t}=\\lambda_i^0\\exp\\!\\big(c_i\\tanh h_{i,t}\\big),\\qquad x=t/T",
+          "label": "RMS normalization separates scale λ₁ from shape λ₂:₅; exp–tanh bounds each deviation"
+        },
+        {
+          "type": "equation",
+          "tex": "\\eta_t\\leftarrow\\left(\\frac{L_{\\rm ref}}{L_d}\\right)^{1/2}\\eta_t,\\qquad \\min_\\phi\\;\\mathbb E_{\\mathcal T,\\tau\\sim\\pi_\\phi}\\frac{1}{T-T_0}\\sum_{t>T_0}\\log \\widetilde\\ell_t^{\\rm val}",
+          "label": "Depth extrapolation follows Depth-μP; validation loss enters the policy state and meta-objective, not the LoRA update gradient"
+        },
+        {
+          "type": "table",
+          "headers": ["Comparison", "Result", "Budget meaning"],
+          "rows": [
+            ["64 in-distribution problems", "Beats cosine / WSD / constant defaults on 78% / 66% / 64%", "One MuPACE run"],
+            ["Versus per-task sweeps", "Median recovery of tuning gain: 80% / 83% / 78%", "Several baseline trials per task"],
+            ["Qwen3-32B, Qwen3.8-27B", "Median test-loss gap to 5-trial tuned baselines: 1.13–3.02%", "One versus five trials; eight tasks per model"]
+          ],
+          "caption": "Reported by the paper; test loss is measured at each arm's best-validation checkpoint. [1]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The OOD result covers only two 64-layer models and eight tasks each. A single run being close to a sweep does not eliminate all end-to-end tuning cost. The policy also observes validation trajectories, so deployment requires usable validation batches. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-27747",
+      "paper": "Constant Step Sizes for Muon-Type Spectral Optimizers on Strongly Convex Quadratics",
+      "authors": "Pratik Jawanpuria · Bhabatosh Garai · Bamdev Mishra",
+      "url": "https://arxiv.org/html/2610.27747v1",
+      "title": "Constant-step Muon: gain and length decide convergence",
+      "kind": "Main reading · New preprint",
+      "dateNote": "First posted 2026-10-20 03:07 EDT · v1; entered the public list on Oct 21",
+      "evidence": "Read Theorems 1 and 3, Lemma 4, and numerical experiments; results are restricted to strongly convex matrix quadratics",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The paper removes nonconvexity, noise, and schedules to ask whether a fixed-step spectral update reaches the optimum. For G=UΣVᵀ, the update preserves singular vectors and maps σᵢ to gᵢ. The key quantities are gain rᵢ=gᵢ/σᵢ and update length. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "f(X)=\\tfrac12\\operatorname{tr}[(X-X_\\star)^\\top H(X-X_\\star)],\\quad G_t=H(X_t-X_\\star),\\quad X_{t+1}=X_t-\\alpha\\Phi(G_t)",
+          "label": "H≻0; this is an exactly analyzable matrix quadratic, not a theorem for general neural networks"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Phi(G)=U\\operatorname{diag}(g_i)V^\\top=P(G)G,\\qquad r_i=\\frac{g_i}{\\sigma_i},\\qquad \\lVert\\Phi(G)\\rVert_F=\\Big(\\sum_i g_i^2\\Big)^{1/2}",
+          "label": "Gain controls local amplification; whether length vanishes decides whether a fixed-step method can actually stop"
+        },
+        {
+          "type": "table",
+          "headers": ["Regime", "Representative update", "Paper result"],
+          "rows": [
+            ["c≤rᵢ≤C", "Finite-step NS normalized with ε>0", "Linear convergence if αλmaxC<2; no better local optimal rate than GD"],
+            ["Unbounded gain, length→0", "‖G‖* sign(G)", "Linear convergence if α tr(H)<2"],
+            ["Non-vanishing length", "Polar map; current-norm NS with ε=0", "No convergence for any α>0 from almost every initialization"]
+          ],
+          "caption": "The same NS polynomial can land in different regimes solely through normalization and scaling. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "f(X_{t+1})\\le\\left[1-u(2-u)\\frac{c\\lambda_{\\min}}{C\\lambda_{\\max}}\\right]f(X_t),\\qquad u=\\alpha C\\lambda_{\\max}\\in(0,2)",
+          "label": "Theorem 1 in the paper, for the bounded-gain regime"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Experiments use only 16×16 or 16×8 quadratics with κ=30. Momentum, stochastic gradients, and nonconvex networks are left open; fixed-step nonconvergence here cannot be translated directly into practical training failure. [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-27447",
+      "paper": "Beyond Scalar Leaderboards: Adaptive Sampling for Pareto Frontier Identification in Multi-Objective LLM Arenas",
+      "authors": "Liang Twist Shan · Jiahao Ai · Zhimei Ren",
+      "url": "https://arxiv.org/html/2610.27447v1",
+      "title": "Do not scalarize first: identify the LLM Pareto frontier at fixed confidence",
+      "kind": "Main reading · Subscribed-author preprint",
+      "dateNote": "First posted 2026-10-19 20:50 EDT · v1; entered the public list on Oct 21",
+      "evidence": "Read the setup, Theorems 3.1–3.2, and real-Arena experiments; experiments not reproduced",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Collapsing math, code, and writing into one leaderboard lets the weights choose values on the reader's behalf. VB-EGE treats each human comparison as a bandit query and aims to identify the strict Pareto frontier with confidence 1−δ, rather than maximize online cumulative reward. [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Pr(Y_t=1\\mid Q_t=(i,j,r))=\\sigma(\\theta_{i,r}-\\theta_{j,r}),\\qquad \\mathcal P(\\theta)=\\{i:\\nexists j,\\ \\theta_{i,r}<\\theta_{j,r}\\ \\forall r\\}",
+          "label": "Multi-objective Bradley–Terry model; each query returns one binary preference on one objective"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Pr\\!\\left(\\widehat{\\mathcal P}=\\mathcal P(\\theta),\\ \\tau\\le dK+\\frac{128d}{\\kappa_B^2}\\sum_{i=1}^K\\frac{L_i^\\theta(\\delta)}{(\\Delta_i^\\theta)^2}\\right)\\ge1-\\delta",
+          "label": "Theorem 3.1; all classification gaps Δᵢ must be positive, and κ_B is the minimum BT-link derivative on a bounded score range"
+        },
+        {
+          "type": "equation",
+          "tex": "Q_{B,d}(\\Delta,\\delta)\\ge\\frac{d(K-1)}{\\Delta^2}\\operatorname{kl}(1-2\\delta,\\delta)",
+          "label": "Theorem 3.2: minimax lower bound on a gap-separated class; upper and lower bounds match in K, d, and Δ⁻² up to logarithms"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Exact recovery assumes Bradley–Terry observations, independent binary comparisons, a bounded score range, and positive gaps. The real-Arena section resamples from an empirical BT model fitted to logged data; it is not an online human experiment. [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-27895",
+      "paper": "The Shape of the DPO Hyperparameter Landscape: What to Measure, How It Moves with Scale, and When Not to Transfer It",
+      "authors": "Hannan Mahadik · David Salinas · Jacek Golebiowski · Aaron Klein",
+      "url": "https://arxiv.org/html/2610.27895v1",
+      "title": "DPO hyperparameters do not transfer cleanly from small models",
+      "kind": "Brief · New preprint",
+      "dateNote": "First posted 2026-10-20 05:14 EDT · v1",
+      "evidence": "Read the main experiments and hyperparameter tables; training not reproduced",
+      "blocks": [{"type": "text", "text": "A shared 3×3 grid over Qwen3 0.6B–14B gives negative cross-scale rank correlations in several pairs. Downstream ranks after roughly 30% of training still correlate 0.63–0.90 with final ranks. Validation loss is weakly aligned with the final downstream optimum; a short run on the target model is more reliable than transfer from a neighboring scale. [4]"}]
+    },
+    {
+      "id": "paper-2610-27789",
+      "paper": "Foundations of the Scaling Law",
+      "authors": "Tianyu Zhao · Zhixiang Ren",
+      "url": "https://arxiv.org/html/2610.27789v1",
+      "title": "A scaling-law note from geometric approximation to compute allocation",
+      "kind": "Brief · New preprint",
+      "dateNote": "First posted 2026-10-20 03:52 EDT · v1",
+      "evidence": "Read the compute-allocation and test-time-scaling sections; a technical note, not one unified new theorem",
+      "blocks": [{"type": "text", "text": "The note connects geometric approximation, spectral visibility, N–D allocation, and test-time coverage. For L−L∞=AN^{-αN}+BD^{-αD}, C=κND, stationarity gives N*∝C^{αD/(αN+αD)} and D*∝C^{αN/(αN+αD)}. The authors explicitly warn that upper risk bounds cannot be treated as exact loss rates without another argument. [5]"}]
+    },
+    {
+      "id": "paper-2610-28036",
+      "paper": "When Does Training on Synthetic Data Provably Work?",
+      "authors": "Leroy Odunlami · Tobias Riedlinger · Hanno Gottschalk",
+      "url": "https://arxiv.org/abs/2610.28036v1",
+      "title": "Synthetic transfer: Wasserstein closeness can still fail completely",
+      "kind": "Brief · New preprint",
+      "dateNote": "First posted 2026-10-20 07:23 EDT · v1",
+      "evidence": "Based on the abstract; full proofs not checked",
+      "blocks": [{"type": "text", "text": "With shared conditional labels, a controlled density ratio gives a finite-sample excess-error bound. If the real distribution has mass outside synthetic support, an expressive classifier can approach worst-case real error even for Wasserstein-close distributions. Under Lipschitz assumptions, the guarantee is instead controlled by the probability that real data lie outside the synthetic reach. [6]"}]
+    },
+    {
+      "id": "paper-2610-27590",
+      "paper": "Benefit and Cost of Random-Token Replacement under Repeated Data",
+      "authors": "Wonsup Shin · Jingu Kim",
+      "url": "https://arxiv.org/html/2610.27590v1",
+      "title": "Under data repetition, random-token replacement is shrinkage",
+      "kind": "Brief · New preprint",
+      "dateNote": "First posted 2026-10-19 23:57 EDT · v1",
+      "evidence": "Read the shrinkage argument, loss decomposition, and main experiments",
+      "blocks": [{"type": "text", "text": "For a first-order source, Q_c=α_cP_c+(1−α_c)π: replacement shrinks the conditional predictor toward the corpus marginal. With known entropy rate H, the authors decompose L_final=H+APPROX+EST+MEM and find that the benefit mainly suppresses post-minimum MEM, rather than improving minimum validation loss. [7]"}]
+    },
+    {
+      "id": "paper-2610-28294",
+      "paper": "Adaptive Replay Refinement: Allocating Test-Time Compute Between Revision and Resampling",
+      "authors": "Ahsan Bilal · Muhammad Ahmed Mohsin · Muhammad Umer · Ayesha Mohsin · Sarmad Bilal · Dean F. Hougen",
+      "url": "https://arxiv.org/abs/2610.28294v1",
+      "title": "Test-time compute: keep revising or resample?",
+      "kind": "Brief · New preprint",
+      "dateNote": "First posted 2026-10-20 10:41 EDT · v1",
+      "evidence": "Based on the abstract; full experiment tables not checked",
+      "blocks": [{"type": "text", "text": "ARR uses replay decoding to detect a revision fixed point, then reallocates released budget to an independent sample. Across seven models and seven benchmarks, the abstract reports 84.6% on MATH500 using 41% of majority voting's serial passes. Serial passes are not FLOPs or end-to-end latency. [8]"}]
+    },
+    {
+      "id": "paper-2610-27290",
+      "paper": "TEX: Test-Time Scaling Testing Agents via Execution-based Cross-Validation",
+      "authors": "Akash Gokul · Srijan Bansal · Yingbo Zhou · Semih Yavuz",
+      "url": "https://arxiv.org/abs/2610.27290v1",
+      "title": "TEX: scale testing agents with a K×K execution matrix",
+      "kind": "Brief · New preprint",
+      "dateNote": "First posted 2026-10-19 17:06 EDT · v1",
+      "evidence": "Based on the abstract; full cost tables not checked",
+      "blocks": [{"type": "text", "text": "K agents generate tests and patches in parallel, then cross-execute them to obtain a K×K feedback matrix. The abstract reports 86.4% on SWT-Bench Verified, while random selection among TEX outputs reaches 84.4%. The result supports candidate-quality gains from collaborative feedback, but K² execution cost needs a matched accounting. [9]"}]
+    },
+    {
+      "id": "paper-2610-28576",
+      "paper": "The Token-Energy Law of LLM Decode",
+      "authors": "Chenxu Niu · Batuhan Sencer · Wei Zhang · Yong Chen",
+      "url": "https://arxiv.org/abs/2610.28576v1",
+      "title": "Energy per token from active bytes and realized decode time",
+      "kind": "Brief · New preprint",
+      "dateNote": "First posted 2026-10-20 13:32 EDT · v1",
+      "evidence": "Based on the abstract; coefficients and all hardware settings not checked",
+      "blocks": [{"type": "text", "text": "An affine model combines shared dense-weight reads, request-private KV-history traffic, and realized decode time. Under BF16, three models, and Hopper/Blackwell settings, held-out condition-mean energy errors are at most 3.73%. This is a deployment-side empirical law, not a training-loss scaling law. [10]"}]
+    },
+    {
+      "id": "paper-2610-28409",
+      "paper": "Rewards for Budget-Aware Multi-Turn Agents That Adapt to Arbitrary Test-Time Constraints",
+      "authors": "Tom A. Lamb · Adam Golinski · Eleonora Gualdoni · Sinead Williamson · Michael Kirchhof",
+      "url": "https://arxiv.org/abs/2610.28409v1",
+      "title": "One policy for arbitrary test-time budgets",
+      "kind": "Brief · New preprint",
+      "dateNote": "First posted 2026-10-20 11:49 EDT · v1",
+      "evidence": "Based on the abstract; eleven rewards not checked budget by budget",
+      "blocks": [{"type": "text", "text": "Qwen3.5 4B/9B policies are trained across dynamic budgets in tokens, API calls, environment steps, and turns. Overspending penalties improve within-budget success and natural compliance, but sigmoid and fixed-negative penalties respectively favor success and compliance: reward design defines a Pareto trade-off. [11]"}]
+    },
+    {
+      "id": "paper-2610-27360",
+      "paper": "On the Limits of Scale: Inverse Scaling in Vision-Language Models",
+      "authors": "Rohit Saxena · Alessandro Suglia · Marek Rei · Pasquale Minervini",
+      "url": "https://arxiv.org/abs/2610.27360v1",
+      "title": "Subtask-level inverse scaling in VLMs",
+      "kind": "Brief · New preprint",
+      "dateNote": "First posted 2026-10-19 18:39 EDT · v1",
+      "evidence": "Based on the abstract; per-question statistical tests not checked",
+      "blocks": [{"type": "text", "text": "Nineteen models from four families across eight benchmarks produce 558,334 model-question evaluations. The authors report 375 subtask–model-pair inverse-scaling combinations and 13 subtask–dataset pairs replicated across families. Improving the aggregate with scale does not imply monotonicity on every capability slice. [12]"}]
+    },
+    {
+      "id": "paper-2610-27439",
+      "paper": "Scaling Graph Reasoning in Language Models with Learnable Graph Positional Encodings",
+      "authors": "Javier Porras-Valenzuela · Arush Arora · Alejandro Ribeiro",
+      "url": "https://arxiv.org/abs/2610.27439v1",
+      "title": "Scale graph reasoning by taking adjacency out of the prompt",
+      "kind": "Brief · New preprint",
+      "dateNote": "First posted 2026-10-19 20:39 EDT · v1",
+      "evidence": "Based on the abstract; full size-generalization curves not checked",
+      "blocks": [{"type": "text", "text": "A GNN plus Graph Transformer produces permutation-equivariant positional encodings that modulate attention logits, reducing context burden from serialized edges to O(N). Training uses small graphs and the abstract reports extrapolation to 1,000 nodes. This is structural size scaling, not a parameter–data power law. [13]"}]
+    },
+    {
+      "id": "paper-2610-27655",
+      "paper": "Does Multi-Agent Collaboration Pay When Agents Serve Users?",
+      "authors": "Ethan Yang · Xiangcheng Shi",
+      "url": "https://arxiv.org/abs/2610.27655v1",
+      "title": "Negative result: multi-agent collaboration fails a compute-matched test",
+      "kind": "Brief · New preprint",
+      "dateNote": "First posted 2026-10-20 01:13 EDT · v1",
+      "evidence": "Based on the abstract; preregistered study, full trajectories not checked",
+      "blocks": [{"type": "text", "text": "Across about 7,950 τ²-bench conversations, a same-model centralized MAS loses in 12 of 13 valid cells and ties one. Without a budget ceiling, it at best ties using 5.5× the tokens. The paper also discloses that its planner did not see tool schemas, so this is strong negative evidence about the tested implementation, not an impossibility theorem for all MAS. [14]"}]
+    },
+    {
+      "id": "paper-2610-27851",
+      "paper": "LaLa-World: Scaling Latent World Models with Natural Language Actions",
+      "authors": "Junha Song · Geonmo Gu · Jeongeun Park · Heejeong Nam · Lucas Maes · Byeongho Heo · Dongyoon Han · Sangdoo Yun",
+      "url": "https://arxiv.org/abs/2610.27851v1",
+      "title": "LaLa-World: mix heterogeneous world-model data through language",
+      "kind": "Brief · New preprint",
+      "dateNote": "First posted 2026-10-20 04:32 EDT · v1",
+      "evidence": "Based on the abstract; matched-cost details not checked",
+      "blocks": [{"type": "text", "text": "Numerical actions and visual changes are expressed in language so that one JEPA-style predictor can train across simulation, robot, image, and video data. Against a matched RAEv2 baseline, the abstract reports comparable planning at 1/6 the training cost and 13.9× faster planning. Here, scaling means cross-domain data composition, not a model-size power law. [15]"}]
+    }
+  ],
+  "classic": {
+    "id": "classic-instructgpt",
+    "paperId": "arxiv:2203.02155",
+    "shortTitle": "InstructGPT",
+    "year": 2022,
+    "topics": ["Post-training"],
+    "kind": "Daily classic · Historical paper",
+    "title": "InstructGPT: preference, KL, and pretraining mix",
+    "paper": "Training Language Models to Follow Instructions with Human Feedback",
+    "authors": "Long Ouyang · Jeff Wu · Xu Jiang · et al.",
+    "url": "https://arxiv.org/html/2203.02155v1",
+    "dateNote": "First posted 2022-03-04; this reading used v1 and the NeurIPS 2022 version",
+    "evidence": "Read §3, §4, and the training appendix; human evaluation not reproduced",
+    "recognition": {
+      "label": "NeurIPS 2022; ACM Digital Library displayed 33,248 citations on 2026-10-21",
+      "url": "https://dl.acm.org/doi/10.5555/3600270.3602281"
+    },
+    "question": "If the reward model systematically overvalues one response type outside the policy's data support, which shift can the KL penalty control, and which can the pretraining mix control? Construct a two-action bandit counterexample showing that neither guarantees the removal of reward hacking.",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Earlier RLHF work covered Atari and robotics (2017) and summarization (2020). InstructGPT moved SFT→reward model→PPO to a broad instruction-following distribution. The mathematical hinge is how pairwise preferences become scalar reward and how policy movement away from supervised support is constrained. This is a historical paper, not today's news. [16,17]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathcal L_{\\rm RM}(\\theta)=-\\mathbb E_{(x,y_w,y_l)}\\log\\sigma\\!\\left(r_\\theta(x,y_w)-r_\\theta(x,y_l)\\right)",
+        "label": "Bradley–Terry pairwise loss; reward is identified only through differences, so a shift normalization is applied afterward"
+      },
+      {
+        "type": "equation",
+        "tex": "\\max_\\phi\\ \\mathbb E_{x,y\\sim\\pi_\\phi}\\!\\left[r_\\theta(x,y)-\\beta\\log\\frac{\\pi_\\phi(y\\mid x)}{\\pi_{\\rm SFT}(y\\mid x)}\\right]+\\gamma\\,\\mathbb E_{x\\sim D_{\\rm pre}}\\log\\pi_\\phi(x)",
+        "label": "The PPO-ptx objective: KL limits policy shift, while pretraining likelihood directly anchors the original capability distribution"
+      },
+      {
+        "type": "equation",
+        "tex": "\\pi^*(y\\mid x)\\propto\\pi_{\\rm SFT}(y\\mid x)\\exp\\!\\left(\\frac{r_\\theta(x,y)}{\\beta}\\right)",
+        "label": "Simplified derivation: with γ omitted and the sequence treated as a one-step bandit, the KL-regularized optimum exponentially tilts the reference; this is not a PPO convergence theorem"
+      },
+      {
+        "type": "table",
+        "headers": ["Evidence", "Paper result", "Does not imply"],
+        "rows": [
+          ["API-prompt human evaluation", "1.3B PPO-ptx beats 175B GPT-3; 175B InstructGPT beats 175B GPT-3 85±3%", "A 100× smaller model preserves every capability"],
+          ["Public NLP", "PPO shows an alignment tax; pretraining gradients reduce several regressions", "More KL is always better"],
+          ["Training compute", "175B SFT: 4.9; PPO-ptx: 60; GPT-3 pretraining: 3640 PF-days", "Data collection and the full experimental program are negligible"]
+        ],
+        "caption": "All results use the paper's 2022 distributions, models, and evaluations; win rate is not a universal measure of present-day chat capability. [16]"
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "Preferences came from a particular labeler pool. The RM was 6B and quickly overfit beyond one epoch. KL and pretraining mix mitigate distribution shift but do not correct systematic reward-model bias. The paper also found no broad improvement on its bias metrics. [16]"
+      }
+    ]
+  },
+  "sources": [
+    {"title": "MuPACE · original paper; methods, experiments, and ablations read", "url": "https://arxiv.org/html/2610.28072v1"},
+    {"title": "Constant Step Sizes for Muon-Type Spectral Optimizers · original paper; theorems and experiments read", "url": "https://arxiv.org/html/2610.27747v1"},
+    {"title": "Beyond Scalar Leaderboards · original paper; theorems and Arena experiments read", "url": "https://arxiv.org/html/2610.27447v1"},
+    {"title": "The Shape of the DPO Hyperparameter Landscape · original paper; main experiments and hyperparameter tables read", "url": "https://arxiv.org/html/2610.27895v1"},
+    {"title": "Foundations of the Scaling Law · original paper; relevant sections read", "url": "https://arxiv.org/html/2610.27789v1"},
+    {"title": "When Does Training on Synthetic Data Provably Work? · original abstract", "url": "https://arxiv.org/abs/2610.28036v1"},
+    {"title": "Benefit and Cost of Random-Token Replacement under Repeated Data · original paper", "url": "https://arxiv.org/html/2610.27590v1"},
+    {"title": "Adaptive Replay Refinement · original abstract", "url": "https://arxiv.org/abs/2610.28294v1"},
+    {"title": "TEX · original abstract", "url": "https://arxiv.org/abs/2610.27290v1"},
+    {"title": "The Token-Energy Law of LLM Decode · original abstract", "url": "https://arxiv.org/abs/2610.28576v1"},
+    {"title": "Rewards for Budget-Aware Multi-Turn Agents · original abstract", "url": "https://arxiv.org/abs/2610.28409v1"},
+    {"title": "On the Limits of Scale · original abstract", "url": "https://arxiv.org/abs/2610.27360v1"},
+    {"title": "Scaling Graph Reasoning · original abstract", "url": "https://arxiv.org/abs/2610.27439v1"},
+    {"title": "Does Multi-Agent Collaboration Pay? · original abstract", "url": "https://arxiv.org/abs/2610.27655v1"},
+    {"title": "LaLa-World · original abstract", "url": "https://arxiv.org/abs/2610.27851v1"},
+    {"title": "Training Language Models to Follow Instructions with Human Feedback · original paper; methods, results, and training appendix read", "url": "https://arxiv.org/html/2203.02155v1"},
+    {"title": "InstructGPT · ACM Digital Library citation record; checked 2026-10-21", "url": "https://dl.acm.org/doi/10.5555/3600270.3602281"}
+  ]
+}

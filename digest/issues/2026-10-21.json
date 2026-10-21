@@ -1,0 +1,352 @@
+{
+  "date": "2026-10-21",
+  "number": "008",
+  "edition": "每日研究笔记",
+  "title": "步长、尺度与多目标前沿",
+  "subtitle": "MuPACE · 常步长 Muon · Pareto 前沿 · 精读 InstructGPT",
+  "window": "2026-10-18 08:13 — 2026-10-21 08:13 · America/New_York",
+  "publishedAt": "2026-10-21T12:13:26Z",
+  "readingMinutes": 22,
+  "tags": ["Muon", "Scaling laws", "Post-training", "Statistical learning"],
+  "intro": "三篇主读：学习 Muon 的全局步长、用 gain／length 判别常步长谱优化器、以及以固定置信度识别多目标 LLM 的 Pareto 前沿。另列 12 条 scaling、数据与 test-time compute 简讯；经典精读 InstructGPT 的 RLHF 目标。",
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "articles": [
+    {
+      "id": "paper-2610-28072",
+      "paper": "MuPACE: Learning to Pace Muon for LoRA Fine-Tuning",
+      "authors": "Jan Kobiolka · Christian Frey · Josif Grabocka",
+      "url": "https://arxiv.org/html/2610.28072v1",
+      "title": "MuPACE：方向交给 Muon，步长交给轨迹",
+      "kind": "主读 · 新稿",
+      "dateNote": "首发 2026-10-20 07:52 EDT · v1；10月21日进入公开列表",
+      "evidence": "已读 §3–5 与附录消融；未重跑 meta-training",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "归一化谱更新把方向与尺度拆开：Muon 近似给出 polar 方向，而学习率承担几乎全部长度控制。MuPACE 不学习新优化器，只让一个约 20K 参数的 LSTM 根据训练轨迹修正解析 schedule。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "s_t=U_t\\Sigma_tV_t^\\top,\\qquad d_t\\approx U_tV_t^\\top,\\qquad \\theta_{t+1}=\\theta_t-\\eta_t d_t",
+          "label": "Muon 决定矩阵方向，策略只输出全局标量 ηₜ"
+        },
+        {
+          "type": "equation",
+          "tex": "\\eta(x)=\\lambda_1\\frac{\\lVert s_0\\rVert_2}{\\lVert s\\rVert_2}s(x),\\qquad \\lambda_{i,t}=\\lambda_i^0\\exp\\!\\big(c_i\\tanh h_{i,t}\\big),\\qquad x=t/T",
+          "label": "解析 schedule 的 RMS 归一化把 scale λ₁ 与 shape λ₂:₅ 分离；指数–tanh 将偏移限制在有界区间"
+        },
+        {
+          "type": "equation",
+          "tex": "\\eta_t\\leftarrow\\left(\\frac{L_{\\rm ref}}{L_d}\\right)^{1/2}\\eta_t,\\qquad \\min_\\phi\\;\\mathbb E_{\\mathcal T,\\tau\\sim\\pi_\\phi}\\frac{1}{T-T_0}\\sum_{t>T_0}\\log \\widetilde\\ell_t^{\\rm val}",
+          "label": "深度外推沿用 Depth-μP；validation loss 只进入策略状态与 meta-objective，不为 LoRA 更新提供梯度"
+        },
+        {
+          "type": "table",
+          "headers": ["比较", "结果", "预算含义"],
+          "rows": [
+            ["64 个 in-distribution 问题", "胜过 cosine / WSD / constant 默认值：78% / 66% / 64%", "MuPACE 1 次运行"],
+            ["相对逐任务 sweep", "恢复调参收益中位数 80% / 83% / 78%", "基线每任务多次试验"],
+            ["Qwen3-32B、Qwen3.8-27B", "对 5-trial tuned baseline 的 test-loss 差距中位数 1.13–3.02%", "1 次 vs 5 次；每模型 8 个任务"]
+          ],
+          "caption": "原文报告；loss 为各自 best-validation checkpoint 的 test loss。[1]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "OOD 结论只有两个 64-layer 模型、每个 8 个任务；“单次接近 sweep”不等于端到端调参成本已被完全消除。策略还读取 validation trajectory，因此部署时必须保留可用的验证批次。[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-27747",
+      "paper": "Constant Step Sizes for Muon-Type Spectral Optimizers on Strongly Convex Quadratics",
+      "authors": "Pratik Jawanpuria · Bhabatosh Garai · Bamdev Mishra",
+      "url": "https://arxiv.org/html/2610.27747v1",
+      "title": "常步长 Muon：决定收敛的是 gain 与 length",
+      "kind": "主读 · 新稿",
+      "dateNote": "首发 2026-10-20 03:07 EDT · v1；10月21日进入公开列表",
+      "evidence": "已读定理 1、3、Lemma 4 与数值实验；结论限于强凸矩阵二次型",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "作者把非凸性、噪声与 schedule 暂时拿掉，只问固定步长的谱更新会不会到达最优点。若 G=UΣVᵀ，更新保留奇异向量、把 σᵢ 改为 gᵢ；核心统计量是 gain rᵢ=gᵢ/σᵢ 与更新长度。[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "f(X)=\\tfrac12\\operatorname{tr}[(X-X_\\star)^\\top H(X-X_\\star)],\\quad G_t=H(X_t-X_\\star),\\quad X_{t+1}=X_t-\\alpha\\Phi(G_t)",
+          "label": "H≻0；这是可完全分析的矩阵二次模型，不是一般神经网络定理"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Phi(G)=U\\operatorname{diag}(g_i)V^\\top=P(G)G,\\qquad r_i=\\frac{g_i}{\\sigma_i},\\qquad \\lVert\\Phi(G)\\rVert_F=\\Big(\\sum_i g_i^2\\Big)^{1/2}",
+          "label": "gain 控制局部放大；length 是否趋零决定能否在固定步长下真正停住"
+        },
+        {
+          "type": "table",
+          "headers": ["区间", "代表更新", "原文结果"],
+          "rows": [
+            ["c≤rᵢ≤C", "带 ε>0 归一化的有限步 NS", "αλmaxC<2 时线性收敛；局部最优率不优于 GD"],
+            ["gain 无界，length→0", "‖G‖* sign(G)", "α tr(H)<2 时线性收敛"],
+            ["length 不消失", "polar；ε=0 的当前范数归一化 NS", "任意 α>0、几乎处处初始化不收敛"]
+          ],
+          "caption": "同一个 NS 多项式可因 normalization / scaling 不同而落入不同区间。[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "f(X_{t+1})\\le\\left[1-u(2-u)\\frac{c\\lambda_{\\min}}{C\\lambda_{\\max}}\\right]f(X_t),\\qquad u=\\alpha C\\lambda_{\\max}\\in(0,2)",
+          "label": "原文定理 1；bounded-gain 情形"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "实验仅在 16×16 或 16×8、κ=30 的二次问题上验证阈值。动量、随机梯度和非凸网络均留待后续；不能把“常步长不收敛”直接翻译成实际训练失败。[2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-27447",
+      "paper": "Beyond Scalar Leaderboards: Adaptive Sampling for Pareto Frontier Identification in Multi-Objective LLM Arenas",
+      "authors": "Liang Twist Shan · Jiahao Ai · Zhimei Ren",
+      "url": "https://arxiv.org/html/2610.27447v1",
+      "title": "不压成一个分数：固定置信度地找 LLM Pareto 前沿",
+      "kind": "主读 · 指定作者新稿",
+      "dateNote": "首发 2026-10-19 20:50 EDT · v1；10月21日进入公开列表",
+      "evidence": "已读问题设定、定理 3.1–3.2 与真实 Arena 实验；未复现实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "若 math、code、writing 先被加权成单一 leaderboard，权重就替读者做了价值选择。VB-EGE 把每次人类比较视为 bandit query，目标是在置信度 1−δ 下识别严格 Pareto 前沿，而非最大化在线累计奖励。[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Pr(Y_t=1\\mid Q_t=(i,j,r))=\\sigma(\\theta_{i,r}-\\theta_{j,r}),\\qquad \\mathcal P(\\theta)=\\{i:\\nexists j,\\ \\theta_{i,r}<\\theta_{j,r}\\ \\forall r\\}",
+          "label": "多目标 Bradley–Terry 模型；每次 query 只返回某一目标上的二元偏好"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Pr\\!\\left(\\widehat{\\mathcal P}=\\mathcal P(\\theta),\\ \\tau\\le dK+\\frac{128d}{\\kappa_B^2}\\sum_{i=1}^K\\frac{L_i^\\theta(\\delta)}{(\\Delta_i^\\theta)^2}\\right)\\ge1-\\delta",
+          "label": "原文定理 3.1；要求全部分类 gap Δᵢ>0，κ_B 是 BT 链接在有界参数区间内的最小导数"
+        },
+        {
+          "type": "equation",
+          "tex": "Q_{B,d}(\\Delta,\\delta)\\ge\\frac{d(K-1)}{\\Delta^2}\\operatorname{kl}(1-2\\delta,\\delta)",
+          "label": "原文定理 3.2：gap-separated 类上的 minimax 下界；与上界在 K、d、Δ⁻² 上仅差对数因子"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "精确恢复依赖 Bradley–Terry、独立二元比较、有界 score range 与正 gap。真实 Arena 部分是在日志数据拟合后的经验 BT 模型上再采样，不能等同于一次在线人类实验。[3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-27895",
+      "paper": "The Shape of the DPO Hyperparameter Landscape: What to Measure, How It Moves with Scale, and When Not to Transfer It",
+      "authors": "Hannan Mahadik · David Salinas · Jacek Golebiowski · Aaron Klein",
+      "url": "https://arxiv.org/html/2610.27895v1",
+      "title": "DPO 超参不能只从小模型搬上去",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-20 05:14 EDT · v1",
+      "evidence": "已读主实验与超参表；未重跑训练",
+      "blocks": [{"type": "text", "text": "Qwen3 0.6B–14B 的共同 3×3 网格显示跨尺度排名可为负相关；训练约 30% 时的下游排名相关仍为 0.63–0.90。validation loss 与最终下游最优配置弱相关，短 target-model run 比邻近尺度迁移更可靠。[4]"}]
+    },
+    {
+      "id": "paper-2610-27789",
+      "paper": "Foundations of the Scaling Law",
+      "authors": "Tianyu Zhao · Zhixiang Ren",
+      "url": "https://arxiv.org/html/2610.27789v1",
+      "title": "Scaling law 技术札记：从几何近似到计算分配",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-20 03:52 EDT · v1",
+      "evidence": "已读 compute allocation 与 test-time scaling 章节；技术札记，不是统一新定理",
+      "blocks": [{"type": "text", "text": "札记串联几何近似、谱可见性、N–D 分配与 test-time coverage。对 L−L∞=AN^{-αN}+BD^{-αD}, C=κND，驻点给出 N*∝C^{αD/(αN+αD)}、D*∝C^{αN/(αN+αD)}；作者明确提醒，风险上界不能未经证明就当作精确 loss rate。[5]"}]
+    },
+    {
+      "id": "paper-2610-28036",
+      "paper": "When Does Training on Synthetic Data Provably Work?",
+      "authors": "Leroy Odunlami · Tobias Riedlinger · Hanno Gottschalk",
+      "url": "https://arxiv.org/abs/2610.28036v1",
+      "title": "合成数据转移：Wasserstein 近也可能完全失灵",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-20 07:23 EDT · v1",
+      "evidence": "基于摘要；未核验完整证明",
+      "blocks": [{"type": "text", "text": "在共享条件标签分布下，密度比受控可给有限样本 excess-error bound；若真实分布在合成支持集外有质量，足够丰富的分类器即使两分布 Wasserstein 很近也可在真实域接近最坏误差。Lipschitz 假设下，保证改由“真实样本落在合成数据可达域外”的概率控制。[6]"}]
+    },
+    {
+      "id": "paper-2610-27590",
+      "paper": "Benefit and Cost of Random-Token Replacement under Repeated Data",
+      "authors": "Wonsup Shin · Jingu Kim",
+      "url": "https://arxiv.org/html/2610.27590v1",
+      "title": "重复数据下，随机替词是在做 shrinkage",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 23:57 EDT · v1",
+      "evidence": "已读 shrinkage、loss decomposition 与主实验",
+      "blocks": [{"type": "text", "text": "对一阶源，Q_c=α_cP_c+(1−α_c)π；替词把条件预测缩向 corpus marginal。已知熵率 H 时，作者分解 L_final=H+APPROX+EST+MEM，发现帮助主要来自压低过拟合后的 MEM，而非改善最小 validation loss。[7]"}]
+    },
+    {
+      "id": "paper-2610-28294",
+      "paper": "Adaptive Replay Refinement: Allocating Test-Time Compute Between Revision and Resampling",
+      "authors": "Ahsan Bilal · Muhammad Ahmed Mohsin · Muhammad Umer · Ayesha Mohsin · Sarmad Bilal · Dean F. Hougen",
+      "url": "https://arxiv.org/abs/2610.28294v1",
+      "title": "Test-time compute：继续改，还是重新采样？",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-20 10:41 EDT · v1",
+      "evidence": "基于摘要；未核验完整实验表",
+      "blocks": [{"type": "text", "text": "ARR 用 replay decoding 检测 revision fixed point，把释放的预算转给独立样本；7 个模型、7 个 benchmark 中，MATH500 报告 84.6% accuracy，仅用 majority voting 41% 的串行 passes。串行 passes 不是 FLOPs 或端到端时延。[8]"}]
+    },
+    {
+      "id": "paper-2610-27290",
+      "paper": "TEX: Test-Time Scaling Testing Agents via Execution-based Cross-Validation",
+      "authors": "Akash Gokul · Srijan Bansal · Yingbo Zhou · Semih Yavuz",
+      "url": "https://arxiv.org/abs/2610.27290v1",
+      "title": "TEX：用 K×K 执行矩阵扩展测试代理",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 17:06 EDT · v1",
+      "evidence": "基于摘要；未核验完整成本表",
+      "blocks": [{"type": "text", "text": "K 个代理并行生成 tests 与 patches，再交叉执行形成 K×K feedback。SWT-Bench Verified 报告 86.4%，随机选 TEX 输出也达 84.4%；这支持协作反馈改善候选质量，但 K² 执行成本需与其他 scaling 基线同口径比较。[9]"}]
+    },
+    {
+      "id": "paper-2610-28576",
+      "paper": "The Token-Energy Law of LLM Decode",
+      "authors": "Chenxu Niu · Batuhan Sencer · Wei Zhang · Yong Chen",
+      "url": "https://arxiv.org/abs/2610.28576v1",
+      "title": "每 token 能耗由 active bytes 与实际 decode time 解释",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-20 13:32 EDT · v1",
+      "evidence": "基于摘要；未核验拟合系数与全部硬件设置",
+      "blocks": [{"type": "text", "text": "论文把 dense weights 的共享读取、每请求 KV history 的私有读取与 realized time 放入仿射模型；BF16、三模型、Hopper/Blackwell 条件下，held-out condition-mean 能耗误差至多 3.73%。它是部署侧经验律，不是训练 loss scaling law。[10]"}]
+    },
+    {
+      "id": "paper-2610-28409",
+      "paper": "Rewards for Budget-Aware Multi-Turn Agents That Adapt to Arbitrary Test-Time Constraints",
+      "authors": "Tom A. Lamb · Adam Golinski · Eleonora Gualdoni · Sinead Williamson · Michael Kirchhof",
+      "url": "https://arxiv.org/abs/2610.28409v1",
+      "title": "让一个策略适应任意 test-time 预算",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-20 11:49 EDT · v1",
+      "evidence": "基于摘要；未核验 11 种 reward 的逐预算表",
+      "blocks": [{"type": "text", "text": "Qwen3.5 4B/9B 在 tokens、API calls、environment steps 等动态预算上训练；惩罚 overspend 可提升预算内成功率与自然合规，但 sigmoid 与固定负奖励分别偏向成功率和合规，显示 reward 选择本身定义了 Pareto 权衡。[11]"}]
+    },
+    {
+      "id": "paper-2610-27360",
+      "paper": "On the Limits of Scale: Inverse Scaling in Vision-Language Models",
+      "authors": "Rohit Saxena · Alessandro Suglia · Marek Rei · Pasquale Minervini",
+      "url": "https://arxiv.org/abs/2610.27360v1",
+      "title": "VLM 的子任务 inverse scaling",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 18:39 EDT · v1",
+      "evidence": "基于摘要；未核验逐题统计检验",
+      "blocks": [{"type": "text", "text": "19 个模型、4 个家族、8 个 benchmark 共 558,334 次 model-question 评估；作者找到 375 个 subtask–model-pair inverse-scaling 组合，13 个 subtask–dataset 对跨家族复现。总体均值随规模上升，不保证每个能力切片单调。[12]"}]
+    },
+    {
+      "id": "paper-2610-27439",
+      "paper": "Scaling Graph Reasoning in Language Models with Learnable Graph Positional Encodings",
+      "authors": "Javier Porras-Valenzuela · Arush Arora · Alejandro Ribeiro",
+      "url": "https://arxiv.org/abs/2610.27439v1",
+      "title": "图推理扩展：把 adjacency 从 prompt 中拿出来",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-19 20:39 EDT · v1",
+      "evidence": "基于摘要；未核验完整 size-generalization 曲线",
+      "blocks": [{"type": "text", "text": "GNN + Graph Transformer 生成 permutation-equivariant positional encoding 并调制 attention logits，使上下文负担从按边序列化降到 O(N)。只在小图训练，摘要报告可外推到 1,000 节点；这是结构性 size scaling，不是参数–数据幂律。[13]"}]
+    },
+    {
+      "id": "paper-2610-27655",
+      "paper": "Does Multi-Agent Collaboration Pay When Agents Serve Users?",
+      "authors": "Ethan Yang · Xiangcheng Shi",
+      "url": "https://arxiv.org/abs/2610.27655v1",
+      "title": "负结果：多代理协作没有通过 compute-matched 检验",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-20 01:13 EDT · v1",
+      "evidence": "基于摘要；预注册研究，未核验全部轨迹",
+      "blocks": [{"type": "text", "text": "τ²-bench 的约 7,950 段对话中，同模型 centralized MAS 在 13 个有效 cells 里 12 负 1 平；无限预算时最好也只在 5.5× token spend 下追平。作者同时披露 planner 未见 tool schema 的 validity bar，故结论应读作当前实现的强负证据，而非所有 MAS 的不可能定理。[14]"}]
+    },
+    {
+      "id": "paper-2610-27851",
+      "paper": "LaLa-World: Scaling Latent World Models with Natural Language Actions",
+      "authors": "Junha Song · Geonmo Gu · Jeongeun Park · Heejeong Nam · Lucas Maes · Byeongho Heo · Dongyoon Han · Sangdoo Yun",
+      "url": "https://arxiv.org/abs/2610.27851v1",
+      "title": "LaLa-World：用语言接口混合异构 world-model 数据",
+      "kind": "简讯 · 新稿",
+      "dateNote": "首发 2026-10-20 04:32 EDT · v1",
+      "evidence": "基于摘要；未核验 matched-cost 细节",
+      "blocks": [{"type": "text", "text": "把数值动作与视觉变化都表成语言，使一个 JEPA-style predictor 联训 simulation、robot、image 与 video 数据。摘要称 matched RAEv2 baseline 下 planning 相当、训练成本 1/6、planning 快 13.9×；这里的 scaling 指跨域数据组合，不是模型规模幂律。[15]"}]
+    }
+  ],
+  "classic": {
+    "id": "classic-instructgpt",
+    "paperId": "arxiv:2203.02155",
+    "shortTitle": "InstructGPT",
+    "year": 2022,
+    "topics": ["Post-training"],
+    "kind": "每日经典 · 历史论文",
+    "title": "InstructGPT：偏好、KL 与 pretraining mix",
+    "paper": "Training Language Models to Follow Instructions with Human Feedback",
+    "authors": "Long Ouyang · Jeff Wu · Xu Jiang · et al.",
+    "url": "https://arxiv.org/html/2203.02155v1",
+    "dateNote": "首发 2022-03-04；本次读 v1 与 NeurIPS 2022 版本",
+    "evidence": "已读 §3、§4 与训练附录；未复现人类评测",
+    "recognition": {
+      "label": "NeurIPS 2022；ACM Digital Library 于 2026-10-21 显示 33,248 次引用",
+      "url": "https://dl.acm.org/doi/10.5555/3600270.3602281"
+    },
+    "question": "若 reward model 在 policy 分布外系统性高估某类回答，KL penalty 与 pretraining mix 分别能控制哪一种偏移？写出一个两动作 bandit 反例，说明它们都不能保证消除 reward hacking。",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "早期 RLHF 已用于 Atari／机器人（2017）与摘要生成（2020）；InstructGPT 把 SFT→reward model→PPO 推到广泛 instruction-following 分布。关键不是“人类反馈”四字，而是偏好比较如何变成标量 reward，以及怎样限制 policy 离开有监督区域。这是历史论文，不是今日新稿。[16,17]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathcal L_{\\rm RM}(\\theta)=-\\mathbb E_{(x,y_w,y_l)}\\log\\sigma\\!\\left(r_\\theta(x,y_w)-r_\\theta(x,y_l)\\right)",
+        "label": "Bradley–Terry 型 pairwise loss；reward 只由差值识别，因此训练后另做平移归一化"
+      },
+      {
+        "type": "equation",
+        "tex": "\\max_\\phi\\ \\mathbb E_{x,y\\sim\\pi_\\phi}\\!\\left[r_\\theta(x,y)-\\beta\\log\\frac{\\pi_\\phi(y\\mid x)}{\\pi_{\\rm SFT}(y\\mid x)}\\right]+\\gamma\\,\\mathbb E_{x\\sim D_{\\rm pre}}\\log\\pi_\\phi(x)",
+        "label": "论文的 PPO-ptx 目标：KL 限制策略偏移，pretraining likelihood 项直接锚定原始能力分布"
+      },
+      {
+        "type": "equation",
+        "tex": "\\pi^*(y\\mid x)\\propto\\pi_{\\rm SFT}(y\\mid x)\\exp\\!\\left(\\frac{r_\\theta(x,y)}{\\beta}\\right)",
+        "label": "简化推导：忽略 γ、把序列视为单步 bandit 时，KL-regularized 最优策略是 reference 的指数倾斜；不是论文对神经网络 PPO 的收敛定理"
+      },
+      {
+        "type": "table",
+        "headers": ["证据", "原文结果", "不能推出"],
+        "rows": [
+          ["API prompt 人评", "1.3B PPO-ptx 优于 175B GPT-3；175B InstructGPT 对 175B GPT-3 胜率 85±3%", "参数缩小 100× 可保持所有能力"],
+          ["public NLP", "PPO 有 alignment tax；加入 pretraining gradients 后多项回退减轻", "KL 越大越好"],
+          ["训练成本", "175B SFT 4.9、PPO-ptx 60、GPT-3 pretraining 3640 PF-days", "数据收集与全套实验成本可忽略"]
+        ],
+        "caption": "均为论文所用分布、模型与 2022 年评测；胜率口径不是今天的通用聊天能力。[16]"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "偏好来自特定 labeler 群体，RM 只有 6B 且会在一轮以上迅速过拟合；KL 与 pretraining mix 缓解分布漂移，却不校正 reward model 的系统偏差。论文也未发现 bias 指标的普遍改善。[16]"
+      }
+    ]
+  },
+  "sources": [
+    {"title": "MuPACE · 原文；已读方法、实验与消融", "url": "https://arxiv.org/html/2610.28072v1"},
+    {"title": "Constant Step Sizes for Muon-Type Spectral Optimizers · 原文；已读定理与实验", "url": "https://arxiv.org/html/2610.27747v1"},
+    {"title": "Beyond Scalar Leaderboards · 原文；已读定理与 Arena 实验", "url": "https://arxiv.org/html/2610.27447v1"},
+    {"title": "The Shape of the DPO Hyperparameter Landscape · 原文；已读主实验与超参表", "url": "https://arxiv.org/html/2610.27895v1"},
+    {"title": "Foundations of the Scaling Law · 原文；已读相关章节", "url": "https://arxiv.org/html/2610.27789v1"},
+    {"title": "When Does Training on Synthetic Data Provably Work? · 原始摘要", "url": "https://arxiv.org/abs/2610.28036v1"},
+    {"title": "Benefit and Cost of Random-Token Replacement under Repeated Data · 原文", "url": "https://arxiv.org/html/2610.27590v1"},
+    {"title": "Adaptive Replay Refinement · 原始摘要", "url": "https://arxiv.org/abs/2610.28294v1"},
+    {"title": "TEX · 原始摘要", "url": "https://arxiv.org/abs/2610.27290v1"},
+    {"title": "The Token-Energy Law of LLM Decode · 原始摘要", "url": "https://arxiv.org/abs/2610.28576v1"},
+    {"title": "Rewards for Budget-Aware Multi-Turn Agents · 原始摘要", "url": "https://arxiv.org/abs/2610.28409v1"},
+    {"title": "On the Limits of Scale · 原始摘要", "url": "https://arxiv.org/abs/2610.27360v1"},
+    {"title": "Scaling Graph Reasoning · 原始摘要", "url": "https://arxiv.org/abs/2610.27439v1"},
+    {"title": "Does Multi-Agent Collaboration Pay? · 原始摘要", "url": "https://arxiv.org/abs/2610.27655v1"},
+    {"title": "LaLa-World · 原始摘要", "url": "https://arxiv.org/abs/2610.27851v1"},
+    {"title": "Training Language Models to Follow Instructions with Human Feedback · 原文；已读方法、结果与训练附录", "url": "https://arxiv.org/html/2203.02155v1"},
+    {"title": "InstructGPT · ACM Digital Library 引用记录；查询于 2026-10-21", "url": "https://dl.acm.org/doi/10.5555/3600270.3602281"}
+  ]
+}

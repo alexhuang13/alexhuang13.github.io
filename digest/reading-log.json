@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-10-21",
+    "paperId": "arxiv:2203.02155",
+    "paper": "Training Language Models to Follow Instructions with Human Feedback",
+    "shortTitle": "InstructGPT",
+    "year": 2022,
+    "topics": [
+      "Post-training"
+    ],
+    "recognition": {
+      "label": "NeurIPS 2022；ACM Digital Library 于 2026-10-21 显示 33,248 次引用",
+      "url": "https://dl.acm.org/doi/10.5555/3600270.3602281"
+    },
+    "source": "https://arxiv.org/html/2203.02155v1",
+    "url": "/digest/2026-10-21.html#classic-instructgpt"
+  },
+  {
     "date": "2026-10-20",
     "paperId": "arxiv:2011.13456",
     "paper": "Score-Based Generative Modeling through Stochastic Differential Equations",

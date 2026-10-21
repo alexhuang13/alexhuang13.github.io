@@ -1,0 +1,91 @@
+RESEARCH DIGEST / 2026-10-21
+步长、尺度与多目标前沿
+MuPACE · 常步长 Muon · Pareto 前沿 · 精读 InstructGPT
+
+中文: https://alexhuang13.github.io/digest/2026-10-21.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-21.html
+
+主读 · 新稿
+MuPACE：方向交给 Muon，步长交给轨迹
+MuPACE: Learning to Pace Muon for LoRA Fine-Tuning
+https://alexhuang13.github.io/digest/2026-10-21.html#paper-2610-28072
+
+主读 · 新稿
+常步长 Muon：决定收敛的是 gain 与 length
+Constant Step Sizes for Muon-Type Spectral Optimizers on Strongly Convex Quadratics
+https://alexhuang13.github.io/digest/2026-10-21.html#paper-2610-27747
+
+主读 · 指定作者新稿
+不压成一个分数：固定置信度地找 LLM Pareto 前沿
+Beyond Scalar Leaderboards: Adaptive Sampling for Pareto Frontier Identification in Multi-Objective LLM Arenas
+https://alexhuang13.github.io/digest/2026-10-21.html#paper-2610-27447
+
+简讯 · 新稿
+DPO 超参不能只从小模型搬上去
+The Shape of the DPO Hyperparameter Landscape: What to Measure, How It Moves with Scale, and When Not to Transfer It
+https://alexhuang13.github.io/digest/2026-10-21.html#paper-2610-27895
+
+简讯 · 新稿
+Scaling law 技术札记：从几何近似到计算分配
+Foundations of the Scaling Law
+https://alexhuang13.github.io/digest/2026-10-21.html#paper-2610-27789
+
+简讯 · 新稿
+合成数据转移：Wasserstein 近也可能完全失灵
+When Does Training on Synthetic Data Provably Work?
+https://alexhuang13.github.io/digest/2026-10-21.html#paper-2610-28036
+
+简讯 · 新稿
+重复数据下，随机替词是在做 shrinkage
+Benefit and Cost of Random-Token Replacement under Repeated Data
+https://alexhuang13.github.io/digest/2026-10-21.html#paper-2610-27590
+
+简讯 · 新稿
+Test-time compute：继续改，还是重新采样？
+Adaptive Replay Refinement: Allocating Test-Time Compute Between Revision and Resampling
+https://alexhuang13.github.io/digest/2026-10-21.html#paper-2610-28294
+
+简讯 · 新稿
+TEX：用 K×K 执行矩阵扩展测试代理
+TEX: Test-Time Scaling Testing Agents via Execution-based Cross-Validation
+https://alexhuang13.github.io/digest/2026-10-21.html#paper-2610-27290
+
+简讯 · 新稿
+每 token 能耗由 active bytes 与实际 decode time 解释
+The Token-Energy Law of LLM Decode
+https://alexhuang13.github.io/digest/2026-10-21.html#paper-2610-28576
+
+简讯 · 新稿
+让一个策略适应任意 test-time 预算
+Rewards for Budget-Aware Multi-Turn Agents That Adapt to Arbitrary Test-Time Constraints
+https://alexhuang13.github.io/digest/2026-10-21.html#paper-2610-28409
+
+简讯 · 新稿
+VLM 的子任务 inverse scaling
+On the Limits of Scale: Inverse Scaling in Vision-Language Models
+https://alexhuang13.github.io/digest/2026-10-21.html#paper-2610-27360
+
+简讯 · 新稿
+图推理扩展：把 adjacency 从 prompt 中拿出来
+Scaling Graph Reasoning in Language Models with Learnable Graph Positional Encodings
+https://alexhuang13.github.io/digest/2026-10-21.html#paper-2610-27439
+
+简讯 · 新稿
+负结果：多代理协作没有通过 compute-matched 检验
+Does Multi-Agent Collaboration Pay When Agents Serve Users?
+https://alexhuang13.github.io/digest/2026-10-21.html#paper-2610-27655
+
+简讯 · 新稿
+LaLa-World：用语言接口混合异构 world-model 数据
+LaLa-World: Scaling Latent World Models with Natural Language Actions
+https://alexhuang13.github.io/digest/2026-10-21.html#paper-2610-27851
+
+每日精读 · 2022
+InstructGPT：偏好、KL 与 pretraining mix
+https://alexhuang13.github.io/digest/2026-10-21.html#classic-instructgpt
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-10-21.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

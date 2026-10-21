@@ -4,8 +4,38 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-10-20",
+  "latest": "2026-10-21",
   "issues": [
+    {
+      "date": "2026-10-21",
+      "title": "步长、尺度与多目标前沿",
+      "url": "/digest/2026-10-21.html",
+      "translations": {
+        "en": {
+          "title": "Step Size, Scale, and Pareto Frontiers",
+          "url": "/digest/en/2026-10-21.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2610.28072v1",
+        "https://arxiv.org/html/2610.27747v1",
+        "https://arxiv.org/html/2610.27447v1",
+        "https://arxiv.org/html/2610.27895v1",
+        "https://arxiv.org/html/2610.27789v1",
+        "https://arxiv.org/abs/2610.28036v1",
+        "https://arxiv.org/html/2610.27590v1",
+        "https://arxiv.org/abs/2610.28294v1",
+        "https://arxiv.org/abs/2610.27290v1",
+        "https://arxiv.org/abs/2610.28576v1",
+        "https://arxiv.org/abs/2610.28409v1",
+        "https://arxiv.org/abs/2610.27360v1",
+        "https://arxiv.org/abs/2610.27439v1",
+        "https://arxiv.org/abs/2610.27655v1",
+        "https://arxiv.org/abs/2610.27851v1",
+        "https://arxiv.org/html/2203.02155v1",
+        "https://dl.acm.org/doi/10.5555/3600270.3602281"
+      ]
+    },
     {
       "date": "2026-10-20",
       "title": "多算哪一步，多看哪种数据",
