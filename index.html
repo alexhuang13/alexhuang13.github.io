@@ -253,9 +253,11 @@
     @media(prefers-reduced-motion:reduce){body,.theme-toggle,.theme-toggle > span{transition:none}}
     @media print{.theme-toggle{display:none}}
   </style>
+  <link rel="stylesheet" href="/assets/background-music.css?v=1">
+  <script defer src="/assets/background-music.js?v=1"></script>
   <!-- reading-light:start -->
-  <link rel="stylesheet" href="/digest/assets/reading-light.css?v=9af6ee23fdd6">
-  <script defer src="/digest/assets/reading-light.js?v=ffbea5fcaf53"></script>
+  <link rel="stylesheet" href="/digest/assets/reading-light.css?v=e650ea0cbd5d">
+  <script defer src="/digest/assets/reading-light.js?v=980ac96ba644"></script>
   <!-- reading-light:end -->
 </head>
 <body>
@@ -269,11 +271,22 @@
       <a href="#lecture-notes">Lecture Notes</a>
       <a href="./digest/en/">Research Digest</a>
     </div>
+    <div class="music-control" id="home-music-control" hidden>
+      <button class="music-toggle" id="home-music-toggle" type="button" aria-pressed="false" aria-label="Play background music: Conformal, Cover Me" title="Play Conformal, Cover Me">
+        <svg class="music-note" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18V5l12-2v13M9 9l12-2"/><ellipse cx="6" cy="18" rx="3" ry="2.5"/><ellipse cx="18" cy="16" rx="3" ry="2.5"/></svg>
+        <svg class="music-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5v14M15 5v14" stroke-width="3"/></svg>
+      </button>
+      <div class="music-caption">
+        <span id="home-music-status" role="status">Conformal, Cover Me</span>
+        <a href="https://suno.com/s/EQ3BGiiYimq5JxUD" target="_blank" rel="noopener noreferrer">Listen on Suno ↗</a>
+      </div>
+    </div>
     <button class="theme-toggle" id="home-theme-toggle" type="button" role="switch" aria-checked="false" aria-label="Dark mode" title="Switch to dark mode">
       <span class="theme-sun" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg></span>
       <span class="theme-moon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M20.9 13.3A9 9 0 0 1 10.7 3.1 9 9 0 1 0 20.9 13.3Z"/></svg></span>
     </button>
   </nav>
+  <audio id="home-background-music" loop preload="none" src="https://cdn1.suno.ai/f422be7e-6397-4080-a837-2016a96c2185.mp4"></audio>
   <main class="page">
     <!-- Content -->
     <div class="content">
@@ -536,3 +549,4 @@
   </script>
 </body>
 </html>
+
