@@ -1,0 +1,585 @@
+{
+  "date": "2026-10-22",
+  "number": "009",
+  "window": "2026-10-19 11:15 — 2026-10-22 11:15 · America/New_York",
+  "publishedAt": "2026-10-22T15:15:00Z",
+  "readingMinutes": 24,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "Daily research notes",
+  "title": "Timing, Geometry, and the Limits of Gaussianity",
+  "subtitle": "Data × learning rate · Muon initialization · Graph tests · Kaplan scaling laws",
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training",
+    "Statistics"
+  ],
+  "intro": "Three main reads connect joint schedules, initialization geometry, and moment criteria for graph statistics. Fourteen briefs cover Muon, scaling, and post-training blogs. The classic revisits Kaplan scaling laws to separate data, model, step, and parallelism budgets.",
+  "articles": [
+    {
+      "id": "paper-2610-29348",
+      "paper": "Data Schedules and Learning Rate Schedules Should Be Designed Together",
+      "authors": "Haodong Wen · Kairong Luo · Tingkai Yan · Wenguang Chen · Kaifeng Lyu",
+      "url": "https://arxiv.org/html/2610.29348v1",
+      "title": "When good data enters depends on when the learning rate decays",
+      "kind": "Main read · subscribed-author preprint",
+      "dateNote": "First posted 2026-10-21 03:42 EDT · v1; listed October 22",
+      "evidence": "Read §§2–3, theoretical interpretation, and experimental setup; not reproduced",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Let γ(t) be the mid-training (MT) fraction and η(t) the learning rate. With compute and MT tokens fixed, introducing MT earlier can win under decay and lose under constant LR. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\min_{0\\le\\gamma(t)\\le1}\\mathbb E\\,L_{\\rm MT}(\\theta_T),\\qquad \\int_0^T\\gamma(t)\\,dt\\le\\alpha T,\\qquad R(s)=\\int_s^T\\eta(t)\\gamma(t)\\,dt",
+          "label": "γ allocates data; R is the cumulative learning rate available to MT-specific features"
+        },
+        {
+          "type": "text",
+          "text": "The explanation uses block-diagonal quadratics and additive gradient noise. Extract one MT-specific direction with curvature λ>0, initial value z₀, variance ν, and discrete-step interval h. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "dz_t=-\\lambda\\eta(t)\\gamma(t)z_t\\,dt+\\eta(t)\\sqrt{h\\nu}\\,dB_t,\\qquad \\mathbb E\\frac{\\lambda z_T^2}{2}=\\frac{\\lambda z_0^2}{2}e^{-2\\lambda R(0)}+\\frac{h\\lambda\\nu}{2}\\int_0^T\\eta(s)^2e^{-2\\lambda R(s)}\\,ds",
+          "label": "One-direction form of the paper's linear SDE: bias followed by variance"
+        },
+        {
+          "type": "text",
+          "text": "With constant η, spending the budget fixes R(0); placing MT last maximizes every R(s), minimizing variance. Under decay, moving MT earlier also raises R(0), creating a bias–variance trade-off. [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Setting",
+            "Fixed budget",
+            "Observation"
+          ],
+          "rows": [
+            [
+              "Dense 630M",
+              "200B PT, then 20.97B tokens; MT 10% / 25% / 47.75%",
+              "Full decay favors earlier mixing; constant LR favors final pure MT"
+            ],
+            [
+              "2.99B MoE",
+              "40B PT, then 4B or 10B tokens",
+              "Schedule rankings also reverse"
+            ],
+            [
+              "19 LR-duration scans",
+              "Data schedule fixed within each scan",
+              "Best tested decay starts after MT entry"
+            ]
+          ],
+          "caption": "Outcome: final MT validation loss, rather than downstream capability or a universal recipe. [1]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The SDE assumes fixed additive noise. Its power-law three-stage optimum requires further assumptions and long horizons; the decomposition alone does not establish an optimum for general LLM training. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-28975",
+      "paper": "How Does Orthogonalization Adapt to the Neural Network Hessian Structure? A Gradient Self Outer-Product Analysis at Initialization",
+      "authors": "Shenyang Deng · Garvit Goyal · Tianyu Pang · Shuhua Yu · Yaoqing Yang",
+      "url": "https://arxiv.org/html/2610.28975v1",
+      "title": "Muon's initialization geometry: a diagonal mean is not a diagonal trajectory",
+      "kind": "Main read · new Muon preprint",
+      "dateNote": "First posted 2026-10-20 18:48 EDT · v1; listed October 22",
+      "evidence": "Read assumptions, Theorems 1–4, simulations, and LLM initialization experiments",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The object is E[GGᵀ] over random initialization. It motivates compatibility with known row-block Hessian structure, without estimating Hessian values. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "D=\\operatorname{polar}(G)=(GG^\\top)^{\\dagger/2}G,\\qquad H_{\\rm Muon}=(GG^\\top)^{1/2}\\otimes I",
+          "label": "Exact polar expression; †/2 denotes the pseudoinverse square root, while NS implementations are approximate"
+        },
+        {
+          "type": "text",
+          "text": "For W∈Rᵈˣᵏ, G=(WWᵀ−M)W, fixed M⪰0, and independent N(0,1) weights, Wishart moments give the exact identity: [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathbb E[GG^\\top]=a_3I-2a_2M+kM^2,\\quad a_2=k(k+d+1),\\quad a_3=k^3+3(d+1)k^2+(d^2+3d+4)k",
+          "label": "Theorem 1: for fixed d and M, the leading diagonal is k³, with generic nonzero target off-diagonals of order k²"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Model",
+            "Expected structure / orders"
+          ],
+          "rows": [
+            [
+              "Deep-linear hidden layers",
+              "E[GᵢGᵢᵀ] is exactly scalar I"
+            ],
+            [
+              "Two-layer ReLU",
+              "Both diagonal/off-diagonal ratios grow as Θ(width)"
+            ],
+            [
+              "Single-layer linear attention",
+              "Q, K, V have scalar-I expected Grams; O retains a target term"
+            ]
+          ],
+          "caption": "All statements require the paper's independent Gaussian initialization and model-specific assumptions. [2]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Off-diagonal cancellation in expectation proves neither operator-norm concentration of one Gram nor persistence during training. LLM tests use initialization statistics—25 initializations and 64 fixed sequences—not a theorem about stable spectral bases along training. [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-29215",
+      "paper": "Third and Fourth Moment Phenomena for Monochromatic Edges and Applications to Graph-Based Two-Sample Tests",
+      "authors": "Siva Athreya · Bhaswar B. Bhattacharya · Yogesh Dahiya · Karambir Das · Spandan Ghoshal · Sourish Maniyar · Elizabeth Sara Roy",
+      "url": "https://arxiv.org/html/2610.29215v1",
+      "title": "When the third moment detects Gaussianity better than the fourth",
+      "kind": "Main read · new Wharton-author preprint",
+      "dateNote": "First posted 2026-10-21 01:15 EDT · v1",
+      "evidence": "Read §1 main theorems, two-sample setting, and counterexample discussion",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Graph two-sample tests count between-group edges in a pooled similarity graph. Under the Poissonized null, conditioning on locations gives independent Bernoulli(p) labels. Balanced and unbalanced proportions require different Gaussian criteria. [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "T_n=\\sum_{\\{i,j\\}\\in E(G_n)}\\mathbf1\\{X_i=X_j\\},\\qquad U_n=\\frac{T_n-\\mathbb ET_n}{\\sqrt{\\operatorname{Var}(T_n)}},\\qquad |E(G_n)|\\to\\infty",
+          "label": "Simple undirected graphs; independent Bernoulli(p) labels with fixed p∈(0,1)"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Label proportion",
+            "Moment criterion equivalent to Uₙ⇒N(0,1)"
+          ],
+          "rows": [
+            [
+              "p≠1/2 and p≠(1±1/√3)/2",
+              "E[Uₙ³]→0, or E[Uₙ⁴]→3"
+            ],
+            [
+              "p=(1±1/√3)/2",
+              "E[Uₙ³]→0; the fourth-moment criterion loses discrimination"
+            ],
+            [
+              "p=1/2",
+              "E[Uₙ⁴]→3; the third moment alone is insufficient"
+            ]
+          ],
+          "caption": "Theorem 1.1; the exceptional p values are essential. [3]"
+        },
+        {
+          "type": "text",
+          "text": "A star graph explains the exception: conditioning on its center leaves a two-point limit. This is a simplified derivation of the paper's star example. [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "U_n\\Rightarrow \\operatorname{sgn}(2p-1)\\frac{X-p}{\\sqrt{p(1-p)}},\\qquad \\mathbb E Z^4=\\frac1{p(1-p)}-3=3\\quad\\text{if }p(1-p)=\\frac16",
+          "label": "Z is the two-point limit: fourth moment 3 does not make its distribution Gaussian"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "For pₙ→0 the third-moment condition stays sufficient but is no longer necessary. The two-sample application uses Poissonization, rather than every fixed-size permutation null. [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-27674",
+      "paper": "Hybrid Momentum Methods for Optimizing Deep Learning Models",
+      "authors": "Haifeng Xu · Yijin Ren · Chenyu Zhou · Qi Deng · Dongdong Ge · Yinyu Ye",
+      "url": "https://arxiv.org/html/2610.27674v2",
+      "title": "HyMUON combines long-history averaging with a fast EMA",
+      "kind": "Brief",
+      "dateNote": "First October 20; v2 October 21 05:25 EDT; overlap-window addition",
+      "evidence": "Read v2 method and C4 setup; version diff not fully checked",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "HyM blends long-history averaging with fast momentum; HyMUON then applies NS. LLaMA-1.3B/C4 at 10k steps gives validation loss 2.777 versus 2.903. HyMUON is tuned and evaluates averaged iterates; Muon uses previously selected settings and training iterates. The v2 note concerns author order/affiliations; no substantive new result is confirmed. [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-27321",
+      "paper": "Physics-Inspired Optimizers beyond the Edge of Stability: Period-Two Orbits and Delayed Instability",
+      "authors": "Alexander Itin",
+      "url": "https://arxiv.org/html/2610.27321v1",
+      "title": "Kinetic Muon: the step map changes period-two stability",
+      "kind": "Brief",
+      "dateNote": "First October 19 17:40 EDT · v1; overlap-window addition",
+      "evidence": "Read abstract and Muon-related experimental passages",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Kinetic maps wrap update directions, including Muon. In the reduced model, period-two linear stability requires step-length elasticity in (0,1). Many ResNet-18 gains can be reproduced by matching effective LR, so default-LR comparisons are insufficient. [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-29352",
+      "paper": "Don't Stop Long-Context Continual Pre-Training Too Early: An Empirical Scaling Law",
+      "authors": "Ziqing Qiao · Xiaoyue Xu · Sikui Zhang · Yinuo Xu · Bingxiang He · Chaojun Xiao · Xu Han",
+      "url": "https://arxiv.org/abs/2610.29352v1",
+      "title": "Long-context continuation separates short- and long-context budgets",
+      "kind": "Brief",
+      "dateNote": "First October 21 03:46 EDT · v1",
+      "evidence": "Based on the original abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Five model scales and over 100 budget configurations support an additive power law. Constant-Last4 averages the latest four constant-LR checkpoints. A 1.22B trajectory at about 100B LCCP tokens shows no clear saturation within that range, rather than indefinitely. [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-29458",
+      "paper": "Harness Scaling for Generalizable Agentic Reinforcement Learning",
+      "authors": "Fei Bai · Huatong Song · Chuan Hao · Ran Tao · Jian Yang · Bryan Dai · Wayne Xin Zhao · Ji-Rong Wen",
+      "url": "https://arxiv.org/abs/2610.29458v1",
+      "title": "Harness diversity as another RL scaling axis",
+      "kind": "Brief",
+      "dateNote": "First October 21 05:15 EDT · v1",
+      "evidence": "Based on abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A factorized configuration space and balanced factorial coverage create a compact cross-harness curriculum. The authors report transfer to unseen white-box configurations and external black-box harnesses; the abstract does not establish a universal power-law exponent. [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-29681",
+      "paper": "Scaling Multilingual Pretraining of Pixel Language Models",
+      "authors": "Ilker Kesen · Jenny Kunz · Kasra Malihi · Desmond Elliott",
+      "url": "https://arxiv.org/abs/2610.29681v1",
+      "title": "Pixel LMs: languages, scripts, and capacity scale differently",
+      "kind": "Brief",
+      "dateNote": "First October 21 08:57 EDT · v1",
+      "evidence": "Based on abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "At fixed per-language compute, three axes are evaluated on five tasks and 83 languages. Capacity mitigates multilingual interference; language/script expansion helps locally, while unseen-script transfer does not keep improving with scale. [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-28698",
+      "paper": "Scaling in Games: Continued Pre-Training For Embodied Agents In Diverse Virtual Worlds",
+      "authors": "Kuan Zhang · Yukun Chen · Zhihao Yang · Yue Su · Xiangnan Wu · Zirong Chen · Run Luo · Jinkun Hou · Tao Tan · Yinhe Zheng · Yiming Li",
+      "url": "https://arxiv.org/abs/2610.28698v1",
+      "title": "Virtual-world CPT: diversity has limits for distant transfer",
+      "kind": "Brief",
+      "dateNote": "First October 20 07:09 EDT · v1; overlap-window addition",
+      "evidence": "Based on abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "120 configurations span 0.8B–27B, 50–1,600 hours, and five mixtures. Diversity helps related-world transfer but has limited distant-world gains; larger single-world models can transfer worse. The authors distinguish early interface learning from later world-specific learning. [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-29657",
+      "paper": "Effects of Model Scale and Quantization on Social Bias and Abstention in Question Answering",
+      "authors": "Kuniko Paxton · Ifeoluwa Wuraola · Dhavalkumar Thakker",
+      "url": "https://arxiv.org/abs/2610.29657v1",
+      "title": "Fewer biased answers may mean more Unknown responses",
+      "kind": "Brief",
+      "dateNote": "First October 21 · v1",
+      "evidence": "Based on abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "On BBQ, larger Qwen3/Gemma-3/SmolLM2 models improve accuracy without a simple bias-scaling trend. Of 26 configurations with fewer biased responses, 20 also increase over-abstention, making refusal and forced-choice controls essential. [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-28834",
+      "paper": "Where Should a Stuck Agent Spend Its Next Tokens? Causal Attribution of Inference-Time Resources",
+      "authors": "Saiyue Lyu · Jerrold Huang · Yunbei Zhang · Janet Wang · Zhenting Wang · Yingqiang Ge · Haibo Zhang",
+      "url": "https://arxiv.org/abs/2610.28834v1",
+      "title": "After failure: more compute, information, or feedback?",
+      "kind": "Brief",
+      "dateNote": "First October 20 14:59 EDT · v1; overlap-window addition",
+      "evidence": "Based on abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "BRA fixes the failed state and revision protocol: six models, 194 function-level and 126 repository-level failures. Specifications help consistently; compute's value declines with capability. Three of four frontier models overwhelmingly choose feedback yet gain less than random resource selection. [11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-30009",
+      "paper": "Mitigating Model Collapse through Dreaming Learning",
+      "authors": "Matteo Benati · Alessandro Londei · Denise Lanzieri · Raffaello Mastromarino · Vittorio Loreto",
+      "url": "https://arxiv.org/abs/2610.30009v1",
+      "title": "Low-temperature synthetic-data sharpening and high-temperature dreaming",
+      "kind": "Brief",
+      "dateNote": "First October 21 12:41 EDT · v1",
+      "evidence": "Based on abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In a controlled Markov model, recursive Tₛ<1 sampling moves subdominant eigenvalues toward the unit circle, even with data accumulation. A T_d>1 self-sampling regularizer mitigates drift over 5,000 generations and in LSTM/GPT-2 124M tests, without a general LLM guarantee. [12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-28785",
+      "paper": "Measure First, Then Allocate: Calibrated Rollout Budgets for MCP Agents in Reinforcement Learning",
+      "authors": "Hieu Tran · Zonghai Yao · Sunjae Kwon · Hong Yu",
+      "url": "https://arxiv.org/abs/2610.28785v1",
+      "title": "BRACE forecasts within-group reward contrast before generation",
+      "kind": "Brief",
+      "dateNote": "First October 20 14:15 EDT · v1; overlap-window addition",
+      "evidence": "Based on abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Historical evidence, success-rate uncertainty, and correlated rewards predict mixed-reward groups before allocation. At three Qwen3-VL scales, fewer new rollouts exceed baseline peaks. Historical-bank collection is accounted for separately, so this is not the same reduction in total training cost. [13]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-29823",
+      "paper": "MemoryTax: The Bitter Lesson of Agent Memory",
+      "authors": "Zedong Peng",
+      "url": "https://arxiv.org/abs/2610.29823v1",
+      "title": "MemoryTax: a stronger reader cannot recover what a writer discarded",
+      "kind": "Brief",
+      "dateNote": "First October 21 10:46 EDT · v1",
+      "evidence": "Based on abstract; small empirical study",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "One LoCoMo conversation, 152 questions, one run per cell compare memory methods across three model capabilities. Writer quality limits designed memory. Photo-caption access explains part of the agent advantage; on 88 photo-free questions, Pi and full context differ by one answer. [14]"
+        }
+      ]
+    },
+    {
+      "id": "blog-graft",
+      "paper": "Reducing Reward Hacking by Localizing Bad Behavior Instead of Penalizing It",
+      "authors": "Shawn Hu · Jake Ward · Aria Wong · Nathan Hu · Bryce Woodworth · Alexander Matt Turner · Alex Cloud",
+      "url": "https://alignment.anthropic.com/2026/graft/",
+      "title": "GRAFT routes gradients with monitor flags, then removes FORGET",
+      "kind": "Brief",
+      "dateNote": "Published October 19; overlap-window addition",
+      "evidence": "Read full technical blog; not every experiment in the linked paper",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Flagged trajectories update only FORGET; unflagged ones update both adapters, with RETAIN-only anchor training. Removing FORGET gives near-zero hacking and nearly +20pp correctness over base in Qwen3-8B/Countdown-Code. RL uses handcrafted monitors and single turns; constructing anchors remains a limitation. [15]"
+        }
+      ]
+    },
+    {
+      "id": "blog-train-agents",
+      "paper": "A curriculum for post-training agents",
+      "authors": "Ben Burtenshaw · Sergio Paniego · Merve Noyan",
+      "url": "https://huggingface.co/blog/huggingface/train-agents",
+      "title": "An agent-training roadmap: supervision granularity and rollout bottlenecks",
+      "kind": "Brief",
+      "dateNote": "Published October 20; overlap-window addition",
+      "evidence": "Read technical synthesis; not a new algorithm or controlled benchmark",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The synthesis connects SFT, distillation, single-turn RL, stateful environments, and full harnesses. Supervision shifts from token probabilities to trajectory outcomes, while long-episode generation becomes the bottleneck. It links corresponding TRL/OpenEnv/AsyncGRPO implementations. [16]"
+        }
+      ]
+    },
+    {
+      "id": "blog-altk-evolve",
+      "paper": "ALTK-Evolve: How learned memory tops the τ²-bench leaderboard on customer service tasks without a frontier model",
+      "authors": "Ashwath Vaithinathan Aravindan · Vatche Isahagian · Vinod Muthusamy · Jayaram Radhakrishnan · Evelyn Duesterwald et al.",
+      "url": "https://huggingface.co/blog/ibm-research/altk-evolve-bc",
+      "title": "ALTK-Evolve distills training-task outcomes into guidelines",
+      "kind": "Brief",
+      "dateNote": "Published October 20; overlap-window addition",
+      "evidence": "Read method, split description, and main results",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "GPT-4.1 extracts rules from training trajectories, then freezes them for held-out prompts without weight updates. Retail Pass^4 is 67.5%—all four trials succeed, not pass@4. The leaderboard snapshot is October 12, and longer guidelines increase token use. [17]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-kaplan-scaling",
+    "paperId": "arxiv:2001.08361",
+    "shortTitle": "Kaplan scaling laws",
+    "year": 2020,
+    "topics": [
+      "Scaling laws"
+    ],
+    "paper": "Scaling Laws for Neural Language Models",
+    "authors": "Jared Kaplan · Sam McCandlish · Tom Henighan · Tom B. Brown · Benjamin Chess · Rewon Child · Scott Gray · Alec Radford · Jeffrey Wu · Dario Amodei",
+    "url": "https://arxiv.org/html/2001.08361v1",
+    "title": "Kaplan scaling laws: identify the resource that limits loss",
+    "kind": "Daily classic · historical paper",
+    "dateNote": "First 2020-01-22 22:59 EST (January 23 UTC); read v1; year refers to the technical report",
+    "evidence": "Read §1.2 and §§4–6 with fitting setup; empirical laws, not universal theorems",
+    "recognition": {
+      "label": "Foundational scaling-laws work; OpenAlex record: 1,745 citations (checked 2026-10-22)",
+      "url": "https://api.openalex.org/works/W3001279689"
+    },
+    "question": "If data and LR schedules become optimization variables, how much of the fitted C-to-N exponent is a property of the training protocol?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "After Transformers (2017) and GPT-2 (2019), the allocation question was larger models versus longer training. This work relates WebText2 token cross-entropy to non-embedding parameters N, data D, steps S, and tokens per step B. [18]"
+      },
+      {
+        "type": "equation",
+        "tex": "L(N)\\simeq(N_c/N)^{0.076},\\qquad L(D)\\simeq(D_c/D)^{0.095},\\qquad L(C_{\\min})\\simeq(C_c/C_{\\min})^{0.050}",
+        "label": "Each empirical fit requires the other resources not to bind; the three laws cannot simply be multiplied"
+      },
+      {
+        "type": "equation",
+        "tex": "L(N,D)=\\left[\\left(\\frac{N_c}{N}\\right)^{\\alpha_N/\\alpha_D}+\\frac{D_c}{D}\\right]^{\\alpha_D}",
+        "label": "The joint fit recovers a single-resource law when one term dominates"
+      },
+      {
+        "type": "equation",
+        "tex": "L(N,S_{\\min})=\\left(\\frac{N_c}{N}\\right)^{\\alpha_N}+\\left(\\frac{S_c}{S_{\\min}}\\right)^{\\alpha_S},\\qquad \\alpha_N\\simeq0.077,\\quad\\alpha_S\\simeq0.76",
+        "label": "Learning curves are fitted after warmup; Sₘᵢₙ adjusts for batch size"
+      },
+      {
+        "type": "equation",
+        "tex": "B_{\\rm crit}(L)\\simeq B_*L^{-1/\\alpha_B},\\quad\\alpha_B\\simeq0.21,\\qquad S_{\\min}=\\frac{S}{1+B_{\\rm crit}/B},\\qquad C_{\\min}=\\frac{6NBS}{1+B/B_{\\rm crit}}",
+        "label": "Actual FLOPs differ from adjusted minimum compute; the model includes parallelism efficiency"
+      },
+      {
+        "type": "equation",
+        "tex": "\\alpha_C=\\left(\\alpha_N^{-1}+\\alpha_B^{-1}+\\alpha_S^{-1}\\right)^{-1},\\qquad N\\propto C_{\\min}^{\\alpha_C/\\alpha_N},\\quad B\\propto C_{\\min}^{\\alpha_C/\\alpha_B},\\quad S_{\\min}\\propto C_{\\min}^{\\alpha_C/\\alpha_S}",
+        "label": "Allocation exponents follow from the fitted training model, rather than guessing from three one-dimensional curves"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Type",
+          "N exponent",
+          "B exponent",
+          "Sₘᵢₙ exponent"
+        ],
+        "rows": [
+          [
+            "Direct empirical allocation",
+            "0.73",
+            "0.24",
+            "0.03"
+          ],
+          [
+            "Joint-model prediction",
+            "about 0.71",
+            "about 0.26",
+            "about 0.07"
+          ]
+        ],
+        "caption": "Section 6: predicted and empirical exponents differ; empirical D=BS grows roughly as Cₘᵢₙ^0.27. [18]"
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "The exponents depend on data, tokenizer, optimizer, and budget adjustments; §6.3 identifies extrapolation contradictions. Chinchilla, read October 17, later revised allocation under a different protocol. [18]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.29348v1",
+      "title": "Joint data/LR schedules · §§2–3"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.28975v1",
+      "title": "Muon initialization Gram · assumptions, theorems, experiments"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.29215v1",
+      "title": "Monochromatic-edge moments · §1 theorems and star example"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.27674v2",
+      "title": "HyMUON · v2 abstract/method and revision note"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.27321v1",
+      "title": "Kinetic maps · abstract and Muon-related text"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.29352v1",
+      "title": "Long-context scaling · original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.29458v1",
+      "title": "Harness Scaling · original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.29681v1",
+      "title": "Pixel LM scaling · original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.28698v1",
+      "title": "Virtual-world CPT scaling · original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.29657v1",
+      "title": "Scale, bias, abstention · original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.28834v1",
+      "title": "Inference-resource attribution · original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.30009v1",
+      "title": "Dreaming Learning · original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.28785v1",
+      "title": "BRACE · original abstract and budget boundary"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.29823v1",
+      "title": "MemoryTax · original abstract and sample boundary"
+    },
+    {
+      "url": "https://alignment.anthropic.com/2026/graft/",
+      "title": "GRAFT · authors' technical blog"
+    },
+    {
+      "url": "https://huggingface.co/blog/huggingface/train-agents",
+      "title": "Agent post-training · Hugging Face technical synthesis"
+    },
+    {
+      "url": "https://huggingface.co/blog/ibm-research/altk-evolve-bc",
+      "title": "ALTK-Evolve · IBM authors' blog"
+    },
+    {
+      "url": "https://arxiv.org/html/2001.08361v1",
+      "title": "Kaplan scaling laws · historical original, §§1, 4–6"
+    },
+    {
+      "url": "https://api.openalex.org/works/W3001279689",
+      "title": "OpenAlex citation record · checked 2026-10-22"
+    }
+  ]
+}

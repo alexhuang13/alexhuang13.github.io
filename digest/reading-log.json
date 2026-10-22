@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-10-22",
+    "paperId": "arxiv:2001.08361",
+    "paper": "Scaling Laws for Neural Language Models",
+    "shortTitle": "Kaplan scaling laws",
+    "year": 2020,
+    "topics": [
+      "Scaling laws"
+    ],
+    "recognition": {
+      "label": "Scaling laws 重要历史工作；OpenAlex 条目 1,745 次引用（查询 2026-10-22）",
+      "url": "https://api.openalex.org/works/W3001279689"
+    },
+    "source": "https://arxiv.org/html/2001.08361v1",
+    "url": "/digest/2026-10-22.html#classic-kaplan-scaling"
+  },
+  {
     "date": "2026-10-21",
     "paperId": "arxiv:2203.02155",
     "paper": "Training Language Models to Follow Instructions with Human Feedback",

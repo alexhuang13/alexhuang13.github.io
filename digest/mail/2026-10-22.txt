@@ -1,0 +1,101 @@
+RESEARCH DIGEST / 2026-10-22
+时序、几何与正态性的边界
+数据×学习率 · Muon 初始化 · 图检验 · 精读 Kaplan scaling laws
+
+中文: https://alexhuang13.github.io/digest/2026-10-22.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-22.html
+
+主读 · 指定作者新稿
+好数据何时进入，取决于学习率何时下降
+Data Schedules and Learning Rate Schedules Should Be Designed Together
+https://alexhuang13.github.io/digest/2026-10-22.html#paper-2610-29348
+
+主读 · Muon 新稿
+Muon 的初始化几何：平均 Gram 对角，不等于单次轨迹对角
+How Does Orthogonalization Adapt to the Neural Network Hessian Structure? A Gradient Self Outer-Product Analysis at Initialization
+https://alexhuang13.github.io/digest/2026-10-22.html#paper-2610-28975
+
+主读 · Wharton 作者新稿
+图上三阶矩何时比四阶矩更会识别正态性
+Third and Fourth Moment Phenomena for Monochromatic Edges and Applications to Graph-Based Two-Sample Tests
+https://alexhuang13.github.io/digest/2026-10-22.html#paper-2610-29215
+
+简讯
+HyMUON：长历史平均与快速 EMA 共同决定方向
+Hybrid Momentum Methods for Optimizing Deep Learning Models
+https://alexhuang13.github.io/digest/2026-10-22.html#paper-2610-27674
+
+简讯
+Kinetic Muon：步长映射改变两周期稳定性
+Physics-Inspired Optimizers beyond the Edge of Stability: Period-Two Orbits and Delayed Instability
+https://alexhuang13.github.io/digest/2026-10-22.html#paper-2610-27321
+
+简讯
+长上下文续训：把 short-context 与 long-context token 预算分开拟合
+Don't Stop Long-Context Continual Pre-Training Too Early: An Empirical Scaling Law
+https://alexhuang13.github.io/digest/2026-10-22.html#paper-2610-29352
+
+简讯
+Harness diversity 是 RL 的另一个扩展轴
+Harness Scaling for Generalizable Agentic Reinforcement Learning
+https://alexhuang13.github.io/digest/2026-10-22.html#paper-2610-29458
+
+简讯
+Pixel LM：更多语言、文字系统与容量，收益并不相同
+Scaling Multilingual Pretraining of Pixel Language Models
+https://alexhuang13.github.io/digest/2026-10-22.html#paper-2610-29681
+
+简讯
+虚拟世界 CPT：数据多样性对远域迁移有边界
+Scaling in Games: Continued Pre-Training For Embodied Agents In Diverse Virtual Worlds
+https://alexhuang13.github.io/digest/2026-10-22.html#paper-2610-28698
+
+简讯
+少偏见回答，可能只是多回答了 Unknown
+Effects of Model Scale and Quantization on Social Bias and Abstention in Question Answering
+https://alexhuang13.github.io/digest/2026-10-22.html#paper-2610-29657
+
+简讯
+卡住以后：多算、补信息、拿反馈，哪个更值？
+Where Should a Stuck Agent Spend Its Next Tokens? Causal Attribution of Inference-Time Resources
+https://alexhuang13.github.io/digest/2026-10-22.html#paper-2610-28834
+
+简讯
+低温合成数据的谱收缩与高温 dreaming
+Mitigating Model Collapse through Dreaming Learning
+https://alexhuang13.github.io/digest/2026-10-22.html#paper-2610-30009
+
+简讯
+BRACE：生成之前预测组内 reward contrast
+Measure First, Then Allocate: Calibrated Rollout Budgets for MCP Agents in Reinforcement Learning
+https://alexhuang13.github.io/digest/2026-10-22.html#paper-2610-28785
+
+简讯
+MemoryTax：更强的 reader 不能恢复 writer 丢掉的内容
+MemoryTax: The Bitter Lesson of Agent Memory
+https://alexhuang13.github.io/digest/2026-10-22.html#paper-2610-29823
+
+简讯
+GRAFT：用监测结果路由梯度，最后移除 FORGET adapter
+Reducing Reward Hacking by Localizing Bad Behavior Instead of Penalizing It
+https://alexhuang13.github.io/digest/2026-10-22.html#blog-graft
+
+简讯
+Agent 后训练路线图：监督粒度与 rollout 瓶颈
+A curriculum for post-training agents
+https://alexhuang13.github.io/digest/2026-10-22.html#blog-train-agents
+
+简讯
+ALTK-Evolve：将训练任务的成败蒸馏成规则
+ALTK-Evolve: How learned memory tops the τ²-bench leaderboard on customer service tasks without a frontier model
+https://alexhuang13.github.io/digest/2026-10-22.html#blog-altk-evolve
+
+每日精读 · 2020
+Kaplan scaling laws：先分清哪一个资源在限制 loss
+https://alexhuang13.github.io/digest/2026-10-22.html#classic-kaplan-scaling
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-10-22.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

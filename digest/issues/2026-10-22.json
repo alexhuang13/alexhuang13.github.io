@@ -1,0 +1,585 @@
+{
+  "date": "2026-10-22",
+  "number": "009",
+  "window": "2026-10-19 11:15 — 2026-10-22 11:15 · America/New_York",
+  "publishedAt": "2026-10-22T15:15:00Z",
+  "readingMinutes": 24,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "每日研究笔记",
+  "title": "时序、几何与正态性的边界",
+  "subtitle": "数据×学习率 · Muon 初始化 · 图检验 · 精读 Kaplan scaling laws",
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training",
+    "Statistics"
+  ],
+  "intro": "三篇主读关注联合日程、初始化几何与图统计量的矩条件；14 条简讯补入 Muon、扩展规律和后训练博客。经典精读回到 Kaplan scaling laws，分清数据、模型、步数与并行预算。",
+  "articles": [
+    {
+      "id": "paper-2610-29348",
+      "paper": "Data Schedules and Learning Rate Schedules Should Be Designed Together",
+      "authors": "Haodong Wen · Kairong Luo · Tingkai Yan · Wenguang Chen · Kaifeng Lyu",
+      "url": "https://arxiv.org/html/2610.29348v1",
+      "title": "好数据何时进入，取决于学习率何时下降",
+      "kind": "主读 · 指定作者新稿",
+      "dateNote": "首发 2026-10-21 03:42 EDT · v1；10月22日公开列表",
+      "evidence": "已读 §2–3、理论解释与实验设置；未复现实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "令 γ(t) 为 batch 中高价值 mid-training（MT）数据的比例，η(t) 为学习率。固定总算力和 MT token 数，只改投放时序：更早混入 MT 的优势，会在学习率由衰减改成常数时反转。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\min_{0\\le\\gamma(t)\\le1}\\mathbb E\\,L_{\\rm MT}(\\theta_T),\\qquad \\int_0^T\\gamma(t)\\,dt\\le\\alpha T,\\qquad R(s)=\\int_s^T\\eta(t)\\gamma(t)\\,dt",
+          "label": "γ 是数据比例；R 是此后留给 MT 特征的累计学习率"
+        },
+        {
+          "type": "text",
+          "text": "原文以共享／MT 专属／PT 专属的块对角二次型及加性梯度噪声作解释。以下抽出一个 MT 专属方向：曲率 λ>0、初值 z₀、噪声方差 ν，h 为离散步间隔。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "dz_t=-\\lambda\\eta(t)\\gamma(t)z_t\\,dt+\\eta(t)\\sqrt{h\\nu}\\,dB_t,\\qquad \\mathbb E\\frac{\\lambda z_T^2}{2}=\\frac{\\lambda z_0^2}{2}e^{-2\\lambda R(0)}+\\frac{h\\lambda\\nu}{2}\\int_0^T\\eta(s)^2e^{-2\\lambda R(s)}\\,ds",
+          "label": "原文线性 SDE 的单方向版本；两项依次为 bias 与 variance"
+        },
+        {
+          "type": "text",
+          "text": "常数 η 下，用满预算就固定了 R(0)；把 MT 放在末尾使每个 R(s) 最大，因此方差最小。衰减 η 下，把 MT 前移又可增大 R(0)，于是出现偏差–方差权衡。[1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "设置",
+            "固定预算",
+            "原文观察"
+          ],
+          "rows": [
+            [
+              "Dense 630M",
+              "200B PT 后继续 20.97B tokens；MT 10%／25%／47.75%",
+              "全程衰减偏好较早混合；常数 LR 偏好末段纯 MT"
+            ],
+            [
+              "2.99B MoE",
+              "40B PT 后继续 4B 或 10B tokens",
+              "同样出现日程排名反转"
+            ],
+            [
+              "19 组 LR-duration 扫描",
+              "每次固定数据日程",
+              "最佳测试值均在 MT 进入后才开始衰减"
+            ]
+          ],
+          "caption": "这里比较最终 MT validation loss；不是下游能力或通用最优训练配方。[1]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "SDE 使用固定加性噪声；真实 LLM 的噪声随数据和参数变化。谱幂律下的三阶段最优解还需附加条件与足够长时间，不能仅凭上述两项分解推广到一般训练。[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-28975",
+      "paper": "How Does Orthogonalization Adapt to the Neural Network Hessian Structure? A Gradient Self Outer-Product Analysis at Initialization",
+      "authors": "Shenyang Deng · Garvit Goyal · Tianyu Pang · Shuhua Yu · Yaoqing Yang",
+      "url": "https://arxiv.org/html/2610.28975v1",
+      "title": "Muon 的初始化几何：平均 Gram 对角，不等于单次轨迹对角",
+      "kind": "主读 · Muon 新稿",
+      "dateNote": "首发 2026-10-20 18:48 EDT · v1；10月22日公开列表",
+      "evidence": "已读假设、定理 1–4、模拟和 LLM 初始化实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "研究对象是随机初始化上的 E[GGᵀ]。作者借此解释 Muon 预条件器为何可能与已知 Hessian 行块结构相容；这不是直接估计 Hessian 数值。[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "D=\\operatorname{polar}(G)=(GG^\\top)^{\\dagger/2}G,\\qquad H_{\\rm Muon}=(GG^\\top)^{1/2}\\otimes I",
+          "label": "精确 polar 的表达；†/2 表示伪逆平方根，NS 实现是近似"
+        },
+        {
+          "type": "text",
+          "text": "最干净的例子是 W∈Rᵈˣᵏ、G=(WWᵀ−M)W，M⪰0 固定，Wᵢⱼ 独立 N(0,1)。用 Wishart 三阶矩可得到原文精确等式：[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathbb E[GG^\\top]=a_3I-2a_2M+kM^2,\\quad a_2=k(k+d+1),\\quad a_3=k^3+3(d+1)k^2+(d^2+3d+4)k",
+          "label": "原文定理 1；d、M 固定时，主导对角为 k³，非零目标非对角通常为 k²"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "模型",
+            "期望结构／阶数"
+          ],
+          "rows": [
+            [
+              "深线性网络隐藏层",
+              "E[GᵢGᵢᵀ] 精确为标量 I"
+            ],
+            [
+              "两层 ReLU",
+              "两层的平均对角／非对角比均为 Θ(width)"
+            ],
+            [
+              "单层线性 attention",
+              "Q、K、V 的期望 Gram 精确为标量 I；O 有目标相关项"
+            ]
+          ],
+          "caption": "均为独立 Gaussian 初始化及各模型专门假设下的结果。[2]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "E[GGᵀ] 的非对角消失，并未证明单个 GGᵀ 在算子范数下接近对角，更未证明训练中持续成立。LLM 实验也是初始化统计（25 次初始化、64 条固定序列），不能读成谱基随训练稳定的定理。[2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-29215",
+      "paper": "Third and Fourth Moment Phenomena for Monochromatic Edges and Applications to Graph-Based Two-Sample Tests",
+      "authors": "Siva Athreya · Bhaswar B. Bhattacharya · Yogesh Dahiya · Karambir Das · Spandan Ghoshal · Sourish Maniyar · Elizabeth Sara Roy",
+      "url": "https://arxiv.org/html/2610.29215v1",
+      "title": "图上三阶矩何时比四阶矩更会识别正态性",
+      "kind": "主读 · Wharton 作者新稿",
+      "dateNote": "首发 2026-10-21 01:15 EDT · v1",
+      "evidence": "已读 §1 主要定理、两样本设定与反例说明",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "图两样本检验先在合并样本上建相似性图，再数跨组边；在 Poissonized null 下，条件于点的位置，组标签独立 Bernoulli(p)。固定标签比例与平衡标签比例，可能需要不同的正态校准条件。[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "T_n=\\sum_{\\{i,j\\}\\in E(G_n)}\\mathbf1\\{X_i=X_j\\},\\qquad U_n=\\frac{T_n-\\mathbb ET_n}{\\sqrt{\\operatorname{Var}(T_n)}},\\qquad |E(G_n)|\\to\\infty",
+          "label": "简单无向图；Xᵢ 独立 Bernoulli(p)，p 固定于 (0,1)"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "标签比例",
+            "Uₙ⇒N(0,1) 的等价矩条件"
+          ],
+          "rows": [
+            [
+              "p≠1/2 且 p≠(1±1/√3)/2",
+              "E[Uₙ³]→0，或 E[Uₙ⁴]→3"
+            ],
+            [
+              "p=(1±1/√3)/2",
+              "E[Uₙ³]→0；四阶矩条件失去识别力"
+            ],
+            [
+              "p=1/2",
+              "E[Uₙ⁴]→3；仅三阶矩不够"
+            ]
+          ],
+          "caption": "原文定理 1.1，条件不能省去特殊 p。[3]"
+        },
+        {
+          "type": "text",
+          "text": "反例可用星图理解：条件于中心顶点，边数的大样本极限只剩一个 Bernoulli 随机量。下面是对原文星图例子的简化推导。[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "U_n\\Rightarrow \\operatorname{sgn}(2p-1)\\frac{X-p}{\\sqrt{p(1-p)}},\\qquad \\mathbb E Z^4=\\frac1{p(1-p)}-3=3\\quad\\text{if }p(1-p)=\\frac16",
+          "label": "Z 是上式两点极限；四阶矩恰为 3，分布仍不是 Gaussian"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "稀疏 pₙ→0 时，三阶矩条件仍充分，但不再必要。两样本应用明确使用 Poissonization；不能直接当作所有固定样本量 permutation null 的结论。[3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-27674",
+      "paper": "Hybrid Momentum Methods for Optimizing Deep Learning Models",
+      "authors": "Haifeng Xu · Yijin Ren · Chenyu Zhou · Qi Deng · Dongdong Ge · Yinyu Ye",
+      "url": "https://arxiv.org/html/2610.27674v2",
+      "title": "HyMUON：长历史平均与快速 EMA 共同决定方向",
+      "kind": "简讯",
+      "dateNote": "首发10月20日；v2 10月21日 05:25 EDT；窗口补收",
+      "evidence": "已读 v2 方法及 C4 实验设置；版本差异未逐项核实",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "HyM 混合线性加权的长历史与快速 momentum；HyMUON 再做 NS。LLaMA-1.3B/C4、10k steps 的 validation loss 为 2.777 vs 2.903；HyMUON 调参且评估 averaged iterate，Muon 沿用既有选择并评估 training iterate，需注意对照差异。v2 备注为作者顺序／单位更新，未确认新增研究结果。[4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-27321",
+      "paper": "Physics-Inspired Optimizers beyond the Edge of Stability: Period-Two Orbits and Delayed Instability",
+      "authors": "Alexander Itin",
+      "url": "https://arxiv.org/html/2610.27321v1",
+      "title": "Kinetic Muon：步长映射改变两周期稳定性",
+      "kind": "简讯",
+      "dateNote": "首发10月19日 17:40 EDT · v1；窗口补收",
+      "evidence": "已读摘要及 Muon 实验相关段落",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用 kinetic map 包装更新方向，包括 Muon。约化模型的两周期线性稳定性取决于 step 对 momentum 的 log–log 斜率是否落在 (0,1)。正文提醒 ResNet-18 上不少收益可由有效学习率匹配复现；不能只比较默认 LR。 [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-29352",
+      "paper": "Don't Stop Long-Context Continual Pre-Training Too Early: An Empirical Scaling Law",
+      "authors": "Ziqing Qiao · Xiaoyue Xu · Sikui Zhang · Yinuo Xu · Bingxiang He · Chaojun Xiao · Xu Han",
+      "url": "https://arxiv.org/abs/2610.29352v1",
+      "title": "长上下文续训：把 short-context 与 long-context token 预算分开拟合",
+      "kind": "简讯",
+      "dateNote": "首发10月21日 03:46 EDT · v1",
+      "evidence": "基于原始摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "五个模型尺度、100 余种预算组合拟合 additive power law；Constant-Last4 平均常数 LR 轨迹最近四个 checkpoint，监测一条可延长的训练曲线。1.22B 模型约 100B LCCP tokens 范围未见明确饱和；不能外推为无限延长始终有益。 [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-29458",
+      "paper": "Harness Scaling for Generalizable Agentic Reinforcement Learning",
+      "authors": "Fei Bai · Huatong Song · Chuan Hao · Ran Tao · Jian Yang · Bryan Dai · Wayne Xin Zhao · Ji-Rong Wen",
+      "url": "https://arxiv.org/abs/2610.29458v1",
+      "title": "Harness diversity 是 RL 的另一个扩展轴",
+      "kind": "简讯",
+      "dateNote": "首发10月21日 05:15 EDT · v1",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "将执行配置分解成因子空间，用均衡 factorial coverage 选紧凑训练子集，并组织同任务下受控变化。作者报告向未见 white-box 配置及外部 black-box harness 泛化；摘要没有给出通用幂律指数。 [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-29681",
+      "paper": "Scaling Multilingual Pretraining of Pixel Language Models",
+      "authors": "Ilker Kesen · Jenny Kunz · Kasra Malihi · Desmond Elliott",
+      "url": "https://arxiv.org/abs/2610.29681v1",
+      "title": "Pixel LM：更多语言、文字系统与容量，收益并不相同",
+      "kind": "简讯",
+      "dateNote": "首发10月21日 08:57 EDT · v1",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "固定每语言算力，沿三轴扩展，在 83 种语言、五任务评估。容量缓解多语种干扰；新增语言／文字系统主要利好对应区域，对未见文字系统的迁移未随进一步扩展持续提高。 [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-28698",
+      "paper": "Scaling in Games: Continued Pre-Training For Embodied Agents In Diverse Virtual Worlds",
+      "authors": "Kuan Zhang · Yukun Chen · Zhihao Yang · Yue Su · Xiangnan Wu · Zirong Chen · Run Luo · Jinkun Hou · Tao Tan · Yinhe Zheng · Yiming Li",
+      "url": "https://arxiv.org/abs/2610.28698v1",
+      "title": "虚拟世界 CPT：数据多样性对远域迁移有边界",
+      "kind": "简讯",
+      "dateNote": "首发10月20日 07:09 EDT · v1；窗口补收",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "120 组配置覆盖 0.8B–27B、50–1600 小时、五种数据混合。多样性改善近域迁移，远域收益有限；单世界训练时更大模型甚至在远域泛化更差。作者区分早期 interface phase 与后期 world phase。 [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-29657",
+      "paper": "Effects of Model Scale and Quantization on Social Bias and Abstention in Question Answering",
+      "authors": "Kuniko Paxton · Ifeoluwa Wuraola · Dhavalkumar Thakker",
+      "url": "https://arxiv.org/abs/2610.29657v1",
+      "title": "少偏见回答，可能只是多回答了 Unknown",
+      "kind": "简讯",
+      "dateNote": "首发10月21日 · v1",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "BBQ 上比较 Qwen3、Gemma-3、SmolLM2 的尺度与量化。更大模型准确率提高，但 bias 没有简单 scaling 趋势；26 组较少 biased responses 的配置中，20 组同时增加 over-abstention。 [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-28834",
+      "paper": "Where Should a Stuck Agent Spend Its Next Tokens? Causal Attribution of Inference-Time Resources",
+      "authors": "Saiyue Lyu · Jerrold Huang · Yunbei Zhang · Janet Wang · Zhenting Wang · Yingqiang Ge · Haibo Zhang",
+      "url": "https://arxiv.org/abs/2610.28834v1",
+      "title": "卡住以后：多算、补信息、拿反馈，哪个更值？",
+      "kind": "简讯",
+      "dateNote": "首发10月20日 14:59 EDT · v1；窗口补收",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "BRA 固定失败状态和修订协议做 factorial 干预：六模型，194 个函数级与 126 个仓库级失败。任务规格持续有益，额外计算的价值随模型能力下降；四个 frontier 模型中三个几乎总选 feedback，收益却低于随机资源选择。 [11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-30009",
+      "paper": "Mitigating Model Collapse through Dreaming Learning",
+      "authors": "Matteo Benati · Alessandro Londei · Denise Lanzieri · Raffaello Mastromarino · Vittorio Loreto",
+      "url": "https://arxiv.org/abs/2610.30009v1",
+      "title": "低温合成数据的谱收缩与高温 dreaming",
+      "kind": "简讯",
+      "dateNote": "首发10月21日 12:41 EDT · v1",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "受控 Markov 模型中，Tₛ<1 的递归采样使次主特征值逼近单位圆、谱隙变小；即使累积旧数据也未停止该漂移。另用 T_d>1 自采样 loss 正则化，5000 代谱测量及 LSTM/GPT-2 124M 实验支持缓解作用，尚非一般 LLM 保证。 [12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-28785",
+      "paper": "Measure First, Then Allocate: Calibrated Rollout Budgets for MCP Agents in Reinforcement Learning",
+      "authors": "Hieu Tran · Zonghai Yao · Sunjae Kwon · Hong Yu",
+      "url": "https://arxiv.org/abs/2610.28785v1",
+      "title": "BRACE：生成之前预测组内 reward contrast",
+      "kind": "简讯",
+      "dateNote": "首发10月20日 14:15 EDT · v1；窗口补收",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "历史任务证据、成功率不确定性及相关 reward 模型共同预测 mixed-reward group，再分配 rollout。三个 Qwen3-VL 尺度上以更少新 rollout 超过对照峰值；历史 bank 的收集单独计费，不能把新 rollout 减少等同总训练成本同比减少。 [13]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-29823",
+      "paper": "MemoryTax: The Bitter Lesson of Agent Memory",
+      "authors": "Zedong Peng",
+      "url": "https://arxiv.org/abs/2610.29823v1",
+      "title": "MemoryTax：更强的 reader 不能恢复 writer 丢掉的内容",
+      "kind": "简讯",
+      "dateNote": "首发10月21日 10:46 EDT · v1",
+      "evidence": "基于摘要；小样本实证",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "一段 LoCoMo 会话、152 问题、每格一次运行，比较 memory 方法及三个模型尺度。设计式 memory 的收益受 writer 能力限制；部分 agent 优势来自独占图片描述，去掉该不对称后 Pi 与 full context 在 88 问上只差一题。 [14]"
+        }
+      ]
+    },
+    {
+      "id": "blog-graft",
+      "paper": "Reducing Reward Hacking by Localizing Bad Behavior Instead of Penalizing It",
+      "authors": "Shawn Hu · Jake Ward · Aria Wong · Nathan Hu · Bryce Woodworth · Alexander Matt Turner · Alex Cloud",
+      "url": "https://alignment.anthropic.com/2026/graft/",
+      "title": "GRAFT：用监测结果路由梯度，最后移除 FORGET adapter",
+      "kind": "简讯",
+      "dateNote": "发布10月19日；窗口补收",
+      "evidence": "已读完整技术博客；未读关联论文全部实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "被 flag 的轨迹只更新 FORGET；未 flag 的轨迹可更新 RETAIN 与 FORGET，另在 anchor 环境只训练 RETAIN。部署时移除 FORGET。Qwen3-8B/Countdown-Code 中 hack rate 近零、正确率比 base 高近 20pp；仅手工监测器、单轮 RL，anchor 环境可构造性仍是限制。 [15]"
+        }
+      ]
+    },
+    {
+      "id": "blog-train-agents",
+      "paper": "A curriculum for post-training agents",
+      "authors": "Ben Burtenshaw · Sergio Paniego · Merve Noyan",
+      "url": "https://huggingface.co/blog/huggingface/train-agents",
+      "title": "Agent 后训练路线图：监督粒度与 rollout 瓶颈",
+      "kind": "简讯",
+      "dateNote": "发布10月20日；窗口补收",
+      "evidence": "已读技术综述；不是新增算法或受控 benchmark",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "按 SFT→蒸馏→单轮 RL→有状态环境→完整 harness 组织。核心差别是监督从 token 概率变成轨迹 outcome，瓶颈从训练转向长 episode 生成；给出 TRL/OpenEnv/AsyncGRPO 对应代码与资料入口。 [16]"
+        }
+      ]
+    },
+    {
+      "id": "blog-altk-evolve",
+      "paper": "ALTK-Evolve: How learned memory tops the τ²-bench leaderboard on customer service tasks without a frontier model",
+      "authors": "Ashwath Vaithinathan Aravindan · Vatche Isahagian · Vinod Muthusamy · Jayaram Radhakrishnan · Evelyn Duesterwald et al.",
+      "url": "https://huggingface.co/blog/ibm-research/altk-evolve-bc",
+      "title": "ALTK-Evolve：将训练任务的成败蒸馏成规则",
+      "kind": "简讯",
+      "dateNote": "发布10月20日；窗口补收",
+      "evidence": "已读方法、数据划分与主结果",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "同一 GPT-4.1 从 train trajectories 抽取规则，冻结后附在 held-out test 的 system prompt，不更新权重。τ²-bench retail Pass^4=67.5%，定义为四次均成功；这不是 pass@4。比较的榜单快照是10月12日，且更长规则会增加 tokens。 [17]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-kaplan-scaling",
+    "paperId": "arxiv:2001.08361",
+    "shortTitle": "Kaplan scaling laws",
+    "year": 2020,
+    "topics": [
+      "Scaling laws"
+    ],
+    "paper": "Scaling Laws for Neural Language Models",
+    "authors": "Jared Kaplan · Sam McCandlish · Tom Henighan · Tom B. Brown · Benjamin Chess · Rewon Child · Scott Gray · Alec Radford · Jeffrey Wu · Dario Amodei",
+    "url": "https://arxiv.org/html/2001.08361v1",
+    "title": "Kaplan scaling laws：先分清哪一个资源在限制 loss",
+    "kind": "每日经典 · 历史论文",
+    "dateNote": "首发 2020-01-22 22:59 EST（UTC 为1月23日）；所读 v1；年份按技术报告计",
+    "evidence": "已读 §1.2、§4–6 与拟合设定；经验规律，不是普适定理",
+    "recognition": {
+      "label": "Scaling laws 重要历史工作；OpenAlex 条目 1,745 次引用（查询 2026-10-22）",
+      "url": "https://api.openalex.org/works/W3001279689"
+    },
+    "question": "若把今天的数据日程与 LR 日程作为优化变量，拟合出来的 C→N 最优指数有多大部分只是训练协议的性质？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "2017 年 Transformer 与 2019 年 GPT-2 之后，一个资源分配问题变得清楚：应该训练更大的模型，还是把小模型训得更久？本文将 WebText2 的 token cross-entropy 与 N（非 embedding 参数）、D（数据 tokens）、S（更新步数）、B（每步 tokens）联系起来。[18]"
+      },
+      {
+        "type": "equation",
+        "tex": "L(N)\\simeq(N_c/N)^{0.076},\\qquad L(D)\\simeq(D_c/D)^{0.095},\\qquad L(C_{\\min})\\simeq(C_c/C_{\\min})^{0.050}",
+        "label": "三条经验拟合各要求其余资源不成为瓶颈；不能任意相乘"
+      },
+      {
+        "type": "equation",
+        "tex": "L(N,D)=\\left[\\left(\\frac{N_c}{N}\\right)^{\\alpha_N/\\alpha_D}+\\frac{D_c}{D}\\right]^{\\alpha_D}",
+        "label": "原文的联合拟合：一项主导时退化为相应单资源规律"
+      },
+      {
+        "type": "equation",
+        "tex": "L(N,S_{\\min})=\\left(\\frac{N_c}{N}\\right)^{\\alpha_N}+\\left(\\frac{S_c}{S_{\\min}}\\right)^{\\alpha_S},\\qquad \\alpha_N\\simeq0.077,\\quad\\alpha_S\\simeq0.76",
+        "label": "学习曲线在 warmup 后拟合；Sₘᵢₙ 已校正 batch 大小"
+      },
+      {
+        "type": "equation",
+        "tex": "B_{\\rm crit}(L)\\simeq B_*L^{-1/\\alpha_B},\\quad\\alpha_B\\simeq0.21,\\qquad S_{\\min}=\\frac{S}{1+B_{\\rm crit}/B},\\qquad C_{\\min}=\\frac{6NBS}{1+B/B_{\\rm crit}}",
+        "label": "实际 FLOPs 与校正后的最小 compute 不同；该模型显式处理并行效率"
+      },
+      {
+        "type": "equation",
+        "tex": "\\alpha_C=\\left(\\alpha_N^{-1}+\\alpha_B^{-1}+\\alpha_S^{-1}\\right)^{-1},\\qquad N\\propto C_{\\min}^{\\alpha_C/\\alpha_N},\\quad B\\propto C_{\\min}^{\\alpha_C/\\alpha_B},\\quad S_{\\min}\\propto C_{\\min}^{\\alpha_C/\\alpha_S}",
+        "label": "原文由拟合模型推导配置指数；不是从三条一维拟合直接猜出来"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "类型",
+          "N 指数",
+          "B 指数",
+          "Sₘᵢₙ 指数"
+        ],
+        "rows": [
+          [
+            "直接经验配置",
+            "0.73",
+            "0.24",
+            "0.03"
+          ],
+          [
+            "联合模型推导",
+            "约0.71",
+            "约0.26",
+            "约0.07"
+          ]
+        ],
+        "caption": "原文 §6；理论模型预测和经验指数并不完全相同，D=BS 的经验增长约为 Cₘᵢₙ^0.27。[18]"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "这些数字依赖数据、tokenizer、optimizer 与预算校正；原文 §6.3 自己指出远处外推矛盾。10月17日已读的 Chinchilla 是不同实验协议下的重要修正，不应把 0.73 当今天的默认配方。[18]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.29348v1",
+      "title": "数据与学习率联合日程 · 正文 §2–3"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.28975v1",
+      "title": "Muon 初始化 Gram · 假设、定理与实验"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.29215v1",
+      "title": "单色边矩现象 · §1 定理与星图反例"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.27674v2",
+      "title": "HyMUON · v2 摘要与方法；修订备注"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.27321v1",
+      "title": "Kinetic maps · 摘要及 Muon 相关正文"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.29352v1",
+      "title": "长上下文 scaling · 原始摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.29458v1",
+      "title": "Harness Scaling · 原始摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.29681v1",
+      "title": "Pixel LM scaling · 原始摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.28698v1",
+      "title": "虚拟世界 CPT scaling · 原始摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.29657v1",
+      "title": "尺度、bias 与 abstention · 原始摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.28834v1",
+      "title": "推理资源因果归因 · 原始摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.30009v1",
+      "title": "Dreaming Learning · 原始摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.28785v1",
+      "title": "BRACE · 原始摘要与预算边界"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.29823v1",
+      "title": "MemoryTax · 原始摘要与样本边界"
+    },
+    {
+      "url": "https://alignment.anthropic.com/2026/graft/",
+      "title": "GRAFT · 作者技术博客"
+    },
+    {
+      "url": "https://huggingface.co/blog/huggingface/train-agents",
+      "title": "Agent post-training · Hugging Face 技术综述"
+    },
+    {
+      "url": "https://huggingface.co/blog/ibm-research/altk-evolve-bc",
+      "title": "ALTK-Evolve · IBM 作者博客"
+    },
+    {
+      "url": "https://arxiv.org/html/2001.08361v1",
+      "title": "Kaplan scaling laws · 历史原文 §§1、4–6"
+    },
+    {
+      "url": "https://api.openalex.org/works/W3001279689",
+      "title": "OpenAlex 引文记录 · 查询 2026-10-22"
+    }
+  ]
+}

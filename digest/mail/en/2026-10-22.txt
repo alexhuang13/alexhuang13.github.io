@@ -1,0 +1,101 @@
+RESEARCH DIGEST / 2026-10-22
+Timing, Geometry, and the Limits of Gaussianity
+Data × learning rate · Muon initialization · Graph tests · Kaplan scaling laws
+
+中文: https://alexhuang13.github.io/digest/2026-10-22.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-22.html
+
+Main read · subscribed-author preprint
+When good data enters depends on when the learning rate decays
+Data Schedules and Learning Rate Schedules Should Be Designed Together
+https://alexhuang13.github.io/digest/en/2026-10-22.html#paper-2610-29348
+
+Main read · new Muon preprint
+Muon's initialization geometry: a diagonal mean is not a diagonal trajectory
+How Does Orthogonalization Adapt to the Neural Network Hessian Structure? A Gradient Self Outer-Product Analysis at Initialization
+https://alexhuang13.github.io/digest/en/2026-10-22.html#paper-2610-28975
+
+Main read · new Wharton-author preprint
+When the third moment detects Gaussianity better than the fourth
+Third and Fourth Moment Phenomena for Monochromatic Edges and Applications to Graph-Based Two-Sample Tests
+https://alexhuang13.github.io/digest/en/2026-10-22.html#paper-2610-29215
+
+Brief
+HyMUON combines long-history averaging with a fast EMA
+Hybrid Momentum Methods for Optimizing Deep Learning Models
+https://alexhuang13.github.io/digest/en/2026-10-22.html#paper-2610-27674
+
+Brief
+Kinetic Muon: the step map changes period-two stability
+Physics-Inspired Optimizers beyond the Edge of Stability: Period-Two Orbits and Delayed Instability
+https://alexhuang13.github.io/digest/en/2026-10-22.html#paper-2610-27321
+
+Brief
+Long-context continuation separates short- and long-context budgets
+Don't Stop Long-Context Continual Pre-Training Too Early: An Empirical Scaling Law
+https://alexhuang13.github.io/digest/en/2026-10-22.html#paper-2610-29352
+
+Brief
+Harness diversity as another RL scaling axis
+Harness Scaling for Generalizable Agentic Reinforcement Learning
+https://alexhuang13.github.io/digest/en/2026-10-22.html#paper-2610-29458
+
+Brief
+Pixel LMs: languages, scripts, and capacity scale differently
+Scaling Multilingual Pretraining of Pixel Language Models
+https://alexhuang13.github.io/digest/en/2026-10-22.html#paper-2610-29681
+
+Brief
+Virtual-world CPT: diversity has limits for distant transfer
+Scaling in Games: Continued Pre-Training For Embodied Agents In Diverse Virtual Worlds
+https://alexhuang13.github.io/digest/en/2026-10-22.html#paper-2610-28698
+
+Brief
+Fewer biased answers may mean more Unknown responses
+Effects of Model Scale and Quantization on Social Bias and Abstention in Question Answering
+https://alexhuang13.github.io/digest/en/2026-10-22.html#paper-2610-29657
+
+Brief
+After failure: more compute, information, or feedback?
+Where Should a Stuck Agent Spend Its Next Tokens? Causal Attribution of Inference-Time Resources
+https://alexhuang13.github.io/digest/en/2026-10-22.html#paper-2610-28834
+
+Brief
+Low-temperature synthetic-data sharpening and high-temperature dreaming
+Mitigating Model Collapse through Dreaming Learning
+https://alexhuang13.github.io/digest/en/2026-10-22.html#paper-2610-30009
+
+Brief
+BRACE forecasts within-group reward contrast before generation
+Measure First, Then Allocate: Calibrated Rollout Budgets for MCP Agents in Reinforcement Learning
+https://alexhuang13.github.io/digest/en/2026-10-22.html#paper-2610-28785
+
+Brief
+MemoryTax: a stronger reader cannot recover what a writer discarded
+MemoryTax: The Bitter Lesson of Agent Memory
+https://alexhuang13.github.io/digest/en/2026-10-22.html#paper-2610-29823
+
+Brief
+GRAFT routes gradients with monitor flags, then removes FORGET
+Reducing Reward Hacking by Localizing Bad Behavior Instead of Penalizing It
+https://alexhuang13.github.io/digest/en/2026-10-22.html#blog-graft
+
+Brief
+An agent-training roadmap: supervision granularity and rollout bottlenecks
+A curriculum for post-training agents
+https://alexhuang13.github.io/digest/en/2026-10-22.html#blog-train-agents
+
+Brief
+ALTK-Evolve distills training-task outcomes into guidelines
+ALTK-Evolve: How learned memory tops the τ²-bench leaderboard on customer service tasks without a frontier model
+https://alexhuang13.github.io/digest/en/2026-10-22.html#blog-altk-evolve
+
+Daily classic · 2020
+Kaplan scaling laws: identify the resource that limits loss
+https://alexhuang13.github.io/digest/en/2026-10-22.html#classic-kaplan-scaling
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-10-22.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

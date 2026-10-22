@@ -4,8 +4,40 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-10-21",
+  "latest": "2026-10-22",
   "issues": [
+    {
+      "date": "2026-10-22",
+      "title": "时序、几何与正态性的边界",
+      "url": "/digest/2026-10-22.html",
+      "translations": {
+        "en": {
+          "title": "Timing, Geometry, and the Limits of Gaussianity",
+          "url": "/digest/en/2026-10-22.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2610.29348v1",
+        "https://arxiv.org/html/2610.28975v1",
+        "https://arxiv.org/html/2610.29215v1",
+        "https://arxiv.org/html/2610.27674v2",
+        "https://arxiv.org/html/2610.27321v1",
+        "https://arxiv.org/abs/2610.29352v1",
+        "https://arxiv.org/abs/2610.29458v1",
+        "https://arxiv.org/abs/2610.29681v1",
+        "https://arxiv.org/abs/2610.28698v1",
+        "https://arxiv.org/abs/2610.29657v1",
+        "https://arxiv.org/abs/2610.28834v1",
+        "https://arxiv.org/abs/2610.30009v1",
+        "https://arxiv.org/abs/2610.28785v1",
+        "https://arxiv.org/abs/2610.29823v1",
+        "https://alignment.anthropic.com/2026/graft/",
+        "https://huggingface.co/blog/huggingface/train-agents",
+        "https://huggingface.co/blog/ibm-research/altk-evolve-bc",
+        "https://arxiv.org/html/2001.08361v1",
+        "https://api.openalex.org/works/W3001279689"
+      ]
+    },
     {
       "date": "2026-10-21",
       "title": "步长、尺度与多目标前沿",
