@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-10-23",
+    "paperId": "arxiv:1710.10345",
+    "paper": "The Implicit Bias of Gradient Descent on Separable Data",
+    "shortTitle": "GD max-margin bias",
+    "year": 2018,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "recognition": {
+      "label": "JMLR 2018 · 隐式偏置的重要历史工作",
+      "url": "https://jmlr.org/papers/v19/18-188.html"
+    },
+    "source": "https://arxiv.org/html/1710.10345v7",
+    "url": "/digest/2026-10-23.html#classic-gd-max-margin"
+  },
+  {
     "date": "2026-10-22",
     "paperId": "arxiv:2001.08361",
     "paper": "Scaling Laws for Neural Language Models",

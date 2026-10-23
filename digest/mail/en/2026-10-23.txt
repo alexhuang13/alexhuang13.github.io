@@ -1,0 +1,86 @@
+RESEARCH DIGEST / 2026-10-23
+Error Geometry and the Teacher's Advantage
+PolarGD · AOPD · Safety-probe scaling · Reading GD's max-margin bias
+
+中文: https://alexhuang13.github.io/digest/2026-10-23.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-23.html
+
+Main reading · New Muon preprint
+Exact polar: the error spectrum controls progress
+A Quadratic Lens on Muon's Polar Update: Benefits, Pitfalls, and the Role of Newton-Schulz
+https://alexhuang13.github.io/digest/en/2026-10-23.html#paper-2610-30280
+
+Main reading · New Wharton-author preprint
+AOPD: teacher-preferred tokens may not help the student
+When to Follow the Teacher: Advantage-Based On-Policy Distillation
+https://alexhuang13.github.io/digest/en/2026-10-23.html#paper-2610-31563
+
+Main reading · New scaling preprint
+Safety probes: estimate the floor before buying size or labels
+Scaling Laws for Safety Probes
+https://alexhuang13.github.io/digest/en/2026-10-23.html#paper-2610-30678
+
+Brief
+Thought pruning: optimize the pool's probability of any success
+Direct Pass@k Optimization for Thought Pruning: Balancing Quality and Diversity in Test-Time Reasoning
+https://alexhuang13.github.io/digest/en/2026-10-23.html#paper-2610-31667
+
+Brief
+R-squared-D: remask-denoise as an inference-scaling axis
+Random Remasking Scales Masked Diffusion Inference
+https://alexhuang13.github.io/digest/en/2026-10-23.html#paper-2610-30744
+
+Brief
+Dataweights: transfer learned weighting rules to larger models
+High-Value Training Data from Noisy, Diverse Sources
+https://alexhuang13.github.io/digest/en/2026-10-23.html#paper-2610-30421
+
+Brief
+Replace unverifiable subset optimality with full-data faithfulness
+Towards Faithful Data Selection: Statistical Limits and Scalable Algorithms
+https://alexhuang13.github.io/digest/en/2026-10-23.html#paper-2610-30442
+
+Brief
+Width-depth training limits: clipping changes the convergence mode
+Width and Depth Limits Commute During Training
+https://alexhuang13.github.io/digest/en/2026-10-23.html#paper-2610-30729
+
+Brief
+A graph-search scaling wall can depend on supervision and tokenization
+Multi-Token Prediction and Alternative Tokenization Improve Learning Latent Multi-Hop Graph Search at Scale
+https://alexhuang13.github.io/digest/en/2026-10-23.html#paper-2610-31439
+
+Brief
+One matched spectral statistic does not predict synthetic-data transfer
+Is spectral predictability enough? Testing Omega-matching for synthetic pretraining under distribution shift
+https://alexhuang13.github.io/digest/en/2026-10-23.html#paper-2610-30802
+
+Brief
+Before routing inference, compare the predictor with self-confidence
+Predictable performance is suboptimal, and what it means for model routing
+https://alexhuang13.github.io/digest/en/2026-10-23.html#paper-2610-31428
+
+Brief
+ThinkingBox: repeatable success rises while coverage slips
+Turning Database Grading into RL Rewards: Post-Training Agents with ThinkingBox
+https://alexhuang13.github.io/digest/en/2026-10-23.html#blog-thinkingbox
+
+Brief
+JOLT: train the teacher to meet the student's capabilities
+A Good Self-Teacher Meets the Student Where They Are: Joint On-Policy Learning and Teaching
+https://alexhuang13.github.io/digest/en/2026-10-23.html#blog-jolt
+
+Brief
+OPAL: rewrite Muon / AdamW recipes during a training run
+Reactive Optimizers
+https://alexhuang13.github.io/digest/en/2026-10-23.html#blog-opal
+
+Daily classic · 2018
+Why does unregularized GD select maximum margin?
+https://alexhuang13.github.io/digest/en/2026-10-23.html#classic-gd-max-margin
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-10-23.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

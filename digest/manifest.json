@@ -4,8 +4,37 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-10-22",
+  "latest": "2026-10-23",
   "issues": [
+    {
+      "date": "2026-10-23",
+      "title": "误差的形状，教师的优势",
+      "url": "/digest/2026-10-23.html",
+      "translations": {
+        "en": {
+          "title": "Error Geometry and the Teacher's Advantage",
+          "url": "/digest/en/2026-10-23.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2610.30280v1",
+        "https://arxiv.org/html/2610.31563v1",
+        "https://arxiv.org/html/2610.30678v1",
+        "https://arxiv.org/abs/2610.31667v1",
+        "https://arxiv.org/abs/2610.30744v1",
+        "https://arxiv.org/abs/2610.30421v1",
+        "https://arxiv.org/abs/2610.30442v1",
+        "https://arxiv.org/abs/2610.30729v1",
+        "https://arxiv.org/abs/2610.31439v1",
+        "https://arxiv.org/abs/2610.30802v1",
+        "https://arxiv.org/abs/2610.31428v1",
+        "https://huggingface.co/blog/microsoft/thinkingbox-training",
+        "https://www.perplexity.ai/hub/blog/a-good-teacher-meets-the-student-where-they-are",
+        "https://xingjianbai.com/reactive-optimizers/",
+        "https://arxiv.org/html/1710.10345v7",
+        "https://jmlr.org/papers/v19/18-188.html"
+      ]
+    },
     {
       "date": "2026-10-22",
       "title": "时序、几何与正态性的边界",

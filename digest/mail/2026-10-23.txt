@@ -1,0 +1,86 @@
+RESEARCH DIGEST / 2026-10-23
+误差的形状，教师的优势
+PolarGD · AOPD · 安全探针 scaling · 精读 GD 的最大间隔偏置
+
+中文: https://alexhuang13.github.io/digest/2026-10-23.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-23.html
+
+主读 · Muon 新稿
+精确 polar：快慢由误差谱决定
+A Quadratic Lens on Muon's Polar Update: Benefits, Pitfalls, and the Role of Newton-Schulz
+https://alexhuang13.github.io/digest/2026-10-23.html#paper-2610-30280
+
+主读 · Wharton 作者新稿
+AOPD：教师喜欢的 token，不一定帮得上学生
+When to Follow the Teacher: Advantage-Based On-Policy Distillation
+https://alexhuang13.github.io/digest/2026-10-23.html#paper-2610-31563
+
+主读 · Scaling 新稿
+安全探针：先估误差下界，再决定加模型还是加标签
+Scaling Laws for Safety Probes
+https://alexhuang13.github.io/digest/2026-10-23.html#paper-2610-30678
+
+简讯
+Thought pruning：直接优化候选池至少成功一次的概率
+Direct Pass@k Optimization for Thought Pruning: Balancing Quality and Diversity in Test-Time Reasoning
+https://alexhuang13.github.io/digest/2026-10-23.html#paper-2610-31667
+
+简讯
+R²D：重复 remask–denoise 也能扩展推理计算
+Random Remasking Scales Masked Diffusion Inference
+https://alexhuang13.github.io/digest/2026-10-23.html#paper-2610-30744
+
+简讯
+Dataweights：小目标集学权重规则，再迁移到大模型
+High-Value Training Data from Noisy, Diverse Sources
+https://alexhuang13.github.io/digest/2026-10-23.html#paper-2610-30421
+
+简讯
+子集最优性难验证，改控制相对全数据训练的偏差
+Towards Faithful Data Selection: Statistical Limits and Scalable Algorithms
+https://alexhuang13.github.io/digest/2026-10-23.html#paper-2610-30442
+
+简讯
+宽度×深度：可交换的训练极限有 clipping 条件
+Width and Depth Limits Commute During Training
+https://alexhuang13.github.io/digest/2026-10-23.html#paper-2610-30729
+
+简讯
+图搜索的 scaling wall，可能来自监督与 tokenization
+Multi-Token Prediction and Alternative Tokenization Improve Learning Latent Multi-Hop Graph Search at Scale
+https://alexhuang13.github.io/digest/2026-10-23.html#paper-2610-31439
+
+简讯
+合成源匹配一个谱统计量，不足以预测迁移
+Is spectral predictability enough? Testing Omega-matching for synthetic pretraining under distribution shift
+https://alexhuang13.github.io/digest/2026-10-23.html#paper-2610-30802
+
+简讯
+分配推理模型前，把预测器与自信度比较
+Predictable performance is suboptimal, and what it means for model routing
+https://alexhuang13.github.io/digest/2026-10-23.html#paper-2610-31428
+
+简讯
+ThinkingBox：重复成功增加，至少成功一次的覆盖略降
+Turning Database Grading into RL Rewards: Post-Training Agents with ThinkingBox
+https://alexhuang13.github.io/digest/2026-10-23.html#blog-thinkingbox
+
+简讯
+JOLT：把教师也训练成学生能跟上的教师
+A Good Self-Teacher Meets the Student Where They Are: Joint On-Policy Learning and Teaching
+https://alexhuang13.github.io/digest/2026-10-23.html#blog-jolt
+
+简讯
+OPAL：训练过程中改写 Muon／AdamW 配方
+Reactive Optimizers
+https://alexhuang13.github.io/digest/2026-10-23.html#blog-opal
+
+每日精读 · 2018
+不加正则，GD 为什么仍走向最大间隔？
+https://alexhuang13.github.io/digest/2026-10-23.html#classic-gd-max-margin
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-10-23.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

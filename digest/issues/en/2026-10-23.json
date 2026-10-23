@@ -1,0 +1,493 @@
+{
+  "date": "2026-10-23",
+  "number": "010",
+  "window": "2026-10-20 08:13 — 2026-10-23 08:13 · America/New_York",
+  "publishedAt": "2026-10-23T12:13:00Z",
+  "readingMinutes": 22,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training",
+    "Deep learning theory"
+  ],
+  "edition": "Daily research notes",
+  "title": "Error Geometry and the Teacher's Advantage",
+  "subtitle": "PolarGD · AOPD · Safety-probe scaling · Reading GD's max-margin bias",
+  "intro": "Three main readings connect spectral geometry, distillation signals, and label budgets; 11 briefs cover inference allocation, data selection, and technical blogs. The classic derives GD's max-margin direction from logistic regression.",
+  "articles": [
+    {
+      "id": "paper-2610-30280",
+      "paper": "A Quadratic Lens on Muon's Polar Update: Benefits, Pitfalls, and the Role of Newton-Schulz",
+      "authors": "Egor Shulgin · Sam Laing · Antonio Orvieto · Peter Richtárik",
+      "url": "https://arxiv.org/html/2610.30280v1",
+      "title": "Exact polar: the error spectrum controls progress",
+      "kind": "Main reading · New Muon preprint",
+      "dateNote": "First posted 2026-10-21 14:01 EDT · v1; October 23 listing",
+      "evidence": "Read Sections 2-4, Theorems 1/3, finite NS, and the 90M-model experiment; no reproduction",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Exact line search compares directions on matrix quadratics without learning-rate scaling effects. The analyzed PolarGD has no momentum.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "f(E)=\\tfrac12\\operatorname{tr}(E^\\top HE),\\quad G=HE,\\quad E=X-X^\\star,\\quad H\\succ0,\\quad E\\in\\mathbb R^{d\\times m},\\quad \\operatorname{rank}(E)=d\\le m",
+          "label": "Fixed left Hessian; full row rank is required below"
+        },
+        {
+          "type": "equation",
+          "tex": "Q=\\operatorname{polar}(HE),\\quad E^+=E-\\frac{\\|HE\\|_*}{\\operatorname{tr}H}Q,\\quad \\frac{f(E^+)}{f(E)}=1-p(E),\\quad p(E)=\\frac{\\|HE\\|_*^2}{\\operatorname{tr}(H)\\operatorname{tr}(HEE^\\top)}",
+          "label": "Theorem 3: nuclear norm determines one-step decrease"
+        },
+        {
+          "type": "equation",
+          "tex": "A=(HEE^\\top H)^{-1/2}H,\\quad Q=AE,\\quad A^\\top A=(EE^\\top)^{-1},\\quad \\kappa(A)=\\kappa(E)",
+          "label": "Proposition 2: the error matrix determines preconditioner conditioning"
+        },
+        {
+          "type": "text",
+          "text": "If EE^T=cI, p(E)=1 gives one-step convergence. Even with H=I, nearly rank-deficient errors can make PolarGD much slower than GD. Finite NS amplifies tiny singular values approximately linearly instead of lifting them directly to one.[1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Evidence",
+            "Setting / observation"
+          ],
+          "rows": [
+            [
+              "Quadratic counterexample",
+              "H=I, d=10, initial singular values 1 and 10^-4; exact-polar loss ratio 0.64 after its first step; GD finishes in one"
+            ],
+            [
+              "Measured spectrum",
+              "90M Transformer, 1.8B tokens; roughly 1/4 of attention-momentum singular values lie in the five-step NS linear regime"
+            ]
+          ],
+          "caption": "The latter establishes that this spectral regime exists, without testing end-to-end gains from fewer NS steps.[1]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Quadratic line-search results do not directly cover nonconvex stochastic training with momentum. Greedy per-step progress need not produce the best trajectory.[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-31563",
+      "paper": "When to Follow the Teacher: Advantage-Based On-Policy Distillation",
+      "authors": "Mahdi Sabbaghi · George Pappas · Hamed Hassani · Adel Javanmard",
+      "url": "https://arxiv.org/html/2610.31563v1",
+      "title": "AOPD: teacher-preferred tokens may not help the student",
+      "kind": "Main reading · New Wharton-author preprint",
+      "dateNote": "First posted 2026-10-22 13:05 EDT · v1",
+      "evidence": "Read Section 3, Lemma 3.1, external-teacher experiments, and Table 1",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Let S be the frozen student rollout policy, T the teacher, R terminal reward, and H trajectory length. Q^S is expected reward after action a followed by student continuations; V^S averages over student actions. Weight teacher supervision by student advantage:[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "A^S(h,a)=Q^S(h,a)-V^S(h),\\qquad J(\\theta)=\\mathbb E_{h\\sim d_S}\\sum_a T(a\\mid h)A^S(h,a)\\log S_\\theta(a\\mid h)",
+          "label": "An irrelevant fixed trajectory-length constant is omitted"
+        },
+        {
+          "type": "text",
+          "text": "Separate continuations for every teacher action are unnecessary. Student trajectories and a baseline b independent of that trajectory, such as a leave-one-out mean, estimate the entire objective:[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\widehat J=\\frac{R-b}{H}\\sum_{t=0}^{H-1}\\left[\\frac{T(a_t\\mid h_t)}{S(a_t\\mid h_t)}\\log S_\\theta(a_t\\mid h_t)-\\sum_aT(a\\mid h_t)\\log S_\\theta(a\\mid h_t)\\right]",
+          "label": "Equation 3.6: unbiased if T>0 implies S>0; S, T, and history distributions are frozen"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Qwen3-1.7B student",
+            "OPD-FKL",
+            "AOPD"
+          ],
+          "rows": [
+            [
+              "AIME24 pass@1",
+              "32.1%",
+              "35.0%"
+            ],
+            [
+              "HumanEval+ pass@1",
+              "66.5%",
+              "68.9%"
+            ]
+          ],
+          "caption": "Math / coding use 450 / 350 iterations, Qwen3-4B-Instruct / 8B teachers, and G=4 for both distillation methods.[2]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Experiments clip ratios at c=4 and apply identical, unnormalized truncation to the teacher-sum term, modifying the target. Sampling temperatures differ across methods; the table does not isolate the objective's causal contribution.[2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-30678",
+      "paper": "Scaling Laws for Safety Probes",
+      "authors": "Yuchen Wu (University of Washington) · Jerry Wei (Anthropic)",
+      "url": "https://arxiv.org/html/2610.30678v1",
+      "title": "Safety probes: estimate the floor before buying size or labels",
+      "kind": "Main reading · New scaling preprint",
+      "dateNote": "First posted 2026-10-21 23:43 EDT (October 22 on arXiv) · v1",
+      "evidence": "Read Sections 3-5, fitted forms, and limitations in Appendix B",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Probes read a fixed model's activations to detect safety attributes. Monitored-model size and labels form distinct budget axes. Six harder datasets reduce saturation seen on existing small datasets.[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "E=1-\\mathrm{AUROC},\\qquad E_\\infty(N)=AN^{-\\alpha},\\qquad E(N,D)=E_\\infty(N)+\\bigl(0.5-E_\\infty(N)\\bigr)\\frac{B^g}{B^g+(D\\sqrt N)^g}",
+          "label": "Empirical fits: N is billions of parameters, D labels; CC++ uses g=1, while last-token probes fit g"
+        },
+        {
+          "type": "equation",
+          "tex": "D_0=\\frac B{\\sqrt N},\\qquad D_{\\rm target}=\\frac B{\\sqrt N}\\left(\\frac{0.5-E_\\infty(N)}{E_{\\rm target}-E_\\infty(N)}-1\\right)^{1/g},\\qquad E_\\infty(N)<E_{\\rm target}<0.5",
+          "label": "D0 halves the chance-to-floor gap; the second expression algebraically inverts the fitted law"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Validation",
+            "Result"
+          ],
+          "rows": [
+            [
+              "20 base models / five families; 32-10^6 labels",
+              "Refit constants per family / task / probe"
+            ],
+            [
+              "Predicting the next size from smaller models",
+              "72% of predictions miss by at most 0.02"
+            ],
+            [
+              "45 eligible budget decisions",
+              "73% choose the cheaper option under N times D cost"
+            ]
+          ],
+          "caption": "Budget cases require both options to reach the target and measured costs to differ at least twofold.[3]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "An empirical AUROC law does not guarantee reliability at a fixed low false-positive rate. N times D omits actual labeling prices. The joint CC++ Qwen2.5 fit has RMSE 0.030 and maximum error 0.115.[3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-31667",
+      "paper": "Direct Pass@k Optimization for Thought Pruning: Balancing Quality and Diversity in Test-Time Reasoning",
+      "authors": "Mahdi Salmani · Adel Javanmard · Devansh Gupta · Meisam Razaviyayn",
+      "url": "https://arxiv.org/abs/2610.31667v1",
+      "title": "Thought pruning: optimize the pool's probability of any success",
+      "kind": "Brief",
+      "dateNote": "First posted October 22, 13:59 EDT · v1",
+      "evidence": "Based on the original abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Maximizing pass@k of retained reasoning prefixes combines quality and redundancy in one objective. Across eight open-weight models it beats quality- or diversity-based heuristics, especially for moderate retained pools; the abstract gives no budget-matched numerical comparison.[4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-30744",
+      "paper": "Random Remasking Scales Masked Diffusion Inference",
+      "authors": "Zhaoyi Zhou · Frank Wu · Andrea Zanette",
+      "url": "https://arxiv.org/abs/2610.30744v1",
+      "title": "R-squared-D: remask-denoise as an inference-scaling axis",
+      "kind": "Brief",
+      "dateNote": "First posted October 22, 01:15 EDT · v1",
+      "evidence": "Based on the original abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A Markov chain over clean sequences motivates inference-only R-squared-D; TCT additionally trains on trajectory errors. Logical tasks show near-log-linear scaling, over 97% on hard Sudoku and over 99% on 3-SAT. These results cannot all be attributed to training-free R-squared-D alone.[5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-30421",
+      "paper": "High-Value Training Data from Noisy, Diverse Sources",
+      "authors": "Hedi Driss · Evan Frick · Anastasios N. Angelopoulos · Cho-Jui Hsieh · Yejin Huh · Tijana Zrnic · Andrew Ilyas",
+      "url": "https://arxiv.org/abs/2610.30421v1",
+      "title": "Dataweights: transfer learned weighting rules to larger models",
+      "kind": "Brief",
+      "dateNote": "First posted October 21, 16:32 EDT · v1",
+      "evidence": "Based on the original abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Metagradients learn example weights against a small high-quality target set. Parametric weighting rules extend to new or streaming examples and larger models, with reward-modeling experiments on human/synthetic mixtures. The abstract establishes no universal cross-scale transfer guarantee.[6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-30442",
+      "paper": "Towards Faithful Data Selection: Statistical Limits and Scalable Algorithms",
+      "authors": "Ahmed Mehdi Inane · Mahdi Haghifam · Gintare Karolina Dziugaite · Ioannis Mitliagkas",
+      "url": "https://arxiv.org/abs/2610.30442v1",
+      "title": "Replace unverifiable subset optimality with full-data faithfulness",
+      "kind": "Brief",
+      "dateNote": "First posted October 21, 16:51 EDT · v1",
+      "evidence": "Based on the original abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Population-optimal selection requires a validation set larger in order than training data. Under ULA training, accumulated gradient discrepancy bounds KL between subset- and full-data-trained parameter distributions. Accepted swaps reduce that bound, without guaranteeing monotonic improvements in population error.[7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-30729",
+      "paper": "Width and Depth Limits Commute During Training",
+      "authors": "Ruijia Zhang · Soufiane Hayou",
+      "url": "https://arxiv.org/abs/2610.30729v1",
+      "title": "Width-depth training limits: clipping changes the convergence mode",
+      "kind": "Brief",
+      "dateNote": "First posted October 22, 00:56 EDT · v1",
+      "evidence": "Based on the original abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "For linear ResNets with 1/sqrt(depth) Depth-muP scaling and muP width parameterization, any fixed clipped-GD horizon has the same L2 limit along all joint growth paths. Without clipping, only convergence in probability is established; nonlinear networks and long horizons are outside this result.[8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-31439",
+      "paper": "Multi-Token Prediction and Alternative Tokenization Improve Learning Latent Multi-Hop Graph Search at Scale",
+      "authors": "Arvid Frydenlund · FuTe Wong · Katherine Lambert · Frank Rudzicz",
+      "url": "https://arxiv.org/abs/2610.31439v1",
+      "title": "A graph-search scaling wall can depend on supervision and tokenization",
+      "kind": "Brief",
+      "dateNote": "First posted October 22, 11:35 EDT · v1",
+      "evidence": "Based on the original abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Multi-token prediction and alternative tokenizations address separate barriers to shortest-path generation on unseen graphs. Authors report learning at larger graph scales than prior limits. This controlled latent graph-search result is not a general law of natural-language reasoning.[9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-30802",
+      "paper": "Is spectral predictability enough? Testing Omega-matching for synthetic pretraining under distribution shift",
+      "authors": "Edric Castel C. Hao · Juan Raphael S. Seña · Neon S. De Jesus",
+      "url": "https://arxiv.org/abs/2610.30802v1",
+      "title": "One matched spectral statistic does not predict synthetic-data transfer",
+      "kind": "Brief",
+      "dateNote": "First posted October 22, 02:27 EDT · v1",
+      "evidence": "Based on the original abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Across LSTM, PatchTST, and TCN with three seeds, Omega-matched sine-plus-noise pretraining improves mean ETTm1 MSE by 2.3%, whereas matched chaotic-ODE sources worsen it by 13.2%. The negative result concerns source selection, not synthetic pretraining in general.[10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-31428",
+      "paper": "Predictable performance is suboptimal, and what it means for model routing",
+      "authors": "Guanhua Zhang · Moritz Hardt",
+      "url": "https://arxiv.org/abs/2610.31428v1",
+      "title": "Before routing inference, compare the predictor with self-confidence",
+      "kind": "Brief",
+      "dateNote": "First posted October 22, 11:27 EDT · v1",
+      "evidence": "Based on the original abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A predictor's advantage over chosen-answer confidence transfers exactly to log-loss improvement through recalibration. Across 16 models and four benchmarks, predictor-based prediction and cascading gains shrink after finetuning. Predictor capacity must be counted in the comparison.[11]"
+        }
+      ]
+    },
+    {
+      "id": "blog-thinkingbox",
+      "paper": "Turning Database Grading into RL Rewards: Post-Training Agents with ThinkingBox",
+      "authors": "Tuhin Kundu · Microsoft and Hugging Face collaborators",
+      "url": "https://huggingface.co/blog/microsoft/thinkingbox-training",
+      "title": "ThinkingBox: repeatable success rises while coverage slips",
+      "kind": "Brief",
+      "dateNote": "Blog published October 22",
+      "evidence": "Read training, task-selection, and evaluation sections of the original blog",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "After 50 GRPO steps on a separate training pool, Qwen3.8-27B is tested 20 times on each of 507 tasks. Pass@1 rises 51.70% to 60.78%; observed 20/20 tasks rise 38 to 107, but pass@20 falls 89.35% to 87.97%. Observed 20/20 is not a deployment-reliability lower bound.[12]"
+        }
+      ]
+    },
+    {
+      "id": "blog-jolt",
+      "paper": "A Good Self-Teacher Meets the Student Where They Are: Joint On-Policy Learning and Teaching",
+      "authors": "Randy Ardywibowo · Arnav Dalal · Jiantao Jiao",
+      "url": "https://www.perplexity.ai/hub/blog/a-good-teacher-meets-the-student-where-they-are",
+      "title": "JOLT: train the teacher to meet the student's capabilities",
+      "kind": "Brief",
+      "dateNote": "New blog October 21; paper arXiv:2610.10447 v1 first posted October 7",
+      "evidence": "Read original-blog methods and token accounting; the older paper is not counted as a new preprint",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "One model jointly learns as a privileged teacher and unprivileged student. Teacher rewards are regularized toward the student; JOLT+ adds student rewards. At 63.44% MATH accuracy, GRPO's observed 8.40M processed tokens are compared with JOLT's fitted 1.30M. The 6.5-fold token comparison is not wall-clock acceleration.[13]"
+        }
+      ]
+    },
+    {
+      "id": "blog-opal",
+      "paper": "Reactive Optimizers",
+      "authors": "Xingjian Bai · Jia-Hao Liang · Jayden Teoh · Vincent Sitzmann",
+      "url": "https://xingjianbai.com/reactive-optimizers/",
+      "title": "OPAL: rewrite Muon / AdamW recipes during a training run",
+      "kind": "Brief",
+      "dateNote": "Page datePublished / dateModified both October 21",
+      "evidence": "Read blog experimental settings, update logs, and cost discussion",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "An agent rewrites groupwise update code from training statistics, including Muon switches, momentum changes, and loss-spike guards. Multilingual NanoGPT and diffusion experiments compare available one-run recipes; RAEv2-B FID improves 3.39 to 3.19. Agent tokens and decision overhead must be counted; uniform compute superiority is not established.[14]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.30280v1",
+      "title": "PolarGD: quadratics, Theorems 1/3, and finite NS"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.31563v1",
+      "title": "AOPD: Section 3, Lemma 3.1, and experimental Table 1"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.30678v1",
+      "title": "Safety probes: Sections 3-5 and limitations in Appendix B"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.31667v1",
+      "title": "Thought-pruning original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.30744v1",
+      "title": "R-squared-D original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.30421v1",
+      "title": "Dataweights original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.30442v1",
+      "title": "Faithful data selection original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.30729v1",
+      "title": "Width-depth limits original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.31439v1",
+      "title": "MTP graph-search original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.30802v1",
+      "title": "Spectrally matched synthetic pretraining original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.31428v1",
+      "title": "Model-routing original abstract"
+    },
+    {
+      "url": "https://huggingface.co/blog/microsoft/thinkingbox-training",
+      "title": "ThinkingBox: original technical blog and evaluation tables"
+    },
+    {
+      "url": "https://www.perplexity.ai/hub/blog/a-good-teacher-meets-the-student-where-they-are",
+      "title": "JOLT: original research blog of October 21 (paper first posted October 7)"
+    },
+    {
+      "url": "https://xingjianbai.com/reactive-optimizers/",
+      "title": "OPAL: original technical blog, first published October 21 in page metadata"
+    },
+    {
+      "url": "https://arxiv.org/html/1710.10345v7",
+      "title": "Historical paper: binary setting, Theorem 3, and proof sketch"
+    },
+    {
+      "url": "https://jmlr.org/papers/v19/18-188.html",
+      "title": "JMLR 2018 official record; historical-reading selection"
+    }
+  ],
+  "classic": {
+    "id": "classic-gd-max-margin",
+    "paperId": "arxiv:1710.10345",
+    "shortTitle": "GD max-margin bias",
+    "year": 2018,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "paper": "The Implicit Bias of Gradient Descent on Separable Data",
+    "authors": "Daniel Soudry · Elad Hoffer · Mor Shpigel Nacson · Suriya Gunasekar · Nathan Srebro",
+    "url": "https://arxiv.org/html/1710.10345v7",
+    "title": "Why does unregularized GD select maximum margin?",
+    "kind": "Daily classic · Historical work",
+    "dateNote": "First posted 2017-10-27; JMLR 2018; read the binary sections of arXiv v7 (2024-10-26)",
+    "evidence": "Read the setting, Theorem 3, proof sketch, and degenerate-data discussion; no multiclass result is used",
+    "recognition": {
+      "label": "JMLR 2018 · Foundational historical work on implicit bias",
+      "url": "https://jmlr.org/papers/v19/18-188.html"
+    },
+    "question": "When the preconditioner P_t keeps changing, what testable conditions still yield a max-margin characterization in a fixed norm?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Hard-margin SVM explicitly selects small norm; separable logistic regression has no finite minimizer. Soudry et al. (2018) connect them: GD's norm diverges while its direction is selected.[15,16]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathcal L(w)=\\sum_{i=1}^n\\log(1+e^{-y_iw^\\top x_i}),\\quad w_{t+1}=w_t-\\eta\\nabla\\mathcal L(w_t),\\quad y_i\\in\\{-1,1\\},\\quad 0<\\eta<\\frac{8}{\\|X\\|_2^2}",
+        "label": "Finite, separable data; homogeneous linear predictor; X has columns xi; summed logistic loss has beta=1/4"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widehat w=\\arg\\min_w\\tfrac12\\|w\\|_2^2\\quad\\text{s.t.}\\quad y_iw^\\top x_i\\ge1\\ \\ \\forall i",
+        "label": "The theorem's max-margin target"
+      },
+      {
+        "type": "text",
+        "text": "This is the paper's asymptotic intuition, not a convergence proof. Assuming a limiting direction u, exponential tails suppress larger-margin examples, leaving support vectors.[15]"
+      },
+      {
+        "type": "equation",
+        "tex": "-\\nabla\\mathcal L(w)\\sim\\sum_i e^{-y_iw^\\top x_i}y_ix_i,\\qquad \\frac{e^{-g\\,y_i u^\\top x_i}}{e^{-g\\,y_j u^\\top x_j}}\\to0\\quad\\text{if}\\quad y_i u^\\top x_i>y_j u^\\top x_j,\\quad g\\to\\infty",
+        "label": "Logistic derivative's exponential tail; the ratio compares dominance along a fixed direction"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widehat w=\\sum_i\\alpha_i y_ix_i,\\quad \\alpha_i\\ge0,\\quad \\alpha_i(y_i\\widehat w^\\top x_i-1)=0",
+        "label": "The surviving nonnegative combination has SVM's KKT structure; direction convergence still needs proof"
+      },
+      {
+        "type": "equation",
+        "tex": "w_t=\\widehat w\\log t+\\rho_t,\\quad \\|\\rho_t\\|=O(\\log\\log t),\\quad \\left\\|\\frac{w_t}{\\|w_t\\|}-\\frac{\\widehat w}{\\|\\widehat w\\|}\\right\\|=O\\!\\left(\\frac{\\log\\log t}{\\log t}\\right)",
+        "label": "Theorem 3: residual is at most log log t, and bounded for almost every dataset"
+      },
+      {
+        "type": "note",
+        "title": "Boundary and discussion",
+        "text": "The general directional rate is slow; nondegenerate data improve it to O(1/log t). Arbitrary deep networks and Muon are not covered. When P_t changes, what testable conditions preserve a fixed-norm max-margin characterization?[15]"
+      }
+    ]
+  }
+}
