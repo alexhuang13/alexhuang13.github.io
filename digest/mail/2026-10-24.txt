@@ -1,0 +1,61 @@
+RESEARCH DIGEST / 2026-10-24
+评得准，未必教得好
+生成式奖励模型 · Rollout 一致性 · 精读 Mamba
+
+中文: https://alexhuang13.github.io/digest/2026-10-24.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-24.html
+
+主读
+静态准确率与在线奖励价值，是两个目标
+Scaling Laws for Generative Reward Models
+https://alexhuang13.github.io/digest/2026-10-24.html#paper-2610-30765
+
+主读
+低精度 RL：先核对“同一 policy”的三种含义
+vLLM Delivers Day-0 Support for MiniMax-M3.1-Flash
+https://alexhuang13.github.io/digest/2026-10-24.html#paper-blog-vllm-1023
+
+简讯
+Muon、μP 与数据日程进入 320B MoE 配方
+IQuest-Q1: Advancing Foundation Capabilities for Agentic CLI Systems
+https://alexhuang13.github.io/digest/2026-10-24.html#paper-2610-30949
+
+简讯
+连续语义与离散生成的联合 scaling
+Cola2: Co-Adaptive Hierarchical Language Modeling with Continuous Semantic Compression and Balanced Discrete Generation
+https://alexhuang13.github.io/digest/2026-10-24.html#paper-2610-31305
+
+简讯
+数据来源：没有机器人轨迹，也能学控制先验
+Learning Robot Behavior Priors from Non-Robotic Synthetic Data
+https://alexhuang13.github.io/digest/2026-10-24.html#paper-2610-31275
+
+简讯
+固定 token 预算下的数据质量与可训练参数
+AQL-Lite: Enabling Efficient Knowledge Acquisition for Arabic LLMs via Data-Centric Continual Pretraining
+https://alexhuang13.github.io/digest/2026-10-24.html#paper-2610-30344
+
+简讯
+VANE：在固定语义空间预测下一帧
+Learning from Next-Frame Prediction: Towards Unified and Scalable Visual Representation Learning
+https://alexhuang13.github.io/digest/2026-10-24.html#paper-2610-30724
+
+简讯
+场景覆盖与闭环导航的数据 scaling
+AirPlayground: Benchmarking Aerial Navigation across Diverse Reconstructed Environments
+https://alexhuang13.github.io/digest/2026-10-24.html#paper-2610-29699
+
+简讯
+作者跟踪：软件世界中的协作计算预算
+World of SWECraft: Agent Collaboration at Scale via Simulated Software Worlds
+https://alexhuang13.github.io/digest/2026-10-24.html#paper-2610-24061
+
+每日精读 · 2024
+压缩历史之前，先决定保留什么
+https://alexhuang13.github.io/digest/2026-10-24.html#classic-mamba
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-10-24.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

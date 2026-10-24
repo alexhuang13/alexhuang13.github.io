@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-10-24",
+    "paperId": "arxiv:2312.00752",
+    "paper": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+    "shortTitle": "Mamba",
+    "year": 2024,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "recognition": {
+      "label": "COLM 2024 Outstanding Paper Award",
+      "url": "https://2024.colmweb.org/AcceptedPapers.html"
+    },
+    "source": "https://arxiv.org/html/2312.00752v2",
+    "url": "/digest/2026-10-24.html#classic-mamba"
+  },
+  {
     "date": "2026-10-23",
     "paperId": "arxiv:1710.10345",
     "paper": "The Implicit Bias of Gradient Descent on Separable Data",

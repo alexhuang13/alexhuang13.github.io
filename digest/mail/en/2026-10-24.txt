@@ -1,0 +1,61 @@
+RESEARCH DIGEST / 2026-10-24
+Accurate Judges, Useful Teachers
+Generative reward models · Rollout consistency · Reading Mamba
+
+中文: https://alexhuang13.github.io/digest/2026-10-24.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-24.html
+
+Close reading
+Static accuracy and online reward quality are different objectives
+Scaling Laws for Generative Reward Models
+https://alexhuang13.github.io/digest/en/2026-10-24.html#paper-2610-30765
+
+Close reading
+Low-precision RL: three checks before treating implementations as one policy
+vLLM Delivers Day-0 Support for MiniMax-M3.1-Flash
+https://alexhuang13.github.io/digest/en/2026-10-24.html#paper-blog-vllm-1023
+
+Brief
+Muon, μP, and data scheduling in a 320B MoE recipe
+IQuest-Q1: Advancing Foundation Capabilities for Agentic CLI Systems
+https://alexhuang13.github.io/digest/en/2026-10-24.html#paper-2610-30949
+
+Brief
+Joint scaling of continuous semantics and discrete generation
+Cola2: Co-Adaptive Hierarchical Language Modeling with Continuous Semantic Compression and Balanced Discrete Generation
+https://alexhuang13.github.io/digest/en/2026-10-24.html#paper-2610-31305
+
+Brief
+Data sources: control priors without robot trajectories
+Learning Robot Behavior Priors from Non-Robotic Synthetic Data
+https://alexhuang13.github.io/digest/en/2026-10-24.html#paper-2610-31275
+
+Brief
+Data quality and trainable parameters at fixed token budgets
+AQL-Lite: Enabling Efficient Knowledge Acquisition for Arabic LLMs via Data-Centric Continual Pretraining
+https://alexhuang13.github.io/digest/en/2026-10-24.html#paper-2610-30344
+
+Brief
+VANE: next-frame prediction in a fixed semantic space
+Learning from Next-Frame Prediction: Towards Unified and Scalable Visual Representation Learning
+https://alexhuang13.github.io/digest/en/2026-10-24.html#paper-2610-30724
+
+Brief
+Scene coverage and data scaling for closed-loop navigation
+AirPlayground: Benchmarking Aerial Navigation across Diverse Reconstructed Environments
+https://alexhuang13.github.io/digest/en/2026-10-24.html#paper-2610-29699
+
+Brief
+Author watch: collaborative compute in software worlds
+World of SWECraft: Agent Collaboration at Scale via Simulated Software Worlds
+https://alexhuang13.github.io/digest/en/2026-10-24.html#paper-2610-24061
+
+Daily classic · 2024
+Choose what to retain before compressing history
+https://alexhuang13.github.io/digest/en/2026-10-24.html#classic-mamba
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-10-24.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

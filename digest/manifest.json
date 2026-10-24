@@ -4,8 +4,32 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-10-23",
+  "latest": "2026-10-24",
   "issues": [
+    {
+      "date": "2026-10-24",
+      "title": "评得准，未必教得好",
+      "url": "/digest/2026-10-24.html",
+      "translations": {
+        "en": {
+          "title": "Accurate Judges, Useful Teachers",
+          "url": "/digest/en/2026-10-24.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2610.30765v1",
+        "https://vllm.ai/blog/2026-10-23-minimax-m31-flash",
+        "https://arxiv.org/html/2610.30949v1",
+        "https://arxiv.org/abs/2610.31305",
+        "https://arxiv.org/abs/2610.31275",
+        "https://arxiv.org/abs/2610.30344",
+        "https://arxiv.org/abs/2610.30724",
+        "https://arxiv.org/abs/2610.29699",
+        "https://arxiv.org/abs/2610.24061",
+        "https://arxiv.org/html/2312.00752v2",
+        "https://2024.colmweb.org/AcceptedPapers.html"
+      ]
+    },
     {
       "date": "2026-10-23",
       "title": "误差的形状，教师的优势",

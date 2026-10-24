@@ -1,0 +1,355 @@
+{
+  "date": "2026-10-24",
+  "number": "011",
+  "window": "2026-10-21 08:09 — 2026-10-24 08:09 · America/New_York",
+  "publishedAt": "2026-10-24T12:09:00Z",
+  "readingMinutes": 18,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Post-training",
+    "RNN / linear attention"
+  ],
+  "edition": "Daily research notes",
+  "title": "Accurate Judges, Useful Teachers",
+  "subtitle": "Generative reward models · Rollout consistency · Reading Mamba",
+  "intro": "Two close readings separate static judging accuracy, online learning outcomes, and implementation mismatch; seven briefs cover compute, data, and models from the overlap window. The classic is Mamba: choosing what to write and computing it in parallel.",
+  "articles": [
+    {
+      "id": "paper-2610-30765",
+      "paper": "Scaling Laws for Generative Reward Models",
+      "authors": "Angel Raychev · Nathan Lile · Rafael Rafailov",
+      "url": "https://arxiv.org/html/2610.30765v1",
+      "title": "Static accuracy and online reward quality are different objectives",
+      "kind": "Close reading",
+      "dateNote": "First posted October 22, 01:37 EDT · v1; overlap-window catch-up",
+      "evidence": "Read §§2–4 and Appendices B.2–B.4; not reproduced",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Following reward overoptimization (Gao et al., 2022), correctly judging story preferences on a fixed distribution need not guide an evolving policy. The paper compares SFT Answer-Only and GRPO Thinking judge pipelines in creative writing.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Delta_\\theta=\\log\\frac{\\pi_\\theta(y^+\\mid x)}{\\pi_{\\rm ref}(y^+\\mid x)}-\\log\\frac{\\pi_\\theta(y^-\\mid x)}{\\pi_{\\rm ref}(y^-\\mid x)},\\quad \\ell_+=-\\log\\sigma(\\beta\\Delta_\\theta),\\quad\\ell_-=-\\log\\sigma(-\\beta\\Delta_\\theta)",
+          "label": "Fixed Gold-oriented response pair; + uses the Gold label and − its flip"
+        },
+        {
+          "type": "equation",
+          "tex": "\\nabla_\\theta\\ell_- -\\nabla_\\theta\\ell_+=\\beta\\nabla_\\theta\\Delta_\\theta",
+          "label": "Appendix B.3 identity: which pairs are mislabeled, their gradient directions, and magnitudes matter"
+        },
+        {
+          "type": "text",
+          "text": "Online sampling and filtering invalid or conflicting judge votes also change the retained-pair distribution. The identity is an explanation; the paper does not measure a per-pair gradient decomposition.[1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Setting",
+            "Observation"
+          ],
+          "rows": [
+            [
+              "Qwen3 judges 0.6B–14B; policies 0.6B–8B",
+              "Thinking has higher static accuracy"
+            ],
+            [
+              "Fixed learned 32B Gold evaluator",
+              "Answer-Only has higher peak/top-five Elo in 7 of 8 matched settings"
+            ],
+            [
+              "Another learned judge, 80 pairs",
+              "Answer-Only wins 42; inconclusive overall"
+            ]
+          ],
+          "caption": "The ranking reversal is conditional on these training and evaluation pipelines.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "Y=b_0+b_P\\log P+b_R\\log R+b_M M+b_{MP}M\\log P+b_{MR}M\\log R+\\epsilon",
+          "label": "Descriptive scaling fit: P and R are billions of parameters; M indicates Thinking"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Six coefficients fit 16 configurations, with in-sample peak-Elo R²=0.954; no out-of-scale prediction validation or independent-training-seed intervals. Format and objective both change, and Gold is learned: this does not establish that reasoning harms human-preferred quality.[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-blog-vllm-1023",
+      "paper": "vLLM Delivers Day-0 Support for MiniMax-M3.1-Flash",
+      "authors": "Inferact and the vLLM Team",
+      "url": "https://vllm.ai/blog/2026-10-23-minimax-m31-flash",
+      "title": "Low-precision RL: three checks before treating implementations as one policy",
+      "kind": "Close reading",
+      "dateNote": "Technical blog published/updated October 23",
+      "evidence": "Read Day-0 RL support and adjacent implementation details; not reproduced",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The training section combines an NVFP4 checkpoint with veRL, FSDP2, and LoRA, freezing base experts and syncing adapters. Before training it checks weight transfer, expert-routing replay, and same-token logprobs: equal weights can still yield different execution.[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "w_t=\\frac{p_{\\rm trainer}(a_t\\mid h_t)}{p_{\\rm rollout}(a_t\\mid h_t)},\\qquad \\bar w_t=\\min\\{2,w_t\\}",
+          "label": "Explanatory notation for token-level IS; the source specifies a ratio cap of 2"
+        },
+        {
+          "type": "text",
+          "text": "Each batch receives one optimizer step, using rollout logprobs as old logprobs and skipping a recomputation forward pass. This condition does not directly transfer to multiple reuse epochs or more stale training.[2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Setup / metric",
+            "Start → end"
+          ],
+          "rows": [
+            [
+              "DAPO-Math-17K; 16×GB300",
+              "200 GRPO steps"
+            ],
+            [
+              "AIME-2024 accuracy",
+              "36.3% → 67.5%"
+            ],
+            [
+              "Train/rollout KL",
+              "0.040 → 0.024"
+            ]
+          ],
+          "caption": "Original blog report; no separate ablation of these consistency measures is provided here.[2]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "This is a working training case, not proof that cap=2 stabilizes every GRPO setup or that repetition collapse has a single cause.[2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-30949",
+      "paper": "IQuest-Q1: Advancing Foundation Capabilities for Agentic CLI Systems",
+      "authors": "A. Jian Yang et al.",
+      "url": "https://arxiv.org/html/2610.30949v1",
+      "title": "Muon, μP, and data scheduling in a 320B MoE recipe",
+      "kind": "Brief",
+      "dateNote": "October 22, 05:01 EDT · v1",
+      "evidence": "Read abstract and pretraining overview; not all evaluations audited",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "320B total / 15B active parameters; pretraining combines Stable SplitNorm, Muon, and μP, increasing the coding mixture later. The report emphasizes a margin between safe and optimal learning rates; it does not isolate Muon’s causal contribution.[3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-31305",
+      "paper": "Cola2: Co-Adaptive Hierarchical Language Modeling with Continuous Semantic Compression and Balanced Discrete Generation",
+      "authors": "Hongcan Guo · Yian Zhao · Feng Wang · Shen Nie · Guoqiang Wei · Yan Zeng · Hengshuang Zhao",
+      "url": "https://arxiv.org/abs/2610.31305",
+      "title": "Joint scaling of continuous semantics and discrete generation",
+      "kind": "Brief",
+      "dateNote": "October 22, 10:04 EDT · v1",
+      "evidence": "Based on the original abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Dynamic semantic segmentation lets token prediction update the encoder while stop-gradient decouples the flow prior. Experiments at about 210B tokens examine design and scaling; an unconverged model with 346.03B source tokens averages 60.10 over eight tasks. Cross-model token differences do not establish a compute-matched advantage.[4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-31275",
+      "paper": "Learning Robot Behavior Priors from Non-Robotic Synthetic Data",
+      "authors": "Mateusz Odrowaz-Sypniewski et al.",
+      "url": "https://arxiv.org/abs/2610.31275",
+      "title": "Data sources: control priors without robot trajectories",
+      "kind": "Brief",
+      "dateNote": "October 22, 09:43 EDT · v1",
+      "evidence": "Based on the original abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Three procedural control abstractions train a Transformer with nontrivial zero-shot action prediction on unseen robot tasks. A compute-matched real-data baseline is stronger only on its training datasets. This compares data sources and transfer, not a universal robot scaling law.[5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-30344",
+      "paper": "AQL-Lite: Enabling Efficient Knowledge Acquisition for Arabic LLMs via Data-Centric Continual Pretraining",
+      "authors": "Houssam Eddine Boukhalfa · Mourad Bouache · Mourad Dahmane",
+      "url": "https://arxiv.org/abs/2610.30344",
+      "title": "Data quality and trainable parameters at fixed token budgets",
+      "kind": "Brief",
+      "dateNote": "October 21, 15:04 EDT · v1",
+      "evidence": "Based on the original abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "At a matched 1B tokens, curated data improves the four-task mean by 3.51 points over raw web. At 5B tokens, partial-parameter training recovers 94% of full-CPT gain in 52% of wall time; means are 73.19 vs 73.58. Recovery is the incremental gain over base, not retention of 94% of all capabilities.[6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-30724",
+      "paper": "Learning from Next-Frame Prediction: Towards Unified and Scalable Visual Representation Learning",
+      "authors": "Yifeng Yao et al.",
+      "url": "https://arxiv.org/abs/2610.30724",
+      "title": "VANE: next-frame prediction in a fixed semantic space",
+      "kind": "Brief",
+      "dateNote": "October 22, 00:46 EDT · v1",
+      "evidence": "Based on the original abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "With a frozen semantic tokenizer, a causal encoder predicts the next full-frame embedding and an auxiliary decoder preserves detail. The paper reports model/data scaling and a 7.1-point gain over V-JEPA 2.1 in EPIC-KITCHENS-100 anticipation mean-class recall@5; strict budget matching is not specified in the abstract.[7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-29699",
+      "paper": "AirPlayground: Benchmarking Aerial Navigation across Diverse Reconstructed Environments",
+      "authors": "Rangya Zhang et al.",
+      "url": "https://arxiv.org/abs/2610.29699",
+      "title": "Scene coverage and data scaling for closed-loop navigation",
+      "kind": "Brief",
+      "dateNote": "October 21, 09:13 EDT · v1",
+      "evidence": "Based on the original abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "94 reconstructed scenes, 94K demonstrations, and 46.5M observation-state-action samples. Scaling ACT training from 5 to 70 scenes raises seen/unseen median success from 30.6% to 41.2% and 16.8% to 29.4%. Offline prediction error is not interchangeable with closed-loop success.[8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-24061",
+      "paper": "World of SWECraft: Agent Collaboration at Scale via Simulated Software Worlds",
+      "authors": "Shannon Zejiang Shen et al. · Luke Zettlemoyer",
+      "url": "https://arxiv.org/abs/2610.24061",
+      "title": "Author watch: collaborative compute in software worlds",
+      "kind": "Brief",
+      "dateNote": "First posted October 16; v2 October 21, 13:59 EDT",
+      "evidence": "Abstract and version dates verified; substantive version differences unverified",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Multi-agent collaboration is evaluated through hidden downstream efficiency in dependent Python packages: three worlds, eight models, and over 10,000 agent-hours, with reported gains up to 31%. Included for Luke author tracking; these conclusions are not claimed as additions in v2.[9]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-mamba",
+    "paperId": "arxiv:2312.00752",
+    "shortTitle": "Mamba",
+    "year": 2024,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "paper": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+    "authors": "Albert Gu · Tri Dao",
+    "url": "https://arxiv.org/html/2312.00752v2",
+    "title": "Choose what to retain before compressing history",
+    "kind": "Daily classic · Historical work",
+    "dateNote": "First posted 2023-12-01; COLM 2024; read v2, 2024-05-31",
+    "evidence": "Read §2, §§3.1–3.5, Theorem 1, and §4.1 task setups; kernel benchmarks not reproduced",
+    "recognition": {
+      "label": "COLM 2024 Outstanding Paper Award",
+      "url": "https://2024.colmweb.org/AcceptedPapers.html"
+    },
+    "question": "At fixed state dimension, can we characterize how much information content selection can retain?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "S4 (2022) compresses history with a fixed linear system; linear attention (2020) accumulates a finite state. Which language tokens deserve memory depends on content. Mamba (2024) makes writing, reading, and forgetting input-dependent.[10]"
+      },
+      {
+        "type": "equation",
+        "tex": "h_t=\\bar A_t h_{t-1}+\\bar B_t x_t,\\quad y_t=C_t h_t,\\qquad B_t=s_B(x_t),\\ C_t=s_C(x_t),\\ \\Delta_t=\\operatorname{softplus}(b+s_\\Delta(x_t))",
+        "label": "Single-channel notation: N-dimensional state and fixed diagonal A; the layer runs across D channels"
+      },
+      {
+        "type": "equation",
+        "tex": "\\bar A_t=e^{\\Delta_t A},\\qquad\\bar B_t=(\\Delta_t A)^{-1}(e^{\\Delta_t A}-I)\\Delta_t B_t",
+        "label": "Zero-order-hold discretization; singular cases admit a continuous extension"
+      },
+      {
+        "type": "equation",
+        "tex": "N=1,\\quad A=-1,\\quad B=1,\\quad\\Delta_t=\\log(1+e^{z_t})\\quad\\Longrightarrow\\quad h_t=(1-g_t)h_{t-1}+g_tx_t,\\quad g_t=\\sigma(z_t)",
+        "label": "Scalar special case of Theorem 1: exp(−softplus(z))=1−sigmoid(z)"
+      },
+      {
+        "type": "text",
+        "text": "A small gate retains state and ignores the current input; a large gate resets toward it. This scalar interpretation is not a convergence theorem for the full network. Input-dependent coefficients break fixed convolution but preserve associativity of affine composition.[10]"
+      },
+      {
+        "type": "equation",
+        "tex": "F_t(h)=a_t\\odot h+b_t,\\qquad (a_2,b_2)\\circ(a_1,b_1)=(a_2\\odot a_1,\\ a_2\\odot b_1+b_2)",
+        "label": "Equivalent algebraic explanation of scan; associativity follows from affine composition"
+      },
+      {
+        "type": "text",
+        "text": "A parallel prefix scan is therefore possible. The implementation fuses discretization and recurrence in SRAM and recomputes states in backward, avoiding the full B×L×D×N state tensor in HBM. Selection and hardware-aware execution jointly support linear sequence complexity.[10]"
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "Read §2, §§3.1–3.5, Theorem 1, and the selective-copy/induction setups in §4.1. Finite state remains an information bottleneck; linear complexity does not establish equivalence to attention on every retrieval task. Question: at fixed state dimension, can we characterize how much information content selection can retain?[10,11]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.30765v1",
+      "title": "GenRM: methodology, online experiments, and Appendix B limitations"
+    },
+    {
+      "url": "https://vllm.ai/blog/2026-10-23-minimax-m31-flash",
+      "title": "Original vLLM blog: Day-0 RL support"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.30949v1",
+      "title": "IQuest-Q1: pretraining overview"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.31305",
+      "title": "Cola2 original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.31275",
+      "title": "Robot-prior original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.30344",
+      "title": "AQL-Lite original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.30724",
+      "title": "VANE original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.29699",
+      "title": "AirPlayground original abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.24061",
+      "title": "SWECraft abstract and version record; differences unverified"
+    },
+    {
+      "url": "https://arxiv.org/html/2312.00752v2",
+      "title": "Historical Mamba: §§2–3 and §4.1"
+    },
+    {
+      "url": "https://2024.colmweb.org/AcceptedPapers.html",
+      "title": "COLM 2024 official award list"
+    }
+  ]
+}

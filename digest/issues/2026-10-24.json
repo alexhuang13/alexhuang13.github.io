@@ -1,0 +1,355 @@
+{
+  "date": "2026-10-24",
+  "number": "011",
+  "window": "2026-10-21 08:09 — 2026-10-24 08:09 · America/New_York",
+  "publishedAt": "2026-10-24T12:09:00Z",
+  "readingMinutes": 18,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Post-training",
+    "RNN / linear attention"
+  ],
+  "edition": "每日研究笔记",
+  "title": "评得准，未必教得好",
+  "subtitle": "生成式奖励模型 · Rollout 一致性 · 精读 Mamba",
+  "intro": "两篇主读区分静态判断能力、在线训练收益与实现偏差；七条简讯补收重叠窗口内的算力、数据及模型研究。经典精读 Mamba：选择写入什么，以及如何并行计算。",
+  "articles": [
+    {
+      "id": "paper-2610-30765",
+      "paper": "Scaling Laws for Generative Reward Models",
+      "authors": "Angel Raychev · Nathan Lile · Rafael Rafailov",
+      "url": "https://arxiv.org/html/2610.30765v1",
+      "title": "静态准确率与在线奖励价值，是两个目标",
+      "kind": "主读",
+      "dateNote": "首发10月22日 01:37 EDT · v1；重叠窗口补收",
+      "evidence": "已读 §2–4、附录 B.2–B.4；未复现",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "延续 reward overoptimization（Gao 等，2022）的问题：在固定分布上判对故事偏好，不保证能指导变化中的 policy。原文在创意写作上比较 SFT Answer-Only 与 GRPO Thinking 两条 judge 训练管线。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Delta_\\theta=\\log\\frac{\\pi_\\theta(y^+\\mid x)}{\\pi_{\\rm ref}(y^+\\mid x)}-\\log\\frac{\\pi_\\theta(y^-\\mid x)}{\\pi_{\\rm ref}(y^-\\mid x)},\\quad \\ell_+=-\\log\\sigma(\\beta\\Delta_\\theta),\\quad\\ell_-=-\\log\\sigma(-\\beta\\Delta_\\theta)",
+          "label": "固定 Gold 定向样本对；+ 为 Gold 标签，− 为翻转标签"
+        },
+        {
+          "type": "equation",
+          "tex": "\\nabla_\\theta\\ell_- -\\nabla_\\theta\\ell_+=\\beta\\nabla_\\theta\\Delta_\\theta",
+          "label": "原文附录 B.3 恒等式；错误发生的位置、梯度方向与大小均重要"
+        },
+        {
+          "type": "text",
+          "text": "在线采样与 judge 的无效／冲突票过滤还会改变保留样本的分布。上式只是机制解释；原文未测出逐样本梯度贡献的分解。[1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "设置",
+            "观察"
+          ],
+          "rows": [
+            [
+              "Qwen3 judge 0.6B–14B；policy 0.6B–8B",
+              "Thinking 静态准确率更高"
+            ],
+            [
+              "固定学习得的 32B Gold 评估器",
+              "8 个匹配设置中，Answer-Only 的 peak／top-five Elo 在 7 个更高"
+            ],
+            [
+              "替换为另一 learned judge，80 对",
+              "Answer-Only 胜 42 对；总体诊断不确定"
+            ]
+          ],
+          "caption": "静态与在线排名反转，条件于这套训练与评估管线。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "Y=b_0+b_P\\log P+b_R\\log R+b_M M+b_{MP}M\\log P+b_{MR}M\\log R+\\epsilon",
+          "label": "原文描述性 scaling 拟合：P、R 为十亿参数；M 为 Thinking 指示量"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "16 个配置拟合 6 个系数，peak Elo 的样本内 R²=0.954；没有跨尺度外推验证或独立训练 seed 区间。格式与训练目标同时改变，且 Gold 是学习模型，不能推出“思考会损害人类偏好质量”。[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-blog-vllm-1023",
+      "paper": "vLLM Delivers Day-0 Support for MiniMax-M3.1-Flash",
+      "authors": "Inferact and the vLLM Team",
+      "url": "https://vllm.ai/blog/2026-10-23-minimax-m31-flash",
+      "title": "低精度 RL：先核对“同一 policy”的三种含义",
+      "kind": "主读",
+      "dateNote": "技术博客首发／更新10月23日",
+      "evidence": "已读 Day-0 RL support 及相邻实现说明；未复现",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "只取博客中的训练方法部分：NVFP4 checkpoint 结合 veRL、FSDP2 与 LoRA，保持 base experts 冻结并同步 adapters。训练前核对权重传递、expert routing replay、同 token 的 logprob；权重相同仍可能有执行差异。[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "w_t=\\frac{p_{\\rm trainer}(a_t\\mid h_t)}{p_{\\rm rollout}(a_t\\mid h_t)},\\qquad \\bar w_t=\\min\\{2,w_t\\}",
+          "label": "为解释而写的 token-level IS 记号；原文说明 ratio cap=2"
+        },
+        {
+          "type": "text",
+          "text": "每个 batch 仅做一次 optimizer step，直接用 rollout logprobs 作 old logprobs，省去一次重算 forward。此条件不能直接移植到多 epoch 重用或更严重 stale 的训练。[2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "设置／指标",
+            "起点 → 终点"
+          ],
+          "rows": [
+            [
+              "DAPO-Math-17K；16×GB300",
+              "200 GRPO steps"
+            ],
+            [
+              "AIME-2024 accuracy",
+              "36.3% → 67.5%"
+            ],
+            [
+              "Train/rollout KL",
+              "0.040 → 0.024"
+            ]
+          ],
+          "caption": "博客原始报告；未提供这里各项一致性措施的独立消融。[2]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "这是一次可运行训练案例，不能证明 cap=2 对所有 GRPO 设置稳定，也不能据此把重复输出崩溃归因到单一原因。[2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-30949",
+      "paper": "IQuest-Q1: Advancing Foundation Capabilities for Agentic CLI Systems",
+      "authors": "A. Jian Yang et al.",
+      "url": "https://arxiv.org/html/2610.30949v1",
+      "title": "Muon、μP 与数据日程进入 320B MoE 配方",
+      "kind": "简讯",
+      "dateNote": "10月22日 05:01 EDT · v1",
+      "evidence": "已读摘要及预训练概述；未核验所有评测",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "320B 总参数／15B 激活；预训练结合 Stable SplitNorm、Muon、μP，后段增加 coding mixture。作者强调 safe 与 optimal learning rate 间保留裕量；这不是隔离 Muon 因果收益的实验。[3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-31305",
+      "paper": "Cola2: Co-Adaptive Hierarchical Language Modeling with Continuous Semantic Compression and Balanced Discrete Generation",
+      "authors": "Hongcan Guo · Yian Zhao · Feng Wang · Shen Nie · Guoqiang Wei · Yan Zeng · Hengshuang Zhao",
+      "url": "https://arxiv.org/abs/2610.31305",
+      "title": "连续语义与离散生成的联合 scaling",
+      "kind": "简讯",
+      "dateNote": "10月22日 10:04 EDT · v1",
+      "evidence": "基于原始摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "动态语义分段，token prediction 更新 encoder，flow prior 以 stop-gradient 解耦。约 210B tokens 的实验检查设计与 scaling；346.03B source tokens 的未收敛模型在八任务平均 60.10。跨模型的 token 差异不是严格 compute-matched 优势。[4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-31275",
+      "paper": "Learning Robot Behavior Priors from Non-Robotic Synthetic Data",
+      "authors": "Mateusz Odrowaz-Sypniewski et al.",
+      "url": "https://arxiv.org/abs/2610.31275",
+      "title": "数据来源：没有机器人轨迹，也能学控制先验",
+      "kind": "简讯",
+      "dateNote": "10月22日 09:43 EDT · v1",
+      "evidence": "基于原始摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "三类程序化控制抽象训练 Transformer，在未见机器人任务上出现非平凡零样本 action prediction。compute-matched 真实数据 baseline 只在其训练数据集上更强；这是数据来源与迁移比较，尚非普适的机器人 scaling law。[5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-30344",
+      "paper": "AQL-Lite: Enabling Efficient Knowledge Acquisition for Arabic LLMs via Data-Centric Continual Pretraining",
+      "authors": "Houssam Eddine Boukhalfa · Mourad Bouache · Mourad Dahmane",
+      "url": "https://arxiv.org/abs/2610.30344",
+      "title": "固定 token 预算下的数据质量与可训练参数",
+      "kind": "简讯",
+      "dateNote": "10月21日 15:04 EDT · v1",
+      "evidence": "基于原始摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "1B-token 匹配实验：curated data 相比 raw web 提高四任务均值 3.51 分。5B-token 比较中，部分参数训练恢复 full CPT 的 94% 增益、耗时为 52%；均值 73.19 vs 73.58。恢复比例是相对 base 的局部增益，不是保留 94% 全部能力。[6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-30724",
+      "paper": "Learning from Next-Frame Prediction: Towards Unified and Scalable Visual Representation Learning",
+      "authors": "Yifeng Yao et al.",
+      "url": "https://arxiv.org/abs/2610.30724",
+      "title": "VANE：在固定语义空间预测下一帧",
+      "kind": "简讯",
+      "dateNote": "10月22日 00:46 EDT · v1",
+      "evidence": "基于原始摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "冻结 semantic tokenizer，causal encoder 预测下一整帧 embedding，辅助 decoder 保留局部细节；报告模型与数据 scaling。EPIC-KITCHENS-100 anticipation 的 mean-class recall@5 比 V-JEPA 2.1 高 7.1 分；摘要未给严格预算匹配细节。[7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-29699",
+      "paper": "AirPlayground: Benchmarking Aerial Navigation across Diverse Reconstructed Environments",
+      "authors": "Rangya Zhang et al.",
+      "url": "https://arxiv.org/abs/2610.29699",
+      "title": "场景覆盖与闭环导航的数据 scaling",
+      "kind": "简讯",
+      "dateNote": "10月21日 09:13 EDT · v1",
+      "evidence": "基于原始摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "94 个重建场景、94K demonstrations、46.5M observation-state-action samples。ACT 训练从 5 扩到 70 scenes，seen／unseen median success 分别 30.6%→41.2%、16.8%→29.4%；离线预测误差与闭环成功不能互换。[8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-24061",
+      "paper": "World of SWECraft: Agent Collaboration at Scale via Simulated Software Worlds",
+      "authors": "Shannon Zejiang Shen et al. · Luke Zettlemoyer",
+      "url": "https://arxiv.org/abs/2610.24061",
+      "title": "作者跟踪：软件世界中的协作计算预算",
+      "kind": "简讯",
+      "dateNote": "首发10月16日；v2 10月21日 13:59 EDT",
+      "evidence": "已核验摘要与版本日期；版本差异尚未核实",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "以依赖 Python 包的隐藏下游效率评估多 agent 协作；三类世界、八模型、超过 10,000 agent-hours，最佳报告下游效率提高至多 31%。此处补充 Luke 作者跟踪记录；不能把这些旧有结论认定为 v2 新增发现。[9]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-mamba",
+    "paperId": "arxiv:2312.00752",
+    "shortTitle": "Mamba",
+    "year": 2024,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "paper": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+    "authors": "Albert Gu · Tri Dao",
+    "url": "https://arxiv.org/html/2312.00752v2",
+    "title": "压缩历史之前，先决定保留什么",
+    "kind": "每日经典 · 历史工作",
+    "dateNote": "首发2023-12-01；COLM 2024；所读 v2 2024-05-31",
+    "evidence": "已读 §2、§3.1–3.5、定理1与 §4.1 任务设定；未复现 kernel benchmark",
+    "recognition": {
+      "label": "COLM 2024 Outstanding Paper Award",
+      "url": "https://2024.colmweb.org/AcceptedPapers.html"
+    },
+    "question": "固定 state dimension 下，能否刻画内容选择带来的可保留信息上限？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "S4（2022）用固定线性系统压缩历史，线性注意力（2020）用有限状态累加。但语言里的“哪些 token 值得记住”依赖内容；Mamba（2024）让写入、读取与遗忘随输入变化。[10]"
+      },
+      {
+        "type": "equation",
+        "tex": "h_t=\\bar A_t h_{t-1}+\\bar B_t x_t,\\quad y_t=C_t h_t,\\qquad B_t=s_B(x_t),\\ C_t=s_C(x_t),\\ \\Delta_t=\\operatorname{softplus}(b+s_\\Delta(x_t))",
+        "label": "单 channel 记号；N 维状态、固定对角 A；完整层并行作用于 D 个 channels"
+      },
+      {
+        "type": "equation",
+        "tex": "\\bar A_t=e^{\\Delta_t A},\\qquad\\bar B_t=(\\Delta_t A)^{-1}(e^{\\Delta_t A}-I)\\Delta_t B_t",
+        "label": "原文 ZOH 离散化；非可逆处可用连续延拓理解"
+      },
+      {
+        "type": "equation",
+        "tex": "N=1,\\quad A=-1,\\quad B=1,\\quad\\Delta_t=\\log(1+e^{z_t})\\quad\\Longrightarrow\\quad h_t=(1-g_t)h_{t-1}+g_tx_t,\\quad g_t=\\sigma(z_t)",
+        "label": "原文定理 1 的标量特例：exp(−softplus(z))=1−sigmoid(z)"
+      },
+      {
+        "type": "text",
+        "text": "小 gate 保留状态并忽略当前输入，大 gate 重置到当前输入；该标量解释不是完整多 channel 网络的收敛定理。输入相关系数打破固定卷积，却保留仿射复合的结合律。[10]"
+      },
+      {
+        "type": "equation",
+        "tex": "F_t(h)=a_t\\odot h+b_t,\\qquad (a_2,b_2)\\circ(a_1,b_1)=(a_2\\odot a_1,\\ a_2\\odot b_1+b_2)",
+        "label": "解释 scan 的等价代数表示；由仿射复合可直接验证结合律"
+      },
+      {
+        "type": "text",
+        "text": "于是可并行 prefix scan。原文再把离散化和递推融合到 SRAM，并在反向重算状态，避免向 HBM 写出完整 B×L×D×N 状态张量；选择机制与硬件实现共同支撑线性序列复杂度。[10]"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "已读 §2、§3.1–3.5、定理1及 §4.1 的 selective-copy／induction 设定。有限维状态仍是信息瓶颈；线性复杂度不保证所有检索任务都能替代 attention。讨论：在固定 state dimension 下，能否刻画内容选择带来的可保留信息上限？[10,11]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.30765v1",
+      "title": "GenRM 原文：方法、在线实验、附录 B 的拟合与评估限制"
+    },
+    {
+      "url": "https://vllm.ai/blog/2026-10-23-minimax-m31-flash",
+      "title": "vLLM 原始博客：Day-0 RL support"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.30949v1",
+      "title": "IQuest-Q1 原文：预训练概述"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.31305",
+      "title": "Cola2 原始摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.31275",
+      "title": "机器人先验原始摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.30344",
+      "title": "AQL-Lite 原始摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.30724",
+      "title": "VANE 原始摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.29699",
+      "title": "AirPlayground 原始摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.24061",
+      "title": "SWECraft 摘要与版本记录；差异未核实"
+    },
+    {
+      "url": "https://arxiv.org/html/2312.00752v2",
+      "title": "经典旧文 Mamba：§2–3、§4.1"
+    },
+    {
+      "url": "https://2024.colmweb.org/AcceptedPapers.html",
+      "title": "COLM 2024 官方获奖名单"
+    }
+  ]
+}
