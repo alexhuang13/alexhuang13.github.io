@@ -1,0 +1,21 @@
+RESEARCH DIGEST / 2026-10-25
+这条轨迹，究竟来自哪个策略？
+搜索 agent RL · 混合版本 rollout · 精读 TRPO
+
+中文: https://alexhuang13.github.io/digest/2026-10-25.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-25.html
+
+主读
+筛选哪些题，记录每个 token 的行为策略
+Post-Training at the Frontier
+https://alexhuang13.github.io/digest/2026-10-25.html#blog-coreweave-frontier
+
+每日精读 · 2015
+surrogate 变好，为什么还要信任域？
+https://alexhuang13.github.io/digest/2026-10-25.html#classic-trpo
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-10-25.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

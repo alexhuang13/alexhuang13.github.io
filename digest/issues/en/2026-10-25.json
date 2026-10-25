@@ -1,0 +1,157 @@
+{
+  "date": "2026-10-25",
+  "number": "012",
+  "window": "2026-10-22 08:49 — 2026-10-25 08:49 · America/New_York",
+  "publishedAt": "2026-10-25T12:49:00Z",
+  "readingMinutes": 12,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Post-training",
+    "Deep learning theory"
+  ],
+  "edition": "Daily research notes",
+  "title": "Which policy generated this trajectory?",
+  "subtitle": "Search-agent RL · Mixed-version rollouts · TRPO",
+  "intro": "One previously unlisted technical blog from the overlap window; historical reading derives the gap between surrogate improvement and policy improvement.",
+  "articles": [
+    {
+      "id": "blog-coreweave-frontier",
+      "paper": "Post-Training at the Frontier",
+      "authors": "Ching-Chia Wang · Eddy Nassif · Aastha Jhunjhunwala",
+      "url": "https://www.coreweave.com/blog/post-training-at-the-frontier",
+      "title": "Filtering tasks; tracking the policy behind each token",
+      "kind": "Main reading",
+      "dateNote": "Published October 22, 2026; newly included from overlap window",
+      "evidence": "Read data strategy, synchronization, results and limitations; not reproduced",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "For search agents, filtering and rollout synchronization jointly determine the update data. This October 22 blog is newly included: eight probes per question, then SFT on 4,932 traces and GRPO on 1,480 tasks.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "K\\mid p\\sim\\operatorname{Binomial}(8,p),\\qquad \\Pr(0<K<8)=1-p^8-(1-p)^8",
+          "label": "Independent Bernoulli illustration: intermediate difficulty is more likely retained; not a paper theorem"
+        },
+        {
+          "type": "text",
+          "text": "Eight failures do not establish unlearnability. Filtering depends on both policy and tools; the reported pipeline does not isolate their contributions.[1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Setup / metric",
+            "Reported result"
+          ],
+          "rows": [
+            [
+              "Nemotron 3.5 Lightning; BrowseComp",
+              "36.97% → 45.45% accuracy"
+            ],
+            [
+              "Mean tool calls / task",
+              "About 168 → 115"
+            ],
+            [
+              "SFT / RL time",
+              "About 1h / 8h; SFT uses 4×B200"
+            ]
+          ],
+          "caption": "Blog report; both tools and training changed.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "q(\\tau\\mid x)=\\prod_{t=1}^T q_{v_t}(a_t\\mid h_t),\\qquad w(\\tau)=\\prod_{t=1}^T\\frac{\\pi_\\theta(a_t\\mid h_t)}{q_{v_t}(a_t\\mid h_t)}",
+          "label": "Illustration: execution version v_t; exact trajectory IS requires actual behavior probabilities and support"
+        },
+        {
+          "type": "text",
+          "text": "Hot-Load preserves requests and caches across weight changes. Strict on-policy operation can reset prompt caches and wait for all replicas. The equation is not an implemented correction; cached execution need not equal recomputation under new weights.[1]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The fastest delta Hot-Load is about 15× the average cold start, measuring weight updates only. No unbiased mixed-version gradient guarantee is established.[1]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-trpo",
+    "paperId": "arxiv:1502.05477",
+    "shortTitle": "TRPO",
+    "year": 2015,
+    "topics": [
+      "Post-training"
+    ],
+    "paper": "Trust Region Policy Optimization",
+    "authors": "John Schulman · Sergey Levine · Philipp Moritz · Michael I. Jordan · Pieter Abbeel",
+    "url": "https://arxiv.org/html/1502.05477v5",
+    "title": "Why surrogate improvement needs a trust region",
+    "kind": "Daily classic · historical work",
+    "dateNote": "First posted 2015-02-19; ICML 2015; read v5 (2017-04-20)",
+    "evidence": "Read §§2–6, Appendix A coupling proof, §8.2 and Table 1; no reproduction",
+    "recognition": {
+      "label": "ICML 2015 · foundational historical policy-optimization work",
+      "url": "https://proceedings.mlr.press/v37/schulman15.html"
+    },
+    "question": "Can sampled-prefix average KL control rare harmful prefixes in long trajectories?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Natural policy gradients and conservative policy iteration (2002) motivate TRPO (2015): improving on old data changes future state visitation.[2,3]"
+      },
+      {
+        "type": "equation",
+        "tex": "J(\\pi)=\\mathbb E_\\pi\\sum_{t\\ge0}\\gamma^t r_t,\\quad \\rho_\\pi(s)=\\sum_{t\\ge0}\\gamma^t\\Pr_\\pi(s_t=s),\\quad A_\\pi=Q_\\pi-V_\\pi",
+        "label": "Discounted MDP; 0<γ<1; unnormalized occupancy; bounded advantage"
+      },
+      {
+        "type": "equation",
+        "tex": "J(\\pi\\prime)-J(\\pi)=\\sum_s\\rho_{\\pi\\prime}(s)\\bar A(s),\\quad L_\\pi(\\pi\\prime)=J(\\pi)+\\sum_s\\rho_\\pi(s)\\bar A(s),\\quad \\bar A(s)=\\mathbb E_{a\\sim\\pi\\prime}A_\\pi(s,a)",
+        "label": "Identity and surrogate: replacing new occupancy with old occupancy is the approximation [2]"
+      },
+      {
+        "type": "text",
+        "text": "Coupling bounds history divergence by tα; zero mean under the old policy bounds the new mean advantage by 2εα.[2]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\alpha=\\max_s D_{\\rm TV}(\\pi(\\cdot\\mid s),\\pi\\prime(\\cdot\\mid s)),\\quad \\epsilon=\\max_{s,a}|A_\\pi(s,a)|,\\quad |J(\\pi\\prime)-L_\\pi(\\pi\\prime)|\\le\\sum_{t\\ge0}4\\epsilon t\\gamma^t\\alpha^2=\\frac{4\\epsilon\\gamma}{(1-\\gamma)^2}\\alpha^2",
+        "label": "Slightly looser form of Appendix A coupling bound; second-order error [2]"
+      },
+      {
+        "type": "equation",
+        "tex": "J(\\pi\\prime)\\ge L_\\pi(\\pi\\prime)-C D_{\\rm KL}^{\\max}(\\pi,\\pi\\prime),\\quad C=\\frac{4\\epsilon\\gamma}{(1-\\gamma)^2},\\quad D_{\\rm KL}^{\\max}=\\max_s D_{\\rm KL}(\\pi(\\cdot\\mid s)\\Vert\\pi\\prime(\\cdot\\mid s))",
+        "label": "Paper KL lower bound; exact improvement over the old-policy baseline guarantees nondecrease [2]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\max_\\theta\\ \\mathbb E_{s\\sim d_\\pi,a\\sim\\pi}\\!\\left[\\frac{\\pi_\\theta(a\\mid s)}{\\pi(a\\mid s)}A_\\pi(s,a)\\right]\\quad\\mathrm{s.t.}\\quad\\mathbb E_{s\\sim d_\\pi}D_{\\rm KL}(\\pi\\Vert\\pi_\\theta)\\le\\delta,\\quad d_\\pi=(1-\\gamma)\\rho_\\pi",
+        "label": "Practical TRPO: average-KL constraint, approximately solved by conjugate gradients and line search [2]"
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "Average KL and estimated advantages do not directly inherit monotonicity. Atari used one run per game. Question: can sampled-prefix average KL control rare harmful prefixes in long trajectories?[2]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://www.coreweave.com/blog/post-training-at-the-frontier",
+      "title": "Original technical blog: filtering, Hot-Load, pipeline results"
+    },
+    {
+      "url": "https://arxiv.org/html/1502.05477v5",
+      "title": "Historical TRPO paper: theory, implementation and experiments"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v37/schulman15.html",
+      "title": "Official ICML 2015 publication record"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+RESEARCH DIGEST / 2026-10-25
+Which policy generated this trajectory?
+Search-agent RL · Mixed-version rollouts · TRPO
+
+中文: https://alexhuang13.github.io/digest/2026-10-25.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-25.html
+
+Main reading
+Filtering tasks; tracking the policy behind each token
+Post-Training at the Frontier
+https://alexhuang13.github.io/digest/en/2026-10-25.html#blog-coreweave-frontier
+
+Daily classic · 2015
+Why surrogate improvement needs a trust region
+https://alexhuang13.github.io/digest/en/2026-10-25.html#classic-trpo
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-10-25.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

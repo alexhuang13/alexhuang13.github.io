@@ -1,0 +1,157 @@
+{
+  "date": "2026-10-25",
+  "number": "012",
+  "window": "2026-10-22 08:49 — 2026-10-25 08:49 · America/New_York",
+  "publishedAt": "2026-10-25T12:49:00Z",
+  "readingMinutes": 12,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Post-training",
+    "Deep learning theory"
+  ],
+  "edition": "每日研究笔记",
+  "title": "这条轨迹，究竟来自哪个策略？",
+  "subtitle": "搜索 agent RL · 混合版本 rollout · 精读 TRPO",
+  "intro": "本期补收重叠窗口内1篇技术博客，区分难度筛选、服务加速与策略一致性；经典精读从耦合证明看 TRPO 的保证落在哪里。",
+  "articles": [
+    {
+      "id": "blog-coreweave-frontier",
+      "paper": "Post-Training at the Frontier",
+      "authors": "Ching-Chia Wang · Eddy Nassif · Aastha Jhunjhunwala",
+      "url": "https://www.coreweave.com/blog/post-training-at-the-frontier",
+      "title": "筛选哪些题，记录每个 token 的行为策略",
+      "kind": "主读",
+      "dateNote": "首发2026-10-22；重叠窗口补收",
+      "evidence": "已读数据策略、同步实现、结果与限制；未复现",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "对搜索 agent，数据筛选与 rollout 同步共同决定一次更新实际使用的样本。此博客10月22日发布，本期补收：每题探测8次，再用4,932条 SFT traces、1,480道 RL tasks 做 SFT→GRPO。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "K\\mid p\\sim\\operatorname{Binomial}(8,p),\\qquad \\Pr(0<K<8)=1-p^8-(1-p)^8",
+          "label": "解释用独立 Bernoulli 模型；中等难度更易保留，并非原文定理"
+        },
+        {
+          "type": "text",
+          "text": "仅8次全失败不能判定题目不可学。这个筛选依赖当前 policy 与搜索工具，换工具后成功率也会改变。以下是整套流程的报告，不能分离数据、SFT、RL与搜索服务各自的贡献。[1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "设置／指标",
+            "原始报告"
+          ],
+          "rows": [
+            [
+              "Nemotron 3.5 Lightning；BrowseComp",
+              "36.97% → 45.45% accuracy"
+            ],
+            [
+              "平均 tool calls／task",
+              "约168 → 115"
+            ],
+            [
+              "SFT／RL 用时",
+              "约1h／8h；SFT为4×B200"
+            ]
+          ],
+          "caption": "博客报告；工具与训练流程共同改变。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "q(\\tau\\mid x)=\\prod_{t=1}^T q_{v_t}(a_t\\mid h_t),\\qquad w(\\tau)=\\prod_{t=1}^T\\frac{\\pi_\\theta(a_t\\mid h_t)}{q_{v_t}(a_t\\mid h_t)}",
+          "label": "解释式：v_t 为执行版本；精确轨迹 IS 要求真实行为条件概率与支持覆盖"
+        },
+        {
+          "type": "text",
+          "text": "Hot-Load 保留进行中的请求与 cache，更新后继续生成；单个请求因此可能跨策略版本。博客给出严格 on-policy 选项：重置 prompt cache，等待所有 replicas 更新完成。上式不是其已实现的校正算法；复用旧 cache 时也不能直接把行为概率等同于新权重全量重算的概率。[1]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "最快 delta Hot-Load 对平均冷启动约15×，只衡量权重更新；不是端到端训练提速。博客没有建立混合版本轨迹的无偏梯度保证。[1]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-trpo",
+    "paperId": "arxiv:1502.05477",
+    "shortTitle": "TRPO",
+    "year": 2015,
+    "topics": [
+      "Post-training"
+    ],
+    "paper": "Trust Region Policy Optimization",
+    "authors": "John Schulman · Sergey Levine · Philipp Moritz · Michael I. Jordan · Pieter Abbeel",
+    "url": "https://arxiv.org/html/1502.05477v5",
+    "title": "surrogate 变好，为什么还要信任域？",
+    "kind": "每日经典 · 历史工作",
+    "dateNote": "首发2015-02-19；ICML 2015；所读v5（2017-04-20）",
+    "evidence": "已读§2–6、附录A耦合证明、§8.2与表1；未复现",
+    "recognition": {
+      "label": "ICML 2015 · 策略优化的重要历史工作",
+      "url": "https://proceedings.mlr.press/v37/schulman15.html"
+    },
+    "question": "只观测采样前缀的平均 KL，怎样控制长轨迹上少数坏前缀造成的损失？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "自然策略梯度（Kakade，2002）给出局部几何，conservative policy iteration（Kakade–Langford，2002）控制策略变化。TRPO（2015）把“在旧数据上改进”与“新策略改变访问分布”的误差显式连接。[2,3]"
+      },
+      {
+        "type": "equation",
+        "tex": "J(\\pi)=\\mathbb E_\\pi\\sum_{t\\ge0}\\gamma^t r_t,\\quad \\rho_\\pi(s)=\\sum_{t\\ge0}\\gamma^t\\Pr_\\pi(s_t=s),\\quad A_\\pi=Q_\\pi-V_\\pi",
+        "label": "折扣 MDP；0<γ<1；ρ 未归一化；优势有界"
+      },
+      {
+        "type": "equation",
+        "tex": "J(\\pi\\prime)-J(\\pi)=\\sum_s\\rho_{\\pi\\prime}(s)\\bar A(s),\\quad L_\\pi(\\pi\\prime)=J(\\pi)+\\sum_s\\rho_\\pi(s)\\bar A(s),\\quad \\bar A(s)=\\mathbb E_{a\\sim\\pi\\prime}A_\\pi(s,a)",
+        "label": "原文恒等式与 surrogate；把新 occupancy 换成旧 occupancy 是近似所在 [2]"
+      },
+      {
+        "type": "text",
+        "text": "证明的两个因子：耦合后，到第t步历史分叉的概率至多tα；同时旧策略下优势均值为0，因此新策略下的优势均值至多2εα。[2]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\alpha=\\max_s D_{\\rm TV}(\\pi(\\cdot\\mid s),\\pi\\prime(\\cdot\\mid s)),\\quad \\epsilon=\\max_{s,a}|A_\\pi(s,a)|,\\quad |J(\\pi\\prime)-L_\\pi(\\pi\\prime)|\\le\\sum_{t\\ge0}4\\epsilon t\\gamma^t\\alpha^2=\\frac{4\\epsilon\\gamma}{(1-\\gamma)^2}\\alpha^2",
+        "label": "原文附录A耦合证明的稍松上界；误差是二阶 [2]"
+      },
+      {
+        "type": "equation",
+        "tex": "J(\\pi\\prime)\\ge L_\\pi(\\pi\\prime)-C D_{\\rm KL}^{\\max}(\\pi,\\pi\\prime),\\quad C=\\frac{4\\epsilon\\gamma}{(1-\\gamma)^2},\\quad D_{\\rm KL}^{\\max}=\\max_s D_{\\rm KL}(\\pi(\\cdot\\mid s)\\Vert\\pi\\prime(\\cdot\\mid s))",
+        "label": "原文 KL 下界；精确优化该下界且包含旧策略时保证不退步 [2]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\max_\\theta\\ \\mathbb E_{s\\sim d_\\pi,a\\sim\\pi}\\!\\left[\\frac{\\pi_\\theta(a\\mid s)}{\\pi(a\\mid s)}A_\\pi(s,a)\\right]\\quad\\mathrm{s.t.}\\quad\\mathbb E_{s\\sim d_\\pi}D_{\\rm KL}(\\pi\\Vert\\pi_\\theta)\\le\\delta,\\quad d_\\pi=(1-\\gamma)\\rho_\\pi",
+        "label": "实用 TRPO：平均 KL 约束，再用共轭梯度与 line search 近似求解 [2]"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "最大 KL→平均 KL、精确优势→样本估计后，不再直接继承单调保证。Atari 原文每游戏只跑一次，缺少误差区间。讨论：若只观测到采样前缀上的平均 KL，怎样控制长轨迹上少数坏前缀造成的损失？[2]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://www.coreweave.com/blog/post-training-at-the-frontier",
+      "title": "原始技术博客：筛选、Hot-Load与整套流程结果"
+    },
+    {
+      "url": "https://arxiv.org/html/1502.05477v5",
+      "title": "经典旧文TRPO：理论、实现与实验"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v37/schulman15.html",
+      "title": "ICML 2015 官方出版记录"
+    }
+  ]
+}

@@ -4,8 +4,24 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-10-24",
+  "latest": "2026-10-25",
   "issues": [
+    {
+      "date": "2026-10-25",
+      "title": "这条轨迹，究竟来自哪个策略？",
+      "url": "/digest/2026-10-25.html",
+      "translations": {
+        "en": {
+          "title": "Which policy generated this trajectory?",
+          "url": "/digest/en/2026-10-25.html"
+        }
+      },
+      "sources": [
+        "https://www.coreweave.com/blog/post-training-at-the-frontier",
+        "https://arxiv.org/html/1502.05477v5",
+        "https://proceedings.mlr.press/v37/schulman15.html"
+      ]
+    },
     {
       "date": "2026-10-24",
       "title": "评得准，未必教得好",

@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-10-25",
+    "paperId": "arxiv:1502.05477",
+    "paper": "Trust Region Policy Optimization",
+    "shortTitle": "TRPO",
+    "year": 2015,
+    "topics": [
+      "Post-training"
+    ],
+    "recognition": {
+      "label": "ICML 2015 · 策略优化的重要历史工作",
+      "url": "https://proceedings.mlr.press/v37/schulman15.html"
+    },
+    "source": "https://arxiv.org/html/1502.05477v5",
+    "url": "/digest/2026-10-25.html#classic-trpo"
+  },
+  {
     "date": "2026-10-24",
     "paperId": "arxiv:2312.00752",
     "paper": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
