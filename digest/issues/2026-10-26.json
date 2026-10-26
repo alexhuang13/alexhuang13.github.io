@@ -1,0 +1,226 @@
+{
+  "date": "2026-10-26",
+  "number": "013",
+  "window": "2026-10-23 09:04 — 2026-10-26 09:04 · America/New_York",
+  "publishedAt": "2026-10-26T13:04:35Z",
+  "readingMinutes": 15,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training",
+    "Diffusion models"
+  ],
+  "edition": "每日研究笔记",
+  "title": "扰动、状态与采样路径",
+  "subtitle": "SOMA · 调度器张量别名 · 数据广度 · 精读DDIM",
+  "intro": "两篇主读、三条简讯：区分扰动保证、实现状态和数据组成；经典精读DDIM，追问同一训练目标如何容许不同采样路径。",
+  "articles": [
+    {
+      "id": "paper-2610-32465",
+      "paper": "Sharpness-aware Orthogonalized Momentum Algorithms",
+      "authors": "Geetika · Shivani Singh Chauhan · Gauranshi Gupta · Anant Jain · Kaushik Kalyanaraman · Bapi Chatterjee",
+      "url": "https://arxiv.org/html/2610.32465v1",
+      "title": "旧梯度扰动，保留多少收敛保证？",
+      "dateNote": "首发2026-10-23 · v1；重叠窗口补收",
+      "evidence": "已读算法1、§4–5与定理1；未复现",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "SAM（2021）通常每步需要两次梯度；SOMA将旧扰动梯度减去动量的EMA估计，再做Newton–Schulz变换。以下沿用算法1的时间指标，NS表示有限步谱变换。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "E_t=\\rho\\operatorname{NS}_q(\\bar G_{t-1}-\\gamma(1-\\beta)M_{t-1}),\\quad \\bar G_t=\\nabla f_{\\mathcal B_t}(W_{t-1}+E_t)",
+          "label": "ρ为扰动尺度，γ为残差系数；首步单独初始化 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "M_t=\\beta M_{t-1}+\\bar G_t,\\qquad W_t=W_{t-1}-\\eta\\operatorname{NS}_q(M_t)",
+          "label": "原文更新：T步共T+1次梯度，对照FP-SOMA为2T次 [1]"
+        },
+        {
+          "type": "text",
+          "text": "定理1假设目标下有界、算子范数／核范数意义的Hölder光滑，以及独立小批量噪声有界p阶中心矩。控制的是平均期望梯度核范数；固定非零扰动留下随ρ的ν次方变化的误差项。这个上界对扰动方向宽容，不能据此证明某一方向泛化更好。[1]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "梯度次数减少不等于训练时间同比减少；这里未逐项核验附录证明与LLM实验，故不转述性能增益。[1]"
+        }
+      ]
+    },
+    {
+      "id": "blog-orthogonal-alias",
+      "paper": "Taming Orthogonal Optimizers at Scale (Part 2): The Anatomy of a Silent Tensor-Aliasing Bug",
+      "authors": "Jennifer Wei",
+      "url": "https://medium.com/@jenwei0312/taming-orthogonal-optimizers-at-scale-part-2-the-anatomy-of-a-silent-tensor-aliasing-bug-147431a9c7b0",
+      "title": "先检查调度器有没有改变实验本身",
+      "dateNote": "2026-10-25公开；作者论坛帖同日链接此文",
+      "evidence": "已读错误复现、修复与恢复测试说明；未运行代码",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在OLMo-core接入Dion3时，lr与initial_lr曾指向同一个零维张量。调度器原地修改lr，也改变了后续调度所需的基准。保存checkpoint时再转成float已经太迟：坏基准会一起保存。[2,3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\eta_t^{\\rm intended}=\\eta_0s_t,\\qquad \\eta_t^{\\rm alias}=\\eta_{t-1}^{\\rm alias}s_t=\\eta_0\\prod_{j=1}^t s_j",
+          "label": "解释用递推：假定每步从已被覆盖的基准乘调度因子；不是通用调度器定理"
+        },
+        {
+          "type": "text",
+          "text": "修复是在注册initial_lr时使用float(lr)，分离不可变基准与运行时张量。作者报告20步连续运行与10步后冷启动恢复的学习率轨迹一致，并检查HSDP、FP8及中断恢复。[2]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "短轨迹与作者自测不能推出Muon／Dion3的长期收敛优势，也不能证明所有checkpoint路径正确；这里的直接证据是学习率状态恢复。[2]"
+        }
+      ]
+    },
+    {
+      "id": "blog-kimi-k31",
+      "paper": "Kimi K3.1 Pro Tech Blog: Advancing Open Intelligence",
+      "authors": "Moonshot AI",
+      "url": "https://www.kimi.ai/blog/kimi-k3-1-pro",
+      "title": "能力随数据混合变化，不能只看总RL算力",
+      "dateNote": "10月23–24日发布窗口；原页未显示精确日期，本轮补收",
+      "evidence": "已读训练概述与数据移除对照；内部评测未独立复现",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "原始博客报告同时移除mid-training网络安全数据与RL相关环境后，内部xdev-bench-hard的pass@3从90.5%降至81.0%；这不是pass@1。两阶段同时改变，无法分离各自贡献；也未给出可拟合的算力—性能曲线。只收技术对照，不把产品发布本身当研究结果。[4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-32057",
+      "paper": "HyScale: Scaling Long-Context Training for Learned Sparse Attention",
+      "authors": "Yangsheng Deng et al.",
+      "url": "https://arxiv.org/html/2610.32057v1",
+      "title": "长上下文的瓶颈也可能是“选择谁”",
+      "dateNote": "首发2026-10-23 · v1",
+      "evidence": "已读摘要与§1–2；未复现",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "HyTopK在线得到精确top-k索引，selection replay在重算时复用索引。原文报告512张H20、1M上下文的GLM-5.1端到端训练较Megatron-LM快2.07倍；其他架构的层级提速不能直接当整模型提速。属于长上下文计算成本研究，并非新的loss scaling law。[5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-32448",
+      "paper": "POSEIDON: Scaling Training Environments for Scientific Agents from Code Repositories",
+      "authors": "Qifan Zhang et al.",
+      "url": "https://arxiv.org/html/2610.32448v1",
+      "title": "固定轨迹预算，扩展来源多样性",
+      "dateNote": "首发2026-10-23 · v1",
+      "evidence": "已读§4.3消融；未核验其余实验",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Qwen3.5-35B-A3B在固定轨迹数、平均难度和任务配比下，将来源仓库覆盖从20%扩至100%，四个评测总体改善但中间有波动。固定3万轨迹、平均难度从2.4调至3.2时，没有一致收益趋势。这里支持“来源广度”与“难度”分开控制，不支持普适幂律。[6]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-ddim",
+    "paperId": "arxiv:2010.02502",
+    "shortTitle": "DDIM",
+    "year": 2021,
+    "topics": [
+      "Diffusion models"
+    ],
+    "paper": "Denoising Diffusion Implicit Models",
+    "authors": "Jiaming Song · Chenlin Meng · Stefano Ermon",
+    "url": "https://arxiv.org/html/2010.02502v3",
+    "title": "训练目标没有唯一指定采样路径",
+    "kind": "每日经典 · 历史工作",
+    "dateNote": "首发2020-10-06；ICLR 2021；所读v3（2022-06-09）",
+    "evidence": "已读§3–5、定理1和表1；未复现",
+    "recognition": {
+      "label": "ICLR 2021 · diffusion采样的重要历史工作",
+      "url": "https://dblp.org/rec/conf/iclr/SongME21.html"
+    },
+    "question": "换采样器时如何控制微调奖励偏移？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "DDPM（2020）的训练依赖各时刻加噪边缘分布，未唯一指定整条路径。DDIM（ICLR 2021）改变时间耦合，让同一去噪器支持不同采样过程。[7,8]"
+      },
+      {
+        "type": "equation",
+        "tex": "x_t=\\sqrt{\\alpha_t}x_0+\\sqrt{1-\\alpha_t}\\epsilon,\\quad \\epsilon\\sim\\mathcal N(0,I),\\quad L_\\gamma=\\sum_t\\gamma_t\\mathbb E\\|\\epsilon_\\theta(x_t,t)-\\epsilon\\|^2",
+        "label": "α为累计保留信号比例，随t递减；不是单步系数 [7]"
+      },
+      {
+        "type": "equation",
+        "tex": "J_\\sigma=L_\\gamma+C,\\qquad \\gamma_t>0,\\quad \\sigma_t>0",
+        "label": "原文定理1：不同路径对应加权去噪目标；C与θ无关 [7]"
+      },
+      {
+        "type": "text",
+        "text": "权重不改变最优解的论证要求各t参数不共享；共享有限网络仍会产生权衡。确定性采样取零噪声极限。[7]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\hat x_0={x_t-\\sqrt{1-\\alpha_t}\\epsilon_\\theta(x_t,t)\\over\\sqrt{\\alpha_t}},\\qquad x_s=\\sqrt{\\alpha_s}\\hat x_0+\\sqrt{1-\\alpha_s-\\sigma_{t,s}^2}\\epsilon_\\theta(x_t,t)+\\sigma_{t,s}z",
+        "label": "原文采样式推广到s<t；z为独立标准高斯 [7]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\sigma_{t,s}(\\eta)=\\eta\\sqrt{{1-\\alpha_s\\over1-\\alpha_t}\\left(1-{\\alpha_t\\over\\alpha_s}\\right)},\\qquad \\eta=0\\ \\Longrightarrow\\ \\operatorname{Var}(x_s\\mid x_t)=0",
+        "label": "η控制随机性；稀疏时间网格减少去噪器调用 [7]"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "同训练目标不保证有限步输出分布相同。原文CelebA表1中20步DDIM的FID为13.73；只是特定实验。讨论：若微调只在一个采样器上进行，怎样约束换采样器后的奖励偏移？[7]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.32465v1",
+      "title": "SOMA原文：算法与定理"
+    },
+    {
+      "url": "https://medium.com/@jenwei0312/taming-orthogonal-optimizers-at-scale-part-2-the-anatomy-of-a-silent-tensor-aliasing-bug-147431a9c7b0",
+      "title": "原始调试博客"
+    },
+    {
+      "url": "https://discuss.huggingface.co/t/i-gave-a-talk-at-pytorch-conference-na-2026/191007",
+      "title": "作者论坛帖：日期核验"
+    },
+    {
+      "url": "https://www.kimi.ai/blog/kimi-k3-1-pro",
+      "title": "Kimi原始技术博客"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.32057v1",
+      "title": "HyScale原文：成本与系统结果"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.32448v1",
+      "title": "POSEIDON原文：§4.3消融"
+    },
+    {
+      "url": "https://arxiv.org/html/2010.02502v3",
+      "title": "DDIM旧文：理论与实验"
+    },
+    {
+      "url": "https://dblp.org/rec/conf/iclr/SongME21.html",
+      "title": "DBLP：ICLR 2021出版记录"
+    }
+  ]
+}

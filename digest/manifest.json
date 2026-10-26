@@ -4,8 +4,29 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-10-25",
+  "latest": "2026-10-26",
   "issues": [
+    {
+      "date": "2026-10-26",
+      "title": "扰动、状态与采样路径",
+      "url": "/digest/2026-10-26.html",
+      "translations": {
+        "en": {
+          "title": "Perturbations, state, and sampling paths",
+          "url": "/digest/en/2026-10-26.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2610.32465v1",
+        "https://medium.com/@jenwei0312/taming-orthogonal-optimizers-at-scale-part-2-the-anatomy-of-a-silent-tensor-aliasing-bug-147431a9c7b0",
+        "https://discuss.huggingface.co/t/i-gave-a-talk-at-pytorch-conference-na-2026/191007",
+        "https://www.kimi.ai/blog/kimi-k3-1-pro",
+        "https://arxiv.org/html/2610.32057v1",
+        "https://arxiv.org/html/2610.32448v1",
+        "https://arxiv.org/html/2010.02502v3",
+        "https://dblp.org/rec/conf/iclr/SongME21.html"
+      ]
+    },
     {
       "date": "2026-10-25",
       "title": "这条轨迹，究竟来自哪个策略？",

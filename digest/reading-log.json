@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-10-26",
+    "paperId": "arxiv:2010.02502",
+    "paper": "Denoising Diffusion Implicit Models",
+    "shortTitle": "DDIM",
+    "year": 2021,
+    "topics": [
+      "Diffusion models"
+    ],
+    "recognition": {
+      "label": "ICLR 2021 · diffusion采样的重要历史工作",
+      "url": "https://dblp.org/rec/conf/iclr/SongME21.html"
+    },
+    "source": "https://arxiv.org/html/2010.02502v3",
+    "url": "/digest/2026-10-26.html#classic-ddim"
+  },
+  {
     "date": "2026-10-25",
     "paperId": "arxiv:1502.05477",
     "paper": "Trust Region Policy Optimization",

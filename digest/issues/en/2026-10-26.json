@@ -1,0 +1,226 @@
+{
+  "date": "2026-10-26",
+  "number": "013",
+  "window": "2026-10-23 09:04 — 2026-10-26 09:04 · America/New_York",
+  "publishedAt": "2026-10-26T13:04:35Z",
+  "readingMinutes": 15,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training",
+    "Diffusion models"
+  ],
+  "edition": "Daily research notes",
+  "title": "Perturbations, state, and sampling paths",
+  "subtitle": "SOMA · Scheduler tensor aliasing · Data breadth · DDIM",
+  "intro": "Two main readings and three briefs separate perturbation guarantees, implementation state, and data composition. The DDIM classic examines how one training objective permits different sampling paths.",
+  "articles": [
+    {
+      "id": "paper-2610-32465",
+      "paper": "Sharpness-aware Orthogonalized Momentum Algorithms",
+      "authors": "Geetika · Shivani Singh Chauhan · Gauranshi Gupta · Anant Jain · Kaushik Kalyanaraman · Bapi Chatterjee",
+      "url": "https://arxiv.org/html/2610.32465v1",
+      "title": "Stale perturbations: what convergence survives?",
+      "dateNote": "First posted 2026-10-23 · v1; overlap-window catch-up",
+      "evidence": "Read Algorithm 1, §§4–5 and Theorem 1; not reproduced",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "SAM (2021) usually needs two gradient evaluations per step. SOMA transforms a stale gradient residual after subtracting a momentum-based EMA. Indices below follow Algorithm 1; NS denotes a finite-step spectral transform.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "E_t=\\rho\\operatorname{NS}_q(\\bar G_{t-1}-\\gamma(1-\\beta)M_{t-1}),\\quad \\bar G_t=\\nabla f_{\\mathcal B_t}(W_{t-1}+E_t)",
+          "label": "ρ is the perturbation scale; γ is the residual coefficient; initialization is separate [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "M_t=\\beta M_{t-1}+\\bar G_t,\\qquad W_t=W_{t-1}-\\eta\\operatorname{NS}_q(M_t)",
+          "label": "Original update: T+1 gradient evaluations over T steps, versus 2T for FP-SOMA [1]"
+        },
+        {
+          "type": "text",
+          "text": "Theorem 1 assumes a lower-bounded objective, operator/nuclear-norm Hölder smoothness and bounded p-th central noise moments with independent minibatches. It controls the average expected nuclear gradient norm, retaining a floor proportional to ρ raised to ν. Direction-insensitivity of this bound does not establish better generalization.[1]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Fewer gradient evaluations do not imply proportional wall-clock savings. Appendix proofs and LLM experiments were not fully checked; no performance gain is asserted here.[1]"
+        }
+      ]
+    },
+    {
+      "id": "blog-orthogonal-alias",
+      "paper": "Taming Orthogonal Optimizers at Scale (Part 2): The Anatomy of a Silent Tensor-Aliasing Bug",
+      "authors": "Jennifer Wei",
+      "url": "https://medium.com/@jenwei0312/taming-orthogonal-optimizers-at-scale-part-2-the-anatomy-of-a-silent-tensor-aliasing-bug-147431a9c7b0",
+      "title": "When the scheduler changes the experiment",
+      "dateNote": "Public on 2026-10-25; linked by the author’s same-day forum post",
+      "evidence": "Read reproduction, fix and recovery-test descriptions; code not executed",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In this OLMo-core/Dion3 integration, lr and initial_lr referenced the same scalar tensor. An in-place scheduler update therefore changed its own baseline. Converting values during checkpoint serialization preserved an already corrupted baseline.[2,3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\eta_t^{\\rm intended}=\\eta_0s_t,\\qquad \\eta_t^{\\rm alias}=\\eta_{t-1}^{\\rm alias}s_t=\\eta_0\\prod_{j=1}^t s_j",
+          "label": "Illustrative recurrence assuming each step multiplies an overwritten baseline; not a universal scheduler theorem"
+        },
+        {
+          "type": "text",
+          "text": "The fix registers initial_lr using float(lr), separating the immutable baseline from the runtime tensor. The author reports matching learning-rate trajectories for 20 uninterrupted steps versus a cold restart after step 10, plus HSDP/FP8 interruption checks.[2]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Short runs and author-reported checks establish neither long-run optimizer superiority nor correctness of every checkpoint path. The direct evidence concerns learning-rate recovery.[2]"
+        }
+      ]
+    },
+    {
+      "id": "blog-kimi-k31",
+      "paper": "Kimi K3.1 Pro Tech Blog: Advancing Open Intelligence",
+      "authors": "Moonshot AI",
+      "url": "https://www.kimi.ai/blog/kimi-k3-1-pro",
+      "title": "Capability depends on the training mixture",
+      "dateNote": "Released in the October 23–24 window; original page has no precise displayed date; catch-up",
+      "evidence": "Read training overview and data-removal comparison; internal evaluation not independently reproduced",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The original blog reports internal xdev-bench-hard pass@3 falling from 90.5% to 81.0% after removing cyber data from mid-training and related RL environments. This is not pass@1. Both stages changed together, preventing separate attribution; no fitted compute–performance curve is provided. The technical comparison, rather than the launch itself, is included.[4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-32057",
+      "paper": "HyScale: Scaling Long-Context Training for Learned Sparse Attention",
+      "authors": "Yangsheng Deng et al.",
+      "url": "https://arxiv.org/html/2610.32057v1",
+      "title": "Selection can dominate long-context training",
+      "dateNote": "First posted 2026-10-23 · v1",
+      "evidence": "Read abstract and §§1–2; not reproduced",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "HyTopK finds exact top-k indices online; selection replay reuses them during recomputation. The paper reports 2.07× end-to-end GLM-5.1 training speedup over Megatron-LM at 1M context on 512 H20 GPUs. Layer-level gains for other architectures are not whole-model gains. This studies context-dependent compute costs, not a new loss scaling law.[5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-32448",
+      "paper": "POSEIDON: Scaling Training Environments for Scientific Agents from Code Repositories",
+      "authors": "Qifan Zhang et al.",
+      "url": "https://arxiv.org/html/2610.32448v1",
+      "title": "Expand source diversity at a fixed trajectory budget",
+      "dateNote": "First posted 2026-10-23 · v1",
+      "evidence": "Read §4.3 ablations; other experiments not fully checked",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "For Qwen3.5-35B-A3B, repository coverage rises from 20% to 100% at fixed trajectory count, average difficulty and task proportions: four benchmarks improve overall, with intermediate fluctuations. At 30,000 trajectories, raising mean difficulty from 2.4 to 3.2 gives no consistent benefit. These ablations distinguish source breadth from difficulty; they establish no universal power law.[6]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-ddim",
+    "paperId": "arxiv:2010.02502",
+    "shortTitle": "DDIM",
+    "year": 2021,
+    "topics": [
+      "Diffusion models"
+    ],
+    "paper": "Denoising Diffusion Implicit Models",
+    "authors": "Jiaming Song · Chenlin Meng · Stefano Ermon",
+    "url": "https://arxiv.org/html/2010.02502v3",
+    "title": "A training objective does not uniquely determine the sampler",
+    "kind": "Daily classic · Historical work",
+    "dateNote": "First posted 2020-10-06; ICLR 2021; read v3 (2022-06-09)",
+    "evidence": "Read §§3–5, Theorem 1 and Table 1; not reproduced",
+    "recognition": {
+      "label": "ICLR 2021 · Foundational diffusion-sampling work",
+      "url": "https://dblp.org/rec/conf/iclr/SongME21.html"
+    },
+    "question": "How can reward drift be controlled when changing samplers?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "DDPM (2020) training uses noisy marginals without uniquely fixing path coupling. DDIM (ICLR 2021) changes that coupling, reusing one denoiser across samplers.[7,8]"
+      },
+      {
+        "type": "equation",
+        "tex": "x_t=\\sqrt{\\alpha_t}x_0+\\sqrt{1-\\alpha_t}\\epsilon,\\quad \\epsilon\\sim\\mathcal N(0,I),\\quad L_\\gamma=\\sum_t\\gamma_t\\mathbb E\\|\\epsilon_\\theta(x_t,t)-\\epsilon\\|^2",
+        "label": "α is cumulative retained signal, decreasing with t; not a one-step coefficient [7]"
+      },
+      {
+        "type": "equation",
+        "tex": "J_\\sigma=L_\\gamma+C,\\qquad \\gamma_t>0,\\quad \\sigma_t>0",
+        "label": "Theorem 1: path-dependent variational objectives equal weighted denoising losses plus a θ-independent constant [7]"
+      },
+      {
+        "type": "text",
+        "text": "Weight-independent optima require unshared parameters across times; finite shared networks retain trade-offs. Deterministic sampling takes the zero-noise limit.[7]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\hat x_0={x_t-\\sqrt{1-\\alpha_t}\\epsilon_\\theta(x_t,t)\\over\\sqrt{\\alpha_t}},\\qquad x_s=\\sqrt{\\alpha_s}\\hat x_0+\\sqrt{1-\\alpha_s-\\sigma_{t,s}^2}\\epsilon_\\theta(x_t,t)+\\sigma_{t,s}z",
+        "label": "Original sampler extended to s<t; z is independent standard Gaussian [7]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\sigma_{t,s}(\\eta)=\\eta\\sqrt{{1-\\alpha_s\\over1-\\alpha_t}\\left(1-{\\alpha_t\\over\\alpha_s}\\right)},\\qquad \\eta=0\\ \\Longrightarrow\\ \\operatorname{Var}(x_s\\mid x_t)=0",
+        "label": "η controls stochasticity; a sparse time grid reduces denoiser calls [7]"
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "Equal training objectives do not ensure equal finite-step output distributions. Table 1 reports CelebA FID 13.73 for 20-step DDIM, a setting-specific result. Question: how can fine-tuning constrain reward drift after switching samplers?[7]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.32465v1",
+      "title": "SOMA: algorithm and theorem"
+    },
+    {
+      "url": "https://medium.com/@jenwei0312/taming-orthogonal-optimizers-at-scale-part-2-the-anatomy-of-a-silent-tensor-aliasing-bug-147431a9c7b0",
+      "title": "Original debugging account"
+    },
+    {
+      "url": "https://discuss.huggingface.co/t/i-gave-a-talk-at-pytorch-conference-na-2026/191007",
+      "title": "Author forum post: date verification"
+    },
+    {
+      "url": "https://www.kimi.ai/blog/kimi-k3-1-pro",
+      "title": "Original Kimi technical blog"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.32057v1",
+      "title": "HyScale: costs and system results"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.32448v1",
+      "title": "POSEIDON: §4.3 ablations"
+    },
+    {
+      "url": "https://arxiv.org/html/2010.02502v3",
+      "title": "DDIM: historical theory and experiments"
+    },
+    {
+      "url": "https://dblp.org/rec/conf/iclr/SongME21.html",
+      "title": "DBLP: ICLR 2021 publication record"
+    }
+  ]
+}

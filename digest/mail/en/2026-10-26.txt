@@ -1,0 +1,41 @@
+RESEARCH DIGEST / 2026-10-26
+Perturbations, state, and sampling paths
+SOMA · Scheduler tensor aliasing · Data breadth · DDIM
+
+中文: https://alexhuang13.github.io/digest/2026-10-26.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-26.html
+
+Main reading
+Stale perturbations: what convergence survives?
+Sharpness-aware Orthogonalized Momentum Algorithms
+https://alexhuang13.github.io/digest/en/2026-10-26.html#paper-2610-32465
+
+Main reading
+When the scheduler changes the experiment
+Taming Orthogonal Optimizers at Scale (Part 2): The Anatomy of a Silent Tensor-Aliasing Bug
+https://alexhuang13.github.io/digest/en/2026-10-26.html#blog-orthogonal-alias
+
+Brief
+Capability depends on the training mixture
+Kimi K3.1 Pro Tech Blog: Advancing Open Intelligence
+https://alexhuang13.github.io/digest/en/2026-10-26.html#blog-kimi-k31
+
+Brief
+Selection can dominate long-context training
+HyScale: Scaling Long-Context Training for Learned Sparse Attention
+https://alexhuang13.github.io/digest/en/2026-10-26.html#paper-2610-32057
+
+Brief
+Expand source diversity at a fixed trajectory budget
+POSEIDON: Scaling Training Environments for Scientific Agents from Code Repositories
+https://alexhuang13.github.io/digest/en/2026-10-26.html#paper-2610-32448
+
+Daily classic · 2021
+A training objective does not uniquely determine the sampler
+https://alexhuang13.github.io/digest/en/2026-10-26.html#classic-ddim
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-10-26.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

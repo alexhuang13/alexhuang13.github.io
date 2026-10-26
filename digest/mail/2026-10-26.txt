@@ -1,0 +1,41 @@
+RESEARCH DIGEST / 2026-10-26
+扰动、状态与采样路径
+SOMA · 调度器张量别名 · 数据广度 · 精读DDIM
+
+中文: https://alexhuang13.github.io/digest/2026-10-26.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-26.html
+
+主读
+旧梯度扰动，保留多少收敛保证？
+Sharpness-aware Orthogonalized Momentum Algorithms
+https://alexhuang13.github.io/digest/2026-10-26.html#paper-2610-32465
+
+主读
+先检查调度器有没有改变实验本身
+Taming Orthogonal Optimizers at Scale (Part 2): The Anatomy of a Silent Tensor-Aliasing Bug
+https://alexhuang13.github.io/digest/2026-10-26.html#blog-orthogonal-alias
+
+简讯
+能力随数据混合变化，不能只看总RL算力
+Kimi K3.1 Pro Tech Blog: Advancing Open Intelligence
+https://alexhuang13.github.io/digest/2026-10-26.html#blog-kimi-k31
+
+简讯
+长上下文的瓶颈也可能是“选择谁”
+HyScale: Scaling Long-Context Training for Learned Sparse Attention
+https://alexhuang13.github.io/digest/2026-10-26.html#paper-2610-32057
+
+简讯
+固定轨迹预算，扩展来源多样性
+POSEIDON: Scaling Training Environments for Scientific Agents from Code Repositories
+https://alexhuang13.github.io/digest/2026-10-26.html#paper-2610-32448
+
+每日精读 · 2021
+训练目标没有唯一指定采样路径
+https://alexhuang13.github.io/digest/2026-10-26.html#classic-ddim
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-10-26.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/
