@@ -1,0 +1,71 @@
+RESEARCH DIGEST / 2026-10-27
+Last iterates and ambiguous extrapolation
+Finite-step Muon · Rashomon fits · IV prediction · Lottery Ticket
+
+中文: https://alexhuang13.github.io/digest/2026-10-27.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-27.html
+
+Main reading
+How does stabilization change the update near zero?
+Last-Iterate Stationarity of Muon with Finitely Many Newton-Schulz Iterations
+https://alexhuang13.github.io/digest/en/2026-10-27.html#paper-2610-34158
+
+Main reading
+Equal fit quality need not mean equal forecasts
+Ambiguous Fits: The Rashomon Effect and Challenges in Scaling Law Estimation
+https://alexhuang13.github.io/digest/en/2026-10-27.html#paper-2610-34514
+
+Brief
+Mix layers, then polarize slices
+TUON: A Tensor-Aware Optimizer Utilizing Tensor-SVD and Polarization for Large Language Model Pretraining
+https://alexhuang13.github.io/digest/en/2026-10-27.html#paper-2610-35130
+
+Brief
+Predictability also depends on the RL metric
+An Empirical Study of Reinforcement Learning Scaling Laws
+https://alexhuang13.github.io/digest/en/2026-10-27.html#paper-2610-33420
+
+Brief
+An information scale for memorization and sample quality
+Information-Theoretic Scaling Laws for Generative Diffusion Training
+https://alexhuang13.github.io/digest/en/2026-10-27.html#paper-2610-33337
+
+Brief
+Depth benefits depend on the task spectrum
+Depth Improves Training-Time Scaling for Difficult Tasks in Deep Linear Networks
+https://alexhuang13.github.io/digest/en/2026-10-27.html#paper-2610-35514
+
+Brief
+When is MNAR prediction informative?
+Distribution-free predictive inference with instrumental variables
+https://alexhuang13.github.io/digest/en/2026-10-27.html#paper-2610-35605
+
+Brief
+Model survival probability ratios directly
+Towards the Revival of Survival Ratio
+https://alexhuang13.github.io/digest/en/2026-10-27.html#paper-2610-34619
+
+Brief
+Version watch: width, connectivity and unit complexity
+Scaling Laws and Tradeoffs in Recurrent Networks of Expressive Neurons
+https://alexhuang13.github.io/digest/en/2026-10-27.html#paper-2605-12049
+
+Brief
+Best-of-N scaling depends on reward tails
+Whether or Where? Tail Calibration Signals Finite-Budget Reward Hacking in Best-of-N Selection
+https://alexhuang13.github.io/digest/en/2026-10-27.html#paper-2610-34375
+
+Brief
+Catch-up: fixed exposure, different learning weights
+Beyond Data Schedule: Fast LLM Pretraining on Data Mixtures by Loss-Reweighting
+https://alexhuang13.github.io/digest/en/2026-10-27.html#paper-2610-32141
+
+Daily classic · 2019
+Sparse structure is not enough: which initialization survives?
+https://alexhuang13.github.io/digest/en/2026-10-27.html#classic-lottery-ticket
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-10-27.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

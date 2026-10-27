@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-10-27",
+    "paperId": "arxiv:1803.03635",
+    "paper": "The Lottery Ticket Hypothesis: Finding Sparse, Trainable Neural Networks",
+    "shortTitle": "Lottery Ticket Hypothesis",
+    "year": 2019,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "recognition": {
+      "label": "ICLR 2019 Best Paper Award",
+      "url": "https://iclr.cc/Conferences/2019/Awards"
+    },
+    "source": "https://arxiv.org/html/1803.03635v5",
+    "url": "/digest/2026-10-27.html#classic-lottery-ticket"
+  },
+  {
     "date": "2026-10-26",
     "paperId": "arxiv:2010.02502",
     "paper": "Denoising Diffusion Implicit Models",

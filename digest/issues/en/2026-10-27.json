@@ -1,0 +1,352 @@
+{
+  "date": "2026-10-27",
+  "number": "014",
+  "window": "2026-10-24 08:15 — 2026-10-27 08:15 · America/New_York",
+  "publishedAt": "2026-10-27T12:15:00Z",
+  "readingMinutes": 18,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Wharton faculty",
+    "Deep learning theory"
+  ],
+  "edition": "Daily research notes",
+  "title": "Last iterates and ambiguous extrapolation",
+  "subtitle": "Finite-step Muon · Rashomon fits · IV prediction · Lottery Ticket",
+  "intro": "Two main readings and nine briefs, including one version watch: update geometry near zero and divergent extrapolations with nearly equal fitting loss. The classic separates sparse structure, initialization, and discovery cost.",
+  "articles": [
+    {
+      "id": "paper-2610-34158",
+      "paper": "Last-Iterate Stationarity of Muon with Finitely Many Newton-Schulz Iterations",
+      "authors": "Ping Li · Vincent Y. F. Tan",
+      "url": "https://arxiv.org/html/2610.34158v1",
+      "title": "How does stabilization change the update near zero?",
+      "dateNote": "First posted 2026-10-25 · v1",
+      "evidence": "Read Sections 2–4, Theorem 3.2 and its proof outline; appendix not audited line by line",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Let F be lower bounded with globally L-Lipschitz gradient in Frobenius norm. The paper studies finite-step NS in exact arithmetic, without weight decay, rather than replacing it by polar.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "M_t=\\beta M_{t-1}+(1-\\beta)g_t,\\quad N_t=\\theta M_t+(1-\\theta)g_t,\\quad g_t=\\nabla F(W_t)",
+          "label": "Deterministic input; fixed beta in [0,1) and theta in [0,1] [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "Z_0={N_t\\over\\|N_t\\|_F+\\varepsilon},\\quad Z_{j+1}=aZ_j+bZ_jZ_j^\\top Z_j+c(Z_jZ_j^\\top)^2Z_j,\\quad W_{t+1}=W_t-\\eta Z_J",
+          "label": "Fixed J at least one; (a,b,c)=(3.4445,-4.7750,2.0315) [1]"
+        },
+        {
+          "type": "text",
+          "text": "At epsilon=0, scalar normalization removes nonzero input magnitude; the paper constructs a two-cycle on a convex quadratic. Positive epsilon shrinks small-input updates and provides the sector inequality for descent–momentum tracking.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "0<\\eta\\le {\\varepsilon(1-\\beta)\\over4Lu_J}\\quad\\Longrightarrow\\quad\\sum_{t=1}^\\infty\\|g_t\\|_F^2<\\infty,\\qquad \\|g_t\\|_F\\to0",
+          "label": "Theorem 3.2; u_J is the global output-norm bound for the finite NS map in Lemma 2.2 [1]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "This is a conservative sufficient condition, not a maximal learning rate. Persistent unbiased noise can still prevent convergence with fixed step size and momentum; the deterministic result does not cover fixed-batch pretraining.[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-34514",
+      "paper": "Ambiguous Fits: The Rashomon Effect and Challenges in Scaling Law Estimation",
+      "authors": "Bruno Mlodozeniec · Spencer Frei",
+      "url": "https://arxiv.org/html/2610.34514v1",
+      "title": "Equal fit quality need not mean equal forecasts",
+      "dateNote": "First posted 2026-10-25 · v1",
+      "evidence": "Read Sections 2–4, Algorithm 1 and limitations; code not run",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Chinchilla (2022) fitting commonly uses multi-start local optimization. This paper separates global optimization accuracy from agreement among nearly optimal extrapolations.[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "L(x;\\vartheta)=E+\\sum_{i=1}^k A_ix_i^{-\\alpha_i},\\qquad R(\\vartheta)=\\sum_n h_\\delta\\!\\left(\\log L(x_n;\\vartheta)-\\log y_n\\right)",
+          "label": "x denotes resource axes, y observed loss; h_delta is Huber loss with threshold delta [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal S_\\epsilon=\\{\\vartheta\\in\\Theta:R(\\vartheta)\\le\\inf_{\\Theta}R+\\epsilon\\},\\qquad [L_-(x_*),L_+(x_*)]=\\left[\\inf_{\\mathcal S_\\epsilon}L(x_*;\\vartheta),\\sup_{\\mathcal S_\\epsilon}L(x_*;\\vartheta)\\right]",
+          "label": "Notation for explanation: Theta is a declared compact domain; the envelope covers predictions of near-optimal fits [2]"
+        },
+        {
+          "type": "text",
+          "text": "A monotone reparameterization bounds residuals over parameter boxes. Branch-and-bound splits promising boxes and discards those whose lower bounds cannot beat the incumbent. Stopping certifies its gap to a global lower bound. Four real scaling ladders demonstrate divergent extrapolation with nearly equal fit error.[2]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The envelope describes optimization ambiguity for fixed data, model family and parameter domain. It is not a confidence interval for future observations and does not cover training randomness or model misspecification.[2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-35130",
+      "paper": "TUON: A Tensor-Aware Optimizer Utilizing Tensor-SVD and Polarization for Large Language Model Pretraining",
+      "authors": "Anda Tang · Xuanlin Yang · Junjie Wang · Zhouchen Lin",
+      "url": "https://arxiv.org/abs/2610.35130",
+      "title": "Mix layers, then polarize slices",
+      "dateNote": "2026-10-26 · v1",
+      "evidence": "Based on abstract and version history; not reproduced",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A unitary transform mixes layers before slice-wise polarization and inverse transformation. Authors characterize steepest descent in a transformed tensor spectral norm. Theorems and matched budgets were not checked; no speedup magnitude is reported here.[3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-33420",
+      "paper": "An Empirical Study of Reinforcement Learning Scaling Laws",
+      "authors": "Zeyu Zheng · Clare Lyle · Khimya Khetarpal · Will Dabney",
+      "url": "https://arxiv.org/abs/2610.33420",
+      "title": "Predictability also depends on the RL metric",
+      "dateNote": "First posted 2026-10-23 23:29 New York time · v1; delayed-index catch-up",
+      "evidence": "Based on abstract and version history; not reproduced",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In Starpilot and Craftax actor–critic experiments, authors find a single-agent Elo variant more predictable than mean return and report extrapolation across two orders of magnitude in compute. Craftax compute-optimal model size can be non-monotone. Fit/extrapolation splits were not checked.[4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-33337",
+      "paper": "Information-Theoretic Scaling Laws for Generative Diffusion Training",
+      "authors": "Druv Pai · Dejan Stancevic · Yi Ma · Luca Ambrogioni",
+      "url": "https://arxiv.org/abs/2610.33337",
+      "title": "An information scale for memorization and sample quality",
+      "dateNote": "First posted 2026-10-23 18:21 New York time · v1; delayed-index catch-up",
+      "evidence": "Based on abstract and version history; not reproduced",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Model information measures sample dependence on the particular training dataset. Authors posit two scaling regimes and derive induced laws for memorization and quality. This is a proposed, empirically fitted law; the abstract does not establish universality.[5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-35514",
+      "paper": "Depth Improves Training-Time Scaling for Difficult Tasks in Deep Linear Networks",
+      "authors": "Taishi Watanabe · Ryo Karakida · Jun-nosuke Teramae",
+      "url": "https://arxiv.org/abs/2610.35514",
+      "title": "Depth benefits depend on the task spectrum",
+      "dateNote": "2026-10-26 · v1",
+      "evidence": "Based on abstract and version history; not reproduced",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In deep linear networks, depth improves the training-time exponent for difficult tasks but not easy ones; predictor-norm time reparameterization yields a common law. Abstract only: initialization, spectral conditions and nonlinear numerical evidence were not checked in detail.[6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-35605",
+      "paper": "Distribution-free predictive inference with instrumental variables",
+      "authors": "Yonghoon Lee · Edgar Dobriban · Eric Tchetgen Tchetgen",
+      "url": "https://arxiv.org/abs/2610.35605",
+      "title": "When is MNAR prediction informative?",
+      "dateNote": "2026-10-26 · v1",
+      "evidence": "Based on abstract and version history; not reproduced",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Wharton author subscription: an identification index separates impossibility from informative prediction with MNAR outcomes and instrumental variables. Efficient influence functions support doubly robust coverage. Abstract only; this does not remove the need for identifying assumptions.[7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-34619",
+      "paper": "Towards the Revival of Survival Ratio",
+      "authors": "Ruixuan Zhao · Jingxin Yan · Xiaochuan Shi · Torben Martinussen · Eric Tchetgen Tchetgen · Linbo Wang",
+      "url": "https://arxiv.org/abs/2610.34619",
+      "title": "Model survival probability ratios directly",
+      "dateNote": "2026-10-25 New York time · v1",
+      "evidence": "Based on abstract and version history; not reproduced",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Wharton author subscription: survival and cumulative-incidence ratios are targeted with variation-independent nuisance parameters and valid monotone curves, supporting likelihood and doubly robust estimation. Abstract only; descriptive selected-cohort results are not causal effects.[8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2605-12049",
+      "paper": "Scaling Laws and Tradeoffs in Recurrent Networks of Expressive Neurons",
+      "authors": "Aaron Spieler · Georg Martius · Anna Levina",
+      "url": "https://arxiv.org/abs/2605.12049",
+      "title": "Version watch: width, connectivity and unit complexity",
+      "dateNote": "First posted 2026-05-12; v2 dated 2026-10-26; substantive version differences not verified",
+      "evidence": "Based on abstract and version history; not reproduced",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The current abstract studies allocation among unit count, effective per-unit complexity and connectivity at fixed parameter budget, observing an interior tradeoff on SHD-Adding and Enwik8. Version watch only: changes from v1 were not established, so these are not presented as new results.[9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-34375",
+      "paper": "Whether or Where? Tail Calibration Signals Finite-Budget Reward Hacking in Best-of-N Selection",
+      "authors": "Cheng Gui · Yihua Shao · Lei Li · Jingcai Guo · Maolin Wang",
+      "url": "https://arxiv.org/abs/2610.34375",
+      "title": "Best-of-N scaling depends on reward tails",
+      "dateNote": "2026-10-25 · v1",
+      "evidence": "Based on abstract and version history; not reproduced",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Included under inference scaling: maximum proxy-reward selection increasingly probes score tails. Authors express BoN through a Beta-weighted integral of quantile-conditional true reward and propose tail calibration audits, explicitly complementing ranking accuracy. Continuity/tie assumptions were not checked.[10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-32141",
+      "paper": "Beyond Data Schedule: Fast LLM Pretraining on Data Mixtures by Loss-Reweighting",
+      "authors": "Jiazheng Li · Huaqing Zhang · Jing Xu · Tianle Cai · Jingzhao Zhang",
+      "url": "https://arxiv.org/abs/2610.32141",
+      "title": "Catch-up: fixed exposure, different learning weights",
+      "dateNote": "First posted 2026-10-23 00:09 New York time · v1; delayed catch-up outside the main window",
+      "evidence": "Based on abstract and version history; not reproduced",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Data-mixture catch-up: LARE preserves sampling exposure while adapting domain weights from running loss statistics. The abstract reports gains over a matched direct mixture at 1.5B/240B tokens. Full text not read; reweighting is distinct from changing exposure, and numerical gains are not repeated here.[11]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.34158v1",
+      "title": "Finite NS: original algorithm and theorems"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.34514v1",
+      "title": "Ambiguous fits: methods and limitations"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.35130",
+      "title": "TUON: A Tensor-Aware Optimizer Utilizing Tensor-SVD and Polarization for Large Language Model Pretraining: abstract and versions"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.33420",
+      "title": "An Empirical Study of Reinforcement Learning Scaling Laws: abstract and versions"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.33337",
+      "title": "Information-Theoretic Scaling Laws for Generative Diffusion Training: abstract and versions"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.35514",
+      "title": "Depth Improves Training-Time Scaling for Difficult Tasks in Deep Linear Networks: abstract and versions"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.35605",
+      "title": "Distribution-free predictive inference with instrumental variables: abstract and versions"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.34619",
+      "title": "Towards the Revival of Survival Ratio: abstract and versions"
+    },
+    {
+      "url": "https://arxiv.org/abs/2605.12049",
+      "title": "Scaling Laws and Tradeoffs in Recurrent Networks of Expressive Neurons: abstract and versions"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.34375",
+      "title": "Whether or Where? Tail Calibration Signals Finite-Budget Reward Hacking in Best-of-N Selection: abstract and versions"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.32141",
+      "title": "Beyond Data Schedule: Fast LLM Pretraining on Data Mixtures by Loss-Reweighting: abstract and versions"
+    },
+    {
+      "url": "https://arxiv.org/html/1803.03635v5",
+      "title": "Lottery Ticket: full paper and experiments"
+    },
+    {
+      "url": "https://iclr.cc/Conferences/2019/Awards",
+      "title": "Official ICLR award record"
+    }
+  ],
+  "classic": {
+    "id": "classic-lottery-ticket",
+    "paperId": "arxiv:1803.03635",
+    "shortTitle": "Lottery Ticket Hypothesis",
+    "year": 2019,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "paper": "The Lottery Ticket Hypothesis: Finding Sparse, Trainable Neural Networks",
+    "authors": "Jonathan Frankle · Michael Carbin",
+    "url": "https://arxiv.org/html/1803.03635v5",
+    "title": "Sparse structure is not enough: which initialization survives?",
+    "kind": "Daily classic · historical work",
+    "dateNote": "First posted 2018-03-09; read v5 (2019-03-04), ICLR 2019",
+    "evidence": "Read Sections 1–4, experimental setup and reinitialization controls; an empirical hypothesis, not a general existence theorem",
+    "recognition": {
+      "label": "ICLR 2019 Best Paper Award",
+      "url": "https://iclr.cc/Conferences/2019/Awards"
+    },
+    "question": "Replacing SGD by Muon, do initialization sensitivity and mask transferability change separately?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Pruning (LeCun et al., 1990; Han et al., 2015) showed that trained networks can be compressed. The lottery hypothesis asks whether the subnetwork trains independently from its original initialization. Let d count parameters and m be a fixed binary mask.[12,13]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\theta_0\\sim\\mathcal D,\\quad m\\in\\{0,1\\}^d,\\qquad f_m(x;\\theta)=f(x;m\\odot\\theta)",
+        "label": "Weights outside the mask remain zero [12]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\exists m:\\quad \\|m\\|_0\\ll d,\\qquad j_m\\le j_{\\rm dense},\\qquad a_m\\ge a_{\\rm dense}",
+        "label": "Original hypothesis: j is the minimum-validation-loss iteration and a its test accuracy [12]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\hat\\theta^{(r)}=\\operatorname{Train}(m_r\\odot\\theta_0),\\qquad m_{r+1}=m_r\\odot\\operatorname{KeepLarge}(\\hat\\theta^{(r)}),\\qquad \\theta_{\\rm start}^{(r+1)}=m_{r+1}\\odot\\theta_0",
+        "label": "Algorithm restatement: train, magnitude-prune, reset each round; trained values are not retained [12]"
+      },
+      {
+        "type": "equation",
+        "tex": "f(x;m\\odot\\theta_0)\\quad\\text{vs.}\\quad f(x;m\\odot\\theta'_0),\\qquad \\theta'_0\\sim\\mathcal D",
+        "label": "Key control fixes the mask and resamples initialization, separating structure from initialization [12]"
+      },
+      {
+        "type": "text",
+        "text": "MNIST fully connected and CIFAR10 convolutional experiments support the hypothesis. Original initialization generally beats reinitializing the same mask. Deep networks are learning-rate sensitive: VGG-19 at 0.1 did not yield winning tickets without warmup, but did with it. Iteration savings exclude repeated mask discovery.[12]"
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "Evidence concerns the tested training settings. Discussion: replacing SGD by Muon, do initialization sensitivity and mask transferability change separately?"
+      }
+    ]
+  }
+}

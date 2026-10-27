@@ -4,8 +4,34 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-10-26",
+  "latest": "2026-10-27",
   "issues": [
+    {
+      "date": "2026-10-27",
+      "title": "末次迭代与外推歧义",
+      "url": "/digest/2026-10-27.html",
+      "translations": {
+        "en": {
+          "title": "Last iterates and ambiguous extrapolation",
+          "url": "/digest/en/2026-10-27.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2610.34158v1",
+        "https://arxiv.org/html/2610.34514v1",
+        "https://arxiv.org/abs/2610.35130",
+        "https://arxiv.org/abs/2610.33420",
+        "https://arxiv.org/abs/2610.33337",
+        "https://arxiv.org/abs/2610.35514",
+        "https://arxiv.org/abs/2610.35605",
+        "https://arxiv.org/abs/2610.34619",
+        "https://arxiv.org/abs/2605.12049",
+        "https://arxiv.org/abs/2610.34375",
+        "https://arxiv.org/abs/2610.32141",
+        "https://arxiv.org/html/1803.03635v5",
+        "https://iclr.cc/Conferences/2019/Awards"
+      ]
+    },
     {
       "date": "2026-10-26",
       "title": "扰动、状态与采样路径",

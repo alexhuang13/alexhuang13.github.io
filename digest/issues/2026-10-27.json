@@ -1,0 +1,352 @@
+{
+  "date": "2026-10-27",
+  "number": "014",
+  "window": "2026-10-24 08:15 — 2026-10-27 08:15 · America/New_York",
+  "publishedAt": "2026-10-27T12:15:00Z",
+  "readingMinutes": 18,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Wharton faculty",
+    "Deep learning theory"
+  ],
+  "edition": "每日研究笔记",
+  "title": "末次迭代与外推歧义",
+  "subtitle": "有限步Muon · Rashomon拟合 · 工具变量预测 · 精读Lottery Ticket",
+  "intro": "两篇主读、九条简讯（含一条版本观察）：从更新在零点附近的几何，到同样拟合误差下不同的外推。经典精读彩票假说，区分稀疏结构、初始化与发现成本。",
+  "articles": [
+    {
+      "id": "paper-2610-34158",
+      "paper": "Last-Iterate Stationarity of Muon with Finitely Many Newton-Schulz Iterations",
+      "authors": "Ping Li · Vincent Y. F. Tan",
+      "url": "https://arxiv.org/html/2610.34158v1",
+      "title": "正稳定项怎样改变零点附近的更新？",
+      "dateNote": "首发2026-10-25 · v1",
+      "evidence": "已读§2–4、定理3.2及其证明路线；未逐行审查附录",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "设单个矩阵目标F下有界，梯度在Frobenius范数下全局L-Lipschitz。原文分析精确算术、无weight decay的有限步NS；并非把NS直接替换为polar。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "M_t=\\beta M_{t-1}+(1-\\beta)g_t,\\quad N_t=\\theta M_t+(1-\\theta)g_t,\\quad g_t=\\nabla F(W_t)",
+          "label": "确定性输入；β∈[0,1)、θ∈[0,1]固定 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "Z_0={N_t\\over\\|N_t\\|_F+\\varepsilon},\\quad Z_{j+1}=aZ_j+bZ_jZ_j^\\top Z_j+c(Z_jZ_j^\\top)^2Z_j,\\quad W_{t+1}=W_t-\\eta Z_J",
+          "label": "J≥1固定；(a,b,c)=(3.4445,−4.7750,2.0315) [1]"
+        },
+        {
+          "type": "text",
+          "text": "ε=0时，标量归一化抹掉非零输入幅值；原文构造凸二次函数上的二周期。ε>0则使更新在小输入时缩小，并提供下降—动量跟踪分析所需的sector不等式。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "0<\\eta\\le {\\varepsilon(1-\\beta)\\over4Lu_J}\\quad\\Longrightarrow\\quad\\sum_{t=1}^\\infty\\|g_t\\|_F^2<\\infty,\\qquad \\|g_t\\|_F\\to0",
+          "label": "定理3.2；u_J为引理2.2中有限NS映射的全局输出范数上界常数 [1]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "这是保守充分条件，不是最大学习率。固定步长与动量遇持续无偏噪声仍可不收敛；不能把确定性结论套到固定batch预训练。[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-34514",
+      "paper": "Ambiguous Fits: The Rashomon Effect and Challenges in Scaling Law Estimation",
+      "authors": "Bruno Mlodozeniec · Spencer Frei",
+      "url": "https://arxiv.org/html/2610.34514v1",
+      "title": "拟合得一样好，预测为何差很多？",
+      "dateNote": "首发2026-10-25 · v1",
+      "evidence": "已读§2–4、算法1与局限；未运行代码",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Chinchilla（2022）的幂律拟合常用多起点局部优化。这里把两个问题分开：是否接近全局最优，以及近最优解之间是否给出一致外推。[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "L(x;\\vartheta)=E+\\sum_{i=1}^k A_ix_i^{-\\alpha_i},\\qquad R(\\vartheta)=\\sum_n h_\\delta\\!\\left(\\log L(x_n;\\vartheta)-\\log y_n\\right)",
+          "label": "x为资源轴、y为观测loss；hδ为Huber损失，δ为阈值 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal S_\\epsilon=\\{\\vartheta\\in\\Theta:R(\\vartheta)\\le\\inf_{\\Theta}R+\\epsilon\\},\\qquad [L_-(x_*),L_+(x_*)]=\\left[\\inf_{\\mathcal S_\\epsilon}L(x_*;\\vartheta),\\sup_{\\mathcal S_\\epsilon}L(x_*;\\vartheta)\\right]",
+          "label": "记号化解释：Θ为声明的紧参数域；包络覆盖近最优拟合的预测 [2]"
+        },
+        {
+          "type": "text",
+          "text": "单调重参数化给每个参数盒子上的残差界；branch-and-bound分割有希望的盒子，剪去下界已劣于当前解者。停止条件把当前拟合与全局下界的差控制在容差内。原文在四组真实scaling ladder上展示近等误差的外推分歧。[2]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "包络是给定数据、模型族与参数域下的优化歧义，不是覆盖未来观测的置信区间；训练随机性、模型错设与域外真值不由此保证。[2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-35130",
+      "paper": "TUON: A Tensor-Aware Optimizer Utilizing Tensor-SVD and Polarization for Large Language Model Pretraining",
+      "authors": "Anda Tang · Xuanlin Yang · Junjie Wang · Zhouchen Lin",
+      "url": "https://arxiv.org/abs/2610.35130",
+      "title": "跨层混合后再逐片polar",
+      "dateNote": "2026-10-26 · v1",
+      "evidence": "基于摘要与版本记录；未复现",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "酉变换先混合层、各变换切片再polar、最后逆变换。作者称其为变换张量谱范数下最陡下降；尚未核验定理和对照预算，不转述提速幅度。[3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-33420",
+      "paper": "An Empirical Study of Reinforcement Learning Scaling Laws",
+      "authors": "Zeyu Zheng · Clare Lyle · Khimya Khetarpal · Will Dabney",
+      "url": "https://arxiv.org/abs/2610.33420",
+      "title": "RL的可预测性也取决于指标",
+      "dateNote": "首发纽约时间2026-10-23 23:29 · v1；本轮补收",
+      "evidence": "基于摘要与版本记录；未复现",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在Starpilot和Craftax的actor–critic实验中，作者发现单智能体Elo变体比平均回报更适合拟合，并报告跨两个数量级算力的预测。Craftax的最优模型大小可非单调；尚未核验拟合与外推划分。[4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-33337",
+      "paper": "Information-Theoretic Scaling Laws for Generative Diffusion Training",
+      "authors": "Druv Pai · Dejan Stancevic · Yi Ma · Luca Ambrogioni",
+      "url": "https://arxiv.org/abs/2610.33337",
+      "title": "把记忆与样本质量放进同一信息尺度",
+      "dateNote": "首发纽约时间2026-10-23 18:21 · v1；延迟收录",
+      "evidence": "基于摘要与版本记录；未复现",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "以样本对特定训练集的依赖衡量model information，提出从记忆过渡到泛化的两区间scaling模型，再导出记忆和质量的规律。属于作者提出并实验拟合的规律，不能仅凭摘要当作普适定理。[5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-35514",
+      "paper": "Depth Improves Training-Time Scaling for Difficult Tasks in Deep Linear Networks",
+      "authors": "Taishi Watanabe · Ryo Karakida · Jun-nosuke Teramae",
+      "url": "https://arxiv.org/abs/2610.35514",
+      "title": "深度收益依赖任务谱",
+      "dateNote": "2026-10-26 · v1",
+      "evidence": "基于摘要与版本记录；未复现",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "深线性网络中，困难任务的训练时间幂律指数随深度改善，容易任务则不变；用预测器范数重参数化时间后出现共同规律。这里仅转述摘要，初始化、谱条件及非线性数值证据尚未逐项核验。[6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-35605",
+      "paper": "Distribution-free predictive inference with instrumental variables",
+      "authors": "Yonghoon Lee · Edgar Dobriban · Eric Tchetgen Tchetgen",
+      "url": "https://arxiv.org/abs/2610.35605",
+      "title": "MNAR下预测区间何时有信息？",
+      "dateNote": "2026-10-26 · v1",
+      "evidence": "基于摘要与版本记录；未复现",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Wharton作者订阅：在非随机缺失结局与工具变量下，以identification index区分不可能性和可行推断；用有效影响函数构造双重稳健覆盖程序。这里基于摘要，不声称无附加假设即可处理MNAR。[7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-34619",
+      "paper": "Towards the Revival of Survival Ratio",
+      "authors": "Ruixuan Zhao · Jingxin Yan · Xiaochuan Shi · Torben Martinussen · Eric Tchetgen Tchetgen · Linbo Wang",
+      "url": "https://arxiv.org/abs/2610.34619",
+      "title": "直接建模生存概率比",
+      "dateNote": "纽约时间2026-10-25 · v1",
+      "evidence": "基于摘要与版本记录；未复现",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Wharton作者订阅：直接针对survival ratio与累积发生率比，使目标和干扰参数variation independent，同时维持有效单调曲线，支持似然与双重稳健估计。基于摘要；描述性筛选队列结果不当作因果效应。[8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2605-12049",
+      "paper": "Scaling Laws and Tradeoffs in Recurrent Networks of Expressive Neurons",
+      "authors": "Aaron Spieler · Georg Martius · Anna Levina",
+      "url": "https://arxiv.org/abs/2605.12049",
+      "title": "版本观察：宽度、连接与单元复杂度",
+      "dateNote": "首发2026-05-12；v2更新2026-10-26；版本差异尚未核实",
+      "evidence": "基于摘要与版本记录；未复现",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "当前摘要研究固定参数预算下神经元数、单元有效复杂度和连接度的分配，在SHD-Adding与Enwik8上观察内部最优权衡。仅记版本观察；未确认哪些结果为v2新增，不把旧结论算作今日新结果。[9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-34375",
+      "paper": "Whether or Where? Tail Calibration Signals Finite-Budget Reward Hacking in Best-of-N Selection",
+      "authors": "Cheng Gui · Yihua Shao · Lei Li · Jingcai Guo · Maolin Wang",
+      "url": "https://arxiv.org/abs/2610.34375",
+      "title": "Best-of-N扩展要看奖励尾部",
+      "dateNote": "2026-10-25 · v1",
+      "evidence": "基于摘要与版本记录；未复现",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "纳入inference-scaling主题：最高代理奖励选择越来越强调分数尾部。作者用分位数条件真实奖励的Beta加权积分描述BoN，并提出尾部校准审计；摘要明确其不替代排序准确率。未核验连续性／并列分数条件。[10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-32141",
+      "paper": "Beyond Data Schedule: Fast LLM Pretraining on Data Mixtures by Loss-Reweighting",
+      "authors": "Jiazheng Li · Huaqing Zhang · Jing Xu · Tianle Cai · Jingzhao Zhang",
+      "url": "https://arxiv.org/abs/2610.32141",
+      "title": "补收：固定曝光，改变学习权重",
+      "dateNote": "首发纽约时间2026-10-23 00:09 · v1；窗口外延迟补收",
+      "evidence": "基于摘要与版本记录；未复现",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "数据混合主题补收：LARE保持采样配比，用运行loss统计调整领域权重。摘要报告1.5B／240B tokens下优于匹配直接混合；未读全文，不能把loss reweighting与改变数据曝光量等同，也不转述数值增益。[11]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.34158v1",
+      "title": "有限NS：原文算法与定理"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.34514v1",
+      "title": "拟合歧义：原文方法与局限"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.35130",
+      "title": "TUON: A Tensor-Aware Optimizer Utilizing Tensor-SVD and Polarization for Large Language Model Pretraining：摘要与版本"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.33420",
+      "title": "An Empirical Study of Reinforcement Learning Scaling Laws：摘要与版本"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.33337",
+      "title": "Information-Theoretic Scaling Laws for Generative Diffusion Training：摘要与版本"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.35514",
+      "title": "Depth Improves Training-Time Scaling for Difficult Tasks in Deep Linear Networks：摘要与版本"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.35605",
+      "title": "Distribution-free predictive inference with instrumental variables：摘要与版本"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.34619",
+      "title": "Towards the Revival of Survival Ratio：摘要与版本"
+    },
+    {
+      "url": "https://arxiv.org/abs/2605.12049",
+      "title": "Scaling Laws and Tradeoffs in Recurrent Networks of Expressive Neurons：摘要与版本"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.34375",
+      "title": "Whether or Where? Tail Calibration Signals Finite-Budget Reward Hacking in Best-of-N Selection：摘要与版本"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.32141",
+      "title": "Beyond Data Schedule: Fast LLM Pretraining on Data Mixtures by Loss-Reweighting：摘要与版本"
+    },
+    {
+      "url": "https://arxiv.org/html/1803.03635v5",
+      "title": "彩票假说：正文与实验"
+    },
+    {
+      "url": "https://iclr.cc/Conferences/2019/Awards",
+      "title": "ICLR官方获奖记录"
+    }
+  ],
+  "classic": {
+    "id": "classic-lottery-ticket",
+    "paperId": "arxiv:1803.03635",
+    "shortTitle": "Lottery Ticket Hypothesis",
+    "year": 2019,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "paper": "The Lottery Ticket Hypothesis: Finding Sparse, Trainable Neural Networks",
+    "authors": "Jonathan Frankle · Michael Carbin",
+    "url": "https://arxiv.org/html/1803.03635v5",
+    "title": "稀疏结构还不够：要保留哪一次初始化？",
+    "kind": "每日经典 · 历史工作",
+    "dateNote": "首发2018-03-09；所读v5（2019-03-04），ICLR 2019",
+    "evidence": "已读§1–4、实验配置与随机重初始化对照；经验假说，不是一般存在性定理",
+    "recognition": {
+      "label": "ICLR 2019 Best Paper Award",
+      "url": "https://iclr.cc/Conferences/2019/Awards"
+    },
+    "question": "若把SGD换成Muon，原初始化的重要性与掩码可迁移性是否分别改变？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "早期剪枝（LeCun等，1990；Han等，2015）说明训练后的网络可压缩；彩票假说追问同一子网络能否从原始初始化独立训练。令d为参数数目，m为固定二值掩码。[12,13]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\theta_0\\sim\\mathcal D,\\quad m\\in\\{0,1\\}^d,\\qquad f_m(x;\\theta)=f(x;m\\odot\\theta)",
+        "label": "掩码外权重始终为零 [12]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\exists m:\\quad \\|m\\|_0\\ll d,\\qquad j_m\\le j_{\\rm dense},\\qquad a_m\\ge a_{\\rm dense}",
+        "label": "原文假说：j为验证loss最小时的迭代，a为该时测试准确率 [12]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\hat\\theta^{(r)}=\\operatorname{Train}(m_r\\odot\\theta_0),\\qquad m_{r+1}=m_r\\odot\\operatorname{KeepLarge}(\\hat\\theta^{(r)}),\\qquad \\theta_{\\rm start}^{(r+1)}=m_{r+1}\\odot\\theta_0",
+        "label": "算法重写：每轮训练、按幅值剪枝、重置；不是保留训练后的值 [12]"
+      },
+      {
+        "type": "equation",
+        "tex": "f(x;m\\odot\\theta_0)\\quad\\text{vs.}\\quad f(x;m\\odot\\theta'_0),\\qquad \\theta'_0\\sim\\mathcal D",
+        "label": "关键对照固定掩码，只重抽初始化；结构与初始化分开检验 [12]"
+      },
+      {
+        "type": "text",
+        "text": "MNIST全连接网与CIFAR10卷积网支持该假说；原初始化通常胜过相同掩码的新随机初始化。深网对学习率敏感：VGG-19在0.1无warmup时未找到winning tickets，加入warmup后才找到。训练快指迭代指标，反复寻找掩码的成本另计。[12]"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "这是特定训练设置中的经验证据。讨论：若把SGD换成Muon，原初始化的重要性与掩码可迁移性是否分别改变？"
+      }
+    ]
+  }
+}
