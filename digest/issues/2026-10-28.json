@@ -1,0 +1,342 @@
+{
+  "date": "2026-10-28",
+  "number": "015",
+  "window": "2026-10-25 08:22 — 2026-10-28 08:22 · America/New_York",
+  "publishedAt": "2026-10-28T12:22:00Z",
+  "readingMinutes": 18,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training",
+    "RNN / linear attention"
+  ],
+  "edition": "每日研究笔记",
+  "title": "范数增长与环境组成",
+  "subtitle": "MuonGS · SynthAPI · MoMuSAM · 精读Performer",
+  "intro": "三篇主读、四条简讯：累积有效步长、环境组成驱动的agent scaling，以及动量如何兼作扰动探针。经典精读Performer的正随机特征。",
+  "articles": [
+    {
+      "id": "paper-2610-37647",
+      "paper": "MuonGS: Pretraining LLMs with Relaxed Weight-Norm Control",
+      "authors": "Athanasios Glentis · Dawei Li · Mingyi Hong",
+      "url": "https://arxiv.org/html/2610.37647v1",
+      "title": "后期区间还能积累多少有效步长？",
+      "dateNote": "首发2026-10-27 · v1",
+      "evidence": "已读正文相关方法与结果；未复现实验",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "设r_t为权重Frobenius范数，Muon方向O_t的范数不超过√p，p=min(m,n)。本文看整条轨迹而非单步归一化；累积有效学习率控制任意后期区间的相对位移。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "r_t=\\|W_t\\|_F,\\quad C_T=\\sum_{t<T}{\\eta_t\\over r_t},\\qquad {\\|W_T-W_s\\|_F\\over\\max(r_s,r_T)}\\le\\sqrt p(C_T-C_s)",
+          "label": "非零迭代；原始有界方向更新 [1]"
+        },
+        {
+          "type": "text",
+          "text": "MuonGS在正交化后去掉径向分量。更新与W_t垂直，从范数平方递推中消除步长的一阶项。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\widetilde O_t=O_t-{\\langle W_t,O_t\\rangle_F\\over r_t^2}W_t,\\quad W_{t+1}=W_t-\\eta_t\\widetilde O_t,\\quad r_T^2\\le r_0^2+p\\sum_{t<T}\\eta_t^2",
+          "label": "算法1与命题4.1 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\eta_t\\equiv\\eta>0:\\qquad r_t=O(\\sqrt t),\\quad C_{2T}-C_T=\\Omega(\\sqrt T)",
+          "label": "后期区间预算持续增长；并非学得更好的充分条件 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "模型／数据",
+            "预算",
+            "对照／指标"
+          ],
+          "rows": [
+            [
+              "GPT-160M / 400M · FineWeb",
+              "3–25B / 8–63B tokens",
+              "MuonGS 对比 MuonH、MuonW；验证集 CE/PPL"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "原文长训练约15%的收益是相对MuonH拟合的等loss token等效加速，不是实测端到端提速。范数有界是持续累积的充分而非必要条件；无动量收敛结果另需尺度不变的光滑目标。[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-37648",
+      "paper": "Scaling Laws for Tool-Use Agents via Controllable Environment Synthesis",
+      "authors": "Andrew Szot · Samira Abnar · Omar Attia · Abbas Kazerouni · Michael Kirchhof · Cheng-Yu Hsieh · Raviteja Vemulapalli · Alexander Toshev",
+      "url": "https://arxiv.org/html/2610.37648v1",
+      "title": "数据组成怎样改变泛化上限？",
+      "dateNote": "首发2026-10-27 · v1",
+      "evidence": "已读正文相关方法与结果；未复现实验",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "SynthAPI拆开应用数A、每应用任务数T、每任务数据库状态数S与状态复杂度D。继token数量scaling（Kaplan 2020、Chinchilla 2022，背景）之后，本文用环境组成预测归一化下游成功率；此处T是任务数，不是训练步数。[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "N=ATS,\\quad \\widehat P_M(A,T,S,D)=\\sigma(c_0+c_A\\log_2(ASD))\\,\\sigma(b_0+b_T\\log_2T)^\\nu",
+          "label": "按模型规模M分别拟合的经验式；σ为logistic [2]"
+        },
+        {
+          "type": "text",
+          "text": "P把各benchmark相对base的增益除以该benchmark最佳观测增益后平均，不是原始准确率。更多应用与数据库多样性提高拟合上限，每应用任务数决定逼近速度。[2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "设计",
+            "(A,T,S,D)",
+            "任务数"
+          ],
+          "rows": [
+            [
+              "SubOpt",
+              "(32,1024,1,2)",
+              "32,768"
+            ],
+            [
+              "Opt",
+              "(64,128,4,4)",
+              "32,768"
+            ]
+          ]
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathrm{MAE}_{\\rm composition}=0.0285,\\qquad\\mathrm{MAE}_{\\rm quantity}=0.1706",
+          "label": "留出最高25%训练FLOPs区域；归一化分数误差 [2]"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "研究跨四种规模训练849个模型。同任务数不等于同token、合成或执行成本；拟合式不是普适的组成定理。[2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-37225",
+      "paper": "Sharpness-Aware Muon: Matrix-Aware Optimization with Momentum-Guided Perturbations",
+      "authors": "Zhiwei Zhai · Wenjing Yan · Ying-Jun Angela Zhang",
+      "url": "https://arxiv.org/html/2610.37225v1",
+      "title": "动量兼作邻域探针",
+      "dateNote": "首发2026-10-27 · v1",
+      "evidence": "已读正文相关方法与结果；未复现实验",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "MuSAM先按SAM式局部扰动取梯度，再做Muon更新。MoMuSAM用上一步动量替代构造扰动所需的当步干净梯度，省去一次梯度计算。[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\min_W\\max_{\\|\\delta\\|_F\\le\\rho}f(W+\\delta),\\qquad \\delta_t^{\\rm Mo}=\\rho{M_{t-1}\\over\\|M_{t-1}\\|_F}",
+          "label": "局部minimax目标与动量引导启发式 [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "M_t=\\mu M_{t-1}+(1-\\mu)\\nabla\\ell(W_{t-1}+\\delta_t;\\mathcal B_t),\\quad W_t=W_{t-1}-\\eta\\operatorname{Polar}(M_t)",
+          "label": "以理想polar记法表示；实现采用Newton–Schulz [3]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "方法",
+            "每步梯度次数",
+            "驻点阶"
+          ],
+          "rows": [
+            [
+              "MuSAM",
+              "2",
+              "O(T^{-1/4})"
+            ],
+            [
+              "MoMuSAM",
+              "1",
+              "O(T^{-1/4})"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "速率要求目标下界、逐样本operator/nuclear光滑性、无偏有界方差梯度及指定的依赖总步数超参数。方向稳定性界更好，不等于驻点收敛阶更快或有泛化保证。[3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-37390",
+      "paper": "LinMix: Data Mixing as Linear Domain Attribution",
+      "authors": "Hubert Baniecki · Przemyslaw Biecek · Martin Pawelczyk",
+      "url": "https://arxiv.org/abs/2610.37390",
+      "title": "LinMix: Data Mixing as Linear Domain Attribution",
+      "dateNote": "首发2026-10-27 · v1",
+      "evidence": "基于摘要",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "基于摘要：在带上限单纯形顶点采样，改善线性domain attribution的设计矩阵，替代集中在先验附近的Dirichlet配比。得到的是proxy拟合后的数据权重，不是自适应采集策略。[4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-36778",
+      "paper": "Does LLM Pre-Training Typically Occur at the Edge of Stability?",
+      "authors": "Yuhang Cai · Haodong Wen · Haofeng Huang · Deyi Liu · Yiyuan Ma · Kaifeng Lyu",
+      "url": "https://arxiv.org/abs/2610.36778",
+      "title": "Does LLM Pre-Training Typically Occur at the Edge of Stability?",
+      "dateNote": "首发2026-10-27 · v1",
+      "evidence": "基于摘要",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "基于摘要：持续负曲率可使局部二次动力学在任意正学习率下发散（Edge of Convexity）。分离此效应后，≤787M预训练常见但并非总有EoS；足够小的学习率或batch可使其消失。按Kaifeng Lyu作者订阅纳入。[5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-37062",
+      "paper": "EnergyCal: Taming Loss Spikes in Muon-Family Optimizers for Sparse MoE Training",
+      "authors": "Masato Fujitake",
+      "url": "https://arxiv.org/abs/2610.37062",
+      "title": "EnergyCal: Taming Loss Spikes in Muon-Family Optimizers for Sparse MoE Training",
+      "dateNote": "首发2026-10-27 · v1",
+      "evidence": "基于摘要",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "已核对原始摘要：EnergyCal针对稀疏MoE中Muon-family的loss spike校准更新能量。尚未读完整算法与受控消融，不推断普遍提速或稳定性保证。[6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-rlvr-unlearnability",
+      "paper": "Unlearnability in RLVR: What More Samples Reveal About Hard Tasks",
+      "authors": "Chinmaya Andukuri · Guga Gogia",
+      "url": "https://blog.collinear.ai/p/unlearnability-in-rlvr-what-more",
+      "title": "Unlearnability in RLVR: What More Samples Reveal About Hard Tasks",
+      "dateNote": "技术博客 · 2026-10-27",
+      "evidence": "已读实验与局限",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "技术博客，已读实验与局限：Qwen2.5-0.5B、MATH 1–4级、100步GRPO、两种子；评估由8次增到256次。初始0/256正确的题约20%后来超过10%成功率。零次观测成功不等于概率为零；有限预算“卡住”不等于不可学习。[7]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-performer",
+    "paperId": "arxiv:2009.14794",
+    "shortTitle": "Performer",
+    "year": 2021,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "kind": "历史经典",
+    "title": "先保证特征为正，再处理归一化",
+    "paper": "Rethinking Attention with Performers",
+    "authors": "Krzysztof Choromanski et al.",
+    "url": "https://arxiv.org/html/2009.14794v4",
+    "dateNote": "首发2020-09-30；读v4（2022-11-19）§2–3及附录B.1",
+    "evidence": "已读特征恒等式、乘法重排、因果前缀和与理论适用范围；未逐行审计证明",
+    "recognition": {
+      "label": "ICLR 2021 · 线性注意力重要历史工作",
+      "url": "https://dblp.org/rec/conf/iclr/ChoromanskiLDSG21.html"
+    },
+    "question": "固定算力下，随机特征数应怎样随key/query范数和最小归一化分母调整？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "从随机Fourier特征（Rahimi–Recht，2007）与Linear Transformers（2020）出发，Performer目标是近似原softmax核。将d^{-1/4}吸收进query与key，记a_ij=exp(q_iᵀk_j)。[8,9]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\phi_\\omega(x)=\\exp(\\omega^\\top x-\\|x\\|^2/2),\\quad\\omega\\sim N(0,I),\\quad\\mathbb E[\\phi_\\omega(x)\\phi_\\omega(y)]=e^{x^\\top y}",
+        "label": "高斯矩母函数恒等式；引理1 [8]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\phi(x)=m^{-1/2}(\\phi_{\\omega_1}(x),\\ldots,\\phi_{\\omega_m}(x)),\\quad \\widehat a_{ij}=\\phi(q_i)^\\top\\phi(k_j)\\ge0",
+        "label": "正特征给出无偏核估计 [8]"
+      },
+      {
+        "type": "text",
+        "text": "正值避免负的归一化和。保持高斯边际的正交方向进一步降低核估计方差；核无偏不意味着取比值后的attention输出无偏。[8]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widehat Y=\\operatorname{diag}(Q_f(K_f^\\top\\mathbf1))^{-1}Q_f(K_f^\\top V),\\qquad \\mathrm{time}=O(Lmd_v)",
+        "label": "重排乘法；不显式构造L×L矩阵 [8]"
+      },
+      {
+        "type": "equation",
+        "tex": "S_t=S_{t-1}+\\phi(k_t)v_t^\\top,\\quad z_t=z_{t-1}+\\phi(k_t),\\qquad \\widehat y_t={\\phi(q_t)^\\top S_t\\over\\phi(q_t)^\\top z_t}",
+        "label": "因果递推，固定特征数m与value维度；附录B.1 [8]"
+      },
+      {
+        "type": "note",
+        "title": "边界",
+        "text": "线性长度复杂度以固定m为前提。所需精度依赖query/key范数和特征数；固定维状态不保证保留任意精确softmax记忆。[8]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.37647v1",
+      "title": "MuonGS: Pretraining LLMs with Relaxed Weight-Norm Control"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.37648v1",
+      "title": "Scaling Laws for Tool-Use Agents via Controllable Environment Synthesis"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.37225v1",
+      "title": "Sharpness-Aware Muon: Matrix-Aware Optimization with Momentum-Guided Perturbations"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.37390",
+      "title": "LinMix: Data Mixing as Linear Domain Attribution"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.36778",
+      "title": "Does LLM Pre-Training Typically Occur at the Edge of Stability?"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.37062",
+      "title": "EnergyCal: Taming Loss Spikes in Muon-Family Optimizers for Sparse MoE Training"
+    },
+    {
+      "url": "https://blog.collinear.ai/p/unlearnability-in-rlvr-what-more",
+      "title": "Unlearnability in RLVR: What More Samples Reveal About Hard Tasks"
+    },
+    {
+      "url": "https://arxiv.org/html/2009.14794v4",
+      "title": "Performer · full text"
+    },
+    {
+      "url": "https://dblp.org/rec/conf/iclr/ChoromanskiLDSG21.html",
+      "title": "DBLP · ICLR 2021 record"
+    }
+  ]
+}

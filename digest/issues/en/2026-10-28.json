@@ -1,0 +1,342 @@
+{
+  "date": "2026-10-28",
+  "number": "015",
+  "window": "2026-10-25 08:22 — 2026-10-28 08:22 · America/New_York",
+  "publishedAt": "2026-10-28T12:22:00Z",
+  "readingMinutes": 18,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training",
+    "RNN / linear attention"
+  ],
+  "edition": "Daily research notes",
+  "title": "Norm growth and environment composition",
+  "subtitle": "MuonGS · SynthAPI · MoMuSAM · Reading Performer",
+  "intro": "Three main readings and four briefs: accumulated effective step sizes, composition-aware agent scaling, and momentum as a perturbation probe. The classic explains positive random features for softmax attention.",
+  "articles": [
+    {
+      "id": "paper-2610-37647",
+      "paper": "MuonGS: Pretraining LLMs with Relaxed Weight-Norm Control",
+      "authors": "Athanasios Glentis · Dawei Li · Mingyi Hong",
+      "url": "https://arxiv.org/html/2610.37647v1",
+      "title": "Accumulation over late windows",
+      "dateNote": "First posted 2026-10-27 · v1",
+      "evidence": "Read relevant main-text methods and results; no code replication",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Let r_t be the Frobenius weight norm and O_t a Muon direction with norm at most √p, p=min(m,n). The paper studies entire trajectories rather than a single normalized step. Its accumulated effective learning rate bounds relative displacement over any later interval.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "r_t=\\|W_t\\|_F,\\quad C_T=\\sum_{t<T}{\\eta_t\\over r_t},\\qquad {\\|W_T-W_s\\|_F\\over\\max(r_s,r_T)}\\le\\sqrt p(C_T-C_s)",
+          "label": "Nonzero iterates; vanilla bounded-direction update [1]"
+        },
+        {
+          "type": "text",
+          "text": "MuonGS removes the radial component after orthogonalization. Orthogonality to W_t eliminates the term linear in the step size in squared-norm growth.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\widetilde O_t=O_t-{\\langle W_t,O_t\\rangle_F\\over r_t^2}W_t,\\quad W_{t+1}=W_t-\\eta_t\\widetilde O_t,\\quad r_T^2\\le r_0^2+p\\sum_{t<T}\\eta_t^2",
+          "label": "Algorithm 1 and Proposition 4.1 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\eta_t\\equiv\\eta>0:\\qquad r_t=O(\\sqrt t),\\quad C_{2T}-C_T=\\Omega(\\sqrt T)",
+          "label": "A growing late-window budget; not a sufficient condition for learning [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Model / data",
+            "Budget",
+            "Comparison / metric"
+          ],
+          "rows": [
+            [
+              "GPT-160M / 400M · FineWeb",
+              "3–25B / 8–63B tokens",
+              "MuonGS vs MuonH, MuonW; validation CE/PPL"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "The claimed ≈15% longer-horizon gain is a fitted token-equivalent speedup over MuonH, not measured wall-clock acceleration. Bounded norm is sufficient, but not necessary, for sustained accumulation; momentum-free convergence additionally assumes a scale-invariant smooth objective.[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-37648",
+      "paper": "Scaling Laws for Tool-Use Agents via Controllable Environment Synthesis",
+      "authors": "Andrew Szot · Samira Abnar · Omar Attia · Abbas Kazerouni · Michael Kirchhof · Cheng-Yu Hsieh · Raviteja Vemulapalli · Alexander Toshev",
+      "url": "https://arxiv.org/html/2610.37648v1",
+      "title": "Data composition moves the ceiling",
+      "dateNote": "First posted 2026-10-27 · v1",
+      "evidence": "Read relevant main-text methods and results; no code replication",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "SynthAPI separates apps A, tasks per app T, profiles per task S, and profile complexity D. Following token-based scaling (Kaplan 2020; Chinchilla 2022, background), it models normalized downstream success from environment composition; T here counts tasks, not optimizer steps.[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "N=ATS,\\quad \\widehat P_M(A,T,S,D)=\\sigma(c_0+c_A\\log_2(ASD))\\,\\sigma(b_0+b_T\\log_2T)^\\nu",
+          "label": "Empirical fit, separately by model size M; σ is logistic [2]"
+        },
+        {
+          "type": "text",
+          "text": "P averages gains over the base model after benchmark-specific normalization by the best observed gain. It is not raw accuracy. More apps and database diversity raise the fitted ceiling; tasks per app control approach to it.[2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Design",
+            "(A,T,S,D)",
+            "Task count"
+          ],
+          "rows": [
+            [
+              "SubOpt",
+              "(32,1024,1,2)",
+              "32,768"
+            ],
+            [
+              "Opt",
+              "(64,128,4,4)",
+              "32,768"
+            ]
+          ]
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathrm{MAE}_{\\rm composition}=0.0285,\\qquad\\mathrm{MAE}_{\\rm quantity}=0.1706",
+          "label": "Held-out top 25% of training FLOPs, normalized score [2]"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "The study trains 849 models across four sizes. Equal task count does not imply equal token, synthesis, or execution cost; the fitted law is not a universal composition theorem.[2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-37225",
+      "paper": "Sharpness-Aware Muon: Matrix-Aware Optimization with Momentum-Guided Perturbations",
+      "authors": "Zhiwei Zhai · Wenjing Yan · Ying-Jun Angela Zhang",
+      "url": "https://arxiv.org/html/2610.37225v1",
+      "title": "Momentum probes the neighborhood",
+      "dateNote": "First posted 2026-10-27 · v1",
+      "evidence": "Read relevant main-text methods and results; no code replication",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "MuSAM inserts a SAM-style local perturbation before the Muon update. MoMuSAM replaces the current clean gradient used to construct that perturbation with the previous momentum, removing one gradient evaluation.[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\min_W\\max_{\\|\\delta\\|_F\\le\\rho}f(W+\\delta),\\qquad \\delta_t^{\\rm Mo}=\\rho{M_{t-1}\\over\\|M_{t-1}\\|_F}",
+          "label": "Local minimax objective and its momentum-guided heuristic [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "M_t=\\mu M_{t-1}+(1-\\mu)\\nabla\\ell(W_{t-1}+\\delta_t;\\mathcal B_t),\\quad W_t=W_{t-1}-\\eta\\operatorname{Polar}(M_t)",
+          "label": "Ideal polar notation; implementation uses Newton–Schulz [3]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Method",
+            "Gradient evaluations / step",
+            "Stationarity order"
+          ],
+          "rows": [
+            [
+              "MuSAM",
+              "2",
+              "O(T^{-1/4})"
+            ],
+            [
+              "MoMuSAM",
+              "1",
+              "O(T^{-1/4})"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "Rates use a lower-bounded objective, sample-wise operator/nuclear smoothness, unbiased bounded-variance gradients, and prescribed horizon-dependent parameters. A sharper directional-stability bound is not a faster stationarity rate or a generalization guarantee.[3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-37390",
+      "paper": "LinMix: Data Mixing as Linear Domain Attribution",
+      "authors": "Hubert Baniecki · Przemyslaw Biecek · Martin Pawelczyk",
+      "url": "https://arxiv.org/abs/2610.37390",
+      "title": "LinMix: Data Mixing as Linear Domain Attribution",
+      "dateNote": "First posted 2026-10-27 · v1",
+      "evidence": "Abstract only",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Abstract only: vertex sampling on a capped simplex improves the design matrix for linear domain attribution, replacing concentrated Dirichlet mixtures. The fitted attribution selects a data mixture; this is proxy-based weighting, not adaptive data collection.[4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-36778",
+      "paper": "Does LLM Pre-Training Typically Occur at the Edge of Stability?",
+      "authors": "Yuhang Cai · Haodong Wen · Haofeng Huang · Deyi Liu · Yiyuan Ma · Kaifeng Lyu",
+      "url": "https://arxiv.org/abs/2610.36778",
+      "title": "Does LLM Pre-Training Typically Occur at the Edge of Stability?",
+      "dateNote": "First posted 2026-10-27 · v1",
+      "evidence": "Abstract only",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Abstract only: persistent negative curvature makes local quadratic dynamics diverge at every positive learning rate (Edge of Convexity). After separating this effect, EoS is prevalent but not universal in pretraining up to 787M, disappearing at sufficiently small learning rates or batch sizes. This is Kaifeng Lyu author-subscription news.[5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-37062",
+      "paper": "EnergyCal: Taming Loss Spikes in Muon-Family Optimizers for Sparse MoE Training",
+      "authors": "Masato Fujitake",
+      "url": "https://arxiv.org/abs/2610.37062",
+      "title": "EnergyCal: Taming Loss Spikes in Muon-Family Optimizers for Sparse MoE Training",
+      "dateNote": "First posted 2026-10-27 · v1",
+      "evidence": "Abstract only",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Primary abstract checked: EnergyCal calibrates update energy in sparse-MoE Muon-family optimization to address loss spikes. Full algorithm and controlled ablations were not reviewed; no general speed or stability claim is inferred.[6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-rlvr-unlearnability",
+      "paper": "Unlearnability in RLVR: What More Samples Reveal About Hard Tasks",
+      "authors": "Chinmaya Andukuri · Guga Gogia",
+      "url": "https://blog.collinear.ai/p/unlearnability-in-rlvr-what-more",
+      "title": "Unlearnability in RLVR: What More Samples Reveal About Hard Tasks",
+      "dateNote": "Technical blog · 2026-10-27",
+      "evidence": "Read experiments and caveats",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Technical blog, read experiment and caveats: Qwen2.5-0.5B, MATH levels 1–4, 100 GRPO steps, two seeds; evaluation increases from 8 to 256 attempts. About 20% of prompts initially solved 0/256 times later exceed 10%. Zero observed successes is not zero probability; finite-horizon “stuck” is not impossibility.[7]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-performer",
+    "paperId": "arxiv:2009.14794",
+    "shortTitle": "Performer",
+    "year": 2021,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "kind": "Historical classic",
+    "title": "Positive features before normalization",
+    "paper": "Rethinking Attention with Performers",
+    "authors": "Krzysztof Choromanski et al.",
+    "url": "https://arxiv.org/html/2009.14794v4",
+    "dateNote": "First posted 2020-09-30; read v4 (2022-11-19), §§2–3 and Appendix B.1",
+    "evidence": "Read feature identities, reassociation, causal prefix sums and theoretical scope; proofs not fully audited",
+    "recognition": {
+      "label": "ICLR 2021 · important historical work in linear attention",
+      "url": "https://dblp.org/rec/conf/iclr/ChoromanskiLDSG21.html"
+    },
+    "question": "At fixed compute, how should feature count depend on key/query norms and the smallest normalization denominator?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "After random Fourier features (Rahimi–Recht, 2007) and Linear Transformers (2020), Performer targets the original softmax kernel rather than merely replacing it. Absorb d^{-1/4} into queries and keys, so a_ij=exp(q_iᵀk_j).[8,9]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\phi_\\omega(x)=\\exp(\\omega^\\top x-\\|x\\|^2/2),\\quad\\omega\\sim N(0,I),\\quad\\mathbb E[\\phi_\\omega(x)\\phi_\\omega(y)]=e^{x^\\top y}",
+        "label": "Gaussian moment-generating identity; Lemma 1 [8]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\phi(x)=m^{-1/2}(\\phi_{\\omega_1}(x),\\ldots,\\phi_{\\omega_m}(x)),\\quad \\widehat a_{ij}=\\phi(q_i)^\\top\\phi(k_j)\\ge0",
+        "label": "Unbiased kernel estimator with positive features [8]"
+      },
+      {
+        "type": "text",
+        "text": "Positivity avoids negative normalization sums. Orthogonal directions, while preserving Gaussian marginals, further reduce kernel-estimator variance. Kernel unbiasedness does not imply unbiasedness after taking a ratio.[8]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widehat Y=\\operatorname{diag}(Q_f(K_f^\\top\\mathbf1))^{-1}Q_f(K_f^\\top V),\\qquad \\mathrm{time}=O(Lmd_v)",
+        "label": "Reassociate products; no L×L attention matrix [8]"
+      },
+      {
+        "type": "equation",
+        "tex": "S_t=S_{t-1}+\\phi(k_t)v_t^\\top,\\quad z_t=z_{t-1}+\\phi(k_t),\\qquad \\widehat y_t={\\phi(q_t)^\\top S_t\\over\\phi(q_t)^\\top z_t}",
+        "label": "Causal recurrence, fixed m and value dimension; Appendix B.1 [8]"
+      },
+      {
+        "type": "note",
+        "title": "Boundary",
+        "text": "Linear sequence-length cost fixes m. Required approximation accuracy depends on query/key norms and feature count; a fixed-size state does not preserve arbitrary exact softmax memory.[8]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.37647v1",
+      "title": "MuonGS: Pretraining LLMs with Relaxed Weight-Norm Control"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.37648v1",
+      "title": "Scaling Laws for Tool-Use Agents via Controllable Environment Synthesis"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.37225v1",
+      "title": "Sharpness-Aware Muon: Matrix-Aware Optimization with Momentum-Guided Perturbations"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.37390",
+      "title": "LinMix: Data Mixing as Linear Domain Attribution"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.36778",
+      "title": "Does LLM Pre-Training Typically Occur at the Edge of Stability?"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.37062",
+      "title": "EnergyCal: Taming Loss Spikes in Muon-Family Optimizers for Sparse MoE Training"
+    },
+    {
+      "url": "https://blog.collinear.ai/p/unlearnability-in-rlvr-what-more",
+      "title": "Unlearnability in RLVR: What More Samples Reveal About Hard Tasks"
+    },
+    {
+      "url": "https://arxiv.org/html/2009.14794v4",
+      "title": "Performer · full text"
+    },
+    {
+      "url": "https://dblp.org/rec/conf/iclr/ChoromanskiLDSG21.html",
+      "title": "DBLP · ICLR 2021 record"
+    }
+  ]
+}

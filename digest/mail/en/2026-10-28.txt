@@ -1,0 +1,51 @@
+RESEARCH DIGEST / 2026-10-28
+Norm growth and environment composition
+MuonGS · SynthAPI · MoMuSAM · Reading Performer
+
+中文: https://alexhuang13.github.io/digest/2026-10-28.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-28.html
+
+Main reading
+Accumulation over late windows
+MuonGS: Pretraining LLMs with Relaxed Weight-Norm Control
+https://alexhuang13.github.io/digest/en/2026-10-28.html#paper-2610-37647
+
+Main reading
+Data composition moves the ceiling
+Scaling Laws for Tool-Use Agents via Controllable Environment Synthesis
+https://alexhuang13.github.io/digest/en/2026-10-28.html#paper-2610-37648
+
+Main reading
+Momentum probes the neighborhood
+Sharpness-Aware Muon: Matrix-Aware Optimization with Momentum-Guided Perturbations
+https://alexhuang13.github.io/digest/en/2026-10-28.html#paper-2610-37225
+
+Brief
+LinMix: Data Mixing as Linear Domain Attribution
+LinMix: Data Mixing as Linear Domain Attribution
+https://alexhuang13.github.io/digest/en/2026-10-28.html#paper-2610-37390
+
+Brief
+Does LLM Pre-Training Typically Occur at the Edge of Stability?
+Does LLM Pre-Training Typically Occur at the Edge of Stability?
+https://alexhuang13.github.io/digest/en/2026-10-28.html#paper-2610-36778
+
+Brief
+EnergyCal: Taming Loss Spikes in Muon-Family Optimizers for Sparse MoE Training
+EnergyCal: Taming Loss Spikes in Muon-Family Optimizers for Sparse MoE Training
+https://alexhuang13.github.io/digest/en/2026-10-28.html#paper-2610-37062
+
+Brief
+Unlearnability in RLVR: What More Samples Reveal About Hard Tasks
+Unlearnability in RLVR: What More Samples Reveal About Hard Tasks
+https://alexhuang13.github.io/digest/en/2026-10-28.html#paper-rlvr-unlearnability
+
+Daily classic · 2021
+Positive features before normalization
+https://alexhuang13.github.io/digest/en/2026-10-28.html#classic-performer
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-10-28.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

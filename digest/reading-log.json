@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-10-28",
+    "paperId": "arxiv:2009.14794",
+    "paper": "Rethinking Attention with Performers",
+    "shortTitle": "Performer",
+    "year": 2021,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "recognition": {
+      "label": "ICLR 2021 · 线性注意力重要历史工作",
+      "url": "https://dblp.org/rec/conf/iclr/ChoromanskiLDSG21.html"
+    },
+    "source": "https://arxiv.org/html/2009.14794v4",
+    "url": "/digest/2026-10-28.html#classic-performer"
+  },
+  {
     "date": "2026-10-27",
     "paperId": "arxiv:1803.03635",
     "paper": "The Lottery Ticket Hypothesis: Finding Sparse, Trainable Neural Networks",

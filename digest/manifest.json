@@ -4,8 +4,30 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-10-27",
+  "latest": "2026-10-28",
   "issues": [
+    {
+      "date": "2026-10-28",
+      "title": "范数增长与环境组成",
+      "url": "/digest/2026-10-28.html",
+      "translations": {
+        "en": {
+          "title": "Norm growth and environment composition",
+          "url": "/digest/en/2026-10-28.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2610.37647v1",
+        "https://arxiv.org/html/2610.37648v1",
+        "https://arxiv.org/html/2610.37225v1",
+        "https://arxiv.org/abs/2610.37390",
+        "https://arxiv.org/abs/2610.36778",
+        "https://arxiv.org/abs/2610.37062",
+        "https://blog.collinear.ai/p/unlearnability-in-rlvr-what-more",
+        "https://arxiv.org/html/2009.14794v4",
+        "https://dblp.org/rec/conf/iclr/ChoromanskiLDSG21.html"
+      ]
+    },
     {
       "date": "2026-10-27",
       "title": "末次迭代与外推歧义",

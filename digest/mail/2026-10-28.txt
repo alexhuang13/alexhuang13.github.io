@@ -1,0 +1,51 @@
+RESEARCH DIGEST / 2026-10-28
+范数增长与环境组成
+MuonGS · SynthAPI · MoMuSAM · 精读Performer
+
+中文: https://alexhuang13.github.io/digest/2026-10-28.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-28.html
+
+主读
+后期区间还能积累多少有效步长？
+MuonGS: Pretraining LLMs with Relaxed Weight-Norm Control
+https://alexhuang13.github.io/digest/2026-10-28.html#paper-2610-37647
+
+主读
+数据组成怎样改变泛化上限？
+Scaling Laws for Tool-Use Agents via Controllable Environment Synthesis
+https://alexhuang13.github.io/digest/2026-10-28.html#paper-2610-37648
+
+主读
+动量兼作邻域探针
+Sharpness-Aware Muon: Matrix-Aware Optimization with Momentum-Guided Perturbations
+https://alexhuang13.github.io/digest/2026-10-28.html#paper-2610-37225
+
+简讯
+LinMix: Data Mixing as Linear Domain Attribution
+LinMix: Data Mixing as Linear Domain Attribution
+https://alexhuang13.github.io/digest/2026-10-28.html#paper-2610-37390
+
+简讯
+Does LLM Pre-Training Typically Occur at the Edge of Stability?
+Does LLM Pre-Training Typically Occur at the Edge of Stability?
+https://alexhuang13.github.io/digest/2026-10-28.html#paper-2610-36778
+
+简讯
+EnergyCal: Taming Loss Spikes in Muon-Family Optimizers for Sparse MoE Training
+EnergyCal: Taming Loss Spikes in Muon-Family Optimizers for Sparse MoE Training
+https://alexhuang13.github.io/digest/2026-10-28.html#paper-2610-37062
+
+简讯
+Unlearnability in RLVR: What More Samples Reveal About Hard Tasks
+Unlearnability in RLVR: What More Samples Reveal About Hard Tasks
+https://alexhuang13.github.io/digest/2026-10-28.html#paper-rlvr-unlearnability
+
+每日精读 · 2021
+先保证特征为正，再处理归一化
+https://alexhuang13.github.io/digest/2026-10-28.html#classic-performer
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-10-28.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/
