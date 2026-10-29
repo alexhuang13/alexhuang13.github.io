@@ -4,8 +4,30 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-10-28",
+  "latest": "2026-10-29",
   "issues": [
+    {
+      "date": "2026-10-29",
+      "title": "预测配比，辨认收益",
+      "url": "/digest/2026-10-29.html",
+      "translations": {
+        "en": {
+          "title": "Predicting mixtures, identifying gains",
+          "url": "/digest/en/2026-10-29.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2610.37001v1",
+        "https://arxiv.org/html/2610.36983v1",
+        "https://arxiv.org/abs/2610.36679",
+        "https://arxiv.org/abs/2610.36113",
+        "https://arxiv.org/html/2106.09685v2",
+        "https://dblp.org/rec/conf/iclr/HuSWALWWC22.html",
+        "https://arxiv.org/abs/2504.04626v2",
+        "https://arxiv.org/abs/2609.02728v3",
+        "https://arxiv.org/abs/2603.11137v2"
+      ]
+    },
     {
       "date": "2026-10-28",
       "title": "范数增长与环境组成",

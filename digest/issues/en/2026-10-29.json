@@ -1,0 +1,302 @@
+{
+  "date": "2026-10-29",
+  "number": "016",
+  "window": "2026-10-26 08:53 — 2026-10-29 08:53 · America/New_York",
+  "publishedAt": "2026-10-29T12:53:00Z",
+  "readingMinutes": 14,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Data mixing",
+    "Post-training"
+  ],
+  "edition": "Daily research notes",
+  "title": "Predicting mixtures, identifying gains",
+  "subtitle": "Meta Models · Limits of data curation · Reading LoRA",
+  "intro": "Two main readings, two briefs, and three version watches recovered in the overlapping window: predicting experiments from training records and separating acceleration from persistent curation gains. The classic is LoRA and its factorized gradients.",
+  "articles": [
+    {
+      "id": "paper-2610-37001",
+      "paper": "Meta Models: Models that Model Learning",
+      "authors": "Peihang Li · Ziming Liu",
+      "url": "https://arxiv.org/html/2610.37001v1",
+      "title": "Treat mixture experiments as numeric regression",
+      "dateNote": "First submitted 2026-10-27 · v1 · Recovered in the overlapping window",
+      "evidence": "Relevant methods and experiments read; not reproduced",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Building on parametric scaling curves (Kaplan, 2020; Chinchilla, 2022), this paper supplies configurations q, progress t, and historical losses to frozen TabPFN. Mixture proportions are configuration fields.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal R=\\{(q_i,t_{ij},L_{ij})\\}_{i,j},\\qquad \\widehat L(q,t)=f_\\theta(q,t\\mid\\mathcal R)",
+          "label": "The prediction target; context updates do not train weights [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Evaluation design",
+            "TabPFN",
+            "Baseline"
+          ],
+          "rows": [
+            [
+              "Delphi: 3,737 runs; 24 held-out groups; mean Spearman ρ",
+              "0.967",
+              "XGBoost 0.875"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Leaving out five-domain mixtures individually, MAE is about 20%–40% below the best evaluated parametric law at four model sizes; laws win on two-domain mixtures and some RedPajama settings.[1]"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "These are new-mixture predictions at fixed scale and progress, without guarantees of training gains or arbitrary scale extrapolation. Group holdout is not prospective experimental validation.[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-36983",
+      "paper": "Advancement or Acceleration? How Data Curation Improves LLM Training",
+      "authors": "Jiaxing Wang · Zicheng Zhang · Deping Xiang · Jin Xu · Yong Li · Chao Liu · Pengzhang Liu · Qixia Jiang",
+      "url": "https://arxiv.org/html/2610.36983v1",
+      "title": "Reaching it faster, or reaching a better endpoint?",
+      "dateNote": "First submitted 2026-10-27 · v1 · Recovered in the overlapping window",
+      "evidence": "Relevant methods and experiments read; not reproduced",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The paper analyzes growing sample budgets in teacher–student perceptrons and distinguishes the effects empirically in LLMs. If the population training objective equals target loss and the baseline is globally optimal, reallocation cannot beat that optimum; finite-budget acceleration remains possible.[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\theta_0\\in\\arg\\min_\\theta L_{\\rm tar}(\\theta)\\quad\\Longrightarrow\\quad L_{\\rm tar}(\\theta(w))\\ge L_{\\rm tar}(\\theta_0)",
+          "label": "Population optimality without shift; not a nonconvex training guarantee [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Delta=\\sum_k\\left|\\widehat w_k L^k_{\\rm tar}(\\theta_0)-w_k L^k_{\\rm train}(\\theta_0)\\right|",
+          "label": "Domain-level diagnostic; training loss is measured on seen examples [2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "160M GPT / SlimPajama; 40K steps, five runs",
+            "Uniform PPL",
+            "TANDEM PPL"
+          ],
+          "rows": [
+            [
+              "Near-zero gap: Δ=0.07",
+              "19.71",
+              "19.66"
+            ],
+            [
+              "Limited data: Δ=0.64",
+              "28.60",
+              "26.02"
+            ],
+            [
+              "Held-out CC target: Δ=1.26",
+              "49.19",
+              "40.24"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "Δ is neither a distributional distance nor a statistical test with a significance level: different distributions can yield equal loss. Persistent finite-budget gaps do not prove infinite-training limits.[2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-36679",
+      "paper": "Specialization, Diversity, and Scaling in Child-Scale Language Models",
+      "authors": "Steven Y. Feng · Michael C. Frank",
+      "url": "https://arxiv.org/abs/2610.36679",
+      "title": "Sources and diversity at small data scale",
+      "dateNote": "First submitted 2026-10-27 · v1 · Recovered in the overlapping window",
+      "evidence": "Based on the abstract",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Based on the abstract: small GPT-2 models use BabyView home-recording transcripts and synthetic TinyDialogues, varying quantity, source, and diversity of child environments. Multiple children improve pooled held-out language prediction, without equally clear grammatical-benchmark gains; one loss does not represent every capability.[3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-36113",
+      "paper": "Scaling and Renormalization in Neural Networks: An Effective Renormalization-Group Description of Grokking",
+      "authors": "Min Chen · Junqi Wang · Zeguan Wu · Wenhao Huang · Junyu Liu",
+      "url": "https://arxiv.org/abs/2610.36113",
+      "title": "Effective critical exponents for grokking",
+      "dateNote": "First submitted 2026-10-26 · v1 · Recovered in the overlapping window",
+      "evidence": "Based on the abstract",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Based on the abstract: in two-layer modular-addition networks, a second-order loss expansion in per-neuron norms defines couplings, followed by Fiedler ordering and coarse-graining to estimate critical exponents. This concerns scaling of ML generalization transitions, rather than a universal model–data–compute budget power law.[4]"
+        }
+      ]
+    },
+    {
+      "id": "version-2504-04626v2",
+      "paper": "Exact Unlearning of Finetuning Data via Model Merging at Scale",
+      "authors": "Kevin Kuo · Amrith Setlur · Kartik Srinivas · Aditi Raghunathan · Virginia Smith",
+      "url": "https://arxiv.org/abs/2504.04626v2",
+      "title": "Exact Unlearning of Finetuning Data via Model Merging at Scale",
+      "dateNote": "First submitted 2025-04-06; updated 2026-10-27 · v2",
+      "evidence": "Abstract and version metadata; differences unverified",
+      "kind": "Version watch",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Aditi Raghunathan subscription: v2 is available. Based on its current abstract, SIFT-Masks combines a global sign constraint and local masks for model merging and exact unlearning. The v1→v2 content changes have not been checked; current claims are not treated as newly established results.[7]"
+        }
+      ]
+    },
+    {
+      "id": "version-2609-02728v3",
+      "paper": "Momentum in large-batch training: Polyak enlarges the critical batch size, Nesterov improves data efficiency",
+      "authors": "Jia-Nan Wang · Zixun Huang · Kairui Li · Zilin Wang · Lei Wu",
+      "url": "https://arxiv.org/abs/2609.02728v3",
+      "title": "Momentum in large-batch training: Polyak enlarges the critical batch size, Nesterov improves data efficiency",
+      "dateNote": "First submitted 2026-09-02; updated 2026-10-27 · v3",
+      "evidence": "Abstract and version metadata; differences unverified",
+      "kind": "Version watch",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Lei Wu subscription and scaling: v3 is available. Current Comments mention revised proofs and added neural-network experiments. Without a v2→v3 comparison, these additions cannot all be assigned to v3; earlier critical-batch conclusions are not reported as new.[8]"
+        }
+      ]
+    },
+    {
+      "id": "version-2603-11137v2",
+      "paper": "Scaling Reasoning Efficiently via Relaxed On-Policy Distillation",
+      "authors": "Jongwoo Ko · Sara Abdali · Young Jin Kim · Tianyi Chen · Pashmina Cameron",
+      "url": "https://arxiv.org/abs/2603.11137v2",
+      "title": "Scaling Reasoning Efficiently via Relaxed On-Policy Distillation",
+      "dateNote": "First submitted 2026-03-11; updated 2026-10-27 · v2",
+      "evidence": "Abstract and version metadata; differences unverified",
+      "kind": "Version watch",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v2 is available. Its current abstract describes REOPOLD controlling where, how strongly, and when teacher feedback acts, with extensions to test-time scaling. Version differences remain unchecked; the abstract’s sample-efficiency maximum is not attributed to this update.[9]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-lora",
+    "paperId": "arxiv:2106.09685",
+    "shortTitle": "LoRA",
+    "year": 2022,
+    "topics": [
+      "Post-training"
+    ],
+    "kind": "Historical classic",
+    "title": "Low rank also changes the optimization path",
+    "paper": "LoRA: Low-Rank Adaptation of Large Language Models",
+    "authors": "Edward J. Hu · Yelong Shen · Phillip Wallis · Zeyuan Allen-Zhu · Yuanzhi Li · Shean Wang · Lu Wang · Weizhu Chen",
+    "url": "https://arxiv.org/html/2106.09685v2",
+    "dateNote": "First submitted 2021-06-17; v2 (2021-10-16), §§4, 7 and appendix rank experiments",
+    "evidence": "Parameterization, initialization, and rank experiments read; gradient formulas are explanatory derivations, not paper theorems",
+    "recognition": {
+      "label": "ICLR 2022 · Important historical work on parameter-efficient adaptation (DBLP checked 2026-10-29)",
+      "url": "https://dblp.org/rec/conf/iclr/HuSWALWWC22.html"
+    },
+    "question": "At a fixed trainable-parameter budget, do gains come from the representable low-rank subspace or the optimization geometry induced by factorization?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Full fine-tuning stores all parameters per task; adapters (2019) add layers. Following low-intrinsic-dimension adaptation (2020), LoRA freezes pretrained weights and learns a low-rank increment that can be merged for deployment.[5,6]"
+      },
+      {
+        "type": "equation",
+        "tex": "W=W_0+sBA,\\quad s=\\alpha/r,\\quad B\\in\\mathbb R^{d\\times r},\\ A\\in\\mathbb R^{r\\times k},\\quad r\\ll\\min(d,k)",
+        "label": "Paper parameterization; W₀ is frozen [5]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\#(A,B)=r(d+k),\\qquad \\operatorname{rank}(W-W_0)\\le r",
+        "label": "Per-matrix parameter count and representation constraint [5]"
+      },
+      {
+        "type": "text",
+        "text": "Let G denote the loss gradient with respect to the effective weight. The following uses the chain rule and a first-order expansion of simultaneous SGD. The paper uses Adam, so this recurrence does not directly describe its experiments."
+      },
+      {
+        "type": "equation",
+        "tex": "\\nabla_B L=sGA^\\top,\\qquad\\nabla_A L=sB^\\top G",
+        "label": "Explanatory derivation; not a paper theorem"
+      },
+      {
+        "type": "equation",
+        "tex": "\\Delta W=-\\eta s^2(GA^\\top A+BB^\\top G)+O(\\eta^2)",
+        "label": "Induced matrix update under simultaneous SGD; factors set left/right preconditioning"
+      },
+      {
+        "type": "equation",
+        "tex": "B_0=0,\\quad A_0\\sim\\mathcal N:\\qquad \\nabla_A L|_0=0,\\quad\\Delta W_0=-\\eta s^2G_0A_0^\\top A_0",
+        "label": "Paper initialization; first-step SGD consequence"
+      },
+      {
+        "type": "note",
+        "title": "Boundary",
+        "text": "Low-rank sufficiency is empirical and task-specific, not a theorem that full-tuning gradients remain low rank. The best rank depends on the metric in GPT-2 E2E experiments; transfer of fixed rank across models needs testing.[5]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.37001v1",
+      "title": "Meta Models: Models that Model Learning"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.36983v1",
+      "title": "Advancement or Acceleration? How Data Curation Improves LLM Training"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.36679",
+      "title": "Specialization, Diversity, and Scaling in Child-Scale Language Models"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.36113",
+      "title": "Scaling and Renormalization in Neural Networks: An Effective Renormalization-Group Description of Grokking"
+    },
+    {
+      "url": "https://arxiv.org/html/2106.09685v2",
+      "title": "LoRA · v2 full text"
+    },
+    {
+      "url": "https://dblp.org/rec/conf/iclr/HuSWALWWC22.html",
+      "title": "DBLP · ICLR 2022 record"
+    },
+    {
+      "url": "https://arxiv.org/abs/2504.04626v2",
+      "title": "Exact Unlearning of Finetuning Data via Model Merging at Scale · version record"
+    },
+    {
+      "url": "https://arxiv.org/abs/2609.02728v3",
+      "title": "Momentum in large-batch training: Polyak enlarges the critical batch size, Nesterov improves data efficiency · version record"
+    },
+    {
+      "url": "https://arxiv.org/abs/2603.11137v2",
+      "title": "Scaling Reasoning Efficiently via Relaxed On-Policy Distillation · version record"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+RESEARCH DIGEST / 2026-10-29
+Predicting mixtures, identifying gains
+Meta Models · Limits of data curation · Reading LoRA
+
+中文: https://alexhuang13.github.io/digest/2026-10-29.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-29.html
+
+Main reading
+Treat mixture experiments as numeric regression
+Meta Models: Models that Model Learning
+https://alexhuang13.github.io/digest/en/2026-10-29.html#paper-2610-37001
+
+Main reading
+Reaching it faster, or reaching a better endpoint?
+Advancement or Acceleration? How Data Curation Improves LLM Training
+https://alexhuang13.github.io/digest/en/2026-10-29.html#paper-2610-36983
+
+Brief
+Sources and diversity at small data scale
+Specialization, Diversity, and Scaling in Child-Scale Language Models
+https://alexhuang13.github.io/digest/en/2026-10-29.html#paper-2610-36679
+
+Brief
+Effective critical exponents for grokking
+Scaling and Renormalization in Neural Networks: An Effective Renormalization-Group Description of Grokking
+https://alexhuang13.github.io/digest/en/2026-10-29.html#paper-2610-36113
+
+Version watch
+Exact Unlearning of Finetuning Data via Model Merging at Scale
+Exact Unlearning of Finetuning Data via Model Merging at Scale
+https://alexhuang13.github.io/digest/en/2026-10-29.html#version-2504-04626v2
+
+Version watch
+Momentum in large-batch training: Polyak enlarges the critical batch size, Nesterov improves data efficiency
+Momentum in large-batch training: Polyak enlarges the critical batch size, Nesterov improves data efficiency
+https://alexhuang13.github.io/digest/en/2026-10-29.html#version-2609-02728v3
+
+Version watch
+Scaling Reasoning Efficiently via Relaxed On-Policy Distillation
+Scaling Reasoning Efficiently via Relaxed On-Policy Distillation
+https://alexhuang13.github.io/digest/en/2026-10-29.html#version-2603-11137v2
+
+Daily classic · 2022
+Low rank also changes the optimization path
+https://alexhuang13.github.io/digest/en/2026-10-29.html#classic-lora
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-10-29.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

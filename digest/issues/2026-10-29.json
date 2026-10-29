@@ -1,0 +1,302 @@
+{
+  "date": "2026-10-29",
+  "number": "016",
+  "window": "2026-10-26 08:53 — 2026-10-29 08:53 · America/New_York",
+  "publishedAt": "2026-10-29T12:53:00Z",
+  "readingMinutes": 14,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Data mixing",
+    "Post-training"
+  ],
+  "edition": "每日研究笔记",
+  "title": "预测配比，辨认收益",
+  "subtitle": "Meta Models · 数据筛选的收益边界 · 精读LoRA",
+  "intro": "重叠窗口补收两篇主读、两条简讯及三条版本观察：用历史训练记录预测新实验，区分数据配比的加速与最终收益。经典精读LoRA及其因子化梯度。",
+  "articles": [
+    {
+      "id": "paper-2610-37001",
+      "paper": "Meta Models: Models that Model Learning",
+      "authors": "Peihang Li · Ziming Liu",
+      "url": "https://arxiv.org/html/2610.37001v1",
+      "title": "把配比实验当作数值回归",
+      "dateNote": "首发2026-10-27 · v1 · 重叠窗口补收",
+      "evidence": "已读正文相关方法与实验；未复现",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "从Kaplan（2020）、Chinchilla（2022）的参数化scaling曲线出发，本文把配置q、进度t和历史loss组成表格，交给冻结的TabPFN预测。配比也是配置的一部分。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal R=\\{(q_i,t_{ij},L_{ij})\\}_{i,j},\\qquad \\widehat L(q,t)=f_\\theta(q,t\\mid\\mathcal R)",
+          "label": "原文预测对象；上下文更新不等于权重训练 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "评估设计",
+            "TabPFN",
+            "对照"
+          ],
+          "rows": [
+            [
+              "Delphi：3,737次训练，24组整组留出；平均Spearman ρ",
+              "0.967",
+              "XGBoost 0.875"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "五域配比逐个留出时，四种模型规模的MAE比最佳受测参数化law约低20%–40%；双域和部分RedPajama配置反而由参数化law占优。[1]"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "这里预测的是固定规模、进度下的新配比；不能据此承诺训练收益或任意规模外推。整组留出也不等于前瞻实验验证。[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-36983",
+      "paper": "Advancement or Acceleration? How Data Curation Improves LLM Training",
+      "authors": "Jiaxing Wang · Zicheng Zhang · Deping Xiang · Jin Xu · Yong Li · Chao Liu · Pengzhang Liu · Qixia Jiang",
+      "url": "https://arxiv.org/html/2610.36983v1",
+      "title": "更快达到，还是最终更好？",
+      "dateNote": "首发2026-10-27 · v1 · 重叠窗口补收",
+      "evidence": "已读正文相关方法与实验；未复现",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "本文以teacher–student感知机分析大样本预算，再用LLM实验区分两种收益。若总体训练目标等于目标分布损失，且基线已全局最优，重新配比不可能突破该最优值；有限预算仍可能加速。[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\theta_0\\in\\arg\\min_\\theta L_{\\rm tar}(\\theta)\\quad\\Longrightarrow\\quad L_{\\rm tar}(\\theta(w))\\ge L_{\\rm tar}(\\theta_0)",
+          "label": "总体无偏移情形的最优性逻辑；不是非凸训练保证 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Delta=\\sum_k\\left|\\widehat w_k L^k_{\\rm tar}(\\theta_0)-w_k L^k_{\\rm train}(\\theta_0)\\right|",
+          "label": "原文域级诊断；training loss在已见样本上测量 [2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "160M GPT / SlimPajama；40K步，5次重复",
+            "Uniform PPL",
+            "TANDEM PPL"
+          ],
+          "rows": [
+            [
+              "近无gap：Δ=0.07",
+              "19.71",
+              "19.66"
+            ],
+            [
+              "限制数据：Δ=0.64",
+              "28.60",
+              "26.02"
+            ],
+            [
+              "留出CC目标：Δ=1.26",
+              "49.19",
+              "40.24"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "Δ不是分布距离或带显著性水平的统计检验；不同分布可有相同loss。有限预算的持续差距也不证明无限训练极限。[2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-36679",
+      "paper": "Specialization, Diversity, and Scaling in Child-Scale Language Models",
+      "authors": "Steven Y. Feng · Michael C. Frank",
+      "url": "https://arxiv.org/abs/2610.36679",
+      "title": "小数据的来源与多样性",
+      "dateNote": "首发2026-10-27 · v1 · 重叠窗口补收",
+      "evidence": "基于摘要",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "基于摘要：小GPT-2使用BabyView家庭录音转写及TinyDialogues合成对话，改变数量、来源与儿童环境多样性。多儿童输入改善混合留出语言预测，但语法benchmark未见同样清晰收益；不能用单一loss替代所有能力。[3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-36113",
+      "paper": "Scaling and Renormalization in Neural Networks: An Effective Renormalization-Group Description of Grokking",
+      "authors": "Min Chen · Junqi Wang · Zeguan Wu · Wenhao Huang · Junyu Liu",
+      "url": "https://arxiv.org/abs/2610.36113",
+      "title": "Grokking的有效临界指数",
+      "dateNote": "首发2026-10-26 · v1 · 重叠窗口补收",
+      "evidence": "基于摘要",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "基于摘要：在两层网络模加任务中，以逐神经元范数的loss二阶展开构造耦合矩阵，再用Fiedler排序与粗粒化拟合临界指数。属于ML泛化转变的scaling研究；不是模型、数据、算力预算的通用power law。[4]"
+        }
+      ]
+    },
+    {
+      "id": "version-2504-04626v2",
+      "paper": "Exact Unlearning of Finetuning Data via Model Merging at Scale",
+      "authors": "Kevin Kuo · Amrith Setlur · Kartik Srinivas · Aditi Raghunathan · Virginia Smith",
+      "url": "https://arxiv.org/abs/2504.04626v2",
+      "title": "Exact Unlearning of Finetuning Data via Model Merging at Scale",
+      "dateNote": "首发2025-04-06；2026-10-27 · 2版",
+      "evidence": "基于摘要及版本元数据；差异未核实",
+      "kind": "版本观察",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Aditi Raghunathan作者订阅：v2已发布；基于当前摘要，SIFT-Masks结合全局符号约束与局部mask做模型合并和精确遗忘。尚未核对v1→v2内容差异，当前结论不视为本次新结果。[7]"
+        }
+      ]
+    },
+    {
+      "id": "version-2609-02728v3",
+      "paper": "Momentum in large-batch training: Polyak enlarges the critical batch size, Nesterov improves data efficiency",
+      "authors": "Jia-Nan Wang · Zixun Huang · Kairui Li · Zilin Wang · Lei Wu",
+      "url": "https://arxiv.org/abs/2609.02728v3",
+      "title": "Momentum in large-batch training: Polyak enlarges the critical batch size, Nesterov improves data efficiency",
+      "dateNote": "首发2026-09-02；2026-10-27 · 3版",
+      "evidence": "基于摘要及版本元数据；差异未核实",
+      "kind": "版本观察",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Lei Wu作者订阅兼scaling主题：v3已发布；当前Comments注明修订证明、增加神经网络实验。尚未逐项比较v2→v3，不能确定这些增补全部发生在v3；不重报旧的critical-batch结论。[8]"
+        }
+      ]
+    },
+    {
+      "id": "version-2603-11137v2",
+      "paper": "Scaling Reasoning Efficiently via Relaxed On-Policy Distillation",
+      "authors": "Jongwoo Ko · Sara Abdali · Young Jin Kim · Tianyi Chen · Pashmina Cameron",
+      "url": "https://arxiv.org/abs/2603.11137v2",
+      "title": "Scaling Reasoning Efficiently via Relaxed On-Policy Distillation",
+      "dateNote": "首发2026-03-11；2026-10-27 · 2版",
+      "evidence": "基于摘要及版本元数据；差异未核实",
+      "kind": "版本观察",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v2已发布，当前摘要称REOPOLD调节教师反馈作用的token位置、强度和阶段，并延伸到test-time scaling。尚未核对版本差异；不将摘要中的样本效率上限当作此次新增的结论。[9]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-lora",
+    "paperId": "arxiv:2106.09685",
+    "shortTitle": "LoRA",
+    "year": 2022,
+    "topics": [
+      "Post-training"
+    ],
+    "kind": "历史经典",
+    "title": "低秩约束也改变了优化路径",
+    "paper": "LoRA: Low-Rank Adaptation of Large Language Models",
+    "authors": "Edward J. Hu · Yelong Shen · Phillip Wallis · Zeyuan Allen-Zhu · Yuanzhi Li · Shean Wang · Lu Wang · Weizhu Chen",
+    "url": "https://arxiv.org/html/2106.09685v2",
+    "dateNote": "首发2021-06-17；读v2（2021-10-16）§4、§7与附录秩实验",
+    "evidence": "已读参数化、初始化与秩实验；梯度式为解释性推导，非原文定理",
+    "recognition": {
+      "label": "ICLR 2022 · 参数高效适配的重要历史工作（DBLP核验2026-10-29）",
+      "url": "https://dblp.org/rec/conf/iclr/HuSWALWWC22.html"
+    },
+    "question": "固定可训练参数预算时，改善来自可表示的低秩子空间，还是因子化诱导的优化几何？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "全量微调为每个任务存储完整参数；adapter（2019）加入额外层。LoRA承接低内在维适配（2020），冻结预训练权重并学习低秩增量，可在部署时合并。[5,6]"
+      },
+      {
+        "type": "equation",
+        "tex": "W=W_0+sBA,\\quad s=\\alpha/r,\\quad B\\in\\mathbb R^{d\\times r},\\ A\\in\\mathbb R^{r\\times k},\\quad r\\ll\\min(d,k)",
+        "label": "原文参数化；W₀冻结 [5]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\#(A,B)=r(d+k),\\qquad \\operatorname{rank}(W-W_0)\\le r",
+        "label": "每矩阵的参数量与表示约束 [5]"
+      },
+      {
+        "type": "text",
+        "text": "令G为有效权重的loss梯度。下面为链式法则与同时SGD更新的一阶展开；实际原文使用Adam，不能直接套用此递推。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\nabla_B L=sGA^\\top,\\qquad\\nabla_A L=sB^\\top G",
+        "label": "解释性推导；非原文定理"
+      },
+      {
+        "type": "equation",
+        "tex": "\\Delta W=-\\eta s^2(GA^\\top A+BB^\\top G)+O(\\eta^2)",
+        "label": "同时SGD的诱导矩阵更新；因子形状决定左右预条件"
+      },
+      {
+        "type": "equation",
+        "tex": "B_0=0,\\quad A_0\\sim\\mathcal N:\\qquad \\nabla_A L|_0=0,\\quad\\Delta W_0=-\\eta s^2G_0A_0^\\top A_0",
+        "label": "原文初始化；首步SGD推论"
+      },
+      {
+        "type": "note",
+        "title": "边界",
+        "text": "低秩充分性是特定任务上的经验结果，不是全量梯度始终低秩的定理。GPT-2 E2E实验的最优rank随指标而变；固定rank跨模型迁移仍需检验。[5]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.37001v1",
+      "title": "Meta Models: Models that Model Learning"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.36983v1",
+      "title": "Advancement or Acceleration? How Data Curation Improves LLM Training"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.36679",
+      "title": "Specialization, Diversity, and Scaling in Child-Scale Language Models"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.36113",
+      "title": "Scaling and Renormalization in Neural Networks: An Effective Renormalization-Group Description of Grokking"
+    },
+    {
+      "url": "https://arxiv.org/html/2106.09685v2",
+      "title": "LoRA · v2 full text"
+    },
+    {
+      "url": "https://dblp.org/rec/conf/iclr/HuSWALWWC22.html",
+      "title": "DBLP · ICLR 2022 record"
+    },
+    {
+      "url": "https://arxiv.org/abs/2504.04626v2",
+      "title": "Exact Unlearning of Finetuning Data via Model Merging at Scale · version record"
+    },
+    {
+      "url": "https://arxiv.org/abs/2609.02728v3",
+      "title": "Momentum in large-batch training: Polyak enlarges the critical batch size, Nesterov improves data efficiency · version record"
+    },
+    {
+      "url": "https://arxiv.org/abs/2603.11137v2",
+      "title": "Scaling Reasoning Efficiently via Relaxed On-Policy Distillation · version record"
+    }
+  ]
+}

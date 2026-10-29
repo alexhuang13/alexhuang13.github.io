@@ -1,0 +1,51 @@
+RESEARCH DIGEST / 2026-10-29
+预测配比，辨认收益
+Meta Models · 数据筛选的收益边界 · 精读LoRA
+
+中文: https://alexhuang13.github.io/digest/2026-10-29.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-29.html
+
+主读
+把配比实验当作数值回归
+Meta Models: Models that Model Learning
+https://alexhuang13.github.io/digest/2026-10-29.html#paper-2610-37001
+
+主读
+更快达到，还是最终更好？
+Advancement or Acceleration? How Data Curation Improves LLM Training
+https://alexhuang13.github.io/digest/2026-10-29.html#paper-2610-36983
+
+简讯
+小数据的来源与多样性
+Specialization, Diversity, and Scaling in Child-Scale Language Models
+https://alexhuang13.github.io/digest/2026-10-29.html#paper-2610-36679
+
+简讯
+Grokking的有效临界指数
+Scaling and Renormalization in Neural Networks: An Effective Renormalization-Group Description of Grokking
+https://alexhuang13.github.io/digest/2026-10-29.html#paper-2610-36113
+
+版本观察
+Exact Unlearning of Finetuning Data via Model Merging at Scale
+Exact Unlearning of Finetuning Data via Model Merging at Scale
+https://alexhuang13.github.io/digest/2026-10-29.html#version-2504-04626v2
+
+版本观察
+Momentum in large-batch training: Polyak enlarges the critical batch size, Nesterov improves data efficiency
+Momentum in large-batch training: Polyak enlarges the critical batch size, Nesterov improves data efficiency
+https://alexhuang13.github.io/digest/2026-10-29.html#version-2609-02728v3
+
+版本观察
+Scaling Reasoning Efficiently via Relaxed On-Policy Distillation
+Scaling Reasoning Efficiently via Relaxed On-Policy Distillation
+https://alexhuang13.github.io/digest/2026-10-29.html#version-2603-11137v2
+
+每日精读 · 2022
+低秩约束也改变了优化路径
+https://alexhuang13.github.io/digest/2026-10-29.html#classic-lora
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-10-29.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

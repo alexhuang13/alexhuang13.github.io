@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-10-29",
+    "paperId": "arxiv:2106.09685",
+    "paper": "LoRA: Low-Rank Adaptation of Large Language Models",
+    "shortTitle": "LoRA",
+    "year": 2022,
+    "topics": [
+      "Post-training"
+    ],
+    "recognition": {
+      "label": "ICLR 2022 · 参数高效适配的重要历史工作（DBLP核验2026-10-29）",
+      "url": "https://dblp.org/rec/conf/iclr/HuSWALWWC22.html"
+    },
+    "source": "https://arxiv.org/html/2106.09685v2",
+    "url": "/digest/2026-10-29.html#classic-lora"
+  },
+  {
     "date": "2026-10-28",
     "paperId": "arxiv:2009.14794",
     "paper": "Rethinking Attention with Performers",
