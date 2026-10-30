@@ -1,0 +1,264 @@
+{
+  "date": "2026-10-30",
+  "number": "017",
+  "window": "2026-10-27 08:43 — 2026-10-30 08:43 · America/New_York",
+  "publishedAt": "2026-10-30T12:43:00Z",
+  "readingMinutes": 13,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Post-training",
+    "Diffusion models"
+  ],
+  "edition": "每日研究笔记",
+  "title": "数据的组织，训练的收益",
+  "subtitle": "Agent后训练 · 教材课程 · H-Net scaling · 精读Improved DDPM",
+  "intro": "三篇主读：小样本agent后训练、教材数量与顺序、字节模型的计算与迁移曲线。经典精读Improved DDPM：方差参数化与时间步采样。",
+  "articles": [
+    {
+      "id": "patronus-stack",
+      "paper": "We Built Our Own Post-Training Stack to Measure What Our Tasks Are Worth",
+      "authors": "Zhe Li · Evan Jolley · Bartosz Mielczarek · Yoshinari Fujinuma · Abdelrahman Madkour · Tobi Akomolede",
+      "url": "https://www.patronus.ai/blog/post-training-stack",
+      "title": "先SFT，是否必要？",
+      "dateNote": "技术博客 · 2026-10-29",
+      "evidence": "已读实验设计、结果与附录；未复现",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Qwen3.8-27B已做过后训练；本文比较进一步SFT→RL与直接RL。GRPO每步4题、每题8次rollout，LoRA rank 8；grader通过得1。近重复任务整组划分。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\widehat p=\\frac1M\\sum_{i=1}^M\\frac18\\sum_{j=1}^8R_{ij},\\qquad R_{ij}\\in\\{0,1\\}",
+          "label": "评估是平均成功率，不是pass@8 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "留出任务 / 成功率%",
+            "起点",
+            "SFT→RL",
+            "直接RL"
+          ],
+          "rows": [
+            [
+              "GitHub（46题）",
+              "35.6",
+              "47.8",
+              "45.4"
+            ],
+            [
+              "Unreal（54题）",
+              "64.3",
+              "71.5",
+              "73.1"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "每题重复8次不等于8倍独立任务。GitHub两组RL题池为175/139，学习率也不同；约2个百分点差距不能证明SFT无用或两种配方等效。[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-40394",
+      "paper": "Scaling Mathematical Proof Supervision from Structured Textbooks",
+      "authors": "Youqing Fang · Zhouqi Hua · Yinhao Tang · Yuzhe Gu · Lingkai Kong · Bin Liu · Weiming Zhang · Kai Chen · Yanan Sun · Wenwei Zhang",
+      "url": "https://arxiv.org/html/2610.40394v1",
+      "title": "数量、广度与顺序是不同的轴",
+      "dateNote": "首发2026-10-29 · v1",
+      "evidence": "已读§4–5与课程实验协议；未复现",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "TOME-Math保留教材章节、命题依赖和局部证明缺口。与孤立QA相比，它允许把同一训练集按不同顺序曝光；受控实验将数据量与来源广度拆开。[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal D_B\\ \\mathrm{fixed}:\\quad \\mathrm{Shuffle}\\quad\\mathrm{vs.}\\quad\\mathrm{Forward\\!\\! -\\! Gap}",
+          "label": "实验记号：同一subject–budget格内数据、token预算与初始化相同 [2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "每学科目标token预算",
+            "Shuffle pass@16",
+            "Forward–Gap pass@16"
+          ],
+          "rows": [
+            [
+              "0.75M",
+              "41.04%",
+              "45.38%"
+            ],
+            [
+              "1.8M",
+              "42.52%",
+              "48.98%"
+            ],
+            [
+              "2.4M",
+              "43.21%",
+              "50.93%"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "表为六学科宏平均。固定0.75M token，8本→16本来源令pass@16提高1.6–4.8个百分点。Forward–Gap先按章节推进，再在阶段内优先局部证明缺口。[2]"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "pass@16衡量16次中至少一次被verifier接受；不是单次正确率。这些有限预算曲线尚不构成可外推的通用power law。[2]"
+        }
+      ]
+    },
+    {
+      "id": "cartesia-hnet",
+      "paper": "From Tokens to Bytes I & II",
+      "authors": "Cartesia Research",
+      "url": "https://www.cartesia.ai/blog/from-tokens-to-bytes-part-1",
+      "title": "同样的预训练loss，迁移也可能不同",
+      "dateNote": "两篇技术文章 · 2026-10-28 · 重叠窗口补收",
+      "evidence": "已读scaling ladder、loss-to-loss与边界消融",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "H-Net用输入依赖的分块压缩字节序列。第一篇控制单阶段架构与BPE对照；第二篇拆开算力→验证loss与验证loss→下游loss。[3,4]"
+        },
+        {
+          "type": "equation",
+          "tex": "L_{\\rm val}=f_A(C),\\qquad L_{\\rm eval}=g_A(L_{\\rm val}),\\qquad L_{\\rm eval}(C)=g_A(f_A(C))",
+          "label": "解释性记号；A为架构，g也可能随A改变，非原文定理 [3,4]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "单阶段ladder：BPE/H-Net同loss所需FLOPs比",
+            "倍率"
+          ],
+          "rows": [
+            [
+              "验证BPB",
+              "1.28×"
+            ],
+            [
+              "Paloma平均",
+              "1.83×"
+            ],
+            [
+              "OLMES平均",
+              "2.06×"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "第二篇固定分层结构与压缩率，比较熵proxy、冻结H-Net边界和端到端边界；三档预算中，端到端模型的验证BPB均最低。[4]"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "倍率来自拟合FLOPs曲线，不是墙钟提速。BLT-like是其受控改造，并非原始BLT的完整复现；proxy训练与推理FLOPs被忽略，偏向proxy对照。[3,4]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-improved-ddpm",
+    "paperId": "arxiv:2102.09672",
+    "shortTitle": "Improved DDPM",
+    "year": 2021,
+    "topics": [
+      "Diffusion models"
+    ],
+    "kind": "历史经典",
+    "title": "学方差，重新分配时间步",
+    "paper": "Improved Denoising Diffusion Probabilistic Models",
+    "authors": "Alex Nichol · Prafulla Dhariwal",
+    "url": "https://arxiv.org/html/2102.09672v1",
+    "dateNote": "首发2021-02-18；读v1 §2–4及消融",
+    "evidence": "已读正文；最后一个方差最优化为解释性推导",
+    "recognition": {
+      "label": "ICML 2021 · OpenAlex所查条目1,550次引用（查询2026-10-30）",
+      "url": "https://api.openalex.org/works/W3122887982"
+    },
+    "question": "若目标是梯度估计的方差，时间步权重应依赖loss二阶矩，还是梯度范数二阶矩？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "DDPM（2020）的噪声回归loss不训练逆过程方差。本文让方差也可学习，同时保留样本质量；另用重要性采样降低VLB估计噪声。[5,6]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\alpha_t=1-\\beta_t,\\quad\\bar\\alpha_t=\\prod_{s\\le t}\\alpha_s,\\quad x_t=\\sqrt{\\bar\\alpha_t}x_0+\\sqrt{1-\\bar\\alpha_t}\\epsilon,\\quad\\epsilon\\sim\\mathcal N(0,I)",
+        "label": "前向高斯加噪；β为给定噪声日程 [5]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widetilde\\beta_t=\\frac{1-\\bar\\alpha_{t-1}}{1-\\bar\\alpha_t}\\beta_t,\\qquad\\Sigma_\\theta=\\exp\\!\\left(v\\log\\beta_t+(1-v)\\log\\widetilde\\beta_t\\right)",
+        "label": "逐坐标预测v；原文未强制v∈[0,1] [5]"
+      },
+      {
+        "type": "equation",
+        "tex": "L_{\\rm hybrid}=\\mathbb E\\|\\epsilon-\\epsilon_\\theta(x_t,t)\\|^2+10^{-3}L_{\\rm vlb}",
+        "label": "VLB项对均值输出stop-gradient，指导方差学习 [5]"
+      },
+      {
+        "type": "equation",
+        "tex": "L_{\\rm vlb}=\\sum_t\\mathbb E\\ell_t=\\mathbb E_{t\\sim p}\\frac{\\ell_t}{p_t},\\qquad p_t\\propto\\sqrt{\\mathbb E\\ell_t^2}",
+        "label": "固定先验项另计；原文用每步最近10个loss估二阶矩 [5]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\min_{p_t>0,\\,\\sum_tp_t=1}\\sum_t\\frac{a_t}{p_t}\\quad\\Longrightarrow\\quad p_t^*=\\frac{\\sqrt{a_t}}{\\sum_s\\sqrt{a_s}},\\qquad a_t=\\mathbb E\\ell_t^2",
+        "label": "解释性拉格朗日推导：最小化标量估计二阶矩；不是梯度方差最优定理"
+      },
+      {
+        "type": "note",
+        "title": "边界",
+        "text": "ImageNet 64×64、200K步、cosine/4K日程：hybrid的NLL/FID为3.62/28.0；重采样VLB为3.57/56.7。似然改善不等于FID改善。[5]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://www.patronus.ai/blog/post-training-stack",
+      "title": "Patronus · 2026-10-29 · 实验与训练附录"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.40394v1",
+      "title": "TOME-Math · v1正文"
+    },
+    {
+      "url": "https://www.cartesia.ai/blog/from-tokens-to-bytes-part-1",
+      "title": "Cartesia · From Tokens to Bytes I"
+    },
+    {
+      "url": "https://www.cartesia.ai/blog/from-tokens-to-bytes-part-2",
+      "title": "Cartesia · From Tokens to Bytes II"
+    },
+    {
+      "url": "https://arxiv.org/html/2102.09672v1",
+      "title": "Improved DDPM · v1正文"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v139/nichol21a.html",
+      "title": "PMLR · ICML 2021原始记录"
+    },
+    {
+      "url": "https://api.openalex.org/works/W3122887982",
+      "title": "OpenAlex · 引文记录，查询2026-10-30"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+RESEARCH DIGEST / 2026-10-30
+Organizing data, measuring training gains
+Agent post-training · Textbook curricula · H-Net scaling · Improved DDPM
+
+中文: https://alexhuang13.github.io/digest/2026-10-30.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-30.html
+
+Main reading
+Is SFT necessary before RL?
+We Built Our Own Post-Training Stack to Measure What Our Tasks Are Worth
+https://alexhuang13.github.io/digest/en/2026-10-30.html#patronus-stack
+
+Main reading
+Volume, breadth and order are distinct axes
+Scaling Mathematical Proof Supervision from Structured Textbooks
+https://alexhuang13.github.io/digest/en/2026-10-30.html#paper-2610-40394
+
+Main reading
+Equal pretraining loss need not mean equal transfer
+From Tokens to Bytes I & II
+https://alexhuang13.github.io/digest/en/2026-10-30.html#cartesia-hnet
+
+Daily classic · 2021
+Learn variances, reallocate timesteps
+https://alexhuang13.github.io/digest/en/2026-10-30.html#classic-improved-ddpm
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-10-30.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

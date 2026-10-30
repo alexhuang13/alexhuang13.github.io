@@ -1,0 +1,264 @@
+{
+  "date": "2026-10-30",
+  "number": "017",
+  "window": "2026-10-27 08:43 — 2026-10-30 08:43 · America/New_York",
+  "publishedAt": "2026-10-30T12:43:00Z",
+  "readingMinutes": 13,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Post-training",
+    "Diffusion models"
+  ],
+  "edition": "Daily research notes",
+  "title": "Organizing data, measuring training gains",
+  "subtitle": "Agent post-training · Textbook curricula · H-Net scaling · Improved DDPM",
+  "intro": "Three readings: small-sample agent post-training, textbook volume and ordering, and compute versus transfer in byte models. The classic examines variance parameterization and timestep sampling in Improved DDPM.",
+  "articles": [
+    {
+      "id": "patronus-stack",
+      "paper": "We Built Our Own Post-Training Stack to Measure What Our Tasks Are Worth",
+      "authors": "Zhe Li · Evan Jolley · Bartosz Mielczarek · Yoshinari Fujinuma · Abdelrahman Madkour · Tobi Akomolede",
+      "url": "https://www.patronus.ai/blog/post-training-stack",
+      "title": "Is SFT necessary before RL?",
+      "dateNote": "Technical blog · 2026-10-29",
+      "evidence": "Read experimental design, results and appendix; not reproduced",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Starting from already post-trained Qwen3.8-27B, compare additional SFT→RL against RL alone. GRPO uses four tasks × eight rollouts per step, rank-8 LoRA and binary grading. Near-duplicate tasks stay in one split.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\widehat p=\\frac1M\\sum_{i=1}^M\\frac18\\sum_{j=1}^8R_{ij},\\qquad R_{ij}\\in\\{0,1\\}",
+          "label": "Evaluation averages success; it is not pass@8 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Held-out tasks / success %",
+            "Start",
+            "SFT→RL",
+            "RL alone"
+          ],
+          "rows": [
+            [
+              "GitHub (46 tasks)",
+              "35.6",
+              "47.8",
+              "45.4"
+            ],
+            [
+              "Unreal (54 tasks)",
+              "64.3",
+              "71.5",
+              "73.1"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "Eight attempts do not provide eight times as many independent tasks. GitHub RL pools differ (175/139), as do learning rates. Roughly two-point gaps establish neither SFT redundancy nor recipe equivalence.[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-40394",
+      "paper": "Scaling Mathematical Proof Supervision from Structured Textbooks",
+      "authors": "Youqing Fang · Zhouqi Hua · Yinhao Tang · Yuzhe Gu · Lingkai Kong · Bin Liu · Weiming Zhang · Kai Chen · Yanan Sun · Wenwei Zhang",
+      "url": "https://arxiv.org/html/2610.40394v1",
+      "title": "Volume, breadth and order are distinct axes",
+      "dateNote": "First posted 2026-10-29 · v1",
+      "evidence": "Read §§4–5 and curriculum protocol; not reproduced",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "TOME-Math retains chapters, proposition dependencies and local proof gaps. Unlike isolated QA, this supports reordering a fixed training set and separating data volume from source breadth.[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal D_B\\ \\mathrm{fixed}:\\quad \\mathrm{Shuffle}\\quad\\mathrm{vs.}\\quad\\mathrm{Forward\\!\\! -\\! Gap}",
+          "label": "Experimental notation: identical examples, token budget and initialization within each subject–budget cell [2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Target-token budget per subject",
+            "Shuffle pass@16",
+            "Forward–Gap pass@16"
+          ],
+          "rows": [
+            [
+              "0.75M",
+              "41.04%",
+              "45.38%"
+            ],
+            [
+              "1.8M",
+              "42.52%",
+              "48.98%"
+            ],
+            [
+              "2.4M",
+              "43.21%",
+              "50.93%"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "The table gives six-subject macro averages. At fixed 0.75M tokens, spreading supervision over 16 rather than eight books adds 1.6–4.8 points. Forward–Gap advances by chapter and prioritizes local proof gaps within stages.[2]"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "Pass@16 measures at least one verifier-accepted solution in 16 draws, not single-draw accuracy. Finite-budget curves do not establish a universal extrapolatable power law.[2]"
+        }
+      ]
+    },
+    {
+      "id": "cartesia-hnet",
+      "paper": "From Tokens to Bytes I & II",
+      "authors": "Cartesia Research",
+      "url": "https://www.cartesia.ai/blog/from-tokens-to-bytes-part-1",
+      "title": "Equal pretraining loss need not mean equal transfer",
+      "dateNote": "Two technical articles · 2026-10-28 · overlap-window addition",
+      "evidence": "Read scaling ladders, loss-to-loss and boundary ablations",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "H-Net compresses bytes through input-dependent chunks. Part I controls a one-stage comparison with BPE; Part II separates compute-to-validation loss from validation-to-downstream loss.[3,4]"
+        },
+        {
+          "type": "equation",
+          "tex": "L_{\\rm val}=f_A(C),\\qquad L_{\\rm eval}=g_A(L_{\\rm val}),\\qquad L_{\\rm eval}(C)=g_A(f_A(C))",
+          "label": "Expository notation: architecture A can change both f and g; not a theorem [3,4]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "One-stage ladder: BPE/H-Net FLOPs at matched loss",
+            "Ratio"
+          ],
+          "rows": [
+            [
+              "Validation BPB",
+              "1.28×"
+            ],
+            [
+              "Paloma average",
+              "1.83×"
+            ],
+            [
+              "OLMES average",
+              "2.06×"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Part II holds hierarchy and compression fixed while comparing entropy-proxy, frozen H-Net and end-to-end boundaries. End-to-end training gives the lowest validation BPB at all three tested budgets.[4]"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "Multipliers concern fitted FLOPs curves, not wall time. BLT-like is a controlled adaptation, not a full reproduction of BLT. Ignoring proxy training and inference FLOPs favors the proxy baselines.[3,4]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-improved-ddpm",
+    "paperId": "arxiv:2102.09672",
+    "shortTitle": "Improved DDPM",
+    "year": 2021,
+    "topics": [
+      "Diffusion models"
+    ],
+    "kind": "Historical classic",
+    "title": "Learn variances, reallocate timesteps",
+    "paper": "Improved Denoising Diffusion Probabilistic Models",
+    "authors": "Alex Nichol · Prafulla Dhariwal",
+    "url": "https://arxiv.org/html/2102.09672v1",
+    "dateNote": "First posted 2021-02-18; read v1 §§2–4 and ablations",
+    "evidence": "Read full-text sections; final variance minimization is an expository derivation",
+    "recognition": {
+      "label": "ICML 2021 · 1,550 citations in queried OpenAlex record (checked 2026-10-30)",
+      "url": "https://api.openalex.org/works/W3122887982"
+    },
+    "question": "For gradient-estimation variance, should timestep weights depend on second moments of losses or of gradient norms?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "DDPM (2020) noise regression does not train reverse variances. This work learns them while preserving sample quality, and importance-samples timesteps to reduce VLB-estimation noise.[5,6]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\alpha_t=1-\\beta_t,\\quad\\bar\\alpha_t=\\prod_{s\\le t}\\alpha_s,\\quad x_t=\\sqrt{\\bar\\alpha_t}x_0+\\sqrt{1-\\bar\\alpha_t}\\epsilon,\\quad\\epsilon\\sim\\mathcal N(0,I)",
+        "label": "Forward Gaussian corruption; β specifies the noise schedule [5]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widetilde\\beta_t=\\frac{1-\\bar\\alpha_{t-1}}{1-\\bar\\alpha_t}\\beta_t,\\qquad\\Sigma_\\theta=\\exp\\!\\left(v\\log\\beta_t+(1-v)\\log\\widetilde\\beta_t\\right)",
+        "label": "Predict v coordinatewise; the paper does not constrain v to [0,1] [5]"
+      },
+      {
+        "type": "equation",
+        "tex": "L_{\\rm hybrid}=\\mathbb E\\|\\epsilon-\\epsilon_\\theta(x_t,t)\\|^2+10^{-3}L_{\\rm vlb}",
+        "label": "Stop gradients through the mean output in the VLB term, guiding variance learning [5]"
+      },
+      {
+        "type": "equation",
+        "tex": "L_{\\rm vlb}=\\sum_t\\mathbb E\\ell_t=\\mathbb E_{t\\sim p}\\frac{\\ell_t}{p_t},\\qquad p_t\\propto\\sqrt{\\mathbb E\\ell_t^2}",
+        "label": "Treat the fixed prior term separately; estimate moments from the last ten losses per timestep [5]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\min_{p_t>0,\\,\\sum_tp_t=1}\\sum_t\\frac{a_t}{p_t}\\quad\\Longrightarrow\\quad p_t^*=\\frac{\\sqrt{a_t}}{\\sum_s\\sqrt{a_s}},\\qquad a_t=\\mathbb E\\ell_t^2",
+        "label": "Expository Lagrange derivation: minimizes scalar-estimator second moment, not necessarily gradient variance"
+      },
+      {
+        "type": "note",
+        "title": "Boundary",
+        "text": "ImageNet 64×64, 200K updates, cosine/4K schedule: hybrid NLL/FID is 3.62/28.0 versus 3.57/56.7 for resampled VLB. Better likelihood need not improve FID.[5]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://www.patronus.ai/blog/post-training-stack",
+      "title": "Patronus · 2026-10-29 · experiments and training appendix"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.40394v1",
+      "title": "TOME-Math · v1 full text"
+    },
+    {
+      "url": "https://www.cartesia.ai/blog/from-tokens-to-bytes-part-1",
+      "title": "Cartesia · From Tokens to Bytes I"
+    },
+    {
+      "url": "https://www.cartesia.ai/blog/from-tokens-to-bytes-part-2",
+      "title": "Cartesia · From Tokens to Bytes II"
+    },
+    {
+      "url": "https://arxiv.org/html/2102.09672v1",
+      "title": "Improved DDPM · v1 full text"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v139/nichol21a.html",
+      "title": "PMLR · original ICML 2021 record"
+    },
+    {
+      "url": "https://api.openalex.org/works/W3122887982",
+      "title": "OpenAlex · citation record checked 2026-10-30"
+    }
+  ]
+}

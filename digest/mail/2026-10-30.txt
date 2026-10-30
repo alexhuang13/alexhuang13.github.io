@@ -1,0 +1,31 @@
+RESEARCH DIGEST / 2026-10-30
+数据的组织，训练的收益
+Agent后训练 · 教材课程 · H-Net scaling · 精读Improved DDPM
+
+中文: https://alexhuang13.github.io/digest/2026-10-30.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-10-30.html
+
+主读
+先SFT，是否必要？
+We Built Our Own Post-Training Stack to Measure What Our Tasks Are Worth
+https://alexhuang13.github.io/digest/2026-10-30.html#patronus-stack
+
+主读
+数量、广度与顺序是不同的轴
+Scaling Mathematical Proof Supervision from Structured Textbooks
+https://alexhuang13.github.io/digest/2026-10-30.html#paper-2610-40394
+
+主读
+同样的预训练loss，迁移也可能不同
+From Tokens to Bytes I & II
+https://alexhuang13.github.io/digest/2026-10-30.html#cartesia-hnet
+
+每日精读 · 2021
+学方差，重新分配时间步
+https://alexhuang13.github.io/digest/2026-10-30.html#classic-improved-ddpm
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-10-30.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-10-30",
+    "paperId": "arxiv:2102.09672",
+    "paper": "Improved Denoising Diffusion Probabilistic Models",
+    "shortTitle": "Improved DDPM",
+    "year": 2021,
+    "topics": [
+      "Diffusion models"
+    ],
+    "recognition": {
+      "label": "ICML 2021 · OpenAlex所查条目1,550次引用（查询2026-10-30）",
+      "url": "https://api.openalex.org/works/W3122887982"
+    },
+    "source": "https://arxiv.org/html/2102.09672v1",
+    "url": "/digest/2026-10-30.html#classic-improved-ddpm"
+  },
+  {
     "date": "2026-10-29",
     "paperId": "arxiv:2106.09685",
     "paper": "LoRA: Low-Rank Adaptation of Large Language Models",
