@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-10-31",
+    "paperId": "arxiv:1912.02292",
+    "paper": "Deep Double Descent: Where Bigger Models and More Data Hurt",
+    "shortTitle": "Deep Double Descent",
+    "year": 2020,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "recognition": {
+      "label": "ICLR 2020 · 双下降的重要历史工作（DBLP核验2026-10-31）",
+      "url": "https://dblp.org/rec/conf/iclr/NakkiranKBYBS20.html"
+    },
+    "source": "https://arxiv.org/html/1912.02292v1",
+    "url": "/digest/2026-10-31.html#classic-deep-double-descent"
+  },
+  {
     "date": "2026-10-30",
     "paperId": "arxiv:2102.09672",
     "paper": "Improved Denoising Diffusion Probabilistic Models",

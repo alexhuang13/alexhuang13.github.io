@@ -1,0 +1,204 @@
+{
+  "date": "2026-10-31",
+  "number": "018",
+  "window": "2026-10-28 08:58 — 2026-10-31 08:58 · America/New_York",
+  "publishedAt": "2026-10-31T12:58:00Z",
+  "readingMinutes": 9,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Deep learning theory"
+  ],
+  "edition": "Daily research notes",
+  "title": "Reuse weights, select computation",
+  "subtitle": "Loop scaling · Conditional interaction · Deep Double Descent",
+  "intro": "One main reading and one brief: the value of loop depth depends on the budget; predicting before executing also incurs screening costs. The classic examines double descent across model size, training time, and sample count.",
+  "articles": [
+    {
+      "id": "paper-2610-40325",
+      "paper": "How to Loop Your Transformer: Loop Scaling, Specialization, and Parallel Inference",
+      "authors": "Chanakya Ekbote · Artidoro Pagnoni · Devendra Singh Sachan · Shruti Bhosale · Mike Lewis · Maryam Fazel-Zarandi · Shashank Rajput · Sujan Kumar Gonugondla",
+      "url": "https://arxiv.org/html/2610.40325v1",
+      "title": "The return to looping depends on what is held fixed",
+      "dateNote": "First posted 2026-10-29 · v1 · overlap-window addition",
+      "evidence": "Read §§2–3 and relevant Appendix G ablations; not every page of the 149-page paper; not reproduced",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "From Universal Transformer (2018) to PLT (2025), weight sharing adds effective depth, but every loop still executes. This study compares loop placement, specialization, and parallel interfaces in pretraining from scratch.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "h_n^{(\\ell)}=F_W(h_n^{(\\ell-1)}),\\qquad W^{(\\ell)}=W+B_\\ell A_\\ell",
+          "label": "Schematic shared transform and Loop LoRA; the latter relaxes exact sharing by loop [1]"
+        },
+        {
+          "type": "text",
+          "text": "Experiments span 70M–1B parameters, up to 155B tokens and 32 loops. Full-stack looping generally favors fixed parameter budgets; middle-stack looping is more competitive at fixed training FLOPs. Lower bits per byte (BPB) is better.[1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "300M models; TPP 40/100",
+            "Extra non-embedding parameters",
+            "Matched-FLOP comparison"
+          ],
+          "rows": [
+            [
+              "Loop-specific low-rank corrections",
+              "1.1–4.3%",
+              "Deeper control has lower BPB"
+            ],
+            [
+              "Double model depth",
+              "51.4%",
+              "Control in Fig.5"
+            ]
+          ]
+        },
+        {
+          "type": "equation",
+          "tex": "b_n^{(\\ell)}=e_n+h_{n-1}^{(\\ell-1)}",
+          "label": "Raw cross-token interface: previous-token states remove same-token serial dependence [1]"
+        },
+        {
+          "type": "text",
+          "text": "The repair preserves the current embedding, separately RMS-normalizes both streams, and controls their mixture. The 200M ablation uses fixed 50/50 mixing; subsequent 100M–1B experiments use a rank-8 linear gate and separate KV caches.[1]"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "Parameter efficiency need not imply compute efficiency; a parallel dependency graph alone does not establish end-to-end wall-clock speedup. Loop gains can saturate, reverse, or become unstable.[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-39497",
+      "paper": "Does Scaling Toward AGI Depend on What System-1 Lets System-2 Execute?",
+      "authors": "Qi Wang · Yun Qu · Lizhou Cai · Heming Zou · Haoang Chi · Yiqin Lv · Xiang Li · Haiyan Feng · Mengyu Ge · Yize Geng · Yuhang Jiang · Yixiu Mao · Xiangyang Ji",
+      "url": "https://arxiv.org/abs/2610.39497",
+      "title": "Brief: predict value before paying execution cost",
+      "dateNote": "First posted 2026-10-29 07:00 UTC (October 29 in New York) · v1",
+      "evidence": "Based on the abstract and related discussion in §§1 and 7.2; appendix proofs not verified",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "This Perspective proposes a lightweight predictor that screens interactions before an expensive executor acts, then updates from outcomes. Ideal savings depend on useful-interaction density; prediction errors, exploration, and drift erode them.[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "C_{\\rm all}=Kc_e,\\qquad C_{\\rm gate}=Kc_p+\\rho Kc_e,\\qquad \\frac{C_{\\rm all}}{C_{\\rm gate}}=\\frac{1}{c_p/c_e+\\rho}",
+          "label": "Illustrative accounting: K equal-cost candidates, admitted fraction ρ, prediction/execution costs c_p/c_e; not the full paper theorem"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "This accounting assumes screening preserves the required utility; the ratio approaches 1/ρ only when prediction is negligible. The paper acknowledges that gating censors training observations, so i.i.d. error rates need not apply. Informative compute remains a testable scaling hypothesis.[2]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-deep-double-descent",
+    "paperId": "arxiv:1912.02292",
+    "shortTitle": "Deep Double Descent",
+    "year": 2020,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "kind": "Historical classic",
+    "title": "The interpolation threshold moves with training",
+    "paper": "Deep Double Descent: Where Bigger Models and More Data Hurt",
+    "authors": "Preetum Nakkiran · Gal Kaplun · Yamini Bansal · Tristan Yang · Boaz Barak · Ilya Sutskever",
+    "url": "https://arxiv.org/html/1912.02292v1",
+    "dateNote": "First posted 2019-12-05; read v1 §§2 and 4–7; ICLR 2020",
+    "evidence": "Read definitions, hypothesis, and experiments; linear regression below is illustrative, not a deep-network theorem from this paper",
+    "recognition": {
+      "label": "ICLR 2020 · important historical double-descent work (DBLP checked 2026-10-31)",
+      "url": "https://dblp.org/rec/conf/iclr/NakkiranKBYBS20.html"
+    },
+    "question": "With architecture and sample size fixed, does the test-error peak still track near-zero training error when only training duration or optimizer changes?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Belkin et al. (2018) connected classical and interpolating regimes through double descent. This paper extends the axis from parameter count to the training procedure: one architecture can cross the critical regime as training continues.[3,4]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathrm{EMC}_{\\mathcal D,\\epsilon}(\\mathcal T)=\\max\\{n:\\mathbb E_{S\\sim\\mathcal D^n}\\mathrm{Error}_S(\\mathcal T(S))\\leq\\epsilon\\}",
+        "label": "Paper definition: largest sample size fitted by procedure T with expected training error ≤ε [3]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathrm{EMC}(\\mathcal T)\\ll n\\ ;\\quad \\mathrm{EMC}(\\mathcal T)\\approx n\\ ;\\quad \\mathrm{EMC}(\\mathcal T)\\gg n",
+        "label": "Paper hypothesis: increasing effective complexity helps away from criticality but may hurt near it; not a universal theorem [3]"
+      },
+      {
+        "type": "text",
+        "text": "An illustrative least-squares model isolates noise amplification: X∈R^{n×p}, y=Xβ+ξ, E[ξ|X]=0, Cov(ξ|X)=σ²I; x is independent of training noise."
+      },
+      {
+        "type": "equation",
+        "tex": "X=U\\operatorname{diag}(s_i)V^\\top,\\qquad \\widehat\\beta=X^\\dagger y,\\qquad \\widehat\\beta_{\\rm noise}=\\sum_{s_i>0}\\frac{u_i^\\top\\xi}{s_i}v_i",
+        "label": "The pseudoinverse amplifies noise along small singular values; not a proof of the deep-network mechanism"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathbb E_\\xi[(x^\\top\\widehat\\beta_{\\rm noise})^2\\mid X,x]=\\sigma^2\\sum_{s_i>0}\\frac{(x^\\top v_i)^2}{s_i^2}",
+        "label": "Noise variance only; total prediction risk also includes bias, and the spectrum changes with data and model"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Paper experiment",
+          "Training / intervention",
+          "Observation"
+        ],
+        "rows": [
+          [
+            "ResNet18 / CIFAR-10",
+            "15% label noise; Adam up to 4K epochs",
+            "Epoch-wise double descent"
+          ],
+          [
+            "Transformer / IWSLT’14",
+            "Fixed architecture, varied samples",
+            "More data hurts in a local regime"
+          ]
+        ]
+      },
+      {
+        "type": "note",
+        "title": "Boundary",
+        "text": "Neither ε nor “sufficiently far” from criticality is principled in EMC. The experiments and hypothesis do not guarantee double descent for every deep network; the linear illustration does not imply decreasing risk whenever p>n.[3]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.40325v1",
+      "title": "Loop scaling · v1 text and interface ablations"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.39497",
+      "title": "Conditional interaction · v1 abstract and related text"
+    },
+    {
+      "url": "https://arxiv.org/html/1912.02292v1",
+      "title": "Deep Double Descent · v1 definitions and experiments"
+    },
+    {
+      "url": "https://iclr.cc/virtual_2020/poster_B1g5sA4twr.html",
+      "title": "ICLR 2020 · official paper record"
+    },
+    {
+      "url": "https://dblp.org/rec/conf/iclr/NakkiranKBYBS20.html",
+      "title": "DBLP · bibliographic record checked 2026-10-31"
+    }
+  ]
+}

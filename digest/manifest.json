@@ -4,8 +4,26 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-10-30",
+  "latest": "2026-10-31",
   "issues": [
+    {
+      "date": "2026-10-31",
+      "title": "复用权重，筛选计算",
+      "url": "/digest/2026-10-31.html",
+      "translations": {
+        "en": {
+          "title": "Reuse weights, select computation",
+          "url": "/digest/en/2026-10-31.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2610.40325v1",
+        "https://arxiv.org/abs/2610.39497",
+        "https://arxiv.org/html/1912.02292v1",
+        "https://iclr.cc/virtual_2020/poster_B1g5sA4twr.html",
+        "https://dblp.org/rec/conf/iclr/NakkiranKBYBS20.html"
+      ]
+    },
     {
       "date": "2026-10-30",
       "title": "数据的组织，训练的收益",

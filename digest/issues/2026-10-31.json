@@ -1,0 +1,204 @@
+{
+  "date": "2026-10-31",
+  "number": "018",
+  "window": "2026-10-28 08:58 — 2026-10-31 08:58 · America/New_York",
+  "publishedAt": "2026-10-31T12:58:00Z",
+  "readingMinutes": 9,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Deep learning theory"
+  ],
+  "edition": "每日研究笔记",
+  "title": "复用权重，筛选计算",
+  "subtitle": "Loop scaling · 条件交互 · 精读Deep Double Descent",
+  "intro": "一篇主读、一条简讯：循环深度的收益取决于预算约束；预测后再执行，需要计入筛选成本。经典精读双下降，把模型、训练时间和样本量放回同一个实验框架。",
+  "articles": [
+    {
+      "id": "paper-2610-40325",
+      "paper": "How to Loop Your Transformer: Loop Scaling, Specialization, and Parallel Inference",
+      "authors": "Chanakya Ekbote · Artidoro Pagnoni · Devendra Singh Sachan · Shruti Bhosale · Mike Lewis · Maryam Fazel-Zarandi · Shashank Rajput · Sujan Kumar Gonugondla",
+      "url": "https://arxiv.org/html/2610.40325v1",
+      "title": "多循环的收益，取决于固定什么",
+      "dateNote": "首发2026-10-29 · v1 · 重叠窗口补收",
+      "evidence": "已读§2–3与附录G相关消融；未逐项读149页附录，未复现",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "从Universal Transformer（2018）到PLT（2025），共享权重增加有效深度，却仍需执行每次循环。本文在从零预训练中比较循环位置、逐循环修正与并行接口。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "h_n^{(\\ell)}=F_W(h_n^{(\\ell-1)}),\\qquad W^{(\\ell)}=W+B_\\ell A_\\ell",
+          "label": "示意：共享变换与Loop LoRA；后者按循环放松精确共享 [1]"
+        },
+        {
+          "type": "text",
+          "text": "实验覆盖70M–1B参数、最高155B token和32次循环。固定参数时全栈循环通常更好；固定训练FLOPs时，中间层循环更有竞争力。这里BPB为bits per byte，越低越好。[1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "300M模型；TPP 40/100",
+            "新增非embedding参数",
+            "同FLOPs比较"
+          ],
+          "rows": [
+            [
+              "逐循环低秩修正",
+              "1.1–4.3%",
+              "加深对照BPB更低"
+            ],
+            [
+              "模型深度翻倍",
+              "51.4%",
+              "原文Fig.5对照"
+            ]
+          ]
+        },
+        {
+          "type": "equation",
+          "tex": "b_n^{(\\ell)}=e_n+h_{n-1}^{(\\ell-1)}",
+          "label": "原始跨token接口：用上一token状态打破同token串行依赖 [1]"
+        },
+        {
+          "type": "text",
+          "text": "修复方案保留当前token embedding，先分别RMS归一化两路输入，再控制混合。200M消融采用固定50/50混合；后续100M–1B实验采用rank-8线性门与独立KV cache。[1]"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "低秩修正的参数效率不等于计算效率；并行依赖结构也不自动给出端到端墙钟提速。循环收益会饱和、反转或不稳定，不能无限外推。[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-39497",
+      "paper": "Does Scaling Toward AGI Depend on What System-1 Lets System-2 Execute?",
+      "authors": "Qi Wang · Yun Qu · Lizhou Cai · Heming Zou · Haoang Chi · Yiqin Lv · Xiang Li · Haiyan Feng · Mengyu Ge · Yize Geng · Yuhang Jiang · Yixiu Mao · Xiangyang Ji",
+      "url": "https://arxiv.org/abs/2610.39497",
+      "title": "简讯：先预测价值，再支付执行成本",
+      "dateNote": "首发2026-10-29 07:00 UTC（美东10月29日）· v1",
+      "evidence": "基于摘要及正文§1、§7.2相关讨论；未核验附录证明",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "这是一篇Perspective：轻量预测器筛选交互，昂贵执行器只执行获准候选，再用结果更新预测器。摘要的理想筛选节省依赖有用交互密度；预测误差、探索和漂移会削弱收益。[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "C_{\\rm all}=Kc_e,\\qquad C_{\\rm gate}=Kc_p+\\rho Kc_e,\\qquad \\frac{C_{\\rm all}}{C_{\\rm gate}}=\\frac{1}{c_p/c_e+\\rho}",
+          "label": "解释性成本账：K个等成本候选，ρ为获准比例，c_p/c_e为预测/执行成本；不是原文完整定理"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "上述成本账假设筛选保留所需效用；只有预测成本可忽略时才趋近1/ρ。原文也明确：门控使训练数据被选择性观测，i.i.d.误差率不能直接套用；“informative compute”仍是待检验的scaling假说。[2]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-deep-double-descent",
+    "paperId": "arxiv:1912.02292",
+    "shortTitle": "Deep Double Descent",
+    "year": 2020,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "kind": "历史经典",
+    "title": "插值阈值，随训练过程移动",
+    "paper": "Deep Double Descent: Where Bigger Models and More Data Hurt",
+    "authors": "Preetum Nakkiran · Gal Kaplun · Yamini Bansal · Tristan Yang · Boaz Barak · Ilya Sutskever",
+    "url": "https://arxiv.org/html/1912.02292v1",
+    "dateNote": "首发2019-12-05；读v1 §2、§4–7；ICLR 2020",
+    "evidence": "已读定义、假说与实验；下方线性回归公式为解释性模型，非本文深网定理",
+    "recognition": {
+      "label": "ICLR 2020 · 双下降的重要历史工作（DBLP核验2026-10-31）",
+      "url": "https://dblp.org/rec/conf/iclr/NakkiranKBYBS20.html"
+    },
+    "question": "固定网络与数据量，只改变训练时长或优化器，测试误差峰值是否仍跟随接近零训练误差的时刻？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Belkin等（2018）用双下降联结经典与插值区间。本文把轴从参数量扩展到整个训练过程：相同架构，不同训练时间，也可能跨过临界区间。[3,4]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathrm{EMC}_{\\mathcal D,\\epsilon}(\\mathcal T)=\\max\\{n:\\mathbb E_{S\\sim\\mathcal D^n}\\mathrm{Error}_S(\\mathcal T(S))\\leq\\epsilon\\}",
+        "label": "原文定义：训练过程T能以期望训练误差≤ε拟合的最大样本数 [3]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathrm{EMC}(\\mathcal T)\\ll n\\ ;\\quad \\mathrm{EMC}(\\mathcal T)\\approx n\\ ;\\quad \\mathrm{EMC}(\\mathcal T)\\gg n",
+        "label": "原文假说：远离临界区间增加有效复杂度有利，临界区间可能有害；不是普遍定理 [3]"
+      },
+      {
+        "type": "text",
+        "text": "下面用最小二乘解释噪声放大：X∈R^{n×p}，y=Xβ+ξ，E[ξ|X]=0、Cov(ξ|X)=σ²I；x独立于训练噪声。[解释性推导]"
+      },
+      {
+        "type": "equation",
+        "tex": "X=U\\operatorname{diag}(s_i)V^\\top,\\qquad \\widehat\\beta=X^\\dagger y,\\qquad \\widehat\\beta_{\\rm noise}=\\sum_{s_i>0}\\frac{u_i^\\top\\xi}{s_i}v_i",
+        "label": "伪逆把小奇异值方向的噪声放大；不是深网机制证明"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathbb E_\\xi[(x^\\top\\widehat\\beta_{\\rm noise})^2\\mid X,x]=\\sigma^2\\sum_{s_i>0}\\frac{(x^\\top v_i)^2}{s_i^2}",
+        "label": "仅噪声方差项；总预测风险还包括偏差，谱随数据与模型改变"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "原文实验",
+          "训练/干预",
+          "观察"
+        ],
+        "rows": [
+          [
+            "ResNet18 / CIFAR-10",
+            "15%标签噪声；Adam至4K epochs",
+            "训练时间上的双下降"
+          ],
+          [
+            "Transformer / IWSLT’14",
+            "固定架构，改变样本量",
+            "局部区间更多数据反而更差"
+          ]
+        ]
+      },
+      {
+        "type": "note",
+        "title": "边界",
+        "text": "EMC的ε与“足够远离”阈值未被原则性确定。实验与假说不保证任意深网都双下降；线性解释也不足以推出p>n后风险必降。[3]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.40325v1",
+      "title": "Loop scaling · v1正文与接口消融"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.39497",
+      "title": "条件交互 · v1摘要；正文相关讨论"
+    },
+    {
+      "url": "https://arxiv.org/html/1912.02292v1",
+      "title": "Deep Double Descent · v1定义与实验"
+    },
+    {
+      "url": "https://iclr.cc/virtual_2020/poster_B1g5sA4twr.html",
+      "title": "ICLR 2020 · 官方论文记录"
+    },
+    {
+      "url": "https://dblp.org/rec/conf/iclr/NakkiranKBYBS20.html",
+      "title": "DBLP · 书目信息，查询2026-10-31"
+    }
+  ]
+}
