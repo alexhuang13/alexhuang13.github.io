@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-01",
+    "paperId": "arxiv:2305.16264",
+    "paper": "Scaling Data-Constrained Language Models",
+    "shortTitle": "Data-constrained scaling",
+    "year": 2023,
+    "topics": [
+      "Scaling laws"
+    ],
+    "recognition": {
+      "label": "NeurIPS 2023 Oral · Outstanding Main Track Runner-Up（官方核验2026-11-01）",
+      "url": "https://blog.neurips.cc/tag/neurips2023/"
+    },
+    "source": "https://arxiv.org/html/2305.16264v5",
+    "url": "/digest/2026-11-01.html#classic-data-constrained"
+  },
+  {
     "date": "2026-10-31",
     "paperId": "arxiv:1912.02292",
     "paper": "Deep Double Descent: Where Bigger Models and More Data Hurt",

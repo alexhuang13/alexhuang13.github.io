@@ -4,8 +4,26 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-10-31",
+  "latest": "2026-11-01",
   "issues": [
+    {
+      "date": "2026-11-01",
+      "title": "保留方向，核算重复的价值",
+      "url": "/digest/2026-11-01.html",
+      "translations": {
+        "en": {
+          "title": "Keep directions, account for repetition",
+          "url": "/digest/en/2026-11-01.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2610.39412v1",
+        "https://www.figma.com/blog/training-a-figma-fluent-editing-model/",
+        "https://arxiv.org/html/2610.39302v1",
+        "https://arxiv.org/html/2305.16264v5",
+        "https://blog.neurips.cc/tag/neurips2023/"
+      ]
+    },
     {
       "date": "2026-10-31",
       "title": "复用权重，筛选计算",

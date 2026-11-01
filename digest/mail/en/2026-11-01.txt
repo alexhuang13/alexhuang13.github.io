@@ -1,0 +1,31 @@
+RESEARCH DIGEST / 2026-11-01
+Keep directions, account for repetition
+Dobb · Design-editing post-training · Alignment scaling · Data-constrained training
+
+中文: https://alexhuang13.github.io/digest/2026-11-01.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-01.html
+
+Main reading
+Partition blocks without truncating directions
+Dobb: Shard-Local Preconditioning in Block-Diagonal Eigenbases
+https://alexhuang13.github.io/digest/en/2026-11-01.html#paper-2610-39412
+
+Main reading
+Separate evaluation dimensions for non-verifiable tasks
+How we’re training a Figma-fluent editing model
+https://alexhuang13.github.io/digest/en/2026-11-01.html#figma-editing
+
+Brief
+Brief: repeated data limits alignment extrapolation too
+Proving and Improving the Platonic Representation Hypothesis with JEPAs
+https://alexhuang13.github.io/digest/en/2026-11-01.html#paper-2610-39302
+
+Daily classic · 2023
+Repeated exposure is not fresh data
+https://alexhuang13.github.io/digest/en/2026-11-01.html#classic-data-constrained
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-01.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

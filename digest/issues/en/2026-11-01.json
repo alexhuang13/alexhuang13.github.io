@@ -1,0 +1,217 @@
+{
+  "date": "2026-11-01",
+  "number": "019",
+  "publishedAt": "2026-11-01T14:00:00Z",
+  "window": "2026-10-28 23:00 EDT — 2026-11-01 09:00 EST · America/New_York · Includes indexing-delay catch-up",
+  "readingMinutes": 11,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Muon",
+    "Post-training",
+    "Scaling laws"
+  ],
+  "edition": "Daily research notes",
+  "title": "Keep directions, account for repetition",
+  "subtitle": "Dobb · Design-editing post-training · Alignment scaling · Data-constrained training",
+  "intro": "Two main readings and one brief, catching up on October 29 releases: complete directions within shards, multidimensional editing evaluation, and limits of alignment extrapolation. The classic examines effective sample size under repetition.",
+  "articles": [
+    {
+      "id": "paper-2610-39412",
+      "paper": "Dobb: Shard-Local Preconditioning in Block-Diagonal Eigenbases",
+      "authors": "Shi-Yuk Fong · Shuhua Yu · Jiawei Zhang",
+      "url": "https://arxiv.org/html/2610.39412v1",
+      "title": "Partition blocks without truncating directions",
+      "dateNote": "First posted 2026-10-29 01:54 EDT · v1 · Delayed catch-up",
+      "evidence": "Read sections 3–6, Table 4 and Appendix G timing definitions; not reproduced",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Muon’s whole-matrix operations conflict with sharding. Dobb drops cross-block activation correlations, retains a complete orthonormal basis U per block, and applies elementwise signs to projected momentum M.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "Z_b=M_{:,\\mathcal S_b}U_b,\\qquad O_{:,\\mathcal S_b}=\\frac{\\operatorname{sign}(Z_b)}{\\sqrt m}U_b^\\top",
+          "label": "Paper update; m is the full output dimension; bases refresh periodically [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\|O\\|_F^2=n,\\qquad \\operatorname{RMS}(O)=m^{-1/2}",
+          "label": "With complete orthonormal bases and nonzero coefficients; singular values need not be equal [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "GPT-2 XL / 1.56B",
+            "Dion ρ=1/16",
+            "Dobb B=16"
+          ],
+          "rows": [
+            [
+              "Validation loss / 40K steps",
+              "2.511",
+              "2.476"
+            ],
+            [
+              "optimizer.step / ms / 32 H100",
+              "124.1",
+              "9.2"
+            ],
+            [
+              "Pooled iteration / ms / 32 H100",
+              "1184.0",
+              "1069.1"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "Learning rate and weight decay follow a shared protocol. Pooled timing shares a forward–backward estimate; it is not full-training wall time. Blocks must fit within shards; moments still require data-parallel synchronization. The 13.5× optimizer-call ratio is not end-to-end speedup.[1]"
+        }
+      ]
+    },
+    {
+      "id": "figma-editing",
+      "paper": "How we’re training a Figma-fluent editing model",
+      "authors": "Josh Clemm · Figma",
+      "url": "https://www.figma.com/blog/training-a-figma-fluent-editing-model/",
+      "title": "Separate evaluation dimensions for non-verifiable tasks",
+      "dateNote": "Technical blog · 2026-10-29 · Overlap catch-up",
+      "evidence": "Read training and evaluation sections; training code unavailable",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Teachers generate starting-design/request/successful-edit triples. Deterministic validators and visual judges filter candidates; feedback repairs edits. An early Llama 3.3 70B used over 250,000 examples; later work adds other bases and RL.[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "q(y;x)=(v_{\\rm structure},v_{\\rm visual},v_{\\rm request})",
+          "label": "Explanatory notation: several evaluation dimensions, not a disclosed reward formula"
+        },
+        {
+          "type": "text",
+          "text": "Structural checks, visual assessment and designer calibration provide separate evidence. SFT teaches native file syntax, but the authors report generalization limits. RL algorithms and reward weights are undisclosed.[2]"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "Speed, undo rates and ratings reflect changes across the whole agent, including tools and harness. They do not isolate RL or the editing model’s contribution.[2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-39302",
+      "paper": "Proving and Improving the Platonic Representation Hypothesis with JEPAs",
+      "authors": "Randall Balestriero · Yann LeCun",
+      "url": "https://arxiv.org/html/2610.39302v1",
+      "title": "Brief: repeated data limits alignment extrapolation too",
+      "dateNote": "First posted 2026-10-28 23:49 EDT (October 29 UTC) · v1 · Delayed catch-up",
+      "evidence": "Read section 2.1 assumptions and 4.4 fit/extrapolation; appendix proofs not fully checked",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Let q be the good-view fraction, M sample presentations, and N unique images. For one BERT-S recipe, the paper fits Flickr retrieval R@1:[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathrm{R@1}=a+d\\log M+b\\log(1+q^\\alpha M^\\beta N^\\gamma/c)",
+          "label": "Paper empirical fit: 45 fitting cells and 85 prospectively predicted runs [3]"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "At 320M presentations and 31 passes it overpredicts good-view results; exponents are weakly identified. This law is empirical. The separate alignment theorem assumes a finite world, injective renderings, shared positives, population optima and uniqueness up to rotation.[3]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-data-constrained",
+    "paperId": "arxiv:2305.16264",
+    "shortTitle": "Data-constrained scaling",
+    "year": 2023,
+    "topics": [
+      "Scaling laws"
+    ],
+    "paper": "Scaling Data-Constrained Language Models",
+    "authors": "Niklas Muennighoff · Alexander M. Rush · Boaz Barak · Teven Le Scao · Aleksandra Piktus · Nouamane Tazi · Sampo Pyysalo · Thomas Wolf · Colin Raffel",
+    "url": "https://arxiv.org/html/2305.16264v5",
+    "kind": "Historical classic",
+    "title": "Repeated exposure is not fresh data",
+    "dateNote": "First posted 2023-05-25; read v5 (2025-06-28), sections 3–6 and Appendix A",
+    "evidence": "Read model, experimental protocol and derivation; derivatives below are explanatory",
+    "recognition": {
+      "label": "NeurIPS 2023 Oral · Outstanding Main Track Runner-Up (official record checked 2026-11-01)",
+      "url": "https://blog.neurips.cc/tag/neurips2023/"
+    },
+    "question": "If repetition-decay constants differ across domains, which domain deserves more unique data rather than more repetitions under fixed compute?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Chinchilla (2022) balances parameters and tokens while treating new tokens alike. Here unique data are limited: U_D counts unique tokens, R_D additional passes, and all D presentations cost compute.[4,5]"
+      },
+      {
+        "type": "equation",
+        "tex": "D=U_D(1+R_D),\\qquad C\\simeq6ND,\\qquad L=E+\\frac{A}{(N^\\prime)^\\alpha}+\\frac{B}{(D^\\prime)^\\beta}",
+        "label": "N counts parameters; positive coefficients are fitted, not a universal theorem [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "D^\\prime=U_D\\{1+R_D^*(1-e^{-R_D/R_D^*})\\}",
+        "label": "Paper effective-data model; R_D* is a fitted decay scale [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "N^\\prime=U_N\\{1+R_N^*(1-e^{-R_N/R_N^*})\\},\\qquad R_N=N/U_N-1",
+        "label": "U_N is the smaller of N and the Chinchilla-optimal size for the unique data [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\frac{\\partial D^\\prime}{\\partial D}=e^{-R_D/R_D^*},\\qquad D^\\prime\\longrightarrow U_D(1+R_D^*)",
+        "label": "Explanatory differentiation: fixed U_D and decay scale; marginal value falls"
+      },
+      {
+        "type": "equation",
+        "tex": "-\\left.\\frac{\\partial L}{\\partial C}\\right|_{N,U_D}=\\frac{\\beta B}{6N(D^\\prime)^{\\beta+1}}e^{-R_D/R_D^*}",
+        "label": "Explanatory chain rule: N′ stays fixed with N; this is not joint optimal allocation"
+      },
+      {
+        "type": "text",
+        "text": "GPT-2/C4 experiments vary size, unique data and passes, with cosine schedules matched to run length. A few passes nearly match fresh data; longer repetition saturates. This does not imply that training becomes useless immediately after four passes.[4]"
+      },
+      {
+        "type": "note",
+        "title": "Boundary",
+        "text": "Saturation is a fitted-model prediction, not an information-theoretic impossibility. Quality, schedules and architecture require revalidation; the law does not transfer directly to RL rollouts.[4]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.39412v1",
+      "title": "Dobb · v1 method, quality and timing protocol"
+    },
+    {
+      "url": "https://www.figma.com/blog/training-a-figma-fluent-editing-model/",
+      "title": "Figma · October 29 technical blog"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.39302v1",
+      "title": "JEPA alignment · v1 sections 2.1 and 4.4"
+    },
+    {
+      "url": "https://arxiv.org/html/2305.16264v5",
+      "title": "Data-constrained training · v5 and Appendix A"
+    },
+    {
+      "url": "https://blog.neurips.cc/tag/neurips2023/",
+      "title": "NeurIPS 2023 official award and oral record"
+    }
+  ]
+}

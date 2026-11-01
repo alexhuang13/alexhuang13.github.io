@@ -1,0 +1,217 @@
+{
+  "date": "2026-11-01",
+  "number": "019",
+  "publishedAt": "2026-11-01T14:00:00Z",
+  "window": "2026-10-28 23:00 EDT — 2026-11-01 09:00 EST · America/New_York · 含索引延迟补查",
+  "readingMinutes": 11,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Muon",
+    "Post-training",
+    "Scaling laws"
+  ],
+  "edition": "每日研究笔记",
+  "title": "保留方向，核算重复的价值",
+  "subtitle": "Dobb · 设计编辑后训练 · 表征对齐scaling · 精读数据受限训练",
+  "intro": "补收10月29日的两篇主读与一条简讯：分片内保留完整方向、设计编辑的多维评估、对齐曲线的外推边界。经典精读重复数据的有效样本量。",
+  "articles": [
+    {
+      "id": "paper-2610-39412",
+      "paper": "Dobb: Shard-Local Preconditioning in Block-Diagonal Eigenbases",
+      "authors": "Shi-Yuk Fong · Shuhua Yu · Jiawei Zhang",
+      "url": "https://arxiv.org/html/2610.39412v1",
+      "title": "分块，不必截断方向",
+      "dateNote": "首发2026-10-29 01:54 EDT · v1 · 延迟补收",
+      "evidence": "已读§3–6、Table 4与附录G计时定义；未复现",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Muon的整矩阵操作会与分片布局冲突。Dobb丢弃输入二阶矩的跨块相关，每块保留完整正交基U；在该基中对动量M逐元素取sign。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "Z_b=M_{:,\\mathcal S_b}U_b,\\qquad O_{:,\\mathcal S_b}=\\frac{\\operatorname{sign}(Z_b)}{\\sqrt m}U_b^\\top",
+          "label": "原文更新；m为完整矩阵输出维度，基周期性刷新 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\|O\\|_F^2=n,\\qquad \\operatorname{RMS}(O)=m^{-1/2}",
+          "label": "完整正交基、所有系数非零时；不意味着奇异值相等 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "GPT-2 XL / 1.56B",
+            "Dion ρ=1/16",
+            "Dobb B=16"
+          ],
+          "rows": [
+            [
+              "Validation loss / 40K steps",
+              "2.511",
+              "2.476"
+            ],
+            [
+              "optimizer.step / ms / 32 H100",
+              "124.1",
+              "9.2"
+            ],
+            [
+              "Pooled iteration / ms / 32 H100",
+              "1184.0",
+              "1069.1"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "共同学习率/weight decay协议；计时经共享forward–backward估计合并，非完整训练墙钟。块须位于单个shard内；二阶矩仍需数据并行同步。不能把13.5倍optimizer-call加速写成端到端加速。[1]"
+        }
+      ]
+    },
+    {
+      "id": "figma-editing",
+      "paper": "How we’re training a Figma-fluent editing model",
+      "authors": "Josh Clemm · Figma",
+      "url": "https://www.figma.com/blog/training-a-figma-fluent-editing-model/",
+      "title": "非可验证任务，先拆开评估维度",
+      "dateNote": "技术博客 · 2026-10-29 · 重叠窗口补收",
+      "evidence": "已读训练流程与评估段落；未获训练代码",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "教师生成“原设计—请求—成功编辑”，用确定性校验器与视觉judge筛选，并用反馈修复候选。早期Llama 3.3 70B使用超过25万例；后续转向其他底座与RL。[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "q(y;x)=(v_{\\rm structure},v_{\\rm visual},v_{\\rm request})",
+          "label": "解释性记号：评估为多个维度；不是原文公开的reward公式"
+        },
+        {
+          "type": "text",
+          "text": "结构检查、视觉判断和设计师标注校准分别提供证据。SFT学会原生文件语法，但作者观察到模仿的泛化局限；RL的具体算法与reward权重未披露。[2]"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "速度、撤销率和用户评分来自整个agent的迭代，包含工具与harness；不能归因于RL或编辑模型单独的贡献。[2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-39302",
+      "paper": "Proving and Improving the Platonic Representation Hypothesis with JEPAs",
+      "authors": "Randall Balestriero · Yann LeCun",
+      "url": "https://arxiv.org/html/2610.39302v1",
+      "title": "简讯：对齐曲线也会被重复数据截断",
+      "dateNote": "首发2026-10-28 23:49 EDT（UTC 10月29日）· v1 · 延迟补收",
+      "evidence": "已读§2.1假设、§4.4拟合与外推边界；未逐项核验附录证明",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "q为good-view比例，M为样本曝光数，N为独立图像数。原文对单一BERT-S配方拟合Flickr检索R@1：[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathrm{R@1}=a+d\\log M+b\\log(1+q^\\alpha M^\\beta N^\\gamma/c)",
+          "label": "原文经验式；45格拟合，85次预先预测的新run [3]"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "320M曝光、31轮重复时高估good-view结果；参数指数辨识弱。这不是定理推导的scaling law。对齐定理另依赖有限世界、单射rendering、相同正样本分布、总体最优与旋转唯一性。[3]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-data-constrained",
+    "paperId": "arxiv:2305.16264",
+    "shortTitle": "Data-constrained scaling",
+    "year": 2023,
+    "topics": [
+      "Scaling laws"
+    ],
+    "paper": "Scaling Data-Constrained Language Models",
+    "authors": "Niklas Muennighoff · Alexander M. Rush · Boaz Barak · Teven Le Scao · Aleksandra Piktus · Nouamane Tazi · Sampo Pyysalo · Thomas Wolf · Colin Raffel",
+    "url": "https://arxiv.org/html/2305.16264v5",
+    "kind": "历史经典",
+    "title": "重复曝光不是新增样本",
+    "dateNote": "首发2023-05-25；读v5（2025-06-28）§3–6与附录A",
+    "evidence": "已读模型、实验协议与推导；以下导数为解释性推导",
+    "recognition": {
+      "label": "NeurIPS 2023 Oral · Outstanding Main Track Runner-Up（官方核验2026-11-01）",
+      "url": "https://blog.neurips.cc/tag/neurips2023/"
+    },
+    "question": "如果不同数据域的重复衰减常数不同，固定算力下应增加哪一域的独立数据，而不是继续重复？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Chinchilla（2022）平衡参数与token，但默认新增token有同样价值。本文固定独立数据预算：U_D为独立token数，R_D为额外重复轮数；总曝光D计入算力。[4,5]"
+      },
+      {
+        "type": "equation",
+        "tex": "D=U_D(1+R_D),\\qquad C\\simeq6ND,\\qquad L=E+\\frac{A}{(N^\\prime)^\\alpha}+\\frac{B}{(D^\\prime)^\\beta}",
+        "label": "N为参数量；正系数从训练run拟合，非普遍定理 [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "D^\\prime=U_D\\{1+R_D^*(1-e^{-R_D/R_D^*})\\}",
+        "label": "原文有效数据模型；R_D*为拟合的衰减尺度 [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "N^\\prime=U_N\\{1+R_N^*(1-e^{-R_N/R_N^*})\\},\\qquad R_N=N/U_N-1",
+        "label": "U_N为对应独立数据的Chinchilla最优参数量与N的较小者 [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\frac{\\partial D^\\prime}{\\partial D}=e^{-R_D/R_D^*},\\qquad D^\\prime\\longrightarrow U_D(1+R_D^*)",
+        "label": "解释性求导：固定U_D与衰减尺度；每次额外曝光的边际价值下降"
+      },
+      {
+        "type": "equation",
+        "tex": "-\\left.\\frac{\\partial L}{\\partial C}\\right|_{N,U_D}=\\frac{\\beta B}{6N(D^\\prime)^{\\beta+1}}e^{-R_D/R_D^*}",
+        "label": "解释性链式法则：固定N时N′亦固定；不是联合最优分配公式"
+      },
+      {
+        "type": "text",
+        "text": "GPT-2/C4实验改变参数量、独立数据与重复轮数，并使用匹配训练长度的cosine日程。少量重复接近新数据，长期重复收益饱和；不是说重复训练在第4轮后立即无效。[4]"
+      },
+      {
+        "type": "note",
+        "title": "边界",
+        "text": "饱和是拟合模型的预测，不是信息论不可能性。数据质量、日程和架构改变后必须重新检验；不能直接迁移为RL rollout的scaling law。[4]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.39412v1",
+      "title": "Dobb · v1方法、质量与计时协议"
+    },
+    {
+      "url": "https://www.figma.com/blog/training-a-figma-fluent-editing-model/",
+      "title": "Figma · 2026-10-29技术博客"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.39302v1",
+      "title": "JEPA对齐 · v1 §2.1、§4.4"
+    },
+    {
+      "url": "https://arxiv.org/html/2305.16264v5",
+      "title": "数据受限训练 · v5正文与附录A"
+    },
+    {
+      "url": "https://blog.neurips.cc/tag/neurips2023/",
+      "title": "NeurIPS 2023官方奖项与Oral记录"
+    }
+  ]
+}
