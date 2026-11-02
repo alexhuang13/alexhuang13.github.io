@@ -1,0 +1,229 @@
+{
+  "date": "2026-11-02",
+  "number": "020",
+  "publishedAt": "2026-11-02T13:48:00Z",
+  "window": "2026-10-30 08:40 EDT — 2026-11-02 08:40 EST · America/New_York; additional catch-up on missed October 29 releases",
+  "readingMinutes": 12,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Muon",
+    "Post-training",
+    "RNN / linear attention"
+  ],
+  "edition": "Daily research notes",
+  "title": "Turning historical state into useful computation",
+  "subtitle": "Muon-RT · Six-step video post-training · GLA",
+  "intro": "Two delayed main readings: teacher displacement as a history of applied updates, and alignment after video distillation. The classic examines GLA: input-dependent forgetting in matrix states and hardware-efficient chunking. Original dates are retained; these are not first releases today.",
+  "articles": [
+    {
+      "id": "paper-2610-41104",
+      "paper": "Muon-RT: Reusing the Teacher’s Trajectory for Momentum-Free Muon for LLM Self-Distillation",
+      "authors": "Aryan Das · Vinay Kumar Verma · Aakansha Mishra",
+      "url": "https://arxiv.org/html/2610.41104v1",
+      "title": "Teacher lag records applied updates",
+      "dateNote": "First posted 2026-10-29 20:50 EDT (October 30 UTC) · v1 · Delayed catch-up outside the main window",
+      "evidence": "Read sections 3–4, Appendix A.5 and memory accounting; convergence proof not fully checked; not reproduced",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The EMA teacher already holds history. With teacher–student displacement D and applied descent direction U, it accumulates optimizer outputs, not raw gradients.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "W_{S,s+1}=W_{S,s}-\\eta cU_s,\\quad W_{T,s+1}=\\tau W_{T,s}+(1-\\tau)W_{S,s+1},\\quad D_s=\\tau\\eta c\\sum_{j=0}^{s-1}\\tau^jU_{s-1-j}",
+          "label": "Paper identity: identical initialization, constant learning rate, no weight decay [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "H=D-\\frac{\\langle D,W_S\\rangle_F}{\\|W_S\\|_F^2+\\varepsilon}W_S,\\qquad P=\\frac{H}{\\max(\\widehat\\sigma_{\\max}(H),\\varepsilon)}",
+          "label": "Remove the radial component, then estimate the spectral norm by power iteration [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "U=(1-\\alpha)\\operatorname{NS}_5(G)+\\alpha P,\\qquad \\alpha=0.1",
+          "label": "Normalize branches separately before mixing; D is not raw-gradient momentum [1]"
+        },
+        {
+          "type": "text",
+          "text": "Qwen2.5-7B/SDFT: 2×H100, 32 prompts/step, one rollout each, two epochs (252 tool-use/166 science steps). New-task accuracy is below; AdamW results are borrowed from SDFT.[1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Optimizer",
+            "Tool use %",
+            "Science %"
+          ],
+          "rows": [
+            [
+              "AdamW",
+              "70.6",
+              "70.2"
+            ],
+            [
+              "Muon μ=0",
+              "69.1",
+              "69.0"
+            ],
+            [
+              "Muon-RT",
+              "74.2",
+              "71.8"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "37.7GB/GPU measures persistent memory between steps after freeing gradients, not peak memory; momentum-free Muon uses the same. Convergence assumes PL, smoothness, drift and alignment conditions; single-batch cosine does not establish an advantage.[1]"
+        }
+      ]
+    },
+    {
+      "id": "pika-h3-flex-research",
+      "paper": "Pika H3 Flex Technical Deep Dive",
+      "authors": "Pika Team",
+      "url": "https://pika.art/blog/pika-h3-flex-research",
+      "title": "Compress sampling, then align the six-step model",
+      "dateNote": "Technical blog first published 2026-10-29; delayed catch-up outside the main window",
+      "evidence": "Read Methods and evaluation limits; internal data and training code not inspected",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "MiniMax H3 receives SFT on aesthetically curated audio-video data, followed by PDMD for 50-to-six-step distillation. Instability of ordinary DMD is the authors’ empirical observation.[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "W_{50}\\xrightarrow{\\mathrm{PDMD}}W_6\\xrightarrow{\\mathrm{ReFL\\;and\\;DPO\\;adapters}}W_6^*,\\qquad \\frac{50}{6}\\approx8.3",
+          "label": "Pipeline schematic; 8.3 is a step-count ratio, not wall-clock speedup [2]"
+        },
+        {
+          "type": "text",
+          "text": "After distillation, separate ReFL and DPO low-rank adapters are trained and merged. ReFL differentiates rewards through current outputs; DPO uses offline preferences, with automated judgments calibrated by human comparisons.[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "T_{\\rm end}=T_{\\rm DiT}+T_{\\rm encode/decode}+T_{\\rm finish}+T_{\\rm service}",
+          "label": "Explanatory time accounting; DiT time cannot substitute for end-to-end latency"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "The launch page’s approximately seven seconds for a 15-second clip measures controlled DiT computation. Finishing and serving are separate; undisclosed data/budgets prevent isolating each training stage’s contribution.[2,3]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-gla",
+    "paperId": "arxiv:2312.06635",
+    "shortTitle": "Gated Linear Attention",
+    "year": 2024,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "paper": "Gated Linear Attention Transformers with Hardware-Efficient Training",
+    "authors": "Songlin Yang · Bailin Wang · Yikang Shen · Rameswar Panda · Yoon Kim",
+    "url": "https://arxiv.org/html/2312.06635v6",
+    "kind": "Historical classic",
+    "title": "Which directions to forget, and how to parallelize them",
+    "dateNote": "First posted 2023-12-11; read v6 (2024-08-27), sections 2–5; ICML 2024",
+    "evidence": "Read recurrence, parallel form, chunking and gating ablations; equivalent column-vector notation",
+    "recognition": {
+      "label": "ICML 2024 · Important historical work on linear attention (official PMLR record checked 2026-11-02)",
+      "url": "https://proceedings.mlr.press/v235/yang24ab.html"
+    },
+    "question": "With fixed matrix-state size, how do effective memory, recall and numerical stability change together when gates remain near zero or one?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Linear Transformers (2020) express attention as matrix recurrence; RetNet (2023) adds fixed decay. GLA selects decay directions from each input while retaining chunkwise computation.[4,5]"
+      },
+      {
+        "type": "text",
+        "text": "Single-head core: q and k are d_k-dimensional columns, v is d_v-dimensional, and S has shape d_k×d_v. Output gating, multi-head normalization and projection are omitted.[4]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\alpha_t\\in(0,1)^{d_k},\\quad S_t=\\operatorname{diag}(\\alpha_t)S_{t-1}+k_tv_t^\\top,\\quad o_t=S_t^\\top q_t,\\quad S_0=0",
+        "label": "Input-dependent rowwise forgetting; paper gates use a low-rank map, sigmoid and temperature [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "o_t=\\sum_{i=1}^{t}\\left[q_t^\\top\\operatorname{diag}\\!\\left(\\prod_{r=i+1}^{t}\\alpha_r\\right)k_i\\right]v_i",
+        "label": "Unrolled recurrence; an empty product is all ones; this is not softmax normalization [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "b_t=\\prod_{r=1}^{t}\\alpha_r,\\qquad o_t=\\sum_{i\\le t}\\big[(q_t\\odot b_t)^\\top(k_i\\oslash b_i)\\big]v_i",
+        "label": "Parallel form with elementwise products/ratios; cumulative products can underflow [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "S_b=\\operatorname{diag}\\!\\left(\\prod_{r=a}^{b}\\alpha_r\\right)S_{a-1}+\\sum_{i=a}^{b}\\operatorname{diag}\\!\\left(\\prod_{r=i+1}^{b}\\alpha_r\\right)k_iv_i^\\top",
+        "label": "Equivalent chunk identity on [a,b]: recurrent boundary state, parallel within-chunk work"
+      },
+      {
+        "type": "text",
+        "text": "Implementation uses secondary tiling: half-precision matmuls between sub-chunks and full-precision log-space work within them. Materializing boundary states trades I/O and memory for sequence parallelism.[4]"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "340M / 7B-token ablation",
+          "Mean training ppl over last 200 steps ↓"
+        ],
+        "rows": [
+          [
+            "No gate",
+            "23.21"
+          ],
+          [
+            "Fixed scalar decay",
+            "16.55"
+          ],
+          [
+            "Input-dependent scalar gate",
+            "15.56"
+          ],
+          [
+            "GLA vector gate",
+            "14.77"
+          ]
+        ]
+      },
+      {
+        "type": "note",
+        "title": "Boundary",
+        "text": "These are training perplexities, not test results. Linear sequence complexity still requires a d_k×d_v state per head and does not ensure speed on every GPU/batch size or lossless retention of arbitrary history.[4]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2610.41104v1",
+      "title": "Muon-RT · v1 methods, training and persistent memory"
+    },
+    {
+      "url": "https://pika.art/blog/pika-h3-flex-research",
+      "title": "Pika · October 29 technical Methods"
+    },
+    {
+      "url": "https://creation.pika.art/blog/pika-h3-flex",
+      "title": "Pika · launch page and DiT timing boundary"
+    },
+    {
+      "url": "https://arxiv.org/html/2312.06635v6",
+      "title": "GLA · v6 methods and gating ablations"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v235/yang24ab.html",
+      "title": "PMLR · official ICML 2024 record"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+RESEARCH DIGEST / 2026-11-02
+Turning historical state into useful computation
+Muon-RT · Six-step video post-training · GLA
+
+中文: https://alexhuang13.github.io/digest/2026-11-02.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-02.html
+
+Main reading
+Teacher lag records applied updates
+Muon-RT: Reusing the Teacher’s Trajectory for Momentum-Free Muon for LLM Self-Distillation
+https://alexhuang13.github.io/digest/en/2026-11-02.html#paper-2610-41104
+
+Main reading
+Compress sampling, then align the six-step model
+Pika H3 Flex Technical Deep Dive
+https://alexhuang13.github.io/digest/en/2026-11-02.html#pika-h3-flex-research
+
+Daily classic · 2024
+Which directions to forget, and how to parallelize them
+https://alexhuang13.github.io/digest/en/2026-11-02.html#classic-gla
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-02.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

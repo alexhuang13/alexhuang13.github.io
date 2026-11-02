@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-02",
+    "paperId": "arxiv:2312.06635",
+    "paper": "Gated Linear Attention Transformers with Hardware-Efficient Training",
+    "shortTitle": "Gated Linear Attention",
+    "year": 2024,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "recognition": {
+      "label": "ICML 2024 · 线性注意力重要历史工作（PMLR官方记录核验2026-11-02）",
+      "url": "https://proceedings.mlr.press/v235/yang24ab.html"
+    },
+    "source": "https://arxiv.org/html/2312.06635v6",
+    "url": "/digest/2026-11-02.html#classic-gla"
+  },
+  {
     "date": "2026-11-01",
     "paperId": "arxiv:2305.16264",
     "paper": "Scaling Data-Constrained Language Models",

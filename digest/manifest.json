@@ -4,8 +4,26 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-01",
+  "latest": "2026-11-02",
   "issues": [
+    {
+      "date": "2026-11-02",
+      "title": "历史状态，怎样变成有效计算",
+      "url": "/digest/2026-11-02.html",
+      "translations": {
+        "en": {
+          "title": "Turning historical state into useful computation",
+          "url": "/digest/en/2026-11-02.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2610.41104v1",
+        "https://pika.art/blog/pika-h3-flex-research",
+        "https://creation.pika.art/blog/pika-h3-flex",
+        "https://arxiv.org/html/2312.06635v6",
+        "https://proceedings.mlr.press/v235/yang24ab.html"
+      ]
+    },
     {
       "date": "2026-11-01",
       "title": "保留方向，核算重复的价值",
