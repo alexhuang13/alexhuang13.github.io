@@ -1,0 +1,321 @@
+{
+  "date": "2026-11-03",
+  "number": "021",
+  "publishedAt": "2026-11-03T13:45:56Z",
+  "window": "2026-10-31 09:33 EDT — 2026-11-03 08:33 EST · America/New_York · 72小时重叠窗口",
+  "readingMinutes": 16,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Post-training",
+    "Diffusion"
+  ],
+  "edition": "每日研究笔记",
+  "title": "外推曲线，也要看训练之后",
+  "subtitle": "Hinted scaling · Muon微调反转 · 自蒸馏与GRPO · 精读EDM",
+  "intro": "三篇主读与三条简讯：用提示揭开近零准确率下的曲线，数据量怎样改变微调前沿，以及新技能与遗忘的共同评估。经典精读EDM，把去噪、预条件化与数值采样拆开。",
+  "articles": [
+    {
+      "id": "paper-2611-02270",
+      "paper": "Hinted Scaling Laws",
+      "authors": "Suze van Adrichem · Luke Bailey · Rohith Kuditipudi · Christine Ye · Neil Band · Ahmed Ahmed · John Duchi · Percy Liang · Tatsunori Hashimoto",
+      "url": "https://arxiv.org/html/2611.02270v1",
+      "title": "小模型答不出时，先降低题目难度",
+      "dateNote": "首发2026-11-01 17:50 EST · v1",
+      "evidence": "已读v1 §2–4的提示构造、拟合与外推实验；未复现",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "普通准确率曲线在小模型端近零，幂律拟合便缺少信号。作者把答案截断、遮盖或教师logit混合视为难度轴H，再外推到无提示的H=0。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "L(C,H)=\\max\\{F,\\ l+(A-l)\\operatorname{sigmoid}(\\beta_1 C+\\beta_2 H+\\beta_3)\\}",
+          "label": "原文经验拟合；C为log₁₀ FLOPs，后训练模型族则用log₁₀参数量；不是原始算力 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "s_H=z_{\\rm model}+H z_{\\rm teacher},\\qquad y_t\\sim\\operatorname{softmax}(s_H/T),\\qquad \\widehat L=L(C_{\\rm large},0)",
+          "label": "logit提示：教师看参考解、共享tokenizer；F是floor，l/A为sigmoid下/上渐近线，β为拟合系数 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Delphi / GSM8K",
+            "设定或绝对误差"
+          ],
+          "rows": [
+            [
+              "拟合预算上限 → 目标预算",
+              "10²⁰ → 10²³ FLOPs"
+            ],
+            [
+              "目标模型实际准确率",
+              "25.9%"
+            ],
+            [
+              "无提示外推 / logit提示外推",
+              "低估13 pp / 误差<3 pp"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "这是有参考解的经验外推；提示评测带来额外开销。跨任务拟合成功不保证任意模型族、提示机制或更大尺度仍成立。[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-03633",
+      "paper": "Pretraining Data Scale Reverses the Muon–AdamW Fine-Tuning Gap",
+      "authors": "Catherine Li · Jingchu Gai · Andrej Risteski · Jacob Mitchell Springer · Aditi Raghunathan",
+      "url": "https://arxiv.org/html/2611.03633v1",
+      "title": "更低预训练loss，不保证更好的微调前沿",
+      "dateNote": "首发2026-11-02 13:56 EST · v1",
+      "evidence": "已读v1 §3实验与§4关联记忆模型；未逐项核对证明、未复现",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在30M–600M OLMo式模型、150M–154B DCLM tokens上，比较新任务loss与预训练遗忘的Pareto前沿。随数据增加，Muon优势可反转；两种检查点选择口径均观察到该趋势。[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\operatorname{TPR}=D/N,\\qquad \\Delta\\mathcal L_{\\rm PT}=\\mathcal L_{\\rm PT}(\\theta_{\\rm FT})-\\mathcal L_{\\rm PT}(\\theta_{\\rm PT})",
+          "label": "D为预训练tokens，N为参数量；前沿同时看微调loss与遗忘 [2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "StackMathQA / 最低预训练loss选点",
+            "反转TPR"
+          ],
+          "rows": [
+            [
+              "30M",
+              "320"
+            ],
+            [
+              "600M",
+              "10"
+            ]
+          ]
+        },
+        {
+          "type": "equation",
+          "tex": "m_{ij}=s_{ii}-s_{ij},\\quad h_i=\\operatorname{mean}_{j\\ne i}m_{ij},\\quad \\kappa_i^2=\\operatorname{mean}_{j\\ne i}(m_{ij}-h_i)^2,\\quad \\rho=\\frac{\\operatorname{mean}_i h_i}{\\sqrt{\\operatorname{mean}_i\\kappa_i^2}}",
+          "label": "原文margin–spread ratio：优势不仅取决于平均margin，还取决于其离散程度 [2]"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "交叉点随任务变化。理论是高斯键值、零初始化、单步全批量GD对精确polar Muon的线性模型，不是AdamW或非凸LLM的普遍定理。[2]"
+        }
+      ]
+    },
+    {
+      "id": "doordash-self-distillation-grpo",
+      "paper": "Learning new skills without forgetting: Self-Distillation vs GRPO",
+      "authors": "Chaitanya Ahuja · Sebastian Zuba",
+      "url": "https://careersatdoordash.com/blog/learning-new-skills-without-forgetting-self-distillation-vs-grpo/",
+      "title": "自生成rollout，也会严重遗忘",
+      "dateNote": "技术博客2026-11-02",
+      "evidence": "已读方法、顺序/混合训练、宽松格式评估与附录设置；未复现",
+      "kind": "主读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Nemotron Nano 9B全参数训练，主实验关闭thinking；按工具→科学→Knights & Knaves顺序训练。自蒸馏让教师看示范、学生生成rollout，并匹配逐token分布；GRPO用可验证奖励。[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "p_S(\\cdot\\mid x,y_{<t})\\longleftrightarrow p_T(\\cdot\\mid x,d,y_{<t}),\\qquad \\Delta R_j=R_j(\\theta_{\\rm final})-R_j(\\theta_{\\rm base})",
+          "label": "机制示意：d是示范；ΔR按旧能力j逐项评估，不假定KL方向"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "顺序训练终点",
+            "Knights & Knaves准确率"
+          ],
+          "rows": [
+            [
+              "基座",
+              "47.7%"
+            ],
+            [
+              "自蒸馏",
+              "31.6%"
+            ],
+            [
+              "GRPO",
+              "95.9%"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "混合训练把自蒸馏的逻辑主题降幅从约30 pp缩至4 pp；放宽输出格式后，BBH逻辑仍下降37 pp，说明不全是格式问题。[3]"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "对照匹配迭代数，不是墙钟或总算力；GRPO多rollout成本另计。单一模型及任务链不能推出RL普遍优于蒸馏。[3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-02208",
+      "paper": "Test-Time Scaling for Open-Ended Reasoning at Small Model Scale",
+      "authors": "Adam Y. Ahmed · Abdullah G. Elafifi",
+      "url": "https://arxiv.org/abs/2611.02208",
+      "title": "简讯｜多采样未必换来开放回答的多样性",
+      "dateNote": "首发2026-11-01 16:06 EST · v1",
+      "evidence": "基于摘要；未读全文",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "250个开放提示、三族2–3B模型、两个生成种子：语义聚类投票在开放任务仅获≤0.30 judge分增益，而数学投票有效。此处judge分不是准确率；关于缺乏有效多样性的解释尚须结合全文审查。[4]"
+        }
+      ]
+    },
+    {
+      "id": "hydrogen-1-0-technical-blog",
+      "paper": "Introducing Hydrogen-1.0",
+      "authors": "DeepPrinciple Team",
+      "url": "https://blog.deepprinciple.com/introducing-hydrogen-1.0/",
+      "title": "简讯｜跨策略版本续跑，保存实际行为概率",
+      "dateNote": "本轮发现；博客未标首发。模型仓库创建2026-10-31 11:54 EDT，11月2日04:00 EST有修改；差异未核实",
+      "evidence": "已读技术博客与公开模型卡，核验Hub服务端时间；未读训练代码或版本diff",
+      "kind": "技术观察",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "技术文描述GLM-5.3后训练：rollout跨策略版本续跑，保存逐token行为logprob；只把完整prompt组纳入更新，未完成前缀保留续跑。另讨论Muon状态offload。仓库时间不等于博客发布日期，且未给足消融以分离吞吐与算法收益。[5,6]"
+        }
+      ]
+    },
+    {
+      "id": "weight-space-programming",
+      "paper": "Sparks of Weight-Space Programming: LLMs can natively read & write neural network weights",
+      "authors": "Rikiya Takehi · Jayden Teoh · Alex Zhang · Omar Khattab",
+      "url": "https://rikiyat.github.io/blog/weight-space-programming/",
+      "title": "简讯｜直接编辑权重，先区分修复与能力新增",
+      "dateNote": "技术博客2026-11-02",
+      "evidence": "已读实验1–3、8及Gemma负结果；未复现",
+      "kind": "简讯",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "GPT-6 Astra编辑Qwen3.5-0.8B的0.016%权重以缓解循环，MATH-500由7.9%至48.1%；但用了50次批量前向反馈。无梯度不等于零评测成本。对少循环的Gemma 270M未建立提升，不能把解除障碍等同新增数学能力。[7]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-edm",
+    "paperId": "arxiv:2206.00364",
+    "shortTitle": "EDM",
+    "year": 2022,
+    "topics": [
+      "Diffusion models"
+    ],
+    "paper": "Elucidating the Design Space of Diffusion-Based Generative Models",
+    "authors": "Tero Karras · Miika Aittala · Timo Aila · Samuli Laine",
+    "url": "https://arxiv.org/pdf/2206.00364v2",
+    "kind": "历史经典",
+    "title": "把去噪器、损失权重和求解器拆开",
+    "dateNote": "首发2022-06-01；读v2（2022-10-11）正文§2–5与Table 1；NeurIPS 2022",
+    "evidence": "已读去噪恒等式、预条件化、Heun采样与训练消融；未复现",
+    "recognition": {
+      "label": "NeurIPS 2022 Featured Paper · 官方会议博客核验2026-11-03",
+      "url": "https://blog.neurips.cc/category/2022-conference/"
+    },
+    "question": "固定训练好的去噪器，在相同NFE下，怎样区分误差来自score估计、噪声离散网格，还是ODE求解器？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "DDPM（2020）与score SDE（2021）把生成写成逐级去噪。EDM统一其设计空间，分别改变采样器和训练，避免把组合收益都归给网络架构。[8,9]"
+      },
+      {
+        "type": "text",
+        "text": "设干净数据y、独立ε∼N(0,I)，pσ为加高斯噪声后的密度。σdata是数据标准差参数；理想恒等式与神经近似要分开。[8]"
+      },
+      {
+        "type": "equation",
+        "tex": "x=y+\\sigma\\epsilon,\\qquad D^*(x,\\sigma)=\\mathbb E[y\\mid x],\\qquad \\nabla_x\\log p_\\sigma(x)=\\frac{D^*(x,\\sigma)-x}{\\sigma^2}",
+        "label": "高斯噪声下，平方误差最优去噪器给出score [8]"
+      },
+      {
+        "type": "equation",
+        "tex": "D_\\theta(x,\\sigma)=c_{\\rm skip}x+c_{\\rm out}F_\\theta(c_{\\rm in}x;c_{\\rm noise}),\\quad c_{\\rm skip}=\\frac{\\sigma_{\\rm data}^2}{\\sigma^2+\\sigma_{\\rm data}^2},\\quad c_{\\rm out}=\\frac{\\sigma\\sigma_{\\rm data}}{\\sqrt{\\sigma^2+\\sigma_{\\rm data}^2}},\\quad c_{\\rm in}=\\frac1{\\sqrt{\\sigma^2+\\sigma_{\\rm data}^2}},\\quad c_{\\rm noise}=\\tfrac14\\log\\sigma",
+        "label": "原文预条件化：控制输入/目标尺度，并保留skip路径 [8]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathcal L=\\mathbb E_{y,\\epsilon,\\sigma}\\lambda(\\sigma)\\|D_\\theta(y+\\sigma\\epsilon,\\sigma)-y\\|^2,\\quad \\lambda=c_{\\rm out}^{-2},\\quad \\log\\sigma\\sim\\mathcal N(-1.2,1.2^2)",
+        "label": "所用训练配置；λ c²out=1，但各噪声尺度被抽到的频率不相等 [8]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\frac{dx}{d\\sigma}=f(x,\\sigma)=\\frac{x-D_\\theta(x,\\sigma)}{\\sigma},\\qquad \\sigma_{i+1}<\\sigma_i",
+        "label": "取σ(t)=t、s(t)=1的概率流ODE；实际去噪器近似D* [8]"
+      },
+      {
+        "type": "equation",
+        "tex": "h_i=\\sigma_{i+1}-\\sigma_i,\\quad d_i=f(x_i,\\sigma_i),\\quad \\widetilde x=x_i+h_i d_i,\\quad x_{i+1}=x_i+\\tfrac{h_i}{2}\\{d_i+f(\\widetilde x,\\sigma_{i+1})\\}",
+        "label": "Heun预测—校正；到σ=0末步用Euler避免除零，N个区间需2N−1次网络评估 [8]"
+      },
+      {
+        "type": "note",
+        "title": "边界",
+        "text": "恒等式不消除score近似和有限步误差。训练消融也不支持“单独预条件化必然改善FID”；损失、噪声采样及增强的贡献须分别比较。[8]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.02270v1",
+      "title": "Hinted Scaling Laws · v1 §2–4"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.03633v1",
+      "title": "Muon微调反转 · v1 §3–4"
+    },
+    {
+      "url": "https://careersatdoordash.com/blog/learning-new-skills-without-forgetting-self-distillation-vs-grpo/",
+      "title": "DoorDash · 方法、评估与附录"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.02208",
+      "title": "开放推理test-time scaling · 仅摘要"
+    },
+    {
+      "url": "https://blog.deepprinciple.com/introducing-hydrogen-1.0/",
+      "title": "Hydrogen-1.0 · 技术博客，未标首发"
+    },
+    {
+      "url": "https://huggingface.co/api/models/deep-principle/Hydrogen-1.0",
+      "title": "Hugging Face · createdAt/lastModified，查询2026-11-03"
+    },
+    {
+      "url": "https://rikiyat.github.io/blog/weight-space-programming/",
+      "title": "Weight-Space Programming · 实验与负结果"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2206.00364v2",
+      "title": "EDM · v2正文与Table 1（历史背景）"
+    },
+    {
+      "url": "https://blog.neurips.cc/category/2022-conference/",
+      "title": "NeurIPS官方 · EDM Featured Paper入选依据"
+    }
+  ]
+}

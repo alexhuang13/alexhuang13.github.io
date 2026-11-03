@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-03",
+    "paperId": "arxiv:2206.00364",
+    "paper": "Elucidating the Design Space of Diffusion-Based Generative Models",
+    "shortTitle": "EDM",
+    "year": 2022,
+    "topics": [
+      "Diffusion models"
+    ],
+    "recognition": {
+      "label": "NeurIPS 2022 Featured Paper · 官方会议博客核验2026-11-03",
+      "url": "https://blog.neurips.cc/category/2022-conference/"
+    },
+    "source": "https://arxiv.org/pdf/2206.00364v2",
+    "url": "/digest/2026-11-03.html#classic-edm"
+  },
+  {
     "date": "2026-11-02",
     "paperId": "arxiv:2312.06635",
     "paper": "Gated Linear Attention Transformers with Hardware-Efficient Training",

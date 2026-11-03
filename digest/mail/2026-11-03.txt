@@ -1,0 +1,46 @@
+RESEARCH DIGEST / 2026-11-03
+外推曲线，也要看训练之后
+Hinted scaling · Muon微调反转 · 自蒸馏与GRPO · 精读EDM
+
+中文: https://alexhuang13.github.io/digest/2026-11-03.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-03.html
+
+主读
+小模型答不出时，先降低题目难度
+Hinted Scaling Laws
+https://alexhuang13.github.io/digest/2026-11-03.html#paper-2611-02270
+
+主读
+更低预训练loss，不保证更好的微调前沿
+Pretraining Data Scale Reverses the Muon–AdamW Fine-Tuning Gap
+https://alexhuang13.github.io/digest/2026-11-03.html#paper-2611-03633
+
+主读
+自生成rollout，也会严重遗忘
+Learning new skills without forgetting: Self-Distillation vs GRPO
+https://alexhuang13.github.io/digest/2026-11-03.html#doordash-self-distillation-grpo
+
+简讯
+简讯｜多采样未必换来开放回答的多样性
+Test-Time Scaling for Open-Ended Reasoning at Small Model Scale
+https://alexhuang13.github.io/digest/2026-11-03.html#paper-2611-02208
+
+技术观察
+简讯｜跨策略版本续跑，保存实际行为概率
+Introducing Hydrogen-1.0
+https://alexhuang13.github.io/digest/2026-11-03.html#hydrogen-1-0-technical-blog
+
+简讯
+简讯｜直接编辑权重，先区分修复与能力新增
+Sparks of Weight-Space Programming: LLMs can natively read & write neural network weights
+https://alexhuang13.github.io/digest/2026-11-03.html#weight-space-programming
+
+每日精读 · 2022
+把去噪器、损失权重和求解器拆开
+https://alexhuang13.github.io/digest/2026-11-03.html#classic-edm
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-03.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

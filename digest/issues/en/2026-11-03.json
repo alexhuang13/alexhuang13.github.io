@@ -1,0 +1,321 @@
+{
+  "date": "2026-11-03",
+  "number": "021",
+  "publishedAt": "2026-11-03T13:45:56Z",
+  "window": "2026-10-31 09:33 EDT — 2026-11-03 08:33 EST · America/New_York · 72-hour overlapping window",
+  "readingMinutes": 16,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Post-training",
+    "Diffusion"
+  ],
+  "edition": "Daily research notes",
+  "title": "Extrapolation must look beyond pretraining",
+  "subtitle": "Hinted scaling · Muon fine-tuning reversal · Self-distillation versus GRPO · EDM",
+  "intro": "Three main readings and three briefs: hints reveal curves beneath near-zero accuracy, data scale changes fine-tuning frontiers, and new skills must be evaluated alongside forgetting. The EDM classic separates denoising, preconditioning and numerical sampling.",
+  "articles": [
+    {
+      "id": "paper-2611-02270",
+      "paper": "Hinted Scaling Laws",
+      "authors": "Suze van Adrichem · Luke Bailey · Rohith Kuditipudi · Christine Ye · Neil Band · Ahmed Ahmed · John Duchi · Percy Liang · Tatsunori Hashimoto",
+      "url": "https://arxiv.org/html/2611.02270v1",
+      "title": "When small models fail, make the task easier first",
+      "dateNote": "First posted 2026-11-01 17:50 EST · v1",
+      "evidence": "Read v1 sections 2–4: hints, fitting and extrapolation experiments; not reproduced",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Near-zero small-model accuracy hides extrapolation signals. The authors introduce a difficulty axis H through truncated/masked reference solutions or teacher-logit mixing, then extrapolate to the unhinted task H=0.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "L(C,H)=\\max\\{F,\\ l+(A-l)\\operatorname{sigmoid}(\\beta_1 C+\\beta_2 H+\\beta_3)\\}",
+          "label": "Empirical fit; C is log₁₀ FLOPs, or log₁₀ parameter count for post-trained families—not raw compute [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "s_H=z_{\\rm model}+H z_{\\rm teacher},\\qquad y_t\\sim\\operatorname{softmax}(s_H/T),\\qquad \\widehat L=L(C_{\\rm large},0)",
+          "label": "Logit hint: teacher sees a reference solution and shares the tokenizer; F is the floor, l/A are sigmoid asymptotes, and β are fitted coefficients [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Delphi / GSM8K",
+            "Setup or absolute error"
+          ],
+          "rows": [
+            [
+              "Maximum fitting compute → target compute",
+              "10²⁰ → 10²³ FLOPs"
+            ],
+            [
+              "Actual target-model accuracy",
+              "25.9%"
+            ],
+            [
+              "Unhinted / logit-hinted forecast",
+              "Underpredicts by 13 pp / error <3 pp"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "This is empirical extrapolation with reference solutions and additional evaluation cost. Success across tested tasks does not guarantee transfer to arbitrary families, hints or larger scales.[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-03633",
+      "paper": "Pretraining Data Scale Reverses the Muon–AdamW Fine-Tuning Gap",
+      "authors": "Catherine Li · Jingchu Gai · Andrej Risteski · Jacob Mitchell Springer · Aditi Raghunathan",
+      "url": "https://arxiv.org/html/2611.03633v1",
+      "title": "Lower pretraining loss need not yield a better fine-tuning frontier",
+      "dateNote": "First posted 2026-11-02 13:56 EST · v1",
+      "evidence": "Read v1 section 3 experiments and section 4 associative-memory model; proof not fully checked; not reproduced",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "OLMo-style models of 30M–600M parameters, pretrained on 150M–154B DCLM tokens, are compared on new-task loss versus pretraining forgetting. Increasing data can reverse Muon’s advantage under both checkpoint-selection protocols.[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\operatorname{TPR}=D/N,\\qquad \\Delta\\mathcal L_{\\rm PT}=\\mathcal L_{\\rm PT}(\\theta_{\\rm FT})-\\mathcal L_{\\rm PT}(\\theta_{\\rm PT})",
+          "label": "D denotes pretraining tokens, N parameters; the frontier measures fine-tuning loss and forgetting jointly [2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "StackMathQA / lowest-pretraining-loss selection",
+            "Crossover TPR"
+          ],
+          "rows": [
+            [
+              "30M",
+              "320"
+            ],
+            [
+              "600M",
+              "10"
+            ]
+          ]
+        },
+        {
+          "type": "equation",
+          "tex": "m_{ij}=s_{ii}-s_{ij},\\quad h_i=\\operatorname{mean}_{j\\ne i}m_{ij},\\quad \\kappa_i^2=\\operatorname{mean}_{j\\ne i}(m_{ij}-h_i)^2,\\quad \\rho=\\frac{\\operatorname{mean}_i h_i}{\\sqrt{\\operatorname{mean}_i\\kappa_i^2}}",
+          "label": "Paper margin–spread ratio: mean margins alone do not determine robustness; their dispersion also matters [2]"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "Crossover points depend on the task. Theory uses Gaussian keys/values, zero initialization and one full-batch GD versus exact-polar Muon step in a linear model—not a general AdamW or nonlinear-LLM theorem.[2]"
+        }
+      ]
+    },
+    {
+      "id": "doordash-self-distillation-grpo",
+      "paper": "Learning new skills without forgetting: Self-Distillation vs GRPO",
+      "authors": "Chaitanya Ahuja · Sebastian Zuba",
+      "url": "https://careersatdoordash.com/blog/learning-new-skills-without-forgetting-self-distillation-vs-grpo/",
+      "title": "Student-generated rollouts can still forget",
+      "dateNote": "Technical blog dated 2026-11-02",
+      "evidence": "Read methods, sequential/mixed training, lenient-format evaluation and appendix setup; not reproduced",
+      "kind": "Main reading",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Full-weight Nemotron Nano 9B training, with thinking off in the main experiment, proceeds through tool use → science → Knights & Knaves. Self-distillation matches token distributions to a demonstration-conditioned teacher on student rollouts; GRPO uses verifiable rewards.[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "p_S(\\cdot\\mid x,y_{<t})\\longleftrightarrow p_T(\\cdot\\mid x,d,y_{<t}),\\qquad \\Delta R_j=R_j(\\theta_{\\rm final})-R_j(\\theta_{\\rm base})",
+          "label": "Mechanism schematic: d is a demonstration; ΔR measures each retained capability j; no KL direction is asserted"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "End of sequential training",
+            "Knights & Knaves accuracy"
+          ],
+          "rows": [
+            [
+              "Base",
+              "47.7%"
+            ],
+            [
+              "Self-distillation",
+              "31.6%"
+            ],
+            [
+              "GRPO",
+              "95.9%"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Mixed training reduces self-distillation’s logic-theme drop from about 30 to 4 pp. Even lenient formatting leaves a 37-pp BBH logic decline, so formatting does not explain everything.[3]"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "Iterations are matched, not wall-clock time or total compute; GRPO’s multiple rollouts carry additional cost. One model/task chain does not establish universal RL superiority.[3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-02208",
+      "paper": "Test-Time Scaling for Open-Ended Reasoning at Small Model Scale",
+      "authors": "Adam Y. Ahmed · Abdullah G. Elafifi",
+      "url": "https://arxiv.org/abs/2611.02208",
+      "title": "Brief | More samples need not diversify open-ended answers",
+      "dateNote": "First posted 2026-11-01 16:06 EST · v1",
+      "evidence": "Based on the abstract; full text not read",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Across 250 open-ended prompts, three 2–3B model families and two generation seeds, semantic-cluster voting yields at most 0.30 judge-point gains, unlike useful mathematical voting. Judge points are not accuracy; the proposed diversity explanation needs full-text examination.[4]"
+        }
+      ]
+    },
+    {
+      "id": "hydrogen-1-0-technical-blog",
+      "paper": "Introducing Hydrogen-1.0",
+      "authors": "DeepPrinciple Team",
+      "url": "https://blog.deepprinciple.com/introducing-hydrogen-1.0/",
+      "title": "Brief | Resumed rollouts need actual behavior probabilities",
+      "dateNote": "Discovered this round; blog is undated. Model repository created 2026-10-31 11:54 EDT and modified November 2 at 04:00 EST; differences unverified",
+      "evidence": "Read technical blog and public model card; checked Hub server timestamps; training code/version diff not inspected",
+      "kind": "Technical observation",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The GLM-5.3 post-training write-up preserves per-token behavior log probabilities when rollouts resume across policy versions. Only completed prompt groups enter updates; unfinished prefixes resume later. Muon-state offloading is also discussed. Repository timestamps do not date the blog, and ablations do not isolate throughput from algorithmic gains.[5,6]"
+        }
+      ]
+    },
+    {
+      "id": "weight-space-programming",
+      "paper": "Sparks of Weight-Space Programming: LLMs can natively read & write neural network weights",
+      "authors": "Rikiya Takehi · Jayden Teoh · Alex Zhang · Omar Khattab",
+      "url": "https://rikiyat.github.io/blog/weight-space-programming/",
+      "title": "Brief | Editing weights: repair versus acquiring ability",
+      "dateNote": "Technical blog dated 2026-11-02",
+      "evidence": "Read experiments 1–3, 8 and the Gemma negative result; not reproduced",
+      "kind": "Brief",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "GPT-6 Astra edits 0.016% of Qwen3.5-0.8B weights to reduce looping, raising MATH-500 from 7.9% to 48.1%, with 50 batched forward-feedback calls. Gradient-free does not mean evaluation-free. No established gain on rarely looping Gemma 270M separates removing an obstacle from adding mathematical ability.[7]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-edm",
+    "paperId": "arxiv:2206.00364",
+    "shortTitle": "EDM",
+    "year": 2022,
+    "topics": [
+      "Diffusion models"
+    ],
+    "paper": "Elucidating the Design Space of Diffusion-Based Generative Models",
+    "authors": "Tero Karras · Miika Aittala · Timo Aila · Samuli Laine",
+    "url": "https://arxiv.org/pdf/2206.00364v2",
+    "kind": "Historical classic",
+    "title": "Separate denoising, loss weighting and the solver",
+    "dateNote": "First posted 2022-06-01; read v2 (2022-10-11), sections 2–5 and Table 1; NeurIPS 2022",
+    "evidence": "Read denoising identity, preconditioning, Heun sampling and training ablations; not reproduced",
+    "recognition": {
+      "label": "NeurIPS 2022 Featured Paper · Official conference blog checked 2026-11-03",
+      "url": "https://blog.neurips.cc/category/2022-conference/"
+    },
+    "question": "For a fixed trained denoiser and equal NFE, how can we distinguish score-estimation error, noise-grid discretization and ODE-solver error?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "DDPM (2020) and score SDEs (2021) generate by progressive denoising. EDM unifies their design space and varies sampling and training separately.[8,9]"
+      },
+      {
+        "type": "text",
+        "text": "Let y be clean data, ε∼N(0,I) independent, and pσ the noisy density. σdata parameterizes data standard deviation; exact identities and neural approximations differ.[8]"
+      },
+      {
+        "type": "equation",
+        "tex": "x=y+\\sigma\\epsilon,\\qquad D^*(x,\\sigma)=\\mathbb E[y\\mid x],\\qquad \\nabla_x\\log p_\\sigma(x)=\\frac{D^*(x,\\sigma)-x}{\\sigma^2}",
+        "label": "Under Gaussian corruption, the squared-error-optimal denoiser gives the score [8]"
+      },
+      {
+        "type": "equation",
+        "tex": "D_\\theta(x,\\sigma)=c_{\\rm skip}x+c_{\\rm out}F_\\theta(c_{\\rm in}x;c_{\\rm noise}),\\quad c_{\\rm skip}=\\frac{\\sigma_{\\rm data}^2}{\\sigma^2+\\sigma_{\\rm data}^2},\\quad c_{\\rm out}=\\frac{\\sigma\\sigma_{\\rm data}}{\\sqrt{\\sigma^2+\\sigma_{\\rm data}^2}},\\quad c_{\\rm in}=\\frac1{\\sqrt{\\sigma^2+\\sigma_{\\rm data}^2}},\\quad c_{\\rm noise}=\\tfrac14\\log\\sigma",
+        "label": "Paper preconditioning controls input/target scales and retains a skip path [8]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathcal L=\\mathbb E_{y,\\epsilon,\\sigma}\\lambda(\\sigma)\\|D_\\theta(y+\\sigma\\epsilon,\\sigma)-y\\|^2,\\quad \\lambda=c_{\\rm out}^{-2},\\quad \\log\\sigma\\sim\\mathcal N(-1.2,1.2^2)",
+        "label": "Training configuration: λ c²out=1, but noise levels are not sampled equally often [8]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\frac{dx}{d\\sigma}=f(x,\\sigma)=\\frac{x-D_\\theta(x,\\sigma)}{\\sigma},\\qquad \\sigma_{i+1}<\\sigma_i",
+        "label": "Probability-flow ODE with σ(t)=t and s(t)=1; the learned denoiser approximates D* [8]"
+      },
+      {
+        "type": "equation",
+        "tex": "h_i=\\sigma_{i+1}-\\sigma_i,\\quad d_i=f(x_i,\\sigma_i),\\quad \\widetilde x=x_i+h_i d_i,\\quad x_{i+1}=x_i+\\tfrac{h_i}{2}\\{d_i+f(\\widetilde x,\\sigma_{i+1})\\}",
+        "label": "Heun predictor–corrector; final σ=0 step uses Euler to avoid division by zero; N intervals require 2N−1 network evaluations [8]"
+      },
+      {
+        "type": "note",
+        "title": "Boundary",
+        "text": "The identity removes neither score error nor finite-step error. Training ablations do not show that preconditioning alone must improve FID; weighting, noise sampling and augmentation need separate comparisons.[8]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.02270v1",
+      "title": "Hinted Scaling Laws · v1 sections 2–4"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.03633v1",
+      "title": "Muon fine-tuning reversal · v1 sections 3–4"
+    },
+    {
+      "url": "https://careersatdoordash.com/blog/learning-new-skills-without-forgetting-self-distillation-vs-grpo/",
+      "title": "DoorDash · methods, evaluation and appendix"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.02208",
+      "title": "Open-ended test-time scaling · abstract only"
+    },
+    {
+      "url": "https://blog.deepprinciple.com/introducing-hydrogen-1.0/",
+      "title": "Hydrogen-1.0 · undated technical blog"
+    },
+    {
+      "url": "https://huggingface.co/api/models/deep-principle/Hydrogen-1.0",
+      "title": "Hugging Face · createdAt/lastModified, checked 2026-11-03"
+    },
+    {
+      "url": "https://rikiyat.github.io/blog/weight-space-programming/",
+      "title": "Weight-Space Programming · experiments and negative result"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2206.00364v2",
+      "title": "EDM · v2 full text and Table 1 (historical background)"
+    },
+    {
+      "url": "https://blog.neurips.cc/category/2022-conference/",
+      "title": "Official NeurIPS blog · EDM Featured Paper recognition"
+    }
+  ]
+}

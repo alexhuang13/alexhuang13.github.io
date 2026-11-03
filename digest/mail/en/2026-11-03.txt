@@ -1,0 +1,46 @@
+RESEARCH DIGEST / 2026-11-03
+Extrapolation must look beyond pretraining
+Hinted scaling · Muon fine-tuning reversal · Self-distillation versus GRPO · EDM
+
+中文: https://alexhuang13.github.io/digest/2026-11-03.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-03.html
+
+Main reading
+When small models fail, make the task easier first
+Hinted Scaling Laws
+https://alexhuang13.github.io/digest/en/2026-11-03.html#paper-2611-02270
+
+Main reading
+Lower pretraining loss need not yield a better fine-tuning frontier
+Pretraining Data Scale Reverses the Muon–AdamW Fine-Tuning Gap
+https://alexhuang13.github.io/digest/en/2026-11-03.html#paper-2611-03633
+
+Main reading
+Student-generated rollouts can still forget
+Learning new skills without forgetting: Self-Distillation vs GRPO
+https://alexhuang13.github.io/digest/en/2026-11-03.html#doordash-self-distillation-grpo
+
+Brief
+Brief | More samples need not diversify open-ended answers
+Test-Time Scaling for Open-Ended Reasoning at Small Model Scale
+https://alexhuang13.github.io/digest/en/2026-11-03.html#paper-2611-02208
+
+Technical observation
+Brief | Resumed rollouts need actual behavior probabilities
+Introducing Hydrogen-1.0
+https://alexhuang13.github.io/digest/en/2026-11-03.html#hydrogen-1-0-technical-blog
+
+Brief
+Brief | Editing weights: repair versus acquiring ability
+Sparks of Weight-Space Programming: LLMs can natively read & write neural network weights
+https://alexhuang13.github.io/digest/en/2026-11-03.html#weight-space-programming
+
+Daily classic · 2022
+Separate denoising, loss weighting and the solver
+https://alexhuang13.github.io/digest/en/2026-11-03.html#classic-edm
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-03.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

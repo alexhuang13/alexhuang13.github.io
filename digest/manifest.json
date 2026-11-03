@@ -4,8 +4,30 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-02",
+  "latest": "2026-11-03",
   "issues": [
+    {
+      "date": "2026-11-03",
+      "title": "外推曲线，也要看训练之后",
+      "url": "/digest/2026-11-03.html",
+      "translations": {
+        "en": {
+          "title": "Extrapolation must look beyond pretraining",
+          "url": "/digest/en/2026-11-03.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.02270v1",
+        "https://arxiv.org/html/2611.03633v1",
+        "https://careersatdoordash.com/blog/learning-new-skills-without-forgetting-self-distillation-vs-grpo/",
+        "https://arxiv.org/abs/2611.02208",
+        "https://blog.deepprinciple.com/introducing-hydrogen-1.0/",
+        "https://huggingface.co/api/models/deep-principle/Hydrogen-1.0",
+        "https://rikiyat.github.io/blog/weight-space-programming/",
+        "https://arxiv.org/pdf/2206.00364v2",
+        "https://blog.neurips.cc/category/2022-conference/"
+      ]
+    },
     {
       "date": "2026-11-02",
       "title": "历史状态，怎样变成有效计算",
