@@ -1,0 +1,369 @@
+{
+  "date": "2026-11-04",
+  "number": "022",
+  "publishedAt": "2026-11-04T13:49:50Z",
+  "window": "2026-11-01 08:43 EST — 2026-11-04 08:43 EST · America/New_York; additional catch-up on early-November-1 releases",
+  "readingMinutes": 17,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training"
+  ],
+  "edition": "Daily research notes",
+  "title": "Directions, ensembles and one-shot experience",
+  "subtitle": "Muon spectral margins · Multi-epoch ensembles · GS1 · GAE",
+  "intro": "Three main readings examine attention directions under Muon, ensemble-dependent stopping with fixed data, and baselines from one rollout per task. Five new-paper briefs and two version observations follow. The GAE classic develops telescoping sums and bias.",
+  "articles": [
+    {
+      "id": "paper-2611-04465",
+      "paper": "Theoretical Analysis of Muon on Transformers for Next-Token Prediction",
+      "authors": "Shengwei Wu · Yixuan Yang · Gao Huang · Song Li",
+      "url": "https://arxiv.org/html/2611.04465v1",
+      "kind": "Main reading",
+      "title": "Learn outputs first, then spectral max-margin attention",
+      "dateNote": "First posted 2026-11-03 02:52 EST · v1",
+      "evidence": "Read model, Algorithm 1, Theorems 1–2 and assumptions; appendix proofs not checked line by line",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A one-layer softmax-attention model directly optimizes combined output W₁ and attention W₂ matrices. W₁ is trained on singleton contexts, then frozen while W₂ learns; both start at zero.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "f(X)=\\operatorname{softmax}\\!\\left(W_1X\\operatorname{softmax}(X^\\top W_2q)\\right),\\quad R_* =\\min_W\\{\\|W\\|_{\\rm op}:(x_n^*-x)^\\top Wq_n\\ge1\\ \\forall n,x\\in\\mathcal X_n^-\\}",
+          "label": "q is the final token, x* the correct token, and 𝒳⁻ the other context tokens; γ*=1/R* [1]"
+        },
+        {
+          "type": "text",
+          "text": "Assume orthonormal token embeddings, bijective labels h, a correct token at least as frequent as competitors, and common separability. After sufficient preprocessing, with fixed momentum and sufficiently small η₀:[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\eta_t=\\eta_0(t+1)^{-1/2},\\quad 0<\\mathcal L_T(W_{2,t})-\\ell_T^*\\le C_1t^{C_2}e^{-C_3\\sqrt t},\\quad 0\\le\\gamma_* -\\rho_2(W_{2,t}/\\|W_{2,t}\\|_{\\rm op})\\le C_4\\frac{1+\\log t}{\\sqrt t}",
+          "label": "Theorem 2; ρ₂ is the minimum attention-score gap; constants depend on finite data and preprocessing [1]"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "Exact-polar, full-batch, staged optimization of combined matrices does not establish the same guarantee for jointly trained deep Transformers or finite-step Newton–Schulz.[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-03590",
+      "paper": "A Scaling Theory of Multi-Epoch Pretraining: Late-Time Overfitting and Ensembling",
+      "authors": "Zhen Yang · Yidi Miao · Blake Bordelon",
+      "url": "https://arxiv.org/html/2611.03590v1",
+      "kind": "Main reading",
+      "title": "Allocate fixed-data compute between time and members",
+      "dateNote": "First posted 2026-11-02 13:34 EST · v1",
+      "evidence": "Read section 2, section 3.5 and Appendix A.2 budget/fitting setup; DMFT proofs not fully checked",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Repeated FineWeb training can produce U-shaped validation loss; logit ensembles delay stopping. Theory separates error correlations using shared data and independent random-feature projections.[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal L_E(\\tau)=C_{\\rm cross}(\\tau)+\\frac{C_{\\rm self}(\\tau)-C_{\\rm cross}(\\tau)}{E}",
+          "label": "Squared-error identity: E is ensemble size; self/cross denote expected error products for identical/distinct members [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal L_{s,E}\\approx\\mathcal L_{s,\\infty}+\\alpha_sE^{-\\beta},\\quad \\beta\\approx1;\\qquad C_{\\rm proxy}=END,\\quad D=40P",
+          "label": "Left: empirical LM fit. Right: common 40-epoch budget; P is unique tokens and N counted parameters per member [2]"
+        },
+        {
+          "type": "text",
+          "text": "Four 85M counted-parameter members match one twice-wide model’s proxy budget, excluding embeddings, output head and scalar gains. RF allocation instead charges each ensemble to its own stopping time.[2]"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "Shared-data error remains. The RF squared-error identity differs from cross-entropy approximations; parameter-token budgets omit ensemble inference overhead and are not measured wall-clock costs.[2]"
+        }
+      ]
+    },
+    {
+      "id": "trajectory-gs1",
+      "paper": "You Only Rollout Once",
+      "authors": "Nikhil Vemuri · Dian Ang Yap · Trajectory Labs",
+      "url": "https://www.trajectory.ai/field-notes/you-only-rollout-once",
+      "kind": "Main reading",
+      "title": "One rollout per task, a baseline borrowed from other tasks",
+      "dateNote": "Technical blog dated 2026-11-02",
+      "evidence": "Read methods, results and Appendices A–C; the actual GS1 kernel is not public",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Unlike GRPO’s same-task samples (2024), GS1 weights rewards from other tasks. Weights may use pre-rollout task information and other rollouts, never this response or its length.[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "b_i=\\frac{\\sum_{j\\ne i}w_{ij}r_j}{\\sum_{j\\ne i}w_{ij}},\\quad g=\\frac1B\\sum_i(r_i-b_i)\\nabla\\log\\pi_\\theta(\\tau_i\\mid x_i),\\quad \\mathbb E[b_i\\nabla\\log\\pi_\\theta(\\tau_i\\mid x_i)\\mid x_i,\\mathcal D_{-i}]=0",
+          "label": "Baseline identity under independent on-policy sampling; 𝒟₋ᵢ excludes the current rollout [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "B_{\\rm eff}\\approx\\frac{B\\sigma_\\epsilon^2}{\\sigma_\\epsilon^2+\\operatorname{MSE}(b)},\\quad \\sigma_\\epsilon^2=\\mathbb E\\operatorname{Var}(r\\mid x)",
+          "label": "Approximation neglects cross-rollout covariance, score-norm/advantage dependence and squared mean gradient [3]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Inkling-Small / AutomationBench",
+            "GS1",
+            "FlashRF",
+            "GRPO"
+          ],
+          "rows": [
+            [
+              "32 rollouts/step; distinct tasks",
+              "32",
+              "32",
+              "4"
+            ],
+            [
+              "LR=2×10⁻⁴; held-out pass rate",
+              "21.0%",
+              "19.5%",
+              "21.4%"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "The deployed kernel is undisclosed. B_eff gains are not throughput speedups, and mean reward is not generally the score-norm-weighted variance-optimal baseline.[3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-02529",
+      "paper": "Tune the Baseline First: Most of Muon's Scaled Weight Decay Gain Is a Tuning Gap, but Its Small Real Advantage Grows With Model Size",
+      "authors": "Esther Xin",
+      "url": "https://arxiv.org/abs/2611.02529",
+      "kind": "Brief",
+      "title": "Brief | Tune LR and WD separately for each method",
+      "dateNote": "First posted 2026-11-01 23:59 EST · v1",
+      "evidence": "Based on abstract; full text not read",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "On 1.9M–15M-active-parameter MoEs with fixed tokens/active-parameter and repetition, joint tuning reduces the reported Muon-SW versus constant-WD gap from 0.035 to 0.0026 BPB. Large-model extrapolation and the abstract’s compute-saving accounting remain unverified.[4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-01564",
+      "paper": "Meta-memorization and memorization scaling laws in transformers",
+      "authors": "Alex Nguyen · Kenneth A. Norman · Gautam Reddy",
+      "url": "https://arxiv.org/abs/2611.01564",
+      "kind": "Brief",
+      "title": "Brief | Learning to memorize random sequences faster",
+      "dateNote": "First posted 2026-11-01 00:43 EDT · v1; delayed catch-up outside window",
+      "evidence": "Based on abstract; full text not closely read",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Random binary sequences remove semantic structure. Reported capacity grows roughly linearly with parameters, while memorization rate grows as a power of training time; prior memorization accelerates new-sequence storage. Mechanistic attribution and transfer to natural-language knowledge require further checks.[5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-03165",
+      "paper": "LaBraM at Scale: Scaling Data and Models for EEG Pretraining",
+      "authors": "Jun-Yu Pan · Ruicheng Yin · Bao-Liang Lu · Dongsheng Li · Wei-Long Zheng · Yansen Wang",
+      "url": "https://arxiv.org/abs/2611.03165",
+      "kind": "Brief",
+      "title": "Brief | EEG pretraining loss and transfer can diverge",
+      "dateNote": "First posted 2026-11-02 09:05 EST · v1",
+      "evidence": "Based on abstract; full text not read",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Ten 5.8M–1.97B encoders use 25,067–79,910 EEG hours across 23 tasks. Capacity-dependent data saturation and declining transfer can coexist with improving pretraining loss. Linear probing, full fine-tuning and shared-Qwen readout results are distinct.[6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-02015",
+      "paper": "Scaling Makes It Possible: How Large Models Master Impossible Languages",
+      "authors": "Yaning Jia · Chunhui Zhang · Chiyu Ma · Zhongyu Ouyang · Ivory Yang · Soroush Vosoughi",
+      "url": "https://arxiv.org/abs/2611.02015",
+      "kind": "Brief",
+      "title": "Brief | Size dependence in learning “impossible languages”",
+      "dateNote": "First posted 2026-11-01 10:58 EST · v1",
+      "evidence": "Based on abstract; full text not read",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Million- and billion-parameter models differ after fine-tuning on transformed languages; semantic coherence distinguishes structural and semantic perturbations. This is an empirical size effect, not an established universal power law; pretraining priors may contribute.[7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-03305",
+      "paper": "Calibrated Multiaccuracy: Deterministic and Randomized Sample Complexity",
+      "authors": "Jiuyao Lu · Georgy Noarov · Aaron Roth",
+      "url": "https://arxiv.org/abs/2611.03305",
+      "kind": "Brief",
+      "title": "Brief | Randomization changes calibrated-multiaccuracy sample complexity",
+      "dateNote": "First posted 2026-11-02 10:37 EST · v1",
+      "evidence": "Based on abstract; full proofs not read; Aaron Roth identity checked against official directory and personal page",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Global calibration plus residuals uncorrelated with a bounded test family G. The abstract separates randomized and deterministic predictors; the deterministic rate below assumes log|G|=Ω(log(1/ε)). Tildes suppress logarithmic factors; full definitions and lower-bound constructions remain unread.[12]"
+        },
+        {
+          "type": "equation",
+          "tex": "n_{\\rm rand}=\\widetilde\\Theta\\!\\left(\\frac{\\log|G|}{\\varepsilon^2}+\\varepsilon^{-5/2}\\right),\\qquad n_{\\rm det}=\\widetilde\\Theta\\!\\left(\\frac{\\log|G|}{\\varepsilon^2}+\\frac{(\\log|G|)^{1/3}}{\\varepsilon^{8/3}}\\right)",
+          "label": "Sample-complexity claims from the abstract, not a proof checked here [12]"
+        }
+      ]
+    },
+    {
+      "id": "version-muonrec-2603-00416",
+      "paper": "MuonRec: Shifting the Optimizer Paradigm Beyond Adam in Scalable Generative Recommendation",
+      "authors": "Rong Shan · Aofan Yu · Bo Chen · Kuo Cai · Qiang Luo · Ruiming Tang · Han Li · Weiwen Liu · Weinan Zhang · Jianghao Lin",
+      "url": "https://arxiv.org/abs/2603.00416",
+      "kind": "Version watch",
+      "title": "Version watch | MuonRec v2",
+      "dateNote": "First posted 2026-02-27; v2 dated 2026-11-03 02:53 EST",
+      "evidence": "Version history verified; abstract only, differences unverified",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A v2 of Muon training for recommendation is public. Changes remain unverified; convergence-step and ranking claims in the abstract are not presented as new v2 results.[8]"
+        }
+      ]
+    },
+    {
+      "id": "version-nesterov-2605-06884",
+      "paper": "Muon with Nesterov Momentum: Heavy-Tailed Noise and (Randomized) Inexact Polar Decomposition",
+      "authors": "Sayantan Choudhury · Xiaoran Cheng · Martin Takáč · Sen Na · Mladen Kolar",
+      "url": "https://arxiv.org/abs/2605.06884",
+      "kind": "Version watch",
+      "title": "Version watch | Heavy tails and inexact polar",
+      "dateNote": "First posted 2026-05-07; v2 dated 2026-11-01 05:27 EST; delayed check",
+      "evidence": "Version history verified; abstract only, differences unverified",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The v2 addresses Nesterov momentum, heavy-tailed noise and inexact-polar error control. Complexity claims require additional assumptions; full conditions and version differences are unverified, so no rate or newly added theorem is asserted.[9]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-gae",
+    "paperId": "arxiv:1506.02438",
+    "shortTitle": "GAE",
+    "year": 2016,
+    "topics": [
+      "Post-training"
+    ],
+    "paper": "High-Dimensional Continuous Control Using Generalized Advantage Estimation",
+    "authors": "John Schulman · Philipp Moritz · Sergey Levine · Michael I. Jordan · Pieter Abbeel",
+    "url": "https://arxiv.org/html/1506.02438v5",
+    "kind": "Historical classic",
+    "title": "How λ lets bootstrap error reach the actor",
+    "dateNote": "First posted 2015-06-08; read v5 (2016-09-09), sections 2–4 and experiments; ICLR 2016",
+    "evidence": "Read γ-justness, GAE derivation and control experiments; error expansion is our explanatory algebra",
+    "recognition": {
+      "label": "ICLR 2016 · Important policy-gradient work (DBLP checked 2026-11-04)",
+      "url": "https://dblp.org/rec/journals/corr/SchulmanMLJA15.html"
+    },
+    "question": "For equal critic MSE, how should λ control actor bias when errors concentrate in states with large score norms?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "REINFORCE (1992) uses full returns; TD(λ) combines bootstrapping and multistep returns. GAE applies this structure to advantages and combines it with TRPO for continuous control.[10,11]"
+      },
+      {
+        "type": "text",
+        "text": "Consider an on-policy episode ending at T, reward rₜ and fixed critic V with V(sT)=0; γ and λ lie between zero and one. The paper’s original objective is undiscounted; γ also controls variance.[10]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\delta_t^V=r_t+\\gamma V(s_{t+1})-V(s_t),\\quad \\widehat A_t^{(k)}=\\sum_{l=0}^{k-1}\\gamma^l\\delta_{t+l}^V=\\sum_{l=0}^{k-1}\\gamma^lr_{t+l}+\\gamma^kV(s_{t+k})-V(s_t)",
+        "label": "k-step telescoping sum; k≤T−t [10]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widehat A_t^{\\rm GAE}=\\sum_{l=0}^{T-t-1}(\\gamma\\lambda)^l\\delta_{t+l}^V=\\delta_t^V+\\gamma\\lambda\\widehat A_{t+1}^{\\rm GAE},\\qquad \\widehat A_T^{\\rm GAE}=0",
+        "label": "Exponential multistep mixture yields a backward recurrence [10]"
+      },
+      {
+        "type": "equation",
+        "tex": "e_t=V(s_t)-V^{\\pi,\\gamma}(s_t),\\quad \\widehat A_t^{\\rm GAE}(V)-\\widehat A_t^{\\rm GAE}(V^{\\pi,\\gamma})=-e_t+\\gamma(1-\\lambda)\\sum_{k=1}^{T-t-1}(\\gamma\\lambda)^{k-1}e_{t+k}",
+        "label": "Our finite-episode expansion, with eT=0; current −eₜ is a baseline, while future errors may depend on the action"
+      },
+      {
+        "type": "equation",
+        "tex": "\\lambda=1:\\quad\\widehat A_t=\\sum_{l=0}^{T-t-1}\\gamma^lr_{t+l}-V(s_t),\\qquad \\mathbb E\\sum_t\\widehat A_t\\nabla\\log\\pi(a_t\\mid s_t)=g^\\gamma",
+        "label": "Paper γ-justness: any fixed V; with V=Vπ,γ, every λ is γ-just [10]"
+      },
+      {
+        "type": "note",
+        "title": "Boundary",
+        "text": "γ-justness targets the paper’s gγ, not automatically the undiscounted gradient. A time limit is not a true terminal state and need not have zero bootstrap; control experiments do not quantify LLM gains.[10]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.04465v1",
+      "title": "Muon NTP theory · v1 model and theorems"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.03590v1",
+      "title": "Multi-epoch pretraining · v1 theory and budget appendix"
+    },
+    {
+      "url": "https://www.trajectory.ai/field-notes/you-only-rollout-once",
+      "title": "GS1 · methods, evaluation and Appendices A–C"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.02529",
+      "title": "Muon-SW tuning · abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.01564",
+      "title": "Meta-memorization · abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.03165",
+      "title": "LaBraM scaling · abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.02015",
+      "title": "Impossible languages · abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2603.00416",
+      "title": "MuonRec · version history and abstract"
+    },
+    {
+      "url": "https://arxiv.org/abs/2605.06884",
+      "title": "Nesterov Muon · version history and abstract"
+    },
+    {
+      "url": "https://arxiv.org/html/1506.02438v5",
+      "title": "GAE · v5 full text (historical background)"
+    },
+    {
+      "url": "https://dblp.org/rec/journals/corr/SchulmanMLJA15.html",
+      "title": "DBLP · ICLR 2016 bibliographic recognition"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.03305",
+      "title": "Calibrated Multiaccuracy · abstract only"
+    }
+  ]
+}

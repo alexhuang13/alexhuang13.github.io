@@ -4,8 +4,33 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-03",
+  "latest": "2026-11-04",
   "issues": [
+    {
+      "date": "2026-11-04",
+      "title": "方向、集成与单次经验",
+      "url": "/digest/2026-11-04.html",
+      "translations": {
+        "en": {
+          "title": "Directions, ensembles and one-shot experience",
+          "url": "/digest/en/2026-11-04.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.04465v1",
+        "https://arxiv.org/html/2611.03590v1",
+        "https://www.trajectory.ai/field-notes/you-only-rollout-once",
+        "https://arxiv.org/abs/2611.02529",
+        "https://arxiv.org/abs/2611.01564",
+        "https://arxiv.org/abs/2611.03165",
+        "https://arxiv.org/abs/2611.02015",
+        "https://arxiv.org/abs/2603.00416",
+        "https://arxiv.org/abs/2605.06884",
+        "https://arxiv.org/html/1506.02438v5",
+        "https://dblp.org/rec/journals/corr/SchulmanMLJA15.html",
+        "https://arxiv.org/abs/2611.03305"
+      ]
+    },
     {
       "date": "2026-11-03",
       "title": "外推曲线，也要看训练之后",

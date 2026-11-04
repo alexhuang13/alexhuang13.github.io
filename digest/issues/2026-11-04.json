@@ -1,0 +1,369 @@
+{
+  "date": "2026-11-04",
+  "number": "022",
+  "publishedAt": "2026-11-04T13:49:50Z",
+  "window": "2026-11-01 08:43 EST — 2026-11-04 08:43 EST · America/New_York；另补收11月1日凌晨的漏检条目",
+  "readingMinutes": 17,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training"
+  ],
+  "edition": "每日研究笔记",
+  "title": "方向、集成与单次经验",
+  "subtitle": "Muon谱间隔 · 多轮训练与集成 · GS1 · 精读GAE",
+  "intro": "三篇主读：Muon如何选择注意力方向、固定数据下集成怎样改变早停，以及单次rollout怎样估计基线。另列五条新稿简讯与两条版本观察；经典精读GAE中的望远镜求和与偏差。",
+  "articles": [
+    {
+      "id": "paper-2611-04465",
+      "paper": "Theoretical Analysis of Muon on Transformers for Next-Token Prediction",
+      "authors": "Shengwei Wu · Yixuan Yang · Gao Huang · Song Li",
+      "url": "https://arxiv.org/html/2611.04465v1",
+      "kind": "主读",
+      "title": "先学输出，再让注意力趋向谱最大间隔",
+      "dateNote": "首发2026-11-03 02:52 EST · v1",
+      "evidence": "已读模型、Algorithm 1、Theorems 1–2及相关假设；未逐行核对附录证明",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "单层softmax注意力，直接优化合并后的输出矩阵W₁与注意力矩阵W₂。先在单token数据上训练W₁，再冻结它训练W₂；两者均零初始化。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "f(X)=\\operatorname{softmax}\\!\\left(W_1X\\operatorname{softmax}(X^\\top W_2q)\\right),\\quad R_* =\\min_W\\{\\|W\\|_{\\rm op}:(x_n^*-x)^\\top Wq_n\\ge1\\ \\forall n,x\\in\\mathcal X_n^-\\}",
+          "label": "q为末token，x*为正确token，𝒳⁻为其他上下文token；γ*=1/R* [1]"
+        },
+        {
+          "type": "text",
+          "text": "假设：token嵌入正交，标签由双射h决定；正确token存在且频数不低于其他token，并有共同分离矩阵。充分预训练、固定momentum与足够小的η₀下：[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\eta_t=\\eta_0(t+1)^{-1/2},\\quad 0<\\mathcal L_T(W_{2,t})-\\ell_T^*\\le C_1t^{C_2}e^{-C_3\\sqrt t},\\quad 0\\le\\gamma_* -\\rho_2(W_{2,t}/\\|W_{2,t}\\|_{\\rm op})\\le C_4\\frac{1+\\log t}{\\sqrt t}",
+          "label": "原文Theorem 2；ρ₂是最小注意力score间隔，常数依赖有限数据与预训练结果 [1]"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "这是精确polar、全批量、分阶段且直接训练合并矩阵的结论；不等于多层Transformer联合训练或有限Newton–Schulz步的保证。[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-03590",
+      "paper": "A Scaling Theory of Multi-Epoch Pretraining: Late-Time Overfitting and Ensembling",
+      "authors": "Zhen Yang · Yidi Miao · Blake Bordelon",
+      "url": "https://arxiv.org/html/2611.03590v1",
+      "kind": "主读",
+      "title": "数据固定时，多训与多模型怎样分配",
+      "dateNote": "首发2026-11-02 13:34 EST · v1",
+      "evidence": "已读§2、§3.5及附录A.2预算与拟合设置；未逐项核验DMFT证明",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "FineWeb重复训练中，验证loss可先降后升；logit集成延后早停。理论用共享数据、独立随机特征投影分析可约与不可约的误差相关性。[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal L_E(\\tau)=C_{\\rm cross}(\\tau)+\\frac{C_{\\rm self}(\\tau)-C_{\\rm cross}(\\tau)}{E}",
+          "label": "原文平方误差恒等式：E为成员数，self/cross为同一/不同成员误差乘积期望 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal L_{s,E}\\approx\\mathcal L_{s,\\infty}+\\alpha_sE^{-\\beta},\\quad \\beta\\approx1;\\qquad C_{\\rm proxy}=END,\\quad D=40P",
+          "label": "左为LM经验拟合；右为40轮共同训练窗口预算，P为唯一tokens、N为每成员计数参数 [2]"
+        },
+        {
+          "type": "text",
+          "text": "四个85M计数参数成员与一个两倍宽模型同预算；排除embedding、输出head及标量gain。RF的最优早停分配则只计到各自停时，两种预算不可混用。[2]"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "集成只消除成员间可变部分，共享数据误差仍在；平方误差RF恒等式与交叉熵近似须分开。参数-token预算不含集成推理开销，也不是实测墙钟。[2]"
+        }
+      ]
+    },
+    {
+      "id": "trajectory-gs1",
+      "paper": "You Only Rollout Once",
+      "authors": "Nikhil Vemuri · Dian Ang Yap · Trajectory Labs",
+      "url": "https://www.trajectory.ai/field-notes/you-only-rollout-once",
+      "kind": "主读",
+      "title": "每题一次rollout，向其他题借基线",
+      "dateNote": "技术博客2026-11-02",
+      "evidence": "已读方法、结果及附录A–C；实际GS1 kernel未公开",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "GRPO（2024）以同题多样本作比较；GS1用其他题的奖励做相似度加权。w只能使用采样前题目信息和其他rollout，不能偷看本条回答或长度。[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "b_i=\\frac{\\sum_{j\\ne i}w_{ij}r_j}{\\sum_{j\\ne i}w_{ij}},\\quad g=\\frac1B\\sum_i(r_i-b_i)\\nabla\\log\\pi_\\theta(\\tau_i\\mid x_i),\\quad \\mathbb E[b_i\\nabla\\log\\pi_\\theta(\\tau_i\\mid x_i)\\mid x_i,\\mathcal D_{-i}]=0",
+          "label": "独立on-policy采样的基线恒等式；𝒟₋ᵢ排除当前rollout [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "B_{\\rm eff}\\approx\\frac{B\\sigma_\\epsilon^2}{\\sigma_\\epsilon^2+\\operatorname{MSE}(b)},\\quad \\sigma_\\epsilon^2=\\mathbb E\\operatorname{Var}(r\\mid x)",
+          "label": "原文近似指标：忽略跨样本协方差、score范数与优势幅度关联、真梯度平方项 [3]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Inkling-Small / AutomationBench",
+            "GS1",
+            "FlashRF",
+            "GRPO"
+          ],
+          "rows": [
+            [
+              "32 rollouts/step；不同题数",
+              "32",
+              "32",
+              "4"
+            ],
+            [
+              "LR=2×10⁻⁴；held-out pass rate",
+              "21.0%",
+              "19.5%",
+              "21.4%"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "实用kernel未公开；B_eff改善不是吞吐提速。均值奖励基线也不是一般的score范数加权方差最优基线。[3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-02529",
+      "paper": "Tune the Baseline First: Most of Muon's Scaled Weight Decay Gain Is a Tuning Gap, but Its Small Real Advantage Grows With Model Size",
+      "authors": "Esther Xin",
+      "url": "https://arxiv.org/abs/2611.02529",
+      "kind": "简讯",
+      "title": "简讯｜先分别调好LR与WD",
+      "dateNote": "首发2026-11-01 23:59 EST · v1",
+      "evidence": "基于摘要；未读正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "1.9M–15M active参数MoE、固定tokens/active参数与重复度：独立联合调参后，Muon-SW相对常量WD的报告差距由0.035降至0.0026 BPB。不能从这个小规模阶梯推出大模型收益；摘要的compute-saving口径尚未核实。[4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-01564",
+      "paper": "Meta-memorization and memorization scaling laws in transformers",
+      "authors": "Alex Nguyen · Kenneth A. Norman · Gautam Reddy",
+      "url": "https://arxiv.org/abs/2611.01564",
+      "kind": "简讯",
+      "title": "简讯｜随机序列也能学会更快地记忆",
+      "dateNote": "首发2026-11-01 00:43 EDT · v1；窗口外延迟补收",
+      "evidence": "基于摘要；全文未精读",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "随机二进制序列排除语义结构：作者报告容量约随参数线性增长，记忆速率随训练时间幂律增加；预先记过更多序列后，新序列需要更少重复。机制归因仍须正文与消融核对，不能等同自然语料中的知识学习。[5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-03165",
+      "paper": "LaBraM at Scale: Scaling Data and Models for EEG Pretraining",
+      "authors": "Jun-Yu Pan · Ruicheng Yin · Bao-Liang Lu · Dongsheng Li · Wei-Long Zheng · Yansen Wang",
+      "url": "https://arxiv.org/abs/2611.03165",
+      "kind": "简讯",
+      "title": "简讯｜EEG预训练的loss与迁移并不同步",
+      "dateNote": "首发2026-11-02 09:05 EST · v1",
+      "evidence": "基于摘要；未读正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "十个5.8M–1.97B编码器、25,067–79,910小时EEG，覆盖23任务；容量相关的数据饱和与下降的迁移性能可与持续下降的预训练loss并存。线性探测、全量微调和共同Qwen读出结论须分开，不是生物学同名scaling。[6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-02015",
+      "paper": "Scaling Makes It Possible: How Large Models Master Impossible Languages",
+      "authors": "Yaning Jia · Chunhui Zhang · Chiyu Ma · Zhongyu Ouyang · Ivory Yang · Soroush Vosoughi",
+      "url": "https://arxiv.org/abs/2611.02015",
+      "kind": "简讯",
+      "title": "简讯｜“不可能语言”的规模依赖",
+      "dateNote": "首发2026-11-01 10:58 EST · v1",
+      "evidence": "基于摘要；未读正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "百万与十亿参数模型在人工变换语言上的微调差距不同；作者用semantic coherence区分结构扰动与语义。属于经验规模效应，不据此声称发现通用幂律，亦不能排除预训练先验贡献。[7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-03305",
+      "paper": "Calibrated Multiaccuracy: Deterministic and Randomized Sample Complexity",
+      "authors": "Jiuyao Lu · Georgy Noarov · Aaron Roth",
+      "url": "https://arxiv.org/abs/2611.03305",
+      "kind": "简讯",
+      "title": "简讯｜校准多准确性中的随机化样本收益",
+      "dateNote": "首发2026-11-02 10:37 EST · v1",
+      "evidence": "基于摘要；未读证明；Aaron Roth由官方目录及个人页核验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "全局校准加上残差与有界测试族G不相关。摘要给出随机与确定预测器的分离；下式确定型速率要求log|G|=Ω(log(1/ε))。波浪号隐藏对数因子，精确定义与下界构造未读。[12]"
+        },
+        {
+          "type": "equation",
+          "tex": "n_{\\rm rand}=\\widetilde\\Theta\\!\\left(\\frac{\\log|G|}{\\varepsilon^2}+\\varepsilon^{-5/2}\\right),\\qquad n_{\\rm det}=\\widetilde\\Theta\\!\\left(\\frac{\\log|G|}{\\varepsilon^2}+\\frac{(\\log|G|)^{1/3}}{\\varepsilon^{8/3}}\\right)",
+          "label": "摘要中的样本复杂度结论，未在此核验完整证明 [12]"
+        }
+      ]
+    },
+    {
+      "id": "version-muonrec-2603-00416",
+      "paper": "MuonRec: Shifting the Optimizer Paradigm Beyond Adam in Scalable Generative Recommendation",
+      "authors": "Rong Shan · Aofan Yu · Bo Chen · Kuo Cai · Qiang Luo · Ruiming Tang · Han Li · Weiwen Liu · Weinan Zhang · Jianghao Lin",
+      "url": "https://arxiv.org/abs/2603.00416",
+      "kind": "版本观察",
+      "title": "版本观察｜MuonRec v2",
+      "dateNote": "首发2026-02-27；v2为2026-11-03 02:53 EST",
+      "evidence": "已核验版本历史；基于摘要，版本差异未核实",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "推荐模型Muon训练的v2已公开。尚未确认改动，不把摘要中的收敛步数和排序指标改进当作本次新增结果。[8]"
+        }
+      ]
+    },
+    {
+      "id": "version-nesterov-2605-06884",
+      "paper": "Muon with Nesterov Momentum: Heavy-Tailed Noise and (Randomized) Inexact Polar Decomposition",
+      "authors": "Sayantan Choudhury · Xiaoran Cheng · Martin Takáč · Sen Na · Mladen Kolar",
+      "url": "https://arxiv.org/abs/2605.06884",
+      "kind": "版本观察",
+      "title": "版本观察｜重尾噪声与不精确polar",
+      "dateNote": "首发2026-05-07；v2为2026-11-01 05:27 EST；延迟补查",
+      "evidence": "已核验版本历史；基于摘要，版本差异未核实",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v2涉及Nesterov动量、重尾随机噪声和不精确polar误差控制。复杂度结论有额外噪声/误差假设；未读完整条件与版本diff，暂不展开其阶数或声称新增定理。[9]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-gae",
+    "paperId": "arxiv:1506.02438",
+    "shortTitle": "GAE",
+    "year": 2016,
+    "topics": [
+      "Post-training"
+    ],
+    "paper": "High-Dimensional Continuous Control Using Generalized Advantage Estimation",
+    "authors": "John Schulman · Philipp Moritz · Sergey Levine · Michael I. Jordan · Pieter Abbeel",
+    "url": "https://arxiv.org/html/1506.02438v5",
+    "kind": "历史经典",
+    "title": "λ怎样控制bootstrap误差进入actor",
+    "dateNote": "首发2015-06-08；读v5（2016-09-09）§2–4与实验；ICLR 2016",
+    "evidence": "已读γ-just定义、GAE推导与控制实验；误差展开为本文解释性代数推导",
+    "recognition": {
+      "label": "ICLR 2016 · 策略梯度的重要历史工作（DBLP核验2026-11-04）",
+      "url": "https://dblp.org/rec/journals/corr/SchulmanMLJA15.html"
+    },
+    "question": "同样的critic MSE，若误差集中在高score范数状态，怎样选择λ才能控制actor更新偏差？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "REINFORCE（1992）以完整回报估计更新，TD(λ)把bootstrap与多步回报连接。GAE将此结构用于优势估计；论文还结合TRPO做高维连续控制。[10,11]"
+      },
+      {
+        "type": "text",
+        "text": "设on-policy回合在T终止，rₜ为即时奖励，V为固定critic，V(sT)=0；γ、λ均介于0与1。论文原目标为不折扣总奖励，γ在分析中也作为方差控制参数。[10]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\delta_t^V=r_t+\\gamma V(s_{t+1})-V(s_t),\\quad \\widehat A_t^{(k)}=\\sum_{l=0}^{k-1}\\gamma^l\\delta_{t+l}^V=\\sum_{l=0}^{k-1}\\gamma^lr_{t+l}+\\gamma^kV(s_{t+k})-V(s_t)",
+        "label": "k步望远镜和；k≤T−t [10]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widehat A_t^{\\rm GAE}=\\sum_{l=0}^{T-t-1}(\\gamma\\lambda)^l\\delta_{t+l}^V=\\delta_t^V+\\gamma\\lambda\\widehat A_{t+1}^{\\rm GAE},\\qquad \\widehat A_T^{\\rm GAE}=0",
+        "label": "指数混合多步估计，得到可逆序计算的递归 [10]"
+      },
+      {
+        "type": "equation",
+        "tex": "e_t=V(s_t)-V^{\\pi,\\gamma}(s_t),\\quad \\widehat A_t^{\\rm GAE}(V)-\\widehat A_t^{\\rm GAE}(V^{\\pi,\\gamma})=-e_t+\\gamma(1-\\lambda)\\sum_{k=1}^{T-t-1}(\\gamma\\lambda)^{k-1}e_{t+k}",
+        "label": "我们的有限回合代数展开，终点误差eT=0；当前−eₜ是baseline，未来误差可能与动作相关"
+      },
+      {
+        "type": "equation",
+        "tex": "\\lambda=1:\\quad\\widehat A_t=\\sum_{l=0}^{T-t-1}\\gamma^lr_{t+l}-V(s_t),\\qquad \\mathbb E\\sum_t\\widehat A_t\\nabla\\log\\pi(a_t\\mid s_t)=g^\\gamma",
+        "label": "原文γ-just结论：任意固定V；若V=Vπ,γ，任意λ亦γ-just [10]"
+      },
+      {
+        "type": "note",
+        "title": "边界",
+        "text": "γ-just针对论文定义的gγ，不自动等于原不折扣目标梯度。有限长度截断若并非真实终止，不能擅设V=0；控制实验的结论也不直接量化LLM收益。[10]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.04465v1",
+      "title": "Muon NTP理论 · v1模型与定理"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.03590v1",
+      "title": "多轮预训练 · v1理论与附录预算"
+    },
+    {
+      "url": "https://www.trajectory.ai/field-notes/you-only-rollout-once",
+      "title": "GS1 · 方法、评估与附录A–C"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.02529",
+      "title": "Muon-SW调参 · 仅摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.01564",
+      "title": "Meta-memorization · 仅摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.03165",
+      "title": "LaBraM scaling · 仅摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.02015",
+      "title": "Impossible languages · 仅摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2603.00416",
+      "title": "MuonRec · 版本历史与摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2605.06884",
+      "title": "Nesterov Muon · 版本历史与摘要"
+    },
+    {
+      "url": "https://arxiv.org/html/1506.02438v5",
+      "title": "GAE · v5正文（历史背景）"
+    },
+    {
+      "url": "https://dblp.org/rec/journals/corr/SchulmanMLJA15.html",
+      "title": "DBLP · ICLR 2016书目与入选依据"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.03305",
+      "title": "Calibrated Multiaccuracy · 仅摘要"
+    }
+  ]
+}

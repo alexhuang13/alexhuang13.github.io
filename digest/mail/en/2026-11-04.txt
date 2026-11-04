@@ -1,0 +1,66 @@
+RESEARCH DIGEST / 2026-11-04
+Directions, ensembles and one-shot experience
+Muon spectral margins · Multi-epoch ensembles · GS1 · GAE
+
+中文: https://alexhuang13.github.io/digest/2026-11-04.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-04.html
+
+Main reading
+Learn outputs first, then spectral max-margin attention
+Theoretical Analysis of Muon on Transformers for Next-Token Prediction
+https://alexhuang13.github.io/digest/en/2026-11-04.html#paper-2611-04465
+
+Main reading
+Allocate fixed-data compute between time and members
+A Scaling Theory of Multi-Epoch Pretraining: Late-Time Overfitting and Ensembling
+https://alexhuang13.github.io/digest/en/2026-11-04.html#paper-2611-03590
+
+Main reading
+One rollout per task, a baseline borrowed from other tasks
+You Only Rollout Once
+https://alexhuang13.github.io/digest/en/2026-11-04.html#trajectory-gs1
+
+Brief
+Brief | Tune LR and WD separately for each method
+Tune the Baseline First: Most of Muon's Scaled Weight Decay Gain Is a Tuning Gap, but Its Small Real Advantage Grows With Model Size
+https://alexhuang13.github.io/digest/en/2026-11-04.html#paper-2611-02529
+
+Brief
+Brief | Learning to memorize random sequences faster
+Meta-memorization and memorization scaling laws in transformers
+https://alexhuang13.github.io/digest/en/2026-11-04.html#paper-2611-01564
+
+Brief
+Brief | EEG pretraining loss and transfer can diverge
+LaBraM at Scale: Scaling Data and Models for EEG Pretraining
+https://alexhuang13.github.io/digest/en/2026-11-04.html#paper-2611-03165
+
+Brief
+Brief | Size dependence in learning “impossible languages”
+Scaling Makes It Possible: How Large Models Master Impossible Languages
+https://alexhuang13.github.io/digest/en/2026-11-04.html#paper-2611-02015
+
+Brief
+Brief | Randomization changes calibrated-multiaccuracy sample complexity
+Calibrated Multiaccuracy: Deterministic and Randomized Sample Complexity
+https://alexhuang13.github.io/digest/en/2026-11-04.html#paper-2611-03305
+
+Version watch
+Version watch | MuonRec v2
+MuonRec: Shifting the Optimizer Paradigm Beyond Adam in Scalable Generative Recommendation
+https://alexhuang13.github.io/digest/en/2026-11-04.html#version-muonrec-2603-00416
+
+Version watch
+Version watch | Heavy tails and inexact polar
+Muon with Nesterov Momentum: Heavy-Tailed Noise and (Randomized) Inexact Polar Decomposition
+https://alexhuang13.github.io/digest/en/2026-11-04.html#version-nesterov-2605-06884
+
+Daily classic · 2016
+How λ lets bootstrap error reach the actor
+https://alexhuang13.github.io/digest/en/2026-11-04.html#classic-gae
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-04.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

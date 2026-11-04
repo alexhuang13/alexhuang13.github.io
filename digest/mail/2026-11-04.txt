@@ -1,0 +1,66 @@
+RESEARCH DIGEST / 2026-11-04
+方向、集成与单次经验
+Muon谱间隔 · 多轮训练与集成 · GS1 · 精读GAE
+
+中文: https://alexhuang13.github.io/digest/2026-11-04.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-04.html
+
+主读
+先学输出，再让注意力趋向谱最大间隔
+Theoretical Analysis of Muon on Transformers for Next-Token Prediction
+https://alexhuang13.github.io/digest/2026-11-04.html#paper-2611-04465
+
+主读
+数据固定时，多训与多模型怎样分配
+A Scaling Theory of Multi-Epoch Pretraining: Late-Time Overfitting and Ensembling
+https://alexhuang13.github.io/digest/2026-11-04.html#paper-2611-03590
+
+主读
+每题一次rollout，向其他题借基线
+You Only Rollout Once
+https://alexhuang13.github.io/digest/2026-11-04.html#trajectory-gs1
+
+简讯
+简讯｜先分别调好LR与WD
+Tune the Baseline First: Most of Muon's Scaled Weight Decay Gain Is a Tuning Gap, but Its Small Real Advantage Grows With Model Size
+https://alexhuang13.github.io/digest/2026-11-04.html#paper-2611-02529
+
+简讯
+简讯｜随机序列也能学会更快地记忆
+Meta-memorization and memorization scaling laws in transformers
+https://alexhuang13.github.io/digest/2026-11-04.html#paper-2611-01564
+
+简讯
+简讯｜EEG预训练的loss与迁移并不同步
+LaBraM at Scale: Scaling Data and Models for EEG Pretraining
+https://alexhuang13.github.io/digest/2026-11-04.html#paper-2611-03165
+
+简讯
+简讯｜“不可能语言”的规模依赖
+Scaling Makes It Possible: How Large Models Master Impossible Languages
+https://alexhuang13.github.io/digest/2026-11-04.html#paper-2611-02015
+
+简讯
+简讯｜校准多准确性中的随机化样本收益
+Calibrated Multiaccuracy: Deterministic and Randomized Sample Complexity
+https://alexhuang13.github.io/digest/2026-11-04.html#paper-2611-03305
+
+版本观察
+版本观察｜MuonRec v2
+MuonRec: Shifting the Optimizer Paradigm Beyond Adam in Scalable Generative Recommendation
+https://alexhuang13.github.io/digest/2026-11-04.html#version-muonrec-2603-00416
+
+版本观察
+版本观察｜重尾噪声与不精确polar
+Muon with Nesterov Momentum: Heavy-Tailed Noise and (Randomized) Inexact Polar Decomposition
+https://alexhuang13.github.io/digest/2026-11-04.html#version-nesterov-2605-06884
+
+每日精读 · 2016
+λ怎样控制bootstrap误差进入actor
+https://alexhuang13.github.io/digest/2026-11-04.html#classic-gae
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-04.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

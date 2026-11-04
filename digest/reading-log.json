@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-04",
+    "paperId": "arxiv:1506.02438",
+    "paper": "High-Dimensional Continuous Control Using Generalized Advantage Estimation",
+    "shortTitle": "GAE",
+    "year": 2016,
+    "topics": [
+      "Post-training"
+    ],
+    "recognition": {
+      "label": "ICLR 2016 · 策略梯度的重要历史工作（DBLP核验2026-11-04）",
+      "url": "https://dblp.org/rec/journals/corr/SchulmanMLJA15.html"
+    },
+    "source": "https://arxiv.org/html/1506.02438v5",
+    "url": "/digest/2026-11-04.html#classic-gae"
+  },
+  {
     "date": "2026-11-03",
     "paperId": "arxiv:2206.00364",
     "paper": "Elucidating the Design Space of Diffusion-Based Generative Models",
