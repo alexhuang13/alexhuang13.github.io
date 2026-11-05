@@ -1,0 +1,111 @@
+RESEARCH DIGEST / 2026-11-05
+Data reuse, turn selection and amortizing training
+Dense-retrieval scaling · Turn-BoN · RL with notes · μP
+
+中文: https://alexhuang13.github.io/digest/2026-11-05.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-05.html
+
+Main reading
+Fit the bottom of the repeated-training curve
+Scaling Laws For Data-Constrained Dense Retrieval
+https://alexhuang13.github.io/digest/en/2026-11-05.html#paper-2611-04979
+
+Main reading
+Move Best-of-N before environment execution
+On Turn-Level Best-of-N Sampling for Scaling LLM Agents
+https://alexhuang13.github.io/digest/en/2026-11-05.html#paper-2611-06868
+
+Main reading
+Hold notes fixed and train their use
+Learning in a world of notes
+https://alexhuang13.github.io/digest/en/2026-11-05.html#engram-notes-rl
+
+Brief
+Weijie Su: inference under deployment feedback
+Statistical Inference under Performativity: From Policy Feedback to Self-Evolving Systems
+https://alexhuang13.github.io/digest/en/2026-11-05.html#paper-2611-00438
+
+Brief
+Row orthogonality does not reliably beat row spheres
+Do Orthogonality Constraints Help Language-Model Training Beyond Sphere Optimization?
+https://alexhuang13.github.io/digest/en/2026-11-05.html#paper-2611-00593
+
+Brief
+Axia: trial-efficient scaling search for rankers
+Data-Efficient Scaling-Law Discovery for Recommendation Systems via Coupled Hyperparameter Scaling
+https://alexhuang13.github.io/digest/en/2026-11-05.html#paper-2611-05643
+
+Brief
+PATTS verifies before an image is finished
+PATTS: Parallel-Aware Test-Time Scaling for Thought-Image Generation in Multimodal Discrete Diffusion LLMs
+https://alexhuang13.github.io/digest/en/2026-11-05.html#paper-2611-04948
+
+Brief
+Visual RL can improve typical samples while weakening the tail
+Do Visual RL Gains Scale at Test Time? A Quantile View of Post-Training
+https://alexhuang13.github.io/digest/en/2026-11-05.html#paper-2611-02366
+
+Brief
+Pruning separates coverage from the cost of finding answers
+Rethinking LLM Pruning via Test-Time Scaling
+https://alexhuang13.github.io/digest/en/2026-11-05.html#paper-2611-01133
+
+Brief
+ToolSpace scales tasks from witnessed execution dependencies
+ToolSpace: Scaling Tool-Centric Environment Synthesis for Long-Horizon Agents
+https://alexhuang13.github.io/digest/en/2026-11-05.html#paper-2611-05036
+
+Brief
+Open-HumanScale links video hours to robot success
+Open-HumanScale: An Open Recipe for Scaling Human and Robot Experience for Embodied Foundation Models
+https://alexhuang13.github.io/digest/en/2026-11-05.html#paper-2611-06817
+
+Brief
+Online robot improvement depends on training-task coverage
+Reinforcement Learning Enables Scaling Generalist Robot Policy Improvement
+https://alexhuang13.github.io/digest/en/2026-11-05.html#paper-2611-06905
+
+Brief
+ScaleDrive tests video-scale transfer with frozen encoders
+Scaling Action-Free Video Latent Prediction for Transferable Representations in End-to-End Autonomous Driving
+https://alexhuang13.github.io/digest/en/2026-11-05.html#paper-2611-02853
+
+Brief
+Larger EfficientNets do not consistently gain at fixed resolution
+Within-Family EfficientNet Scaling under Fixed-Resolution Transfer Learning for Spectral-Domain Optical Coherence Tomography Retinal Disease Classification
+https://alexhuang13.github.io/digest/en/2026-11-05.html#paper-2611-06452
+
+Brief
+CUA-Master expands verifiable interaction experience
+CUA-Master: Scaling Computer-use Agents through Open-World Recursive Improvements
+https://alexhuang13.github.io/digest/en/2026-11-05.html#paper-2611-03126
+
+Brief
+Small decision models: calibration does not improve monotonically
+Honest Small Decision Models for Finance: Scale, Specialization Collapse, and Mixed-Corpus Remediation
+https://alexhuang13.github.io/digest/en/2026-11-05.html#paper-2611-03755
+
+Brief
+Axion: two SFT stages followed by verifiable RL
+Axion 1.0: Open Agent Foundation Models, Simplified
+https://alexhuang13.github.io/digest/en/2026-11-05.html#paper-2611-03233
+
+Brief
+NorthCUA v3: version watch
+NorthCUA Technical Report: Turbocharging Computer-Use Agents through Experience at Scale
+https://alexhuang13.github.io/digest/en/2026-11-05.html#paper-2611-02102
+
+Brief
+FireFlash bounds rollout staleness in asynchronous RL
+FireFlash: An Open Recipe for Long-Horizon Agentic RL Achieving the Performance-Cost Pareto Frontier
+https://alexhuang13.github.io/digest/en/2026-11-05.html#fireflash-agentic-rl
+
+Daily classic · 2021
+How much should one update change features as width grows?
+https://alexhuang13.github.io/digest/en/2026-11-05.html#classic-mup
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-05.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

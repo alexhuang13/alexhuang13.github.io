@@ -1,5 +1,22 @@
 [
   {
+    "date": "2026-11-05",
+    "paperId": "arxiv:2203.03466",
+    "paper": "Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer",
+    "shortTitle": "μP and μTransfer",
+    "year": 2021,
+    "topics": [
+      "Deep learning theory",
+      "Scaling laws"
+    ],
+    "recognition": {
+      "label": "NeurIPS 2021 · 超参数迁移的重要历史工作（官方论文集核验2026-11-05）",
+      "url": "https://proceedings.nips.cc/paper_files/paper/2021/hash/8df7c2e3c3c3be098ef7b382bd2c37ba-Abstract.html"
+    },
+    "source": "https://arxiv.org/html/2203.03466v1",
+    "url": "/digest/2026-11-05.html#classic-mup"
+  },
+  {
     "date": "2026-11-04",
     "paperId": "arxiv:1506.02438",
     "paper": "High-Dimensional Continuous Control Using Generalized Advantage Estimation",

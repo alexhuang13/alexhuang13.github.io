@@ -1,0 +1,111 @@
+RESEARCH DIGEST / 2026-11-05
+数据复用、逐轮选择与训练摊销
+密集检索 scaling · Turn-BoN · 笔记上的 RL · 精读 μP
+
+中文: https://alexhuang13.github.io/digest/2026-11-05.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-05.html
+
+主读
+把重复训练的谷底作为 scaling 目标
+Scaling Laws For Data-Constrained Dense Retrieval
+https://alexhuang13.github.io/digest/2026-11-05.html#paper-2611-04979
+
+主读
+把 Best-of-N 放在环境执行之前
+On Turn-Level Best-of-N Sampling for Scaling LLM Agents
+https://alexhuang13.github.io/digest/2026-11-05.html#paper-2611-06868
+
+主读
+固定笔记，训练模型怎样使用它
+Learning in a world of notes
+https://alexhuang13.github.io/digest/2026-11-05.html#engram-notes-rl
+
+简讯
+Weijie Su：部署反馈下的统计推断
+Statistical Inference under Performativity: From Policy Feedback to Self-Evolving Systems
+https://alexhuang13.github.io/digest/2026-11-05.html#paper-2611-00438
+
+简讯
+行正交约束未稳定超过逐行球面
+Do Orthogonality Constraints Help Language-Model Training Beyond Sphere Optimization?
+https://alexhuang13.github.io/digest/2026-11-05.html#paper-2611-00593
+
+简讯
+Axia：排序架构的少试验 scaling 搜索
+Data-Efficient Scaling-Law Discovery for Recommendation Systems via Coupled Hyperparameter Scaling
+https://alexhuang13.github.io/digest/2026-11-05.html#paper-2611-05643
+
+简讯
+PATTS：在图像成形前做验证
+PATTS: Parallel-Aware Test-Time Scaling for Thought-Image Generation in Multimodal Discrete Diffusion LLMs
+https://alexhuang13.github.io/digest/2026-11-05.html#paper-2611-04948
+
+简讯
+视觉 RL 提高单样本，也可能削弱上尾
+Do Visual RL Gains Scale at Test Time? A Quantile View of Post-Training
+https://alexhuang13.github.io/digest/2026-11-05.html#paper-2611-02366
+
+简讯
+剪枝后的覆盖率与找到答案的成本
+Rethinking LLM Pruning via Test-Time Scaling
+https://alexhuang13.github.io/digest/2026-11-05.html#paper-2611-01133
+
+简讯
+ToolSpace：以真实执行依赖扩展任务
+ToolSpace: Scaling Tool-Centric Environment Synthesis for Long-Horizon Agents
+https://alexhuang13.github.io/digest/2026-11-05.html#paper-2611-05036
+
+简讯
+Open-HumanScale：人类视频时数与机器人成功率
+Open-HumanScale: An Open Recipe for Scaling Human and Robot Experience for Embodied Foundation Models
+https://alexhuang13.github.io/digest/2026-11-05.html#paper-2611-06817
+
+简讯
+机器人在线改进取决于训练任务覆盖
+Reinforcement Learning Enables Scaling Generalist Robot Policy Improvement
+https://alexhuang13.github.io/digest/2026-11-05.html#paper-2611-06905
+
+简讯
+ScaleDrive：冻结编码器检验视频规模迁移
+Scaling Action-Free Video Latent Prediction for Transferable Representations in End-to-End Autonomous Driving
+https://alexhuang13.github.io/digest/2026-11-05.html#paper-2611-02853
+
+简讯
+固定分辨率下，更宽深的 EfficientNet 未稳定获益
+Within-Family EfficientNet Scaling under Fixed-Resolution Transfer Learning for Spectral-Domain Optical Coherence Tomography Retinal Disease Classification
+https://alexhuang13.github.io/digest/2026-11-05.html#paper-2611-06452
+
+简讯
+CUA-Master：扩展可验证交互经验
+CUA-Master: Scaling Computer-use Agents through Open-World Recursive Improvements
+https://alexhuang13.github.io/digest/2026-11-05.html#paper-2611-03126
+
+简讯
+小决策模型：容量与校准不是单调关系
+Honest Small Decision Models for Finance: Scale, Specialization Collapse, and Mixed-Corpus Remediation
+https://alexhuang13.github.io/digest/2026-11-05.html#paper-2611-03755
+
+简讯
+Axion：两阶段 SFT 后接可验证 RL
+Axion 1.0: Open Agent Foundation Models, Simplified
+https://alexhuang13.github.io/digest/2026-11-05.html#paper-2611-03233
+
+简讯
+NorthCUA v3：版本观察
+NorthCUA Technical Report: Turbocharging Computer-Use Agents through Experience at Scale
+https://alexhuang13.github.io/digest/2026-11-05.html#paper-2611-02102
+
+简讯
+FireFlash：异步 rollout 的陈旧度上限
+FireFlash: An Open Recipe for Long-Horizon Agentic RL Achieving the Performance-Cost Pareto Frontier
+https://alexhuang13.github.io/digest/2026-11-05.html#fireflash-agentic-rl
+
+每日精读 · 2021
+宽度变了，单次更新应改变多少特征？
+https://alexhuang13.github.io/digest/2026-11-05.html#classic-mup
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-05.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

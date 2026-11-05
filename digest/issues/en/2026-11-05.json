@@ -1,0 +1,579 @@
+{
+  "date": "2026-11-05",
+  "number": "023",
+  "publishedAt": "2026-11-05T13:43:22Z",
+  "window": "2026-11-02 08:34 — 2026-11-05 08:34 EST · America/New_York; includes catch-up on recent announcements",
+  "readingMinutes": 19,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Post-training",
+    "Muon"
+  ],
+  "edition": "Daily research notes",
+  "title": "Data reuse, turn selection and amortizing training",
+  "subtitle": "Dense-retrieval scaling · Turn-BoN · RL with notes · μP",
+  "intro": "Three main readings: retrieval early stopping with limited unique data, turn-level action selection at inference, and RL with fixed notes. Briefs cover scaling, Muon, technical reports and subscribed authors. The classic is μP.",
+  "articles": [
+    {
+      "id": "paper-2611-04979",
+      "paper": "Scaling Laws For Data-Constrained Dense Retrieval",
+      "authors": "Bowen Fu · Jingtao Zhan",
+      "url": "https://arxiv.org/html/2611.04979v1",
+      "kind": "Main reading",
+      "title": "Fit the bottom of the repeated-training curve",
+      "dateNote": "2026-11-03 09:33 EST · v1",
+      "evidence": "Read Sections 3–4 and Tables 2 and 5; not reproduced",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Supervised retrieval often repeats scarce labels, so the final checkpoint can overfit. The study fine-tunes BERT-Tiny through Base on MS MARCO, sweeping 5K–320K unique query–document pairs over 35 configurations.[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "L_*(N,U)=\\min_{t\\in\\mathcal T}L_{\\rm eval}(t;N,U),\\qquad L_*\\approx A N^{-\\alpha} U^{-\\beta}+\\delta",
+          "label": "Left: MAEL over evaluated checkpoints. Right: paper fit; N counts non-embedding parameters and U unique training pairs [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Same 35-point grid",
+            "Fit R²",
+            "RMSE"
+          ],
+          "rows": [
+            [
+              "Kaplan style",
+              "0.88",
+              "0.133"
+            ],
+            [
+              "Chinchilla style",
+              "0.96",
+              "0.076"
+            ],
+            [
+              "Multiplicative",
+              "0.99",
+              "0.035"
+            ]
+          ]
+        },
+        {
+          "type": "equation",
+          "tex": "C_{\\rm ft}=Q N^a U^b,\\qquad -\\frac{d\\log(L_*-\\delta)}{d\\log C_{\\rm ft}}=\\begin{cases}\\alpha/a & U\\text{ fixed}\\\\\\beta/b & N\\text{ fixed}\\end{cases}",
+          "label": "Marginal comparison derived from the two fits; ratio about 1.46, counting fine-tuning compute only [1]"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "This is a local empirical law for training to the loss minimum. Table 5’s nearest observed runs use relative compute 1.00 versus 1.08; only the predicted comparison is budget matched. Pretraining and serving costs are excluded.[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-06868",
+      "paper": "On Turn-Level Best-of-N Sampling for Scaling LLM Agents",
+      "authors": "Jalaj Bhandari · Dhawal Gupta · Hongli Zhan · Zhenting Wang · Varad Pimpalkhute · Zhengzhong Liu · Eric Xing · Rupesh Srivastava",
+      "url": "https://arxiv.org/html/2611.06868v1",
+      "kind": "Main reading",
+      "title": "Move Best-of-N before environment execution",
+      "dateNote": "2026-11-04 13:23 EST · v1",
+      "evidence": "Read method, Section 3 and Table 1; not reproduced",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Whole-trajectory resampling selects after completion. Here a stronger off-the-shelf model ranks candidate commands at every turn, and only the chosen command reaches the environment, avoiding branch rollback.[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "a_{tj}\\sim\\pi(\\cdot\\mid h_t),\\ j=1,\\ldots,N;\\quad j_t=S(h_t,a_{t1:N}),\\quad h_{t+1}=\\operatorname{step}(h_t,a_{tj_t})",
+          "label": "Method schematic: hₜ is history and S a listwise selector; no trajectory-optimality theorem [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "C_{\\rm out}=\\sum_t\\left(\\sum_{j=1}^N |a_{tj}|+|z_t|\\right)",
+          "label": "Explanatory accounting: zₜ is selector output; excludes input tokens, FLOPs and wall time [2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "K2-Horizon-375B / Kimi-K3",
+            "Mean executed turns",
+            "Output-token ratio"
+          ],
+          "rows": [
+            [
+              "N=1 (no selector)",
+              "69.5",
+              "1.0×"
+            ],
+            [
+              "N=4",
+              "41.0",
+              "3.6×"
+            ],
+            [
+              "N=8",
+              "33.9",
+              "5.6×"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "Terminal-Bench v2.1 uses 89 tasks with four attempts each. Better pass@1 and repeat success use more output budget; no general advantage over equal-compute trajectory sampling or with weaker selectors is established.[2]"
+        }
+      ]
+    },
+    {
+      "id": "engram-notes-rl",
+      "paper": "Learning in a world of notes",
+      "authors": "Engram",
+      "url": "https://engram.com/blog/learning-in-a-world-of-notes",
+      "kind": "Main reading",
+      "title": "Hold notes fixed and train their use",
+      "dateNote": "2026-11-04 · technical blog",
+      "evidence": "Read setup, cost model and changing-notes experiment; not reproduced",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Notes, raw files, prompts and harness stay fixed; GRPO with LoRA changes only model weights. Training and evaluation tasks are disjoint. Controls add notes first, then RL.[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "R_\\lambda(\\tau)=R_{\\rm task}(\\tau)-\\lambda C(\\tau),\\qquad q_*=\\frac{K_{\\rm train}}{c_{\\rm comparator}-c_{\\rm tuned}}",
+          "label": "Left: reward schematic. Right: break-even with shared notes cost and constant cost per query [3]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Harvey C&H / same notes",
+            "Accuracy",
+            "Cost per query"
+          ],
+          "rows": [
+            [
+              "Qwen 3.8-27B + RL, λ=0.05",
+              "77.84%",
+              "$0.0608"
+            ],
+            [
+              "GPT-6 Sol medium",
+              "77.92%",
+              "$0.1677"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "With modeled training cost of $372.57, break-even is about 3,487 queries. It depends on prices, utilization and traffic. Hex does not match the best frontier comparator, so the gains need not transfer across workspaces.[3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-00438",
+      "paper": "Statistical Inference under Performativity: From Policy Feedback to Self-Evolving Systems",
+      "authors": "Tianwei Gao , Garrett G. Wen , Huiying Zhong , Lihua Lei , Weijie Su , Zhun Deng",
+      "url": "https://arxiv.org/abs/2611.00438",
+      "kind": "Brief",
+      "title": "Weijie Su: inference under deployment feedback",
+      "dateNote": "2026-10-30 18:45 EDT · v1; delayed catch-up",
+      "evidence": "Based on abstract; full text not verified",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Fixed-round CLTs and covariance recursions propagate prior estimation error; omitting it can yield undercoverage. This extends conference work; additions were not compared one by one.[4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-00593",
+      "paper": "Do Orthogonality Constraints Help Language-Model Training Beyond Sphere Optimization?",
+      "authors": "Kai Hu , Li Zhang , Weichen Yu , Matt Fredrikson , Haoqi Hu",
+      "url": "https://arxiv.org/abs/2611.00593",
+      "kind": "Brief",
+      "title": "Row orthogonality does not reliably beat row spheres",
+      "dateNote": "2026-10-30 23:42 EDT · v1; delayed catch-up",
+      "evidence": "Based on abstract; full text not verified",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In 360M–3.1B pretraining, row spheres beat tuned Muon while larger orthogonal blocks do not reliably improve on spheres. Weight constraints differ from orthogonalized updates.[5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-05643",
+      "paper": "Data-Efficient Scaling-Law Discovery for Recommendation Systems via Coupled Hyperparameter Scaling",
+      "authors": "John Martabano Landy , Louis C. Tiao , Yao Xuan , Luc Kien Hang , Rupinder P. Khandpur , Arvind M. Vepa , Srinidhi Raghavendran , Anirudh Agrawal , Xiaoyi Leo Liu , Jiang Liu , Peggy Yao , Alireza Vahdatpour , Djordje Gligorijevic",
+      "url": "https://arxiv.org/abs/2611.05643",
+      "kind": "Brief",
+      "title": "Axia: trial-efficient scaling search for rankers",
+      "dateNote": "2026-11-03 16:27 EST · v1",
+      "evidence": "Based on abstract; full text not verified",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Tie heterogeneous architecture knobs into low-dimensional variables, then use posterior acquisition to estimate a Pareto frontier. Results across 34 model iterations do not establish a universal power law.[6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-04948",
+      "paper": "PATTS: Parallel-Aware Test-Time Scaling for Thought-Image Generation in Multimodal Discrete Diffusion LLMs",
+      "authors": "Yasong Dai , Zeeshan Hayder , David Ahmedt-Aristizabal , Hongdong Li",
+      "url": "https://arxiv.org/abs/2611.04948",
+      "kind": "Brief",
+      "title": "PATTS verifies before an image is finished",
+      "dateNote": "2026-11-03 09:10 EST · v1",
+      "evidence": "Based on abstract; full text not verified",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Discrete diffusion jointly generates thought and image tokens; reliability-weighted verification searches intermediate states. At N=32 on MMaDA-Parallel, GenEval is 0.844 versus 0.787 for BoN; equal sample counts need not mean equal compute.[7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-02366",
+      "paper": "Do Visual RL Gains Scale at Test Time? A Quantile View of Post-Training",
+      "authors": "Austin Wang , Lexing Ying",
+      "url": "https://arxiv.org/abs/2611.02366",
+      "kind": "Brief",
+      "title": "Visual RL can improve typical samples while weakening the tail",
+      "dateNote": "2026-11-01 20:26 EST · v1; delayed catch-up",
+      "evidence": "Based on abstract; full text not verified",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Larger Best-of-N relies more on the reward upper tail, so higher single-sample quality can reverse at larger budgets. QUPO mixes quantile utilities; the abstract reports gains on SD3.5-M and BAGEL.[8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-01133",
+      "paper": "Rethinking LLM Pruning via Test-Time Scaling",
+      "authors": "Mingyang Song , Mao Zheng",
+      "url": "https://arxiv.org/abs/2611.01133",
+      "kind": "Brief",
+      "title": "Pruning separates coverage from the cost of finding answers",
+      "dateNote": "2026-10-31 13:22 EDT · v1; delayed catch-up",
+      "evidence": "Based on abstract; full text not verified",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Some structurally pruned models recover coverage at large k despite lower pass@1. Matching sample counts differs from matching tokens; extra attempts can erase savings from shorter responses.[9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-05036",
+      "paper": "ToolSpace: Scaling Tool-Centric Environment Synthesis for Long-Horizon Agents",
+      "authors": "Guanting Dong , Zhichao Sun , Xinyu Yang , Rui Wang , Xin Deng , Jiajie Jin , Zhixiong Yang , Junhao Huang , Han Han , Mingyu Ma , Xiaotao Wang , Yuyang Hu , Xiaoshuai Song , Xiaoxi Li , Jiejun Tan , Zhecan Wang , Shihan Dou , Honglin Guo , Zhiheng Xi , Tao Gui , Tao Ji , Qi Zhang , Yutao Zhu , Ji-Rong Wen , Zhicheng Dou",
+      "url": "https://arxiv.org/abs/2611.05036",
+      "kind": "Brief",
+      "title": "ToolSpace scales tasks from witnessed execution dependencies",
+      "dateNote": "2026-11-03 10:09 EST · v1",
+      "evidence": "Based on abstract; full text not verified",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Build tool graphs from real traces, sample with rollback and validate replay. Reported gains persist as data and environment scale; task quality can matter alongside quantity.[10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-06817",
+      "paper": "Open-HumanScale: An Open Recipe for Scaling Human and Robot Experience for Embodied Foundation Models",
+      "authors": "Juncheng Ma , Jiaxin Li , Jiankai Tu , Bo Liang , Guodong Lv , Yufan Deng , Junzhe Tang , Liangzhu Yang , Chen Bian , Zicong Cao , Baohao Zhu , Jianxin Bi , Tengfei Yan , Yinyuan Zhang , Kewei Zhang , Xinglong Chen , Kaiqi Chen , Duomin Wang , Xiaotian Tang , Liang Tan , Li Li , Yuan Xu , Haosen Yang , Yuqi Wang , Jingfei Xia , Songyan Huang , Zhiyang Dou , Zhen Dong , Enze Xie , Tat-Seng Chua , Daquan Zhou",
+      "url": "https://arxiv.org/abs/2611.06817",
+      "kind": "Brief",
+      "title": "Open-HumanScale links video hours to robot success",
+      "dateNote": "2026-11-04 12:31 EST · v1",
+      "evidence": "Based on abstract; full text not verified",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The 50,000-hour egocentric corpus yields a reported log-linear hours–success relation in closed-loop simulation. Physical demonstrations do not independently validate that law.[11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-06905",
+      "paper": "Reinforcement Learning Enables Scaling Generalist Robot Policy Improvement",
+      "authors": "Michal Korniak , Marco Bagatella , Ralf Römer , Michal Nauman , Yarden As , Pranav Vignesh , Manan Agarwal , Leander Diaz-Bone , Piotr Zalewski , Mikołaj Czarnecki , Lenart Treven , Shashwat Saxena , Sreyas Venkataraman , Sarvesh Patil , Zhiyuan Zhou , Daniel Marta , Oier Mees , Nur Muhammad Mahi Shafiullah , Carmelo Sferrazza , Bhavya Sukhija , Angela P. Schoellig , Andreas Krause , Max Simchowitz , Andrew Wagenmaker",
+      "url": "https://arxiv.org/abs/2611.06905",
+      "kind": "Brief",
+      "title": "Online robot improvement depends on training-task coverage",
+      "dateNote": "2026-11-04 13:52 EST · v1",
+      "evidence": "Based on abstract; full text not verified",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "With greater task diversity on MolmoSpaces, the paper reports better preservation of unseen-task performance with critic-guided extraction or refinement than filtered SFT; coverage and algorithm are separate factors.[12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-02853",
+      "paper": "Scaling Action-Free Video Latent Prediction for Transferable Representations in End-to-End Autonomous Driving",
+      "authors": "Xingtai Gui , Xubin Zhou , Yucheng Zhou , Dongqian Guo , Jiahao Gong , Feiyang Tan , Jianbing Shen",
+      "url": "https://arxiv.org/abs/2611.02853",
+      "kind": "Brief",
+      "title": "ScaleDrive tests video-scale transfer with frozen encoders",
+      "dateNote": "2026-11-02 04:54 EST · v1; delayed catch-up",
+      "evidence": "Based on abstract; full text not verified",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Scaling action-free video pretraining improves depth and ego-motion probes on frozen representations; closed-loop transfer depends on the tested downstream protocol.[13]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-06452",
+      "paper": "Within-Family EfficientNet Scaling under Fixed-Resolution Transfer Learning for Spectral-Domain Optical Coherence Tomography Retinal Disease Classification",
+      "authors": "Shkelqim Sherifi",
+      "url": "https://arxiv.org/abs/2611.06452",
+      "kind": "Brief",
+      "title": "Larger EfficientNets do not consistently gain at fixed resolution",
+      "dateNote": "2026-11-04 07:53 EST · v1",
+      "evidence": "Based on abstract; full text not verified",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Accuracy is nonmonotone across B0–B7 on 224×224 Kermany OCT transfer. This single-dataset negative result does not cover joint resolution scaling.[14]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-03126",
+      "paper": "CUA-Master: Scaling Computer-use Agents through Open-World Recursive Improvements",
+      "authors": "Xinlei Yu , Gen Li , Ji Zhao , Zhangquan Chen , Congcong Wang , Shuai Dong , Zelin Peng , Yuqi Xu , Hongrui Wu , Kaiwen Tuo , Cheng Yang , Kaituo Feng , Yifan Wu , Jiayi Zhang , Dongming Wu , Wenqi Shao , Jiaqi Wang , Xiangyu Yue",
+      "url": "https://arxiv.org/abs/2611.03126",
+      "kind": "Brief",
+      "title": "CUA-Master expands verifiable interaction experience",
+      "dateNote": "2026-11-02 08:41 EST · v1",
+      "evidence": "Based on abstract; full text not verified",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Extract workflows from public video, compose task primitives and collect traces using snapshot retries. Iterations improve, but data construction and policy both change.[15]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-03755",
+      "paper": "Honest Small Decision Models for Finance: Scale, Specialization Collapse, and Mixed-Corpus Remediation",
+      "authors": "Ajitabh Kumar",
+      "url": "https://arxiv.org/abs/2611.03755",
+      "kind": "Brief",
+      "title": "Small decision models: calibration does not improve monotonically",
+      "dateNote": "2026-11-02 06:18 EST · v1; delayed catch-up",
+      "evidence": "Based on abstract; full text not verified",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The authors report better calibration at 2B than 9–32B under prior drift, and use mixed corpora to retain capabilities in one adapter. Evidence is task- and metric-specific.[16]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-03233",
+      "paper": "Axion 1.0: Open Agent Foundation Models, Simplified",
+      "authors": "Yuqi Jia , Yunjie Tian , Jiayu Zheng , Yijun Liang , Jingchen Sun , Mengyu Zhao , Di Fu",
+      "url": "https://arxiv.org/abs/2611.03233",
+      "kind": "Brief",
+      "title": "Axion: two SFT stages followed by verifiable RL",
+      "dateNote": "2026-11-02 09:48 EST · v1; v2 2026-11-03 05:54 EST, changes not verified",
+      "evidence": "Read abstract and released recipe; v1/v2 not compared",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Construct self-contained reasoning problems, add tool-dependent verifiable traces, then run RL. The public recipe supports reproduction, not a general conclusion that DPO or distillation is unnecessary.[17,18]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-02102",
+      "paper": "NorthCUA Technical Report: Turbocharging Computer-Use Agents through Experience at Scale",
+      "authors": "Chaoyun Zhang , Bingxuan Li , Pinxue Guo , Yangfan Gao , Zikun Cai , Tianci Xie , Hui Li , Yuqi Huang , Yifei Cao , Bo Mao , Tian Tang , Qichang Zheng , Tongtong Liu , Xiaoxing Wang , Jinxiu Liu , Lizhi Lin , Zhou Shao , Maosen Zhou , Miao Zheng , Shuo Zhang , Yangji He , Kepeng Lei , Ning Zhao , Wei Shen , Zhenjiang Jin , Xinyue Zhang , Peng Sun , Zhenhua Han , Rui Zheng , Hang Yan",
+      "url": "https://arxiv.org/abs/2611.02102",
+      "kind": "Brief",
+      "title": "NorthCUA v3: version watch",
+      "dateNote": "2026-11-01 13:16 EST · v1; delayed catch-up; v3 2026-11-04 01:00 EST, changes not verified",
+      "evidence": "Based on abstract; full text not verified",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Verified the November 4 v3. Its abstract describes a loop from executable tasks and verified traces to desktop and web RL; differences are unverified and no new result is attributed to v3.[19]"
+        }
+      ]
+    },
+    {
+      "id": "fireflash-agentic-rl",
+      "paper": "FireFlash: An Open Recipe for Long-Horizon Agentic RL Achieving the Performance-Cost Pareto Frontier",
+      "authors": "Wenbo Hu · Jesse Cai · Po-nien Kung · Yuxuan Lu · Di Wu · Huimin Zeng · Nanyun Peng · Dakuo Wang · Kai-Wei Chang",
+      "url": "https://agenteconomics.org/posts/agentic-rl-recipe",
+      "kind": "Brief",
+      "title": "FireFlash bounds rollout staleness in asynchronous RL",
+      "dateNote": "2026-11-02 · technical blog; catch-up",
+      "evidence": "Read method, training configuration and result comparison",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Under five days on 64 B300s: separate sampling and training, keep turns up to six weight versions stale, and truncate importance ratios. The Terminal-Bench 4.0 base score comes from a published run, so the entire gap cannot be assigned to RL.[20]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.04979v1",
+      "title": "Dense-retrieval scaling · Sections 3–4 and Tables 2, 5"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.06868v1",
+      "title": "Turn-BoN · Section 3, Table 1 and trajectory analysis"
+    },
+    {
+      "url": "https://engram.com/blog/learning-in-a-world-of-notes",
+      "title": "Engram · Setup, Figure 2 and cost Table 1"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.00438",
+      "title": "Statistical Inference under Performativity: From Policy Feedback to Self-Evolving Systems · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.00593",
+      "title": "Do Orthogonality Constraints Help Language-Model Training Beyond Sphere Optimization? · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.05643",
+      "title": "Data-Efficient Scaling-Law Discovery for Recommendation Systems via Coupled Hyperparameter Scaling · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.04948",
+      "title": "PATTS: Parallel-Aware Test-Time Scaling for Thought-Image Generation in Multimodal Discrete Diffusion LLMs · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.02366",
+      "title": "Do Visual RL Gains Scale at Test Time? A Quantile View of Post-Training · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.01133",
+      "title": "Rethinking LLM Pruning via Test-Time Scaling · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.05036",
+      "title": "ToolSpace: Scaling Tool-Centric Environment Synthesis for Long-Horizon Agents · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.06817",
+      "title": "Open-HumanScale: An Open Recipe for Scaling Human and Robot Experience for Embodied Foundation Models · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.06905",
+      "title": "Reinforcement Learning Enables Scaling Generalist Robot Policy Improvement · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.02853",
+      "title": "Scaling Action-Free Video Latent Prediction for Transferable Representations in End-to-End Autonomous Driving · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.06452",
+      "title": "Within-Family EfficientNet Scaling under Fixed-Resolution Transfer Learning for Spectral-Domain Optical Coherence Tomography Retinal Disease Classification · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.03126",
+      "title": "CUA-Master: Scaling Computer-use Agents through Open-World Recursive Improvements · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.03755",
+      "title": "Honest Small Decision Models for Finance: Scale, Specialization Collapse, and Mixed-Corpus Remediation · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.03233",
+      "title": "Axion 1.0: Open Agent Foundation Models, Simplified · abstract and version history"
+    },
+    {
+      "url": "https://github.com/bytedance/axion1_0",
+      "title": "Axion · authors’ released recipe"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.02102",
+      "title": "NorthCUA Technical Report: Turbocharging Computer-Use Agents through Experience at Scale · abstract and version history"
+    },
+    {
+      "url": "https://agenteconomics.org/posts/agentic-rl-recipe",
+      "title": "FireFlash · method and configuration table"
+    },
+    {
+      "url": "https://arxiv.org/html/2203.03466v1",
+      "title": "Tensor Programs V · arXiv v1 Sections 3–4, Table 8 and Appendix D"
+    },
+    {
+      "url": "https://proceedings.nips.cc/paper_files/paper/2021/hash/8df7c2e3c3c3be098ef7b382bd2c37ba-Abstract.html",
+      "title": "Official NeurIPS 2021 proceedings (historical)"
+    }
+  ],
+  "classic": {
+    "id": "classic-mup",
+    "paperId": "arxiv:2203.03466",
+    "shortTitle": "μP and μTransfer",
+    "year": 2021,
+    "topics": [
+      "Deep learning theory",
+      "Scaling laws"
+    ],
+    "paper": "Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer",
+    "authors": "Greg Yang · Edward J. Hu · Igor Babuschkin · Szymon Sidor · Xiaodong Liu · David Farhi · Nick Ryder · Jakub Pachocki · Weizhu Chen · Jianfeng Gao",
+    "url": "https://arxiv.org/html/2203.03466v1",
+    "kind": "Historical classic",
+    "title": "How much should one update change features as width grows?",
+    "dateNote": "NeurIPS 2021; first arXiv posting and version read: v1, 2022-03-07",
+    "evidence": "Read Sections 3–4, Table 8 and Appendix D; one-layer counting below is illustrative",
+    "recognition": {
+      "label": "NeurIPS 2021 · Foundational work on hyperparameter transfer (proceedings checked 2026-11-05)",
+      "url": "https://proceedings.nips.cc/paper_files/paper/2021/hash/8df7c2e3c3c3be098ef7b382bd2c37ba-Abstract.html"
+    },
+    "question": "With matrix-orthogonalizing optimizers, how would coordinate checks distinguish a bad width rule from a bad attention parametrization?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Standard parametrization controls initialization scale without necessarily controlling feature updates. Tensor Programs’ infinite-width feature-learning analysis (2021) motivates μP; this paper turns it into small-model tuning followed by transfer.[21,22]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\operatorname{Var}(W_{ij,0})\\asymp n^{-1},\\quad \\eta_{\\rm Adam,hidden}\\asymp n^{-1},\\quad f(x)=n^{-1}v^\\top h(x),\\quad \\eta_{\\rm Adam,readout}\\asymp 1",
+        "label": "Table 8 width orders: both hidden axes grow, output dimension is fixed, and v has constant initialization variance [21]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\Delta z_i=\\sum_{j=1}^n \\Delta W_{ij}h_j\\approx \\frac{\\eta}{n}\\sum_{j=1}^n c_j h_j=O(1)",
+        "label": "Illustrative counting: aligned normalized updates cⱼ can sum against inputs at order n; independent zero-mean cancellation is not assumed"
+      },
+      {
+        "type": "equation",
+        "tex": "\\Delta f_{\\rm readout}=n^{-1}\\sum_j\\Delta v_j h_j,\\qquad \\Delta v_j=O(1)",
+        "label": "Readout update at fixed h: explicit 1/n balances an aligned sum"
+      },
+      {
+        "type": "equation",
+        "tex": "c_\\ell(n,t)=\\frac1{d_\\ell}\\sum_{i=1}^{d_\\ell}|h_{\\ell,i}^{(t)}|",
+        "label": "One form of the coordinate check: compare average coordinate magnitudes at equal steps across widths [21]"
+      },
+      {
+        "type": "note",
+        "title": "Boundary",
+        "text": "Stable width order is an implementation diagnostic, not a guarantee of exactly invariant optimal learning rates. Transformer and ResNet experiments do not automatically cover depth changes, dataset shifts or Muon.[21]"
+      }
+    ]
+  }
+}

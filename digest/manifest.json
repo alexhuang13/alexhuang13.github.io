@@ -4,8 +4,43 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-04",
+  "latest": "2026-11-05",
   "issues": [
+    {
+      "date": "2026-11-05",
+      "title": "数据复用、逐轮选择与训练摊销",
+      "url": "/digest/2026-11-05.html",
+      "translations": {
+        "en": {
+          "title": "Data reuse, turn selection and amortizing training",
+          "url": "/digest/en/2026-11-05.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.04979v1",
+        "https://arxiv.org/html/2611.06868v1",
+        "https://engram.com/blog/learning-in-a-world-of-notes",
+        "https://arxiv.org/abs/2611.00438",
+        "https://arxiv.org/abs/2611.00593",
+        "https://arxiv.org/abs/2611.05643",
+        "https://arxiv.org/abs/2611.04948",
+        "https://arxiv.org/abs/2611.02366",
+        "https://arxiv.org/abs/2611.01133",
+        "https://arxiv.org/abs/2611.05036",
+        "https://arxiv.org/abs/2611.06817",
+        "https://arxiv.org/abs/2611.06905",
+        "https://arxiv.org/abs/2611.02853",
+        "https://arxiv.org/abs/2611.06452",
+        "https://arxiv.org/abs/2611.03126",
+        "https://arxiv.org/abs/2611.03755",
+        "https://arxiv.org/abs/2611.03233",
+        "https://github.com/bytedance/axion1_0",
+        "https://arxiv.org/abs/2611.02102",
+        "https://agenteconomics.org/posts/agentic-rl-recipe",
+        "https://arxiv.org/html/2203.03466v1",
+        "https://proceedings.nips.cc/paper_files/paper/2021/hash/8df7c2e3c3c3be098ef7b382bd2c37ba-Abstract.html"
+      ]
+    },
     {
       "date": "2026-11-04",
       "title": "方向、集成与单次经验",

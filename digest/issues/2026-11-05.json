@@ -1,0 +1,579 @@
+{
+  "date": "2026-11-05",
+  "number": "023",
+  "publishedAt": "2026-11-05T13:43:22Z",
+  "window": "2026-11-02 08:34 — 2026-11-05 08:34 EST · America/New_York；含近期公告的延迟补收",
+  "readingMinutes": 19,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Post-training",
+    "Muon"
+  ],
+  "edition": "每日研究笔记",
+  "title": "数据复用、逐轮选择与训练摊销",
+  "subtitle": "密集检索 scaling · Turn-BoN · 笔记上的 RL · 精读 μP",
+  "intro": "三篇主读：有限唯一数据下的检索早停、推理时逐轮选动作、固定笔记上的强化学习。另收 scaling、Muon、技术报告和指定作者新稿；经典精读 μP。",
+  "articles": [
+    {
+      "id": "paper-2611-04979",
+      "paper": "Scaling Laws For Data-Constrained Dense Retrieval",
+      "authors": "Bowen Fu · Jingtao Zhan",
+      "url": "https://arxiv.org/html/2611.04979v1",
+      "kind": "主读",
+      "title": "把重复训练的谷底作为 scaling 目标",
+      "dateNote": "2026-11-03 09:33 EST · v1",
+      "evidence": "已读 §3–4、表2和表5；未复现",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "监督检索常反复使用少量标注，最终 checkpoint 可能已过拟合。作者在 MS MARCO 上对 BERT-Tiny 至 Base 微调，扫 5K–320K 唯一 query–document 对、共35种配置。[1]"
+        },
+        {
+          "type": "equation",
+          "tex": "L_*(N,U)=\\min_{t\\in\\mathcal T}L_{\\rm eval}(t;N,U),\\qquad L_*\\approx A N^{-\\alpha} U^{-\\beta}+\\delta",
+          "label": "左：离散评估点的 MAEL；右：原文经验拟合，N 为非 embedding 参数，U 为唯一训练对 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "同一35点网格",
+            "拟合 R²",
+            "RMSE"
+          ],
+          "rows": [
+            [
+              "Kaplan式",
+              "0.88",
+              "0.133"
+            ],
+            [
+              "Chinchilla式",
+              "0.96",
+              "0.076"
+            ],
+            [
+              "乘积式",
+              "0.99",
+              "0.035"
+            ]
+          ]
+        },
+        {
+          "type": "equation",
+          "tex": "C_{\\rm ft}=Q N^a U^b,\\qquad -\\frac{d\\log(L_*-\\delta)}{d\\log C_{\\rm ft}}=\\begin{cases}\\alpha/a & U\\text{ fixed}\\\\\\beta/b & N\\text{ fixed}\\end{cases}",
+          "label": "据原文两项拟合写出的边际比较；比值约1.46，只计微调计算 [1]"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "这是重复训练到谷底的局部经验规律。表5近邻实测的相对算力是1.00对1.08，不能把预测的等预算比较写成实测等预算；不含预训练或在线检索成本。[1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-06868",
+      "paper": "On Turn-Level Best-of-N Sampling for Scaling LLM Agents",
+      "authors": "Jalaj Bhandari · Dhawal Gupta · Hongli Zhan · Zhenting Wang · Varad Pimpalkhute · Zhengzhong Liu · Eric Xing · Rupesh Srivastava",
+      "url": "https://arxiv.org/html/2611.06868v1",
+      "kind": "主读",
+      "title": "把 Best-of-N 放在环境执行之前",
+      "dateNote": "2026-11-04 13:23 EST · v1",
+      "evidence": "已读方法、§3与表1；未复现",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "整条轨迹重采样只能事后挑选。这里在每轮先生成多个候选命令，由较强的现成模型做列表式选择，环境只执行一个命令；不需回滚探索分支。[2]"
+        },
+        {
+          "type": "equation",
+          "tex": "a_{tj}\\sim\\pi(\\cdot\\mid h_t),\\ j=1,\\ldots,N;\\quad j_t=S(h_t,a_{t1:N}),\\quad h_{t+1}=\\operatorname{step}(h_t,a_{tj_t})",
+          "label": "方法示意：hₜ为历史，S为列表选择器；非全轨迹价值最优性定理 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "C_{\\rm out}=\\sum_t\\left(\\sum_{j=1}^N |a_{tj}|+|z_t|\\right)",
+          "label": "解释性记账：zₜ为选择器输出；不包含输入 tokens、FLOPs 或墙钟 [2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "K2-Horizon-375B / Kimi-K3",
+            "平均执行轮数",
+            "输出 token 倍数"
+          ],
+          "rows": [
+            [
+              "N=1（无选择器）",
+              "69.5",
+              "1.0×"
+            ],
+            [
+              "N=4",
+              "41.0",
+              "3.6×"
+            ],
+            [
+              "N=8",
+              "33.9",
+              "5.6×"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "Terminal-Bench v2.1，89题×4次；pass@1和重复成功率改善伴随输出预算增加。尚未建立与同总算力的整轨迹采样或弱选择器的普遍优势。[2]"
+        }
+      ]
+    },
+    {
+      "id": "engram-notes-rl",
+      "paper": "Learning in a world of notes",
+      "authors": "Engram",
+      "url": "https://engram.com/blog/learning-in-a-world-of-notes",
+      "kind": "主读",
+      "title": "固定笔记，训练模型怎样使用它",
+      "dateNote": "2026-11-04 · 技术博客",
+      "evidence": "已读设定、成本模型与笔记变更实验；未复现",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "固定笔记、原文件、提示词与 harness，仅用 GRPO+LoRA 更新模型；训练任务与评估分开。对照是原文件、原文件加笔记、再加 RL。[3]"
+        },
+        {
+          "type": "equation",
+          "tex": "R_\\lambda(\\tau)=R_{\\rm task}(\\tau)-\\lambda C(\\tau),\\qquad q_*=\\frac{K_{\\rm train}}{c_{\\rm comparator}-c_{\\rm tuned}}",
+          "label": "左：奖励结构示意；右：共享笔记成本且每查询成本恒定时的摊销公式 [3]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Harvey C&H / 同笔记",
+            "准确率",
+            "每查询成本"
+          ],
+          "rows": [
+            [
+              "Qwen 3.8-27B + RL，λ=0.05",
+              "77.84%",
+              "$0.0608"
+            ],
+            [
+              "GPT-6 Sol medium",
+              "77.92%",
+              "$0.1677"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "以估算训练成本 $372.57，约3,487次查询回本。这个交点依赖硬件价格、利用率与流量；Hex 未追平最佳 frontier 对照，不能把收益外推到所有工作区。[3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-00438",
+      "paper": "Statistical Inference under Performativity: From Policy Feedback to Self-Evolving Systems",
+      "authors": "Tianwei Gao , Garrett G. Wen , Huiying Zhong , Lihua Lei , Weijie Su , Zhun Deng",
+      "url": "https://arxiv.org/abs/2611.00438",
+      "kind": "简讯",
+      "title": "Weijie Su：部署反馈下的统计推断",
+      "dateNote": "2026-10-30 18:45 EDT · v1；延迟补收",
+      "evidence": "基于摘要；未核验全文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "固定部署轮次的 CLT 与协方差递推，保留前序估计误差的传播；省略该项可导致区间欠覆盖。arXiv 为会议工作扩展稿，未逐项核对扩展。[4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-00593",
+      "paper": "Do Orthogonality Constraints Help Language-Model Training Beyond Sphere Optimization?",
+      "authors": "Kai Hu , Li Zhang , Weichen Yu , Matt Fredrikson , Haoqi Hu",
+      "url": "https://arxiv.org/abs/2611.00593",
+      "kind": "简讯",
+      "title": "行正交约束未稳定超过逐行球面",
+      "dateNote": "2026-10-30 23:42 EDT · v1；延迟补收",
+      "evidence": "基于摘要；未核验全文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "360M–3.1B 预训练中，块大小1的逐行球面优于调参后的 Muon；更大的正交块未稳定改善。这里约束权重，不能等同 Muon 正交化更新。[5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-05643",
+      "paper": "Data-Efficient Scaling-Law Discovery for Recommendation Systems via Coupled Hyperparameter Scaling",
+      "authors": "John Martabano Landy , Louis C. Tiao , Yao Xuan , Luc Kien Hang , Rupinder P. Khandpur , Arvind M. Vepa , Srinidhi Raghavendran , Anirudh Agrawal , Xiaoyi Leo Liu , Jiang Liu , Peggy Yao , Alireza Vahdatpour , Djordje Gligorijevic",
+      "url": "https://arxiv.org/abs/2611.05643",
+      "kind": "简讯",
+      "title": "Axia：排序架构的少试验 scaling 搜索",
+      "dateNote": "2026-11-03 16:27 EST · v1",
+      "evidence": "基于摘要；未核验全文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "将异构架构旋钮绑定成低维变量，用后验采集选择试验、估计 Pareto 前沿。34个模型迭代的业务结果不等于通用幂律。[6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-04948",
+      "paper": "PATTS: Parallel-Aware Test-Time Scaling for Thought-Image Generation in Multimodal Discrete Diffusion LLMs",
+      "authors": "Yasong Dai , Zeeshan Hayder , David Ahmedt-Aristizabal , Hongdong Li",
+      "url": "https://arxiv.org/abs/2611.04948",
+      "kind": "简讯",
+      "title": "PATTS：在图像成形前做验证",
+      "dateNote": "2026-11-03 09:10 EST · v1",
+      "evidence": "基于摘要；未核验全文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "离散扩散同时生成思考与图像 token；可靠性加权验证器搜索中间态。MMaDA-Parallel 的 N=32 条件下 GenEval 0.844 对 BoN 0.787，样本数相同不保证算力相同。[7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-02366",
+      "paper": "Do Visual RL Gains Scale at Test Time? A Quantile View of Post-Training",
+      "authors": "Austin Wang , Lexing Ying",
+      "url": "https://arxiv.org/abs/2611.02366",
+      "kind": "简讯",
+      "title": "视觉 RL 提高单样本，也可能削弱上尾",
+      "dateNote": "2026-11-01 20:26 EST · v1；延迟补收",
+      "evidence": "基于摘要；未核验全文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Best-of-N 越大越依赖奖励上尾；更高的单样本质量可能在大预算反转。QUPO 混合不同分位效用，摘要报告 SD3.5-M 与 BAGEL 的改善。[8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-01133",
+      "paper": "Rethinking LLM Pruning via Test-Time Scaling",
+      "authors": "Mingyang Song , Mao Zheng",
+      "url": "https://arxiv.org/abs/2611.01133",
+      "kind": "简讯",
+      "title": "剪枝后的覆盖率与找到答案的成本",
+      "dateNote": "2026-10-31 13:22 EDT · v1；延迟补收",
+      "evidence": "基于摘要；未核验全文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "部分结构化剪枝模型低 pass@1 却能在较大 k 恢复覆盖；按样本数匹配不等于按 token 匹配，重试可吞掉短回答节省。[9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-05036",
+      "paper": "ToolSpace: Scaling Tool-Centric Environment Synthesis for Long-Horizon Agents",
+      "authors": "Guanting Dong , Zhichao Sun , Xinyu Yang , Rui Wang , Xin Deng , Jiajie Jin , Zhixiong Yang , Junhao Huang , Han Han , Mingyu Ma , Xiaotao Wang , Yuyang Hu , Xiaoshuai Song , Xiaoxi Li , Jiejun Tan , Zhecan Wang , Shihan Dou , Honglin Guo , Zhiheng Xi , Tao Gui , Tao Ji , Qi Zhang , Yutao Zhu , Ji-Rong Wen , Zhicheng Dou",
+      "url": "https://arxiv.org/abs/2611.05036",
+      "kind": "简讯",
+      "title": "ToolSpace：以真实执行依赖扩展任务",
+      "dateNote": "2026-11-03 10:09 EST · v1",
+      "evidence": "基于摘要；未核验全文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "从真实工具轨迹建图、回滚采样并验证可重放，作者报告数据与环境规模增大仍有收益；不能归因于纯任务数量而忽略任务质量。[10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-06817",
+      "paper": "Open-HumanScale: An Open Recipe for Scaling Human and Robot Experience for Embodied Foundation Models",
+      "authors": "Juncheng Ma , Jiaxin Li , Jiankai Tu , Bo Liang , Guodong Lv , Yufan Deng , Junzhe Tang , Liangzhu Yang , Chen Bian , Zicong Cao , Baohao Zhu , Jianxin Bi , Tengfei Yan , Yinyuan Zhang , Kewei Zhang , Xinglong Chen , Kaiqi Chen , Duomin Wang , Xiaotian Tang , Liang Tan , Li Li , Yuan Xu , Haosen Yang , Yuqi Wang , Jingfei Xia , Songyan Huang , Zhiyang Dou , Zhen Dong , Enze Xie , Tat-Seng Chua , Daquan Zhou",
+      "url": "https://arxiv.org/abs/2611.06817",
+      "kind": "简讯",
+      "title": "Open-HumanScale：人类视频时数与机器人成功率",
+      "dateNote": "2026-11-04 12:31 EST · v1",
+      "evidence": "基于摘要；未核验全文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "50,000小时第一视角语料；闭环仿真中作者拟合预训练时数与成功率的对数线性关系。物理机器人展示不能单独验证同一律。[11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-06905",
+      "paper": "Reinforcement Learning Enables Scaling Generalist Robot Policy Improvement",
+      "authors": "Michal Korniak , Marco Bagatella , Ralf Römer , Michal Nauman , Yarden As , Pranav Vignesh , Manan Agarwal , Leander Diaz-Bone , Piotr Zalewski , Mikołaj Czarnecki , Lenart Treven , Shashwat Saxena , Sreyas Venkataraman , Sarvesh Patil , Zhiyuan Zhou , Daniel Marta , Oier Mees , Nur Muhammad Mahi Shafiullah , Carmelo Sferrazza , Bhavya Sukhija , Angela P. Schoellig , Andreas Krause , Max Simchowitz , Andrew Wagenmaker",
+      "url": "https://arxiv.org/abs/2611.06905",
+      "kind": "简讯",
+      "title": "机器人在线改进取决于训练任务覆盖",
+      "dateNote": "2026-11-04 13:52 EST · v1",
+      "evidence": "基于摘要；未核验全文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在 MolmoSpaces 扩展训练任务多样性，作者报告 critic 引导的策略提取或细化比筛选 SFT 更能保持未见任务表现；任务覆盖与算法是不同因素。[12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-02853",
+      "paper": "Scaling Action-Free Video Latent Prediction for Transferable Representations in End-to-End Autonomous Driving",
+      "authors": "Xingtai Gui , Xubin Zhou , Yucheng Zhou , Dongqian Guo , Jiahao Gong , Feiyang Tan , Jianbing Shen",
+      "url": "https://arxiv.org/abs/2611.02853",
+      "kind": "简讯",
+      "title": "ScaleDrive：冻结编码器检验视频规模迁移",
+      "dateNote": "2026-11-02 04:54 EST · v1；延迟补收",
+      "evidence": "基于摘要；未核验全文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "无动作视频预训练扩大后，冻结表征的深度与自运动探针改善；闭环规划迁移结果依赖被测下游训练协议。[13]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-06452",
+      "paper": "Within-Family EfficientNet Scaling under Fixed-Resolution Transfer Learning for Spectral-Domain Optical Coherence Tomography Retinal Disease Classification",
+      "authors": "Shkelqim Sherifi",
+      "url": "https://arxiv.org/abs/2611.06452",
+      "kind": "简讯",
+      "title": "固定分辨率下，更宽深的 EfficientNet 未稳定获益",
+      "dateNote": "2026-11-04 07:53 EST · v1",
+      "evidence": "基于摘要；未核验全文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Kermany OCT、224×224、B0–B7 的迁移对照中准确率非单调；是一个数据集上的规模负结果，不能推广至联合调分辨率的训练。[14]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-03126",
+      "paper": "CUA-Master: Scaling Computer-use Agents through Open-World Recursive Improvements",
+      "authors": "Xinlei Yu , Gen Li , Ji Zhao , Zhangquan Chen , Congcong Wang , Shuai Dong , Zelin Peng , Yuqi Xu , Hongrui Wu , Kaiwen Tuo , Cheng Yang , Kaituo Feng , Yifan Wu , Jiayi Zhang , Dongming Wu , Wenqi Shao , Jiaqi Wang , Xiangyu Yue",
+      "url": "https://arxiv.org/abs/2611.03126",
+      "kind": "简讯",
+      "title": "CUA-Master：扩展可验证交互经验",
+      "dateNote": "2026-11-02 08:41 EST · v1",
+      "evidence": "基于摘要；未核验全文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用公开视频提取工作流、组合任务原语，并从快照重试生成轨迹。报告多轮改进；数据构建与策略迭代同时变化，不是单变量 scaling。[15]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-03755",
+      "paper": "Honest Small Decision Models for Finance: Scale, Specialization Collapse, and Mixed-Corpus Remediation",
+      "authors": "Ajitabh Kumar",
+      "url": "https://arxiv.org/abs/2611.03755",
+      "kind": "简讯",
+      "title": "小决策模型：容量与校准不是单调关系",
+      "dateNote": "2026-11-02 06:18 EST · v1；延迟补收",
+      "evidence": "基于摘要；未核验全文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "作者报告先验漂移下2B的校准优于9–32B，并用混合语料在单适配器保留多种能力。只是特定任务与指标的实证。[16]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-03233",
+      "paper": "Axion 1.0: Open Agent Foundation Models, Simplified",
+      "authors": "Yuqi Jia , Yunjie Tian , Jiayu Zheng , Yijun Liang , Jingchen Sun , Mengyu Zhao , Di Fu",
+      "url": "https://arxiv.org/abs/2611.03233",
+      "kind": "简讯",
+      "title": "Axion：两阶段 SFT 后接可验证 RL",
+      "dateNote": "2026-11-02 09:48 EST · v1；v2 2026-11-03 05:54 EST，版本差异未核实",
+      "evidence": "已读摘要与公开配方；未比较 v1/v2",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "先构造自含推理题，再加入工具依赖且可程序核验的轨迹，最后 RL。公开配方支持对照复现，不能证明 DPO 或蒸馏在其他任务无用。[17,18]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-02102",
+      "paper": "NorthCUA Technical Report: Turbocharging Computer-Use Agents through Experience at Scale",
+      "authors": "Chaoyun Zhang , Bingxuan Li , Pinxue Guo , Yangfan Gao , Zikun Cai , Tianci Xie , Hui Li , Yuqi Huang , Yifei Cao , Bo Mao , Tian Tang , Qichang Zheng , Tongtong Liu , Xiaoxing Wang , Jinxiu Liu , Lizhi Lin , Zhou Shao , Maosen Zhou , Miao Zheng , Shuo Zhang , Yangji He , Kepeng Lei , Ning Zhao , Wei Shen , Zhenjiang Jin , Xinyue Zhang , Peng Sun , Zhenhua Han , Rui Zheng , Hang Yan",
+      "url": "https://arxiv.org/abs/2611.02102",
+      "kind": "简讯",
+      "title": "NorthCUA v3：版本观察",
+      "dateNote": "2026-11-01 13:16 EST · v1；延迟补收；v3 2026-11-04 01:00 EST，版本差异未核实",
+      "evidence": "基于摘要；未核验全文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "已核验11月4日 v3。摘要仍描述从可执行任务、验证轨迹到桌面与网页 RL 的经验闭环；差异未核实，不视为新增结果。[19]"
+        }
+      ]
+    },
+    {
+      "id": "fireflash-agentic-rl",
+      "paper": "FireFlash: An Open Recipe for Long-Horizon Agentic RL Achieving the Performance-Cost Pareto Frontier",
+      "authors": "Wenbo Hu · Jesse Cai · Po-nien Kung · Yuxuan Lu · Di Wu · Huimin Zeng · Nanyun Peng · Dakuo Wang · Kai-Wei Chang",
+      "url": "https://agenteconomics.org/posts/agentic-rl-recipe",
+      "kind": "简讯",
+      "title": "FireFlash：异步 rollout 的陈旧度上限",
+      "dateNote": "2026-11-02 · 技术博客；补收",
+      "evidence": "已读方法、训练配置及结果对照",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "64张 B300、不足5天；采样与训练分开，保留至多6版陈旧的 rollout turn，并截断重要性比率。Terminal-Bench 4.0 的基座为公开成绩，不能将差距全归因于 RL。[20]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.04979v1",
+      "title": "密集检索 scaling · §3–4与表2、5"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.06868v1",
+      "title": "Turn-BoN · §3、表1与轨迹分析"
+    },
+    {
+      "url": "https://engram.com/blog/learning-in-a-world-of-notes",
+      "title": "Engram · 实验设定、图2与成本表1"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.00438",
+      "title": "Statistical Inference under Performativity: From Policy Feedback to Self-Evolving Systems · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.00593",
+      "title": "Do Orthogonality Constraints Help Language-Model Training Beyond Sphere Optimization? · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.05643",
+      "title": "Data-Efficient Scaling-Law Discovery for Recommendation Systems via Coupled Hyperparameter Scaling · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.04948",
+      "title": "PATTS: Parallel-Aware Test-Time Scaling for Thought-Image Generation in Multimodal Discrete Diffusion LLMs · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.02366",
+      "title": "Do Visual RL Gains Scale at Test Time? A Quantile View of Post-Training · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.01133",
+      "title": "Rethinking LLM Pruning via Test-Time Scaling · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.05036",
+      "title": "ToolSpace: Scaling Tool-Centric Environment Synthesis for Long-Horizon Agents · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.06817",
+      "title": "Open-HumanScale: An Open Recipe for Scaling Human and Robot Experience for Embodied Foundation Models · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.06905",
+      "title": "Reinforcement Learning Enables Scaling Generalist Robot Policy Improvement · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.02853",
+      "title": "Scaling Action-Free Video Latent Prediction for Transferable Representations in End-to-End Autonomous Driving · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.06452",
+      "title": "Within-Family EfficientNet Scaling under Fixed-Resolution Transfer Learning for Spectral-Domain Optical Coherence Tomography Retinal Disease Classification · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.03126",
+      "title": "CUA-Master: Scaling Computer-use Agents through Open-World Recursive Improvements · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.03755",
+      "title": "Honest Small Decision Models for Finance: Scale, Specialization Collapse, and Mixed-Corpus Remediation · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.03233",
+      "title": "Axion 1.0: Open Agent Foundation Models, Simplified · 摘要及版本历史"
+    },
+    {
+      "url": "https://github.com/bytedance/axion1_0",
+      "title": "Axion · 作者公开配方"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.02102",
+      "title": "NorthCUA Technical Report: Turbocharging Computer-Use Agents through Experience at Scale · 摘要及版本历史"
+    },
+    {
+      "url": "https://agenteconomics.org/posts/agentic-rl-recipe",
+      "title": "FireFlash · 方法与配置表"
+    },
+    {
+      "url": "https://arxiv.org/html/2203.03466v1",
+      "title": "Tensor Programs V · arXiv v1 §3–4、表8与附录D"
+    },
+    {
+      "url": "https://proceedings.nips.cc/paper_files/paper/2021/hash/8df7c2e3c3c3be098ef7b382bd2c37ba-Abstract.html",
+      "title": "NeurIPS 2021 官方论文记录（历史）"
+    }
+  ],
+  "classic": {
+    "id": "classic-mup",
+    "paperId": "arxiv:2203.03466",
+    "shortTitle": "μP and μTransfer",
+    "year": 2021,
+    "topics": [
+      "Deep learning theory",
+      "Scaling laws"
+    ],
+    "paper": "Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer",
+    "authors": "Greg Yang · Edward J. Hu · Igor Babuschkin · Szymon Sidor · Xiaodong Liu · David Farhi · Nick Ryder · Jakub Pachocki · Weizhu Chen · Jianfeng Gao",
+    "url": "https://arxiv.org/html/2203.03466v1",
+    "kind": "历史经典",
+    "title": "宽度变了，单次更新应改变多少特征？",
+    "dateNote": "NeurIPS 2021；arXiv 首发及所读 v1：2022-03-07",
+    "evidence": "已读 §3–4、表8与附录D；下列单层计数为简化推导",
+    "recognition": {
+      "label": "NeurIPS 2021 · 超参数迁移的重要历史工作（官方论文集核验2026-11-05）",
+      "url": "https://proceedings.nips.cc/paper_files/paper/2021/hash/8df7c2e3c3c3be098ef7b382bd2c37ba-Abstract.html"
+    },
+    "question": "换成矩阵正交化优化器时，怎样设计 coordinate check，区分宽度规则失配与注意力参数化失配？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "标准参数化控制初始化的激活尺度，却未必控制更新后的尺度。Tensor Programs 的无限宽特征学习分析（2021）引出 μP；本文将其变成先在小模型调参、再迁移的实验方案。[21,22]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\operatorname{Var}(W_{ij,0})\\asymp n^{-1},\\quad \\eta_{\\rm Adam,hidden}\\asymp n^{-1},\\quad f(x)=n^{-1}v^\\top h(x),\\quad \\eta_{\\rm Adam,readout}\\asymp 1",
+        "label": "表8等价参数化的宽度阶：隐藏层两轴增长，输出维数固定，v 初始化方差为常数 [21]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\Delta z_i=\\sum_{j=1}^n \\Delta W_{ij}h_j\\approx \\frac{\\eta}{n}\\sum_{j=1}^n c_j h_j=O(1)",
+        "label": "解释性计数：归一化后的坐标更新 cⱼ 与输入有同阶对齐时，和可达 n 阶；并非假设独立零均值"
+      },
+      {
+        "type": "equation",
+        "tex": "\\Delta f_{\\rm readout}=n^{-1}\\sum_j\\Delta v_j h_j,\\qquad \\Delta v_j=O(1)",
+        "label": "固定 h 的读出更新：显式 1/n 因子抵消对齐和的规模"
+      },
+      {
+        "type": "equation",
+        "tex": "c_\\ell(n,t)=\\frac1{d_\\ell}\\sum_{i=1}^{d_\\ell}|h_{\\ell,i}^{(t)}|",
+        "label": "coordinate check 的一种写法：比较不同宽度、相同步数下的坐标平均量级 [21]"
+      },
+      {
+        "type": "note",
+        "title": "边界",
+        "text": "宽度阶稳定是实现诊断，不能保证最优学习率完全不漂移。论文的 Transformer/ResNet 实验也不自动覆盖深度、数据变化或 Muon。[21]"
+      }
+    ]
+  }
+}
