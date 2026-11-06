@@ -4,8 +4,42 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-05",
+  "latest": "2026-11-06",
   "issues": [
+    {
+      "date": "2026-11-06",
+      "title": "激活复用、蒸馏算力与表征约束",
+      "url": "/digest/2026-11-06.html",
+      "translations": {
+        "en": {
+          "title": "Activation reuse, distillation compute and representation constraints",
+          "url": "/digest/en/2026-11-06.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.07756v1",
+        "https://arxiv.org/abs/2305.16264",
+        "https://arxiv.org/html/2611.08453v1",
+        "https://www.goodfire.com/research/mechanistic-shaping",
+        "https://arxiv.org/html/2611.07071v1",
+        "https://arxiv.org/abs/2611.07367",
+        "https://arxiv.org/abs/2611.07891",
+        "https://arxiv.org/abs/2611.08219",
+        "https://arxiv.org/abs/2611.08263",
+        "https://ernie.baidu.com/release/ernie-5-5-flash-base/",
+        "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base",
+        "https://surgehq.ai/blog/nvidia-nemotron-3-5-super-training-report",
+        "https://surgehq.ai/blog/benchmarking-coding-agent-harnesses",
+        "https://www.ai21.com/blog/ai21-deel-case-study/",
+        "https://www.ai21.com/blog/ai21-alice-case-study/",
+        "https://arxiv.org/abs/2611.07717",
+        "https://arxiv.org/pdf/2611.07717",
+        "https://arxiv.org/abs/2611.08465",
+        "https://arxiv.org/html/2611.08465v1",
+        "https://arxiv.org/html/2210.02747v1",
+        "https://openreview.net/forum?id=PqvMRDCJT9t"
+      ]
+    },
     {
       "date": "2026-11-05",
       "title": "数据复用、逐轮选择与训练摊销",

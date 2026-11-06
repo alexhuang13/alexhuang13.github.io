@@ -1,0 +1,86 @@
+RESEARCH DIGEST / 2026-11-06
+Activation reuse, distillation compute and representation constraints
+SAE scaling · OPD versus GRPO · Mechanistic Shaping · Flow Matching
+
+中文: https://alexhuang13.github.io/digest/2026-11-06.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-06.html
+
+Main reading
+How much fresh data can reused activations replace?
+Scaling Laws for SAE Training Data
+https://alexhuang13.github.io/digest/en/2026-11-06.html#paper-2611-07756
+
+Main reading
+Distillation can be cheap; where did the teacher come from?
+Unpacking the Compute Efficiency of Strong-to-Weak OPD against GRPO
+https://alexhuang13.github.io/digest/en/2026-11-06.html#paper-2611-08453
+
+Main reading
+After behavior changes, can a probe still decode the concept?
+Shaping & Monitoring Models through their Internal Representations
+https://alexhuang13.github.io/digest/en/2026-11-06.html#paper-2611-07071
+
+Brief
+TTSP: inference scaling without a target verifier
+Test-Time Self-Play: Scaling without a Verifier
+https://alexhuang13.github.io/digest/en/2026-11-06.html#paper-2611-07367
+
+Brief
+Larger models do not necessarily compensate better for retrieval-head damage
+When Bigger Becomes Brittle: Why Compression Hurts More as Language Models Scale
+https://alexhuang13.github.io/digest/en/2026-11-06.html#paper-2611-07891
+
+Brief
+Agent‑R²: scaling training tasks grounded in real files
+Agent-R$^2$: Scaling Agents for Realistic Productivity Work via Real-Source Data Synthesis
+https://alexhuang13.github.io/digest/en/2026-11-06.html#paper-2611-08219
+
+Brief
+BEEMO: scale unpaired behavioral data separately
+Scaling Neural Motor Decoding via Decoupled Behavioral Pretraining
+https://alexhuang13.github.io/digest/en/2026-11-06.html#paper-2611-08263
+
+Brief
+ERNIE: Muon in a 33.5T-token pretraining run
+ERNIE 5.5 Flash Base
+https://alexhuang13.github.io/digest/en/2026-11-06.html#ernie-55-flash-base
+
+Brief
+Nemotron: four RL datasets, four checkpoints
+Surge RL Pushes NVIDIA Nemotron 3.5 Super VL Toward Frontier-Level Performance
+https://alexhuang13.github.io/digest/en/2026-11-06.html#surge-nemotron-35
+
+Brief
+Coding agents: higher reasoning effort versus more orchestration
+We Benchmarked Coding Agent Harnesses. Thinking Harder Beat All of Them.
+https://alexhuang13.github.io/digest/en/2026-11-06.html#surge-harness-compute
+
+Brief
+SFT on self-generated trajectories, then on-policy self-distillation
+Post-training case study: Reaching frontier-level intelligence on global payroll with Deel
+https://alexhuang13.github.io/digest/en/2026-11-06.html#ai21-deel-sdpo
+
+Brief
+Make within-group rewards vary before GRPO
+Post-training case study: Reaching frontier-level attack resilience with Alice
+https://alexhuang13.github.io/digest/en/2026-11-06.html#ai21-alice-grpo
+
+Brief
+Pediatric ECG: a fine-tuning data sweep
+Pediatric ECG foundation model via adult-to-pediatric fine-tuning: downstream tasks and clinical evaluation
+https://alexhuang13.github.io/digest/en/2026-11-06.html#paper-2611-07717
+
+Brief
+Activation inversion: scale corpus search or inference samples
+Towards interpreting any residual stream direction by scaling activation inversion
+https://alexhuang13.github.io/digest/en/2026-11-06.html#paper-2611-08465
+
+Daily classic · 2023
+Why does regressing conditional velocities learn the marginal flow?
+https://alexhuang13.github.io/digest/en/2026-11-06.html#classic-flow-matching
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-06.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

@@ -1,0 +1,486 @@
+{
+  "date": "2026-11-06",
+  "number": "024",
+  "publishedAt": "2026-11-06T13:33:05Z",
+  "window": "2026-11-03 08:21 — 2026-11-06 08:21 EST · America/New_York; delayed catch-up marked separately",
+  "readingMinutes": 13,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Post-training",
+    "Muon"
+  ],
+  "edition": "Daily research notes",
+  "title": "Activation reuse, distillation compute and representation constraints",
+  "subtitle": "SAE scaling · OPD versus GRPO · Mechanistic Shaping · Flow Matching",
+  "intro": "Three readings ask when recycled activations approximate fresh data, where the compute bill for distillation starts, and whether sycophancy remains decodable after its behavior is reduced. Briefs cover test-time compute, data scaling and Muon in practice. The classic is Flow Matching.",
+  "articles": [
+    {
+      "id": "paper-2611-07756",
+      "paper": "Scaling Laws for SAE Training Data",
+      "authors": "Nikita Koriagin · Nikita Balagansky · Daniil Gavrilov",
+      "url": "https://arxiv.org/html/2611.07756v1",
+      "kind": "Main reading",
+      "title": "How much fresh data can reused activations replace?",
+      "dateNote": "2026-11-05 05:00 EST · v1 first posted",
+      "evidence": "Read Sections 4.9–4.12 and Tables 1–2; empirical fit",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Sparse autoencoders (SAEs) require extracting and storing base-model activations. Applying Muennighoff et al.’s (2023) data-reuse idea to reconstruction, distinguish unique activations U and dictionary width D at fixed exposure T. [1,2]"
+        },
+        {
+          "type": "equation",
+          "tex": "R=T/U-1,\\qquad N_{\\rm eff}=U[1+R_*(1-e^{-R/R_*})],\\qquad R_*=cD^{-\\gamma}",
+          "label": "Empirical conversion: reuse initially approximates fresh data, then each exposure contributes less [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\operatorname{EV}\\approx E_\\infty-AD^{-\\alpha}-BN_{\\rm eff}^{-\\beta}",
+          "label": "EV is explained variance on held-out activations; terms represent insufficient width and effective data [1]"
+        },
+        {
+          "type": "text",
+          "text": "For Llama‑3.1‑8B layer 15 at D=32k and T=640M, the lower endpoint of near-saturation is U=40M for all three SAEs in Table 2, a 16-fold reduction in activation storage."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Table 2 · SAE",
+            "Nonzero activations",
+            "Peak EV"
+          ],
+          "rows": [
+            [
+              "BatchTopK",
+              "32",
+              "0.6803"
+            ],
+            [
+              "TopK",
+              "32",
+              "0.6807"
+            ],
+            [
+              "JumpReLU",
+              "≈100",
+              "0.7634"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "Sparsity differs; compare reuse trends. Storage reduction does not imply end-to-end compute savings, and reconstruction variance does not measure feature interpretability. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-08453",
+      "paper": "Unpacking the Compute Efficiency of Strong-to-Weak OPD against GRPO",
+      "authors": "Zeyu Leo Liu · Yang Li · Bo Pang · Emre Can Acikgoz · Xuan-Phi Nguyen · Anurag Koul · Srijan Bansal · Erik Nijkamp · Shafiq Joty · Semih Yavuz",
+      "url": "https://arxiv.org/html/2611.08453v1",
+      "kind": "Main reading",
+      "title": "Distillation can be cheap; where did the teacher come from?",
+      "dateNote": "2026-11-05 13:47 EST · v1 first posted",
+      "evidence": "Read objectives, compute accounting, Sections 5–6 and Appendix J",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The student generates its own rollouts. GRPO uses within-group outcome rewards; on-policy distillation (OPD) uses a frozen teacher and renormalizes both distributions over the student’s top 16 tokens at each step. [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\ell_{\\rm OPD}=D_{\\rm KL}(\\widetilde\\pi_s\\|\\widetilde\\pi_t),\\qquad C_{\\rm GRPO}\\simeq10N_s T,\\qquad C_{\\rm OPD}\\simeq(10N_s+2N_t)T",
+          "label": "T counts each run’s generated tokens; Nₛ and Nₜ count parameters. Teacher forwards add cost; shared prompts are omitted [3]"
+        },
+        {
+          "type": "text",
+          "text": "On math alone, using a GRPO checkpoint of the same Qwen3‑4B‑Base as teacher matched the baseline with about 1/50 of GRPO’s FLOPs in the distillation stage. For multiple domains, the bill starts with training specialists, then merges them into a fresh Qwen3‑4B‑Base. [3]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "§6 · Domains",
+            "Specialists + merge to specialist level (EFLOP)",
+            "Total FLOPs saved at matched score"
+          ],
+          "rows": [
+            [
+              "Math, code",
+              "10.7 + 0.55",
+              "42.0%"
+            ],
+            [
+              "Plus knowledge and instruction following",
+              "14.4 + 1.15",
+              "31.6%"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "Matched scores are against the authors’ instance-mixed joint GRPO. External-teacher failures depend on the recipes tested, and FLOPs are not wall-clock time. [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-07071",
+      "paper": "Shaping & Monitoring Models through their Internal Representations",
+      "authors": "Satchel Grant · Michael Byun (blog); Thomas Fel et al. (paper)",
+      "url": "https://www.goodfire.com/research/mechanistic-shaping",
+      "kind": "Main reading",
+      "title": "After behavior changes, can a probe still decode the concept?",
+      "dateNote": "Blog 2026-11-05; paper first posted 2026-11-04 14:29 EST · v1",
+      "evidence": "Read blog, paper framework, DPO comparisons and Figure 14",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Output rewards alone do not specify what a decision should rely on. The authors add a representation penalty to the task objective and distinguish concept expression from reliance. [4,5]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal L(\\theta)=\\mathcal R(\\theta)+\\lambda\\omega(\\theta)",
+          "label": "Minimization form of the framework: task loss plus a representation penalty [5]"
+        },
+        {
+          "type": "equation",
+          "tex": "g_v(z)=v^\\top z+b,\\qquad D_vs(z)=\\nabla_zs(z)^\\top v",
+          "label": "Illustration with fixed unit concept direction v: expression in activation z on the left, local sensitivity of readout s on the right"
+        },
+        {
+          "type": "text",
+          "text": "The OLMo‑3‑7B sycophancy experiment adds a directional attribution penalty to DPO. The original fixed difference-of-means probe’s AUROC falls from 0.981 to 0.931; freely refitted linear probes still recover the signal at evaluated training steps. [4,5]"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "Failure of a fixed probe does not show erasure, and successful refitting in this experiment does not ensure monitoring under distribution shift. [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-07367",
+      "paper": "Test-Time Self-Play: Scaling without a Verifier",
+      "authors": "Akira Yoshiyama , Akmal Ashirmatov , Jonas Hübotter , Ido Hakimi , Andreas Krause",
+      "url": "https://arxiv.org/abs/2611.07367",
+      "kind": "Brief",
+      "title": "TTSP: inference scaling without a target verifier",
+      "dateNote": "2026-11-04 22:07 EST · v1 first posted",
+      "evidence": "Based on abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Asymmetric self-play spends compute on related variants. On a difficulty-calibrated LiveCodeBench v6 subset without a target verifier, the authors report a 35-point mean@8 gain over the strongest baseline; gains vanish when the base policy has nearly no correct-answer coverage. [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-07891",
+      "paper": "When Bigger Becomes Brittle: Why Compression Hurts More as Language Models Scale",
+      "authors": "Gautam Gupta , Dikshant Kukreja , Unique Kumar , Avni Mittal , Deepanshu Dabas , Kshitij Sah , Erik Cambria , Rajiv Ratn Shah , Zhengkui Wang , Avinash Anand",
+      "url": "https://arxiv.org/abs/2611.07891",
+      "kind": "Brief",
+      "title": "Larger models do not necessarily compensate better for retrieval-head damage",
+      "dateNote": "2026-11-05 07:11 EST · v1 first posted",
+      "evidence": "Based on abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "For in-context retrieval, the authors separate damage compensated by the rest of the network from damage reaching the output. At similar damage, the larger tested models compensate less; this is a local mechanism result. [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-08219",
+      "paper": "Agent-R$^2$: Scaling Agents for Realistic Productivity Work via Real-Source Data Synthesis",
+      "authors": "Teng Pan , Zixuan Wang , Yuchen Yan , Qifei Wu , Yao Chen , Yingqi Qu , Ruiqing Zhang , Yongliang Shen",
+      "url": "https://arxiv.org/abs/2611.08219",
+      "kind": "Brief",
+      "title": "Agent‑R²: scaling training tasks grounded in real files",
+      "dateNote": "2026-11-05 11:08 EST · v1 first posted",
+      "evidence": "Based on abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Filter 10k web candidates into 4k tasks with real attachments and deliverable rubrics for 4B-model SFT and rubric-based RL. This is a scalable synthesis pipeline; the abstract does not establish a data-volume power law. [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-08263",
+      "paper": "Scaling Neural Motor Decoding via Decoupled Behavioral Pretraining",
+      "authors": "Divyansha Lachi , Vinam Arora , Shivashriganesh P. Mahato , Alexandre Andre , Eva L. Dyer",
+      "url": "https://arxiv.org/abs/2611.08263",
+      "kind": "Brief",
+      "title": "BEEMO: scale unpaired behavioral data separately",
+      "dateNote": "2026-11-05 11:37 EST · v1 first posted",
+      "evidence": "Based on abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Pretrain on movement trajectories alone, then incorporate neural recordings through cross-attention when available. Extra unpaired behavior data improved transfer to new tasks in nonhuman-primate decoding experiments. [9]"
+        }
+      ]
+    },
+    {
+      "id": "ernie-55-flash-base",
+      "paper": "ERNIE 5.5 Flash Base",
+      "authors": "Baidu ERNIE Team",
+      "url": "https://ernie.baidu.com/release/ernie-5-5-flash-base/",
+      "kind": "Brief",
+      "title": "ERNIE: Muon in a 33.5T-token pretraining run",
+      "dateNote": "2026-11-05 · technical release and model card",
+      "evidence": "Read original methods and relevant results",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The 280B-total, 14B-active MoE was trained from scratch with Muon and FP8 mixed precision. The release gives no budget-matched AdamW control for attributing improvements to Muon. [10,11]"
+        }
+      ]
+    },
+    {
+      "id": "surge-nemotron-35",
+      "paper": "Surge RL Pushes NVIDIA Nemotron 3.5 Super VL Toward Frontier-Level Performance",
+      "authors": "Surge AI",
+      "url": "https://surgehq.ai/blog/nvidia-nemotron-3-5-super-training-report",
+      "kind": "Brief",
+      "title": "Nemotron: four RL datasets, four checkpoints",
+      "dateNote": "2026-11-05 · technical blog",
+      "evidence": "Read original methods and relevant results",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The 120B-total, 12B-active model yields one checkpoint per training dataset. Reported gains span 4.5–18.6 points on 12 benchmarks across those checkpoints. [12]"
+        }
+      ]
+    },
+    {
+      "id": "surge-harness-compute",
+      "paper": "We Benchmarked Coding Agent Harnesses. Thinking Harder Beat All of Them.",
+      "authors": "Surge AI",
+      "url": "https://surgehq.ai/blog/benchmarking-coding-agent-harnesses",
+      "kind": "Brief",
+      "title": "Coding agents: higher reasoning effort versus more orchestration",
+      "dateNote": "First published 2026-11-03 · page also shows 11-05; changes unverified",
+      "evidence": "Read original methods and relevant results",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Across 100 software tasks and four configurations, raising Claude Code reasoning effort beat the tested skills and multi-agent orchestration on this sample. Configurations did not use equal inference budgets. [13]"
+        }
+      ]
+    },
+    {
+      "id": "ai21-deel-sdpo",
+      "paper": "Post-training case study: Reaching frontier-level intelligence on global payroll with Deel",
+      "authors": "Eran Goldstein · Asaf Karnieli · Shaked Meirom · Joanna Kramer; with Abhijit Mehta and Anthony Li",
+      "url": "https://www.ai21.com/blog/ai21-deel-case-study/",
+      "kind": "Brief",
+      "title": "SFT on self-generated trajectories, then on-policy self-distillation",
+      "dateNote": "2026-11-04 · technical case study",
+      "evidence": "Read original methods and relevant results",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "SFT uses 412 accepted hint-assisted trajectories, followed by SDPO on 698 questions. Mean rubric-criterion satisfaction on the payroll QA dev set is 51.3% for base, 65.7% for SFT alone, 63.8% for SDPO alone and 72.0% for the sequence. [14]"
+        }
+      ]
+    },
+    {
+      "id": "ai21-alice-grpo",
+      "paper": "Post-training case study: Reaching frontier-level attack resilience with Alice",
+      "authors": "Assaf Gerner · Guy Rephaeli · Asaf Karnieli · Guy Freund · Shaked Meirom · Joanna Kramer; with Liran Cohen and Dadi Atar",
+      "url": "https://www.ai21.com/blog/ai21-alice-case-study/",
+      "kind": "Brief",
+      "title": "Make within-group rewards vary before GRPO",
+      "dateNote": "2026-11-02 · technical case study; delayed catch-up",
+      "evidence": "Read original methods and relevant results",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Keep actions fixed and have the base model rewrite successful trajectories’ reasoning before SFT. In sandbox training tasks, the share with nonzero within-group reward standard deviation rose from 35% to 66%; subsequent GRPO preserved the magnitude of dense reward gaps. [15]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-07717",
+      "paper": "Pediatric ECG foundation model via adult-to-pediatric fine-tuning: downstream tasks and clinical evaluation",
+      "authors": "Yu Cao , Haiyan Xu , Xiaohan Li , Jian Yang , Yuqing Feng , Wei Wang , Haomin Li",
+      "url": "https://arxiv.org/abs/2611.07717",
+      "kind": "Brief",
+      "title": "Pediatric ECG: a fine-tuning data sweep",
+      "dateNote": "2026-11-05 04:36 EST · v1 first posted",
+      "evidence": "Read Figure 1b results and methods; topic subscription",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Same architecture, fine-tuned sequentially on 1%, 10%, 25%, 50% and 100% subsets. Internal holdout mean AUROC ranges from 0.9079 (1%) to 0.9695 (full data). Sequential adaptation differs from independent fits at each size; no power law is fitted. [16,17]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-08465",
+      "paper": "Towards interpreting any residual stream direction by scaling activation inversion",
+      "authors": "Celeste De Schamphelaere , Juan J. Vazquez , Ari Spiesberger , Tomáš Gavenčiak , Gavin Leech , Euan Ong , Jiahai Feng",
+      "url": "https://arxiv.org/abs/2611.08465",
+      "kind": "Brief",
+      "title": "Activation inversion: scale corpus search or inference samples",
+      "dateNote": "2026-11-05 13:54 EST · v1 first posted",
+      "evidence": "Read comparisons and corpus construction",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Given a residual direction, the model generates highly activating text. Figure 2 compares top snippets from 1.25M–10M-token scans; Figure 4 sweeps 1, 2, 4 and 8 generations shown to the judge and measures identification. The two budgets have different units. [18,19]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.07756v1",
+      "title": "SAE activation-data scaling · v1 Sections 4.9–4.12, Tables 1–2"
+    },
+    {
+      "url": "https://arxiv.org/abs/2305.16264",
+      "title": "Background: Muennighoff et al., data-constrained scaling (2023)"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.08453v1",
+      "title": "OPD versus GRPO · v1 methods, Sections 5–6 and Appendices B and J"
+    },
+    {
+      "url": "https://www.goodfire.com/research/mechanistic-shaping",
+      "title": "Goodfire technical blog · methods and sycophancy experiment"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.07071v1",
+      "title": "Mechanistic Shaping · paper v1 Sections 3, 5.2 and Appendix G.2"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.07367",
+      "title": "Test-Time Self-Play: Scaling without a Verifier · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.07891",
+      "title": "When Bigger Becomes Brittle: Why Compression Hurts More as Language Models Scale · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.08219",
+      "title": "Agent-R$^2$: Scaling Agents for Realistic Productivity Work via Real-Source Data Synthesis · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.08263",
+      "title": "Scaling Neural Motor Decoding via Decoupled Behavioral Pretraining · abstract and version history"
+    },
+    {
+      "url": "https://ernie.baidu.com/release/ernie-5-5-flash-base/",
+      "title": "ERNIE 5.5 Flash Base · original post"
+    },
+    {
+      "url": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base",
+      "title": "ERNIE model card · training recipe"
+    },
+    {
+      "url": "https://surgehq.ai/blog/nvidia-nemotron-3-5-super-training-report",
+      "title": "Surge RL Pushes NVIDIA Nemotron 3.5 Super VL Toward Frontier-Level Performance · original post"
+    },
+    {
+      "url": "https://surgehq.ai/blog/benchmarking-coding-agent-harnesses",
+      "title": "We Benchmarked Coding Agent Harnesses. Thinking Harder Beat All of Them. · original post"
+    },
+    {
+      "url": "https://www.ai21.com/blog/ai21-deel-case-study/",
+      "title": "Post-training case study: Reaching frontier-level intelligence on global payroll with Deel · original post"
+    },
+    {
+      "url": "https://www.ai21.com/blog/ai21-alice-case-study/",
+      "title": "Post-training case study: Reaching frontier-level attack resilience with Alice · original post"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.07717",
+      "title": "Pediatric ECG foundation model via adult-to-pediatric fine-tuning: downstream tasks and clinical evaluation · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2611.07717",
+      "title": "Figure 1b and subsampling methods"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.08465",
+      "title": "Towards interpreting any residual stream direction by scaling activation inversion · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.08465v1",
+      "title": "Figures 2 and 4 and Appendix C"
+    },
+    {
+      "url": "https://arxiv.org/html/2210.02747v1",
+      "title": "Flow Matching · arXiv v1 Sections 2–4 and Appendix A"
+    },
+    {
+      "url": "https://openreview.net/forum?id=PqvMRDCJT9t",
+      "title": "Official ICLR 2023 paper record (historical)"
+    }
+  ],
+  "classic": {
+    "id": "classic-flow-matching",
+    "paperId": "arxiv:2210.02747",
+    "shortTitle": "Flow Matching",
+    "year": 2023,
+    "topics": [
+      "Diffusion models"
+    ],
+    "paper": "Flow Matching for Generative Modeling",
+    "authors": "Yaron Lipman · Ricky T. Q. Chen · Heli Ben-Hamu · Maximilian Nickel · Matt Le",
+    "url": "https://arxiv.org/html/2210.02747v1",
+    "kind": "Historical classic",
+    "title": "Why does regressing conditional velocities learn the marginal flow?",
+    "dateNote": "ICLR 2023; first arXiv posting and version read: v1, 2022-10-06",
+    "evidence": "Read Sections 2–4 and Appendix A; squared-error decomposition is an explanatory derivation",
+    "recognition": {
+      "label": "ICLR 2023 · Historical work on continuous generative modeling (official record checked 2026-11-06)",
+      "url": "https://openreview.net/forum?id=PqvMRDCJT9t"
+    },
+    "question": "At fixed training sample count and endpoint error, how would you separately compare conditional-velocity regression noise and sampling ODE solver cost?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Neural ODEs (2018) formulate generation as continuous dynamics; score SDEs (2021) use noising paths to construct a training target. Flow Matching regresses velocities directly and samples a single path point during training. Draw data Y∼q, independent base noise X₀∼N(0,I), and uniform time t. [20,21]"
+      },
+      {
+        "type": "equation",
+        "tex": "p_t(x)=\\int p_t(x\\mid y)\\,q(dy),\\qquad u_t(x)=\\mathbb E[u_t(X_t\\mid Y)\\mid X_t=x]",
+        "label": "Theorem 1: average conditional velocities under the posterior wherever the density is positive [20]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\partial_t p_t=-\\nabla_x\\cdot(p_t u_t)",
+        "label": "Continuity equation: under the paper’s smoothness conditions, integrating conditional flux gives marginal flux [20]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathbb E\\|v_\\theta(t,X_t)-U\\|^2=\\mathbb E\\|v_\\theta(t,X_t)-u_t(X_t)\\|^2+\\mathbb E\\|U-u_t(X_t)\\|^2,\\quad U=u_t(X_t\\mid Y)",
+        "label": "Regression interpretation of Theorem 2: the conditional residual has mean zero given (t,Xₜ), so the cross term vanishes [20]"
+      },
+      {
+        "type": "equation",
+        "tex": "X_t=tY+[1-(1-\\sigma_{\\min})t]X_0,\\qquad U=Y-(1-\\sigma_{\\min})X_0",
+        "label": "Conditional Gaussian OT path: each noise sample follows a straight line; terminal noise has scale σₘᵢₙ [20]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\frac{dX_t}{dt}=v_\\theta(t,X_t),\\qquad X_0\\sim\\mathcal N(0,I)",
+        "label": "Integrate the learned ODE at sampling time [20]"
+      },
+      {
+        "type": "note",
+        "title": "Boundary",
+        "text": "Conditional OT does not imply marginal OT after mixing. With σₘᵢₙ>0 the ideal endpoint is data smoothed by small Gaussian noise; finite-step integration adds separate error. [20]"
+      }
+    ]
+  }
+}

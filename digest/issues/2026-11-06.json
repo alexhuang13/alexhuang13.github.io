@@ -1,0 +1,486 @@
+{
+  "date": "2026-11-06",
+  "number": "024",
+  "publishedAt": "2026-11-06T13:33:05Z",
+  "window": "2026-11-03 08:21 — 2026-11-06 08:21 EST · America/New_York；另标延迟补收",
+  "readingMinutes": 13,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Post-training",
+    "Muon"
+  ],
+  "edition": "每日研究笔记",
+  "title": "激活复用、蒸馏算力与表征约束",
+  "subtitle": "SAE scaling · OPD 与 GRPO · Mechanistic Shaping · 精读 Flow Matching",
+  "intro": "三篇主读分别问：重复激活何时近似新数据、蒸馏的算力账该从哪里算起、压低迎合行为后还能否读出迎合信号。简讯覆盖测试时算力、数据扩展与 Muon 实践；经典精读 Flow Matching。",
+  "articles": [
+    {
+      "id": "paper-2611-07756",
+      "paper": "Scaling Laws for SAE Training Data",
+      "authors": "Nikita Koriagin · Nikita Balagansky · Daniil Gavrilov",
+      "url": "https://arxiv.org/html/2611.07756v1",
+      "kind": "主读",
+      "title": "同一批激活，能当多少新数据？",
+      "dateNote": "2026-11-05 05:00 EST · v1 首发",
+      "evidence": "已读 §4.9–4.12、表1–2；经验拟合",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "稀疏自编码器（SAE）需要从基座模型抽取、保存激活。把 Muennighoff 等（2023）的数据复用思想用于重构：固定呈现量 T，区分唯一激活 U 与字典宽度 D。 [1,2]"
+        },
+        {
+          "type": "equation",
+          "tex": "R=T/U-1,\\qquad N_{\\rm eff}=U[1+R_*(1-e^{-R/R_*})],\\qquad R_*=cD^{-\\gamma}",
+          "label": "经验折算：复用先近似等价于新数据，之后每次呈现的边际贡献递减 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\operatorname{EV}\\approx E_\\infty-AD^{-\\alpha}-BN_{\\rm eff}^{-\\beta}",
+          "label": "EV 为留出激活的解释方差；两项分别描述宽度与有效数据不足 [1]"
+        },
+        {
+          "type": "text",
+          "text": "Llama‑3.1‑8B 第15层，D=32k、T=640M：表2中三种 SAE 的近饱和下端均为 U=40M，对应 16 倍激活存储缩减。"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "表2 · SAE",
+            "非零激活",
+            "峰值 EV"
+          ],
+          "rows": [
+            [
+              "BatchTopK",
+              "32",
+              "0.6803"
+            ],
+            [
+              "TopK",
+              "32",
+              "0.6807"
+            ],
+            [
+              "JumpReLU",
+              "≈100",
+              "0.7634"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "三者稀疏度不全相同；这里比较的是复用趋势。存储缩减不等于端到端省算力，重构方差也不衡量特征可解释性。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-08453",
+      "paper": "Unpacking the Compute Efficiency of Strong-to-Weak OPD against GRPO",
+      "authors": "Zeyu Leo Liu · Yang Li · Bo Pang · Emre Can Acikgoz · Xuan-Phi Nguyen · Anurag Koul · Srijan Bansal · Erik Nijkamp · Shafiq Joty · Semih Yavuz",
+      "url": "https://arxiv.org/html/2611.08453v1",
+      "kind": "主读",
+      "title": "蒸馏算力便宜，前提是老师从哪里来",
+      "dateNote": "2026-11-05 13:47 EST · v1 首发",
+      "evidence": "已读目标、算力账、§5–6及附录 J",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "学生自己采样。GRPO 用组内结果奖励；on-policy distillation（OPD）用冻结老师，在每一步把双方概率限制到学生 top‑16，再归一化。 [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\ell_{\\rm OPD}=D_{\\rm KL}(\\widetilde\\pi_s\\|\\widetilde\\pi_t),\\qquad C_{\\rm GRPO}\\simeq10N_s T,\\qquad C_{\\rm OPD}\\simeq(10N_s+2N_t)T",
+          "label": "T 为各次运行生成的 token 数，Nₛ、Nₜ 是参数数；额外成本来自老师前向，不计共享 prompt [3]"
+        },
+        {
+          "type": "text",
+          "text": "单域数学：用同一 Qwen3‑4B‑Base 的 GRPO checkpoint 作老师，达到对照水平所需的蒸馏阶段 FLOPs 约为 GRPO 的 1/50。多域则从零计入各专才训练，再把它们合到一个新 Qwen3‑4B‑Base。 [3]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "§6 · 领域",
+            "专才 + 合并至专才水平（EFLOP）",
+            "同分总 FLOPs 降幅"
+          ],
+          "rows": [
+            [
+              "数学、代码",
+              "10.7 + 0.55",
+              "42.0%"
+            ],
+            [
+              "再加知识、指令遵循",
+              "14.4 + 1.15",
+              "31.6%"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "表中“同分”指作者对逐样本混合 joint GRPO 的评估匹配。外部老师的负结果依赖所试配置；FLOPs 账不能替代墙钟。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-07071",
+      "paper": "Shaping & Monitoring Models through their Internal Representations",
+      "authors": "Satchel Grant · Michael Byun (blog); Thomas Fel et al. (paper)",
+      "url": "https://www.goodfire.com/research/mechanistic-shaping",
+      "kind": "主读",
+      "title": "行为变了，探针还能读出原来的概念吗？",
+      "dateNote": "博客 2026-11-05；论文首发 2026-11-04 14:29 EST · v1",
+      "evidence": "已读博客、论文框架、DPO 对照及图14",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "只看输出奖励，无法规定模型应依赖什么。作者在任务目标上加表征惩罚，分开约束概念的表达与决策对概念的依赖。 [4,5]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal L(\\theta)=\\mathcal R(\\theta)+\\lambda\\omega(\\theta)",
+          "label": "原文框架的最小化写法：任务损失与表征惩罚 [5]"
+        },
+        {
+          "type": "equation",
+          "tex": "g_v(z)=v^\\top z+b,\\qquad D_vs(z)=\\nabla_zs(z)^\\top v",
+          "label": "简化示意：固定单位概念方向 v；左测激活 z 中的表达，右测读出 s 的局部敏感性"
+        },
+        {
+          "type": "text",
+          "text": "OLMo‑3‑7B 的迎合实验用 DPO 加方向归因惩罚。原来固定的均值差探针 AUROC 从 0.981 降到 0.931；各训练阶段重拟合的自由线性探针仍能读出信号。 [4,5]"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "固定探针退化不证明表征消失；同一实验可重拟合也不保证分布外可监控。 [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-07367",
+      "paper": "Test-Time Self-Play: Scaling without a Verifier",
+      "authors": "Akira Yoshiyama , Akmal Ashirmatov , Jonas Hübotter , Ido Hakimi , Andreas Krause",
+      "url": "https://arxiv.org/abs/2611.07367",
+      "kind": "简讯",
+      "title": "TTSP：没有目标验证器时的推理 scaling",
+      "dateNote": "2026-11-04 22:07 EST · v1 首发",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "非对称自博弈把算力用到相关变体上。在校准难度的 LiveCodeBench v6 子集、无目标验证器时，作者报告对最强对照 mean@8 提升 35 个百分点；基座近乎采不到正确解时收益消失。 [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-07891",
+      "paper": "When Bigger Becomes Brittle: Why Compression Hurts More as Language Models Scale",
+      "authors": "Gautam Gupta , Dikshant Kukreja , Unique Kumar , Avni Mittal , Deepanshu Dabas , Kshitij Sah , Erik Cambria , Rajiv Ratn Shah , Zhengkui Wang , Avinash Anand",
+      "url": "https://arxiv.org/abs/2611.07891",
+      "kind": "简讯",
+      "title": "大模型未必更能补偿检索头受损",
+      "dateNote": "2026-11-05 07:11 EST · v1 首发",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "对上下文检索，作者分解损伤中被其余网络弥补和传到输出的两部分。损伤量相近时，较大的被测模型恢复较少；这是局部机制结果。 [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-08219",
+      "paper": "Agent-R$^2$: Scaling Agents for Realistic Productivity Work via Real-Source Data Synthesis",
+      "authors": "Teng Pan , Zixuan Wang , Yuchen Yan , Qifei Wu , Yao Chen , Yingqi Qu , Ruiqing Zhang , Yongliang Shen",
+      "url": "https://arxiv.org/abs/2611.08219",
+      "kind": "简讯",
+      "title": "Agent‑R²：扩充真实文件上的训练任务",
+      "dateNote": "2026-11-05 11:08 EST · v1 首发",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "10k 网页候选筛成 4k 带真实附件和交付物评分规则的任务，用于 4B 模型的 SFT 与规则奖励 RL；这给出可扩充的合成管线，未由摘要确证数据量幂律。 [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-08263",
+      "paper": "Scaling Neural Motor Decoding via Decoupled Behavioral Pretraining",
+      "authors": "Divyansha Lachi , Vinam Arora , Shivashriganesh P. Mahato , Alexandre Andre , Eva L. Dyer",
+      "url": "https://arxiv.org/abs/2611.08263",
+      "kind": "简讯",
+      "title": "BEEMO：把无配对行为数据单独扩量",
+      "dateNote": "2026-11-05 11:37 EST · v1 首发",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "运动轨迹可单独预训练；有神经记录时用交叉注意力纳入。非人灵长类解码实验中，额外无配对行为数据有助于迁移至新任务。 [9]"
+        }
+      ]
+    },
+    {
+      "id": "ernie-55-flash-base",
+      "paper": "ERNIE 5.5 Flash Base",
+      "authors": "Baidu ERNIE Team",
+      "url": "https://ernie.baidu.com/release/ernie-5-5-flash-base/",
+      "kind": "简讯",
+      "title": "ERNIE：Muon 在 33.5T token 预训练中的使用",
+      "dateNote": "2026-11-05 · 技术发布及模型卡",
+      "evidence": "已读原文方法及相关结果",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "280B 总参数、14B 激活的 MoE 从头训练，采用 Muon 与 FP8 混合精度。公开记录未给等预算 AdamW 对照，不能归因到 Muon。 [10,11]"
+        }
+      ]
+    },
+    {
+      "id": "surge-nemotron-35",
+      "paper": "Surge RL Pushes NVIDIA Nemotron 3.5 Super VL Toward Frontier-Level Performance",
+      "authors": "Surge AI",
+      "url": "https://surgehq.ai/blog/nvidia-nemotron-3-5-super-training-report",
+      "kind": "简讯",
+      "title": "Nemotron：四套数据，四个 RL checkpoint",
+      "dateNote": "2026-11-05 · 技术博客",
+      "evidence": "已读原文方法及相关结果",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "120B 总参数、12B 激活；四类任务各训一个 checkpoint。12 个基准的报告增幅为 4.5–18.6 个百分点，不能读作单个模型的联合增益。 [12]"
+        }
+      ]
+    },
+    {
+      "id": "surge-harness-compute",
+      "paper": "We Benchmarked Coding Agent Harnesses. Thinking Harder Beat All of Them.",
+      "authors": "Surge AI",
+      "url": "https://surgehq.ai/blog/benchmarking-coding-agent-harnesses",
+      "kind": "简讯",
+      "title": "代码代理：提高推理强度与加编排的对照",
+      "dateNote": "2026-11-03 首发 · 网页另标 11-05，差异未核实",
+      "evidence": "已读原文方法及相关结果",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "100 个软件任务、四套配置；该样本中，直接提高 Claude Code 推理强度优于被测的技能与多代理编排。比较未把各设置等价为同一推理预算。 [13]"
+        }
+      ]
+    },
+    {
+      "id": "ai21-deel-sdpo",
+      "paper": "Post-training case study: Reaching frontier-level intelligence on global payroll with Deel",
+      "authors": "Eran Goldstein · Asaf Karnieli · Shaked Meirom · Joanna Kramer; with Abhijit Mehta and Anthony Li",
+      "url": "https://www.ai21.com/blog/ai21-deel-case-study/",
+      "kind": "简讯",
+      "title": "自生成轨迹 SFT，再做 on-policy 自蒸馏",
+      "dateNote": "2026-11-04 · 技术案例",
+      "evidence": "已读原文方法及相关结果",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "412 条提示辅助的合格轨迹做 SFT，再用 698 题做 SDPO。工资问答开发集平均满足条款比例为基座 51.3%、仅 SFT 65.7%、仅 SDPO 63.8%、顺序组合 72.0%。 [14]"
+        }
+      ]
+    },
+    {
+      "id": "ai21-alice-grpo",
+      "paper": "Post-training case study: Reaching frontier-level attack resilience with Alice",
+      "authors": "Assaf Gerner · Guy Rephaeli · Asaf Karnieli · Guy Freund · Shaked Meirom · Joanna Kramer; with Liran Cohen and Dadi Atar",
+      "url": "https://www.ai21.com/blog/ai21-alice-case-study/",
+      "kind": "简讯",
+      "title": "先让奖励产生组内差异，再做 GRPO",
+      "dateNote": "2026-11-02 · 技术案例；延迟补收",
+      "evidence": "已读原文方法及相关结果",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "保留动作、让基座改写成功轨迹的推理，再用其做 SFT。沙盒训练任务中，组内奖励标准差非零的比例由 35% 升至 66%；后续 GRPO 保留稠密奖励差的量级。 [15]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-07717",
+      "paper": "Pediatric ECG foundation model via adult-to-pediatric fine-tuning: downstream tasks and clinical evaluation",
+      "authors": "Yu Cao , Haiyan Xu , Xiaohan Li , Jian Yang , Yuqing Feng , Wei Wang , Haomin Li",
+      "url": "https://arxiv.org/abs/2611.07717",
+      "kind": "简讯",
+      "title": "儿童 ECG 微调的数据量对照",
+      "dateNote": "2026-11-05 04:36 EST · v1 首发",
+      "evidence": "已读图1b相关结果与方法；按主题收录",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "同一架构，按 1%、10%、25%、50%、100% 子集顺序微调；内部留出集平均 AUROC 从 0.9079（1%）至 0.9695（全量）。顺序协议不等于各规模独立训练，也未拟合幂律。 [16,17]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-08465",
+      "paper": "Towards interpreting any residual stream direction by scaling activation inversion",
+      "authors": "Celeste De Schamphelaere , Juan J. Vazquez , Ari Spiesberger , Tomáš Gavenčiak , Gavin Leech , Euan Ong , Jiahai Feng",
+      "url": "https://arxiv.org/abs/2611.08465",
+      "kind": "简讯",
+      "title": "激活反演：增加语料扫描或推理样本",
+      "dateNote": "2026-11-05 13:54 EST · v1 首发",
+      "evidence": "已读正文对照与语料构造",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "给定残差方向，模型生成高激活文本。图2对照扫描 1.25M–10M tokens 的最优片段；图4另扫给评判模型的 1、2、4、8 个生成样本，以辨识率评估。两种预算单位不同。 [18,19]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.07756v1",
+      "title": "SAE 激活数据 scaling · v1 §4.9–4.12、表1–2"
+    },
+    {
+      "url": "https://arxiv.org/abs/2305.16264",
+      "title": "背景：Muennighoff 等，数据受限 scaling（2023）"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.08453v1",
+      "title": "OPD 对 GRPO · v1 方法、§5–6、附录 B、J"
+    },
+    {
+      "url": "https://www.goodfire.com/research/mechanistic-shaping",
+      "title": "Goodfire 技术博客 · 方法及迎合实验"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.07071v1",
+      "title": "Mechanistic Shaping · 论文 v1 §3、5.2、附录 G.2"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.07367",
+      "title": "Test-Time Self-Play: Scaling without a Verifier · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.07891",
+      "title": "When Bigger Becomes Brittle: Why Compression Hurts More as Language Models Scale · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.08219",
+      "title": "Agent-R$^2$: Scaling Agents for Realistic Productivity Work via Real-Source Data Synthesis · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.08263",
+      "title": "Scaling Neural Motor Decoding via Decoupled Behavioral Pretraining · 摘要及版本历史"
+    },
+    {
+      "url": "https://ernie.baidu.com/release/ernie-5-5-flash-base/",
+      "title": "ERNIE 5.5 Flash Base · 原文"
+    },
+    {
+      "url": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base",
+      "title": "ERNIE 模型卡 · 训练配方"
+    },
+    {
+      "url": "https://surgehq.ai/blog/nvidia-nemotron-3-5-super-training-report",
+      "title": "Surge RL Pushes NVIDIA Nemotron 3.5 Super VL Toward Frontier-Level Performance · 原文"
+    },
+    {
+      "url": "https://surgehq.ai/blog/benchmarking-coding-agent-harnesses",
+      "title": "We Benchmarked Coding Agent Harnesses. Thinking Harder Beat All of Them. · 原文"
+    },
+    {
+      "url": "https://www.ai21.com/blog/ai21-deel-case-study/",
+      "title": "Post-training case study: Reaching frontier-level intelligence on global payroll with Deel · 原文"
+    },
+    {
+      "url": "https://www.ai21.com/blog/ai21-alice-case-study/",
+      "title": "Post-training case study: Reaching frontier-level attack resilience with Alice · 原文"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.07717",
+      "title": "Pediatric ECG foundation model via adult-to-pediatric fine-tuning: downstream tasks and clinical evaluation · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2611.07717",
+      "title": "原文图1b及样本量方法"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.08465",
+      "title": "Towards interpreting any residual stream direction by scaling activation inversion · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.08465v1",
+      "title": "原文图2、4及附录 C"
+    },
+    {
+      "url": "https://arxiv.org/html/2210.02747v1",
+      "title": "Flow Matching · arXiv v1 §2–4、附录 A"
+    },
+    {
+      "url": "https://openreview.net/forum?id=PqvMRDCJT9t",
+      "title": "ICLR 2023 官方论文记录（历史）"
+    }
+  ],
+  "classic": {
+    "id": "classic-flow-matching",
+    "paperId": "arxiv:2210.02747",
+    "shortTitle": "Flow Matching",
+    "year": 2023,
+    "topics": [
+      "Diffusion models"
+    ],
+    "paper": "Flow Matching for Generative Modeling",
+    "authors": "Yaron Lipman · Ricky T. Q. Chen · Heli Ben-Hamu · Maximilian Nickel · Matt Le",
+    "url": "https://arxiv.org/html/2210.02747v1",
+    "kind": "历史经典",
+    "title": "为什么回归条件速度就能学到边缘流？",
+    "dateNote": "ICLR 2023；arXiv 首发及所读 v1：2022-10-06",
+    "evidence": "已读 §2–4、附录 A；平方误差分解为解释性推导",
+    "recognition": {
+      "label": "ICLR 2023 · 连续生成建模的历史工作（官方记录核验 2026-11-06）",
+      "url": "https://openreview.net/forum?id=PqvMRDCJT9t"
+    },
+    "question": "固定训练样本数和终点误差，如何设计对照，分开比较条件速度的回归噪声和采样 ODE 的求解代价？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Neural ODE（2018）把生成写成连续动力系统；score SDE（2021）用加噪路径构造可训练目标。Flow Matching 直接回归速度，训练时只需采样路径上的一个点。取数据 Y∼q，基座 X₀∼N(0,I) 与 Y 独立，时间 t 均匀采样。 [20,21]"
+      },
+      {
+        "type": "equation",
+        "tex": "p_t(x)=\\int p_t(x\\mid y)\\,q(dy),\\qquad u_t(x)=\\mathbb E[u_t(X_t\\mid Y)\\mid X_t=x]",
+        "label": "原文定理1：在正密度处对条件速度按后验取平均 [20]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\partial_t p_t=-\\nabla_x\\cdot(p_t u_t)",
+        "label": "连续性方程：在原文光滑条件下，对条件通量积分得到边缘通量 [20]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathbb E\\|v_\\theta(t,X_t)-U\\|^2=\\mathbb E\\|v_\\theta(t,X_t)-u_t(X_t)\\|^2+\\mathbb E\\|U-u_t(X_t)\\|^2,\\quad U=u_t(X_t\\mid Y)",
+        "label": "定理2的回归解释：给定 (t,Xₜ)，条件残差均值为零，交叉项消失 [20]"
+      },
+      {
+        "type": "equation",
+        "tex": "X_t=tY+[1-(1-\\sigma_{\\min})t]X_0,\\qquad U=Y-(1-\\sigma_{\\min})X_0",
+        "label": "条件高斯 OT 路径：同一噪声样本连成直线，终点仍留 σₘᵢₙ 的噪声 [20]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\frac{dX_t}{dt}=v_\\theta(t,X_t),\\qquad X_0\\sim\\mathcal N(0,I)",
+        "label": "采样时才积分所学 ODE [20]"
+      },
+      {
+        "type": "note",
+        "title": "边界",
+        "text": "条件路径是 OT，不推出混合后的边缘路径是 OT。若 σₘᵢₙ>0，理想终点是加了小量高斯噪声的数据分布；有限步求解另有误差。 [20]"
+      }
+    ]
+  }
+}
