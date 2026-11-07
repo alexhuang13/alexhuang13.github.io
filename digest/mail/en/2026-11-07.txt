@@ -1,0 +1,71 @@
+RESEARCH DIGEST / 2026-11-07
+Async mismatch, production feedback and mixture-conditioned generation
+REINFORCE Zero · Production RL · LLM Zoo · DeltaNet
+
+中文: https://alexhuang13.github.io/digest/2026-11-07.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-07.html
+
+Main reading
+Identical weights need not give identical logprobs
+Zero Mismatch, Simple Async RL: REINFORCE Zero, DeepSeek-V4.1 and Kimi K3.1
+https://alexhuang13.github.io/digest/en/2026-11-07.html#reinforce-zero
+
+Main reading
+Record the actual deployment sampling distribution
+A Practical Recipe for Production RL
+https://alexhuang13.github.io/digest/en/2026-11-07.html#production-rl
+
+Main reading
+Generate weights conditioned on the training mixture
+A Night at the LLM Zoo: Data Conditioned Flow Matching for Generating Pretrained LLM Weights
+https://alexhuang13.github.io/digest/en/2026-11-07.html#paper-2611-07103
+
+Brief
+Weight refit: transfer only what each destination shard needs
+Accelerating Reinforcement Learning Weight Refit with the Reshard Collective
+https://alexhuang13.github.io/digest/en/2026-11-07.html#nccl-reshard
+
+Brief
+Autonomous post-training: choose experiments from failure diagnosis
+Ari Autoresearch: Autonomous Post-Training in AC2
+https://alexhuang13.github.io/digest/en/2026-11-07.html#ari-autoresearch
+
+Brief
+CRATER: unfinished responses are censored, not wrong
+Right, Wrong, or Unfinished: A Competing Risks Framework for Language-Model Reasoning under Token Budgets
+https://alexhuang13.github.io/digest/en/2026-11-07.html#paper-2611-05860
+
+Brief
+StepBack resamples a suspected error step and its suffix
+StepBack: Step-Level Error-Localized Resampling for Efficient Test-Time Reasoning
+https://alexhuang13.github.io/digest/en/2026-11-07.html#paper-2611-08403
+
+Brief
+MoE routing as a control interface for reasoning
+Routes of Reasoning: Reading and Reshaping Test-Time Compute in MoE Models
+https://alexhuang13.github.io/digest/en/2026-11-07.html#paper-2611-05919
+
+Brief
+Compute allocation: the hardest items need not get most retries
+Give Up to Get More: Priors, Not Policies, Govern Test-Time Compute Allocation
+https://alexhuang13.github.io/digest/en/2026-11-07.html#paper-2611-06372
+
+Brief
+VGSC combines verifier guidance with stochastic trajectories
+Verifier-Guided Self-Consistency: Test-Time Reasoning with Imperfect Generators and Verifiers
+https://alexhuang13.github.io/digest/en/2026-11-07.html#paper-2611-06606
+
+Brief
+BudgetMix separates sampling breadth from interaction depth
+What Does Multi-Turn Reinforcement Learning Really Improve in LLM Agents?
+https://alexhuang13.github.io/digest/en/2026-11-07.html#paper-2611-06483
+
+Daily classic · 2024
+Why does writing residuals lead to a triangular solve?
+https://alexhuang13.github.io/digest/en/2026-11-07.html#classic-deltanet
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-07.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

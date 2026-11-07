@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-07",
+    "paperId": "arxiv:2406.06484",
+    "paper": "Parallelizing Linear Transformers with the Delta Rule over Sequence Length",
+    "shortTitle": "DeltaNet",
+    "year": 2024,
+    "topics": [
+      "RNN / Linear attention"
+    ],
+    "recognition": {
+      "label": "NeurIPS 2024 · DeltaNet 并行算法（官方论文集核验2026-11-07）",
+      "url": "https://papers.nips.cc/paper_files/paper/2024/hash/d13a3eae72366e61dfdc7eea82eeb685-Abstract-Conference.html"
+    },
+    "source": "https://arxiv.org/html/2406.06484v1",
+    "url": "/digest/2026-11-07.html#classic-deltanet"
+  },
+  {
     "date": "2026-11-06",
     "paperId": "arxiv:2210.02747",
     "paper": "Flow Matching for Generative Modeling",

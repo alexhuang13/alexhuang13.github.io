@@ -4,8 +4,34 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-06",
+  "latest": "2026-11-07",
   "issues": [
+    {
+      "date": "2026-11-07",
+      "title": "异步误差、生产反馈与配比条件生成",
+      "url": "/digest/2026-11-07.html",
+      "translations": {
+        "en": {
+          "title": "Async mismatch, production feedback and mixture-conditioned generation",
+          "url": "/digest/en/2026-11-07.html"
+        }
+      },
+      "sources": [
+        "https://vllm.ai/blog/2026-11-06-zero-mismatch-async-rl",
+        "https://appliedcompute.network/research/production-rl",
+        "https://arxiv.org/html/2611.07103v1",
+        "https://developer.nvidia.com/blog/accelerating-reinforcement-learning-weight-refit-with-the-reshard-collective/",
+        "https://appliedcompute.network/research/ari-autoresearch",
+        "https://arxiv.org/abs/2611.05860",
+        "https://arxiv.org/abs/2611.08403",
+        "https://arxiv.org/abs/2611.05919",
+        "https://arxiv.org/abs/2611.06372",
+        "https://arxiv.org/abs/2611.06606",
+        "https://arxiv.org/abs/2611.06483",
+        "https://arxiv.org/html/2406.06484v1",
+        "https://papers.nips.cc/paper_files/paper/2024/hash/d13a3eae72366e61dfdc7eea82eeb685-Abstract-Conference.html"
+      ]
+    },
     {
       "date": "2026-11-06",
       "title": "激活复用、蒸馏算力与表征约束",

@@ -1,0 +1,71 @@
+RESEARCH DIGEST / 2026-11-07
+异步误差、生产反馈与配比条件生成
+REINFORCE Zero · Production RL · LLM Zoo · 精读 DeltaNet
+
+中文: https://alexhuang13.github.io/digest/2026-11-07.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-07.html
+
+主读
+同一权重，也可能产生不同的 logprob
+Zero Mismatch, Simple Async RL: REINFORCE Zero, DeepSeek-V4.1 and Kimi K3.1
+https://alexhuang13.github.io/digest/2026-11-07.html#reinforce-zero
+
+主读
+部署采样分布必须进入训练账本
+A Practical Recipe for Production RL
+https://alexhuang13.github.io/digest/2026-11-07.html#production-rl
+
+主读
+用数据配比作条件，生成权重
+A Night at the LLM Zoo: Data Conditioned Flow Matching for Generating Pretrained LLM Weights
+https://alexhuang13.github.io/digest/2026-11-07.html#paper-2611-07103
+
+简讯
+同步权重：只传目标分片需要的数据
+Accelerating Reinforcement Learning Weight Refit with the Reshard Collective
+https://alexhuang13.github.io/digest/2026-11-07.html#nccl-reshard
+
+简讯
+自动后训练：用失败诊断决定下一次试验
+Ari Autoresearch: Autonomous Post-Training in AC2
+https://alexhuang13.github.io/digest/2026-11-07.html#ari-autoresearch
+
+简讯
+CRATER：把未完成视为删失，而非错误
+Right, Wrong, or Unfinished: A Competing Risks Framework for Language-Model Reasoning under Token Budgets
+https://alexhuang13.github.io/digest/2026-11-07.html#paper-2611-05860
+
+简讯
+StepBack：重采错误步骤及其后缀
+StepBack: Step-Level Error-Localized Resampling for Efficient Test-Time Reasoning
+https://alexhuang13.github.io/digest/2026-11-07.html#paper-2611-08403
+
+简讯
+MoE 路由作为推理行为的控制口
+Routes of Reasoning: Reading and Reshaping Test-Time Compute in MoE Models
+https://alexhuang13.github.io/digest/2026-11-07.html#paper-2611-05919
+
+简讯
+算力分配：难题未必值得最多重试
+Give Up to Get More: Priors, Not Policies, Govern Test-Time Compute Allocation
+https://alexhuang13.github.io/digest/2026-11-07.html#paper-2611-06372
+
+简讯
+VGSC：验证器引导与随机多轨迹并存
+Verifier-Guided Self-Consistency: Test-Time Reasoning with Imperfect Generators and Verifiers
+https://alexhuang13.github.io/digest/2026-11-07.html#paper-2611-06606
+
+简讯
+BudgetMix：把采样宽度和交互深度分开
+What Does Multi-Turn Reinforcement Learning Really Improve in LLM Agents?
+https://alexhuang13.github.io/digest/2026-11-07.html#paper-2611-06483
+
+每日精读 · 2024
+写入残差，为什么需要三角求解？
+https://alexhuang13.github.io/digest/2026-11-07.html#classic-deltanet
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-07.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

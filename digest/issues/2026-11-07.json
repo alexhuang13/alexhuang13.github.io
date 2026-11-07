@@ -1,0 +1,373 @@
+{
+  "date": "2026-11-07",
+  "number": "025",
+  "publishedAt": "2026-11-07T13:15:38Z",
+  "window": "2026-11-04 08:09 — 2026-11-07 08:09 EST · America/New_York",
+  "readingMinutes": 12,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Post-training",
+    "Data mixing",
+    "Linear attention"
+  ],
+  "edition": "每日研究笔记",
+  "title": "异步误差、生产反馈与配比条件生成",
+  "subtitle": "REINFORCE Zero · Production RL · LLM Zoo · 精读 DeltaNet",
+  "intro": "三篇主读：拆开异步 RL 的两类误差、从部署日志构造训练信号、按数据配比生成模型权重。另收权重同步、自动后训练及推理算力分配八条简讯；经典精读 DeltaNet。",
+  "articles": [
+    {
+      "id": "reinforce-zero",
+      "paper": "Zero Mismatch, Simple Async RL: REINFORCE Zero, DeepSeek-V4.1 and Kimi K3.1",
+      "authors": "Ao Shen · Jian Hu · Yan Bai · Shekhar Pandey · REINFORCE Zero authors",
+      "url": "https://vllm.ai/blog/2026-11-06-zero-mismatch-async-rl",
+      "kind": "主读",
+      "title": "同一权重，也可能产生不同的 logprob",
+      "dateNote": "2026-11-06",
+      "evidence": "已读技术博客 §2–4；未逐项复核所链接论文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "令 π 为训练引擎分布，μ 为 rollout 引擎分布；k 是当前权重版本，v 是采样版本。异步训练中的差异可以精确拆成两项。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\log\\pi_{\\theta_k}(a\\mid h)-\\log\\mu_v(a\\mid h)=\\underbrace{\\log\\pi_{\\theta_k}-\\log\\pi_{\\theta_v}}_{\\text{weight lag}}+\\underbrace{\\log\\pi_{\\theta_v}-\\log\\mu_v}_{\\text{kernel mismatch}}",
+          "label": "右侧均在同一 (a,h) 求值；先对齐相同权重下的算子路径 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "w_{it}=\\frac{\\pi_\\theta(a_{it}\\mid h_{it})}{\\mu_i(a_{it}\\mid h_{it})},\\qquad \\mathcal L=-\\frac1B\\sum_i\\frac{A_i}{T_i}\\sum_{t=1}^{T_i}w_{it}",
+          "label": "原文配方：未截断 token IS，Aᵢ 为组内中心化奖励；均值按每条响应长度归一 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "1.5B · 6000更新",
+            "Macro pass@1"
+          ],
+          "rows": [
+            [
+              "同步、对齐",
+              "48.91%"
+            ],
+            [
+              "异步 IS、普通 kernel",
+              "45.32%"
+            ],
+            [
+              "对齐、lag 2 / 8",
+              "48.80% / 48.53%"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "这是所测异步配方的稳定性证据。单 token 比率只校正在给定历史下的动作分布，不能据此宣称完整轨迹的 off-policy 梯度无偏。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "production-rl",
+      "paper": "A Practical Recipe for Production RL",
+      "authors": "Edward Yu · Raymond Feng",
+      "url": "https://appliedcompute.network/research/production-rl",
+      "kind": "主读",
+      "title": "部署采样分布必须进入训练账本",
+      "dateNote": "2026-11-06",
+      "evidence": "基于原站可核验的公开索引片段：训练算法与 sampled-KL 小节；直接页面访问受限，未读完整实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "部署分布 μ 可能含温度、top‑p/top‑k；它未必等于权重对应的原始 π。作者每轮采 SB 条轨迹，做 S 次、每次 B 条的更新，轮内固定参考分布 q，下一轮刷新。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "D_{\\rm KL}(\\pi\\|q)=\\mathbb E_{a\\sim\\mu}\\!\\left[\\frac{q(a)-\\pi(a)+\\pi(a)\\log(\\pi(a)/q(a))}{\\mu(a)}\\right]",
+          "label": "原文 sampled-token KL：在固定历史处，要求 μ 覆盖词表支持、且分布归一 [2]"
+        },
+        {
+          "type": "text",
+          "text": "被积量的 q−π 项总和为零，保留后仍给同一 KL。作者将其与 score centering 联用；这减少存储和词表计算，代价是采样方差。 [2]"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "top‑p/top‑k 令部分 μ(a)=0 时，上式全词表恒等式不再成立；作者明确承认此偏差，不能把经验稳定性称为无偏保证。 [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-07103",
+      "paper": "A Night at the LLM Zoo: Data Conditioned Flow Matching for Generating Pretrained LLM Weights",
+      "authors": "Scott Biggs · Bedionita Soro · Saumya Gupta · Bruno Andreis · Sung Ju Hwang",
+      "url": "https://arxiv.org/html/2611.07103v1",
+      "kind": "主读",
+      "title": "用数据配比作条件，生成权重",
+      "dateNote": "2026-11-04 15:16 EST · v1",
+      "evidence": "已读方法、结果和 transductive 限制；重叠窗口补收",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "每个规模训练100个 GPT 式模型，规模为51M、124M、355M；共享主干后在不同数据配比上分支训练。将权重差压缩到50维，再学习配比条件生成分布。 [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "p\\in\\Delta^4,\\qquad z=\\mathcal P_{50}(\\theta-\\theta_{\\rm trunk}),\\qquad z\\sim q_\\phi(z\\mid p)",
+          "label": "记号重写：五域配比 p、Gram-PCA 编码 z 与条件流生成器；不是配比 loss 的幂律 [3]"
+        },
+        {
+          "type": "text",
+          "text": "未见配比上的平均 perplexity 变化约4.1–5.1%，近邻基线约5.8–6.0%；这是相对对应真实模型的生成失真，不是语言建模提升。 [3]"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "PCA 基包含留出模型：表示是 transductive，留出的是生成器的配比训练。不能把这些结果写成从未见权重到任意新配比的全流程泛化。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "nccl-reshard",
+      "paper": "Accelerating Reinforcement Learning Weight Refit with the Reshard Collective",
+      "authors": "Youngeun Kwon · Kaushik Kandadi Suresh · Sreeram Potluri · Terry Kong · Sangkug Lym",
+      "url": "https://developer.nvidia.com/blog/accelerating-reinforcement-learning-weight-refit-with-the-reshard-collective/",
+      "kind": "简讯",
+      "title": "同步权重：只传目标分片需要的数据",
+      "dateNote": "2026-11-06",
+      "evidence": "已读传输设计与表2",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "把训练→推理布局转换写成 DTensor 间分片传输，复用目标端 NVLink。H100 上 DeepSeek v3 671B 的 refit 从14.9s降到2.6s；这是权重同步延迟，不是端到端 RL 提速。 [4]"
+        }
+      ]
+    },
+    {
+      "id": "ari-autoresearch",
+      "paper": "Ari Autoresearch: Autonomous Post-Training in AC2",
+      "authors": "Jaray Liu · Sam Denton",
+      "url": "https://appliedcompute.network/research/ari-autoresearch",
+      "kind": "简讯",
+      "title": "自动后训练：用失败诊断决定下一次试验",
+      "dateNote": "2026-11-04",
+      "evidence": "已读原站公开索引的流程与对照表；直接访问受限",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "16小时棋题案例中，Qwen3.5‑9B 留出奖励0.118→0.629。流程包括轨迹分析、定期检查和持久笔记；技能选择曾从改提示转向提高响应上限。四组起点不相同，不能将差距全归于判断能力。 [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-05860",
+      "paper": "Right, Wrong, or Unfinished: A Competing Risks Framework for Language-Model Reasoning under Token Budgets",
+      "authors": "Boen Jiang , Guanhua Fang , Wen Yu",
+      "url": "https://arxiv.org/abs/2611.05860",
+      "kind": "简讯",
+      "title": "CRATER：把未完成视为删失，而非错误",
+      "dateNote": "2026-11-03 21:51 EST · v1；重叠窗口/延迟补收",
+      "evidence": "基于摘要；未读完整定理或实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "竞争风险模型同时预测正确完成、错误完成与尚未完成，再用于 token 预算和模型路由。53.39% 的成本下降采用假设价格，且正确率96.42%对97.30%，不能称等质量省成本。 [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-08403",
+      "paper": "StepBack: Step-Level Error-Localized Resampling for Efficient Test-Time Reasoning",
+      "authors": "Yang Ouyang , Jung-Eun Kim",
+      "url": "https://arxiv.org/abs/2611.08403",
+      "kind": "简讯",
+      "title": "StepBack：重采错误步骤及其后缀",
+      "dateNote": "2026-11-05 13:12 EST · v1；重叠窗口/延迟补收",
+      "evidence": "基于摘要；未读完整定理或实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "从少量草稿定位首个可能错误，再重采后缀并投票。七个数学与多跳问答基准中，平均准确率匹配 self-consistency，token 最多减少41.26%；“最多”不代表平均节省。 [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-05919",
+      "paper": "Routes of Reasoning: Reading and Reshaping Test-Time Compute in MoE Models",
+      "authors": "Shengjie Wang , Mohsen Fayyaz , Nanyun Peng",
+      "url": "https://arxiv.org/abs/2611.05919",
+      "kind": "简讯",
+      "title": "MoE 路由作为推理行为的控制口",
+      "dateNote": "2026-11-03 23:13 EST · v1；重叠窗口/延迟补收",
+      "evidence": "基于摘要；未读完整定理或实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用路由 logits 识别六类推理行为，干预相关专家以减少过度验证。四模型、四基准的生成 token 中位减少30.4%；摘要报告准确率最大下降0.5个百分点，非普遍保证。 [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-06372",
+      "paper": "Give Up to Get More: Priors, Not Policies, Govern Test-Time Compute Allocation",
+      "authors": "Jinhyung Bae",
+      "url": "https://arxiv.org/abs/2611.06372",
+      "kind": "简讯",
+      "title": "算力分配：难题未必值得最多重试",
+      "dateNote": "2026-11-04 06:32 EST · v1；重叠窗口/延迟补收",
+      "evidence": "基于摘要；未读完整定理或实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "最佳静态重试分配可能呈倒U形。最难负载中，有相关历史先验时 Thompson Sampling 的解决率14%→27%；无先验时，被测策略均未胜过轮转，验证器误接受也会侵蚀收益。 [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-06606",
+      "paper": "Verifier-Guided Self-Consistency: Test-Time Reasoning with Imperfect Generators and Verifiers",
+      "authors": "Ekaterina Fadeeva , Xueyan Li , Mrinmaya Sachan , Maxim Panov",
+      "url": "https://arxiv.org/abs/2611.06606",
+      "kind": "简讯",
+      "title": "VGSC：验证器引导与随机多轨迹并存",
+      "dateNote": "2026-11-04 09:57 EST · v1；重叠窗口/延迟补收",
+      "evidence": "基于摘要；未读完整定理或实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "逐步提出候选，再按正确性和未来结果估计做接受/重采，最后作答案一致性。原文解释为近似采样验证器倾斜的轨迹分布；摘要不足以核实等算力对照。 [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-06483",
+      "paper": "What Does Multi-Turn Reinforcement Learning Really Improve in LLM Agents?",
+      "authors": "Kejian Zhu , Zhuoran Jin , Shangqing Tu , Tianyi Men , Yupu Hao , Jiachun Li , Kang Liu , Jun Zhao",
+      "url": "https://arxiv.org/abs/2611.06483",
+      "kind": "简讯",
+      "title": "BudgetMix：把采样宽度和交互深度分开",
+      "dateNote": "2026-11-04 08:24 EST · v1；重叠窗口/延迟补收",
+      "evidence": "基于摘要；未读完整定理或实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "按 Pass@(K,T) 评估。多轮 RL 的收益依赖充足回合预算，更多体现纠错与长程韧性；训练中混合回合预算以缓解部署预算变化，不能仅凭摘要确证普遍单步改进。 [11]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://vllm.ai/blog/2026-11-06-zero-mismatch-async-rl",
+      "title": "vLLM · 原文 §2–4及结果表"
+    },
+    {
+      "url": "https://appliedcompute.network/research/production-rl",
+      "title": "Applied Compute · 原文公开索引中的算法与 sampled-KL 小节"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.07103v1",
+      "title": "LLM Zoo · v1 方法、结果与附录 B.3"
+    },
+    {
+      "url": "https://developer.nvidia.com/blog/accelerating-reinforcement-learning-weight-refit-with-the-reshard-collective/",
+      "title": "Accelerating Reinforcement Learning Weight Refit with the Reshard Collective · 原始技术文章"
+    },
+    {
+      "url": "https://appliedcompute.network/research/ari-autoresearch",
+      "title": "Ari Autoresearch: Autonomous Post-Training in AC2 · 原始技术文章"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.05860",
+      "title": "Right, Wrong, or Unfinished: A Competing Risks Framework for Language-Model Reasoning under Token Budgets · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.08403",
+      "title": "StepBack: Step-Level Error-Localized Resampling for Efficient Test-Time Reasoning · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.05919",
+      "title": "Routes of Reasoning: Reading and Reshaping Test-Time Compute in MoE Models · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.06372",
+      "title": "Give Up to Get More: Priors, Not Policies, Govern Test-Time Compute Allocation · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.06606",
+      "title": "Verifier-Guided Self-Consistency: Test-Time Reasoning with Imperfect Generators and Verifiers · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.06483",
+      "title": "What Does Multi-Turn Reinforcement Learning Really Improve in LLM Agents? · 摘要及版本历史"
+    },
+    {
+      "url": "https://arxiv.org/html/2406.06484v1",
+      "title": "DeltaNet · v1 §2.2–3.3，块算法与实验设置"
+    },
+    {
+      "url": "https://papers.nips.cc/paper_files/paper/2024/hash/d13a3eae72366e61dfdc7eea82eeb685-Abstract-Conference.html",
+      "title": "NeurIPS 2024 官方论文集（历史）"
+    }
+  ],
+  "classic": {
+    "id": "classic-deltanet",
+    "paperId": "arxiv:2406.06484",
+    "shortTitle": "DeltaNet",
+    "year": 2024,
+    "topics": [
+      "RNN / Linear attention"
+    ],
+    "paper": "Parallelizing Linear Transformers with the Delta Rule over Sequence Length",
+    "authors": "Songlin Yang · Bailin Wang · Yu Zhang · Yikang Shen · Yoon Kim",
+    "url": "https://arxiv.org/html/2406.06484v1",
+    "kind": "历史经典",
+    "title": "写入残差，为什么需要三角求解？",
+    "dateNote": "NeurIPS 2024；arXiv 首发及所读 v1：2024-06-10",
+    "evidence": "已读 §2.2–3.3与相关实验设置；下列列向量块记号是等价推导",
+    "recognition": {
+      "label": "NeurIPS 2024 · DeltaNet 并行算法（官方论文集核验2026-11-07）",
+      "url": "https://papers.nips.cc/paper_files/paper/2024/hash/d13a3eae72366e61dfdc7eea82eeb685-Abstract-Conference.html"
+    },
+    "question": "在固定头维数与块长度下，如何分离键碰撞、有限精度三角求解和遗忘强度对长程检索的影响？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "线性注意力（2020）不断累加键值外积，重复键会互相干扰。DeltaNet（2021）先读旧值，再写误差；本文把此递归变成适合 GPU 的分块算法。设状态 S∈R^(dᵥ×dₖ)，键 k、值 v、查询 q，且 ‖k‖₂=1、0<β<1。 [12,13]"
+      },
+      {
+        "type": "equation",
+        "tex": "S_t=S_{t-1}+\\beta_t(v_t-S_{t-1}k_t)k_t^\\top,\\qquad o_t=S_tq_t",
+        "label": "原文 delta rule：等价于对 ½‖Skₜ−vₜ‖² 做一步矩阵梯度下降 [12]"
+      },
+      {
+        "type": "equation",
+        "tex": "S_tk_t=(1-\\beta_t)S_{t-1}k_t+\\beta_tv_t,\\qquad S_tx=S_{t-1}x\\quad(k_t^\\top x=0)",
+        "label": "由单位键直接推得：当前键方向插值更新，其正交补保留"
+      },
+      {
+        "type": "equation",
+        "tex": "e_t=\\beta_t\\!\\left(v_t-S_0k_t-\\sum_{j<t}e_jk_j^\\top k_t\\right),\\qquad S_t=S_0+\\sum_{j\\le t}e_jk_j^\\top",
+        "label": "块内伪值递推；S₀ 为块初始状态。键之间的 Gram 项产生因果依赖"
+      },
+      {
+        "type": "equation",
+        "tex": "E=(V-S_0K)B(I+UB)^{-1},\\qquad U_{jt}=\\mathbf1_{\\{j<t\\}}k_j^\\top k_t,\\quad B=\\operatorname{diag}(\\beta_t)",
+        "label": "等价块推导：K、V、E 按列堆叠。U 严格上三角，故这是三角求解，不需一般稠密求逆"
+      },
+      {
+        "type": "equation",
+        "tex": "O=S_0Q+E[(K^\\top Q)\\odot M],\\quad M_{jt}=\\mathbf1_{\\{j\\le t\\}},\\qquad S_{\\rm end}=S_0+EK^\\top",
+        "label": "已得 E 后，用矩阵乘法计算块内输出和末状态；与原文 WY 分块计算表达同一依赖 [12]"
+      },
+      {
+        "type": "note",
+        "title": "边界",
+        "text": "块与块之间仍传递矩阵状态，不能说整个序列完全并行。单位键的稳定收缩也不等于检索总是成功；容量和键几何仍重要。 [12]"
+      }
+    ]
+  }
+}

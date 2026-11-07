@@ -1,0 +1,373 @@
+{
+  "date": "2026-11-07",
+  "number": "025",
+  "publishedAt": "2026-11-07T13:15:38Z",
+  "window": "2026-11-04 08:09 — 2026-11-07 08:09 EST · America/New_York",
+  "readingMinutes": 12,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Post-training",
+    "Data mixing",
+    "Linear attention"
+  ],
+  "edition": "Daily research notes",
+  "title": "Async mismatch, production feedback and mixture-conditioned generation",
+  "subtitle": "REINFORCE Zero · Production RL · LLM Zoo · DeltaNet",
+  "intro": "Three readings separate two sources of asynchronous RL mismatch, construct learning signals from deployment logs, and generate weights conditioned on data mixtures. Eight briefs cover weight synchronization, autonomous post-training and inference compute allocation. The classic is DeltaNet.",
+  "articles": [
+    {
+      "id": "reinforce-zero",
+      "paper": "Zero Mismatch, Simple Async RL: REINFORCE Zero, DeepSeek-V4.1 and Kimi K3.1",
+      "authors": "Ao Shen · Jian Hu · Yan Bai · Shekhar Pandey · REINFORCE Zero authors",
+      "url": "https://vllm.ai/blog/2026-11-06-zero-mismatch-async-rl",
+      "kind": "Main reading",
+      "title": "Identical weights need not give identical logprobs",
+      "dateNote": "2026-11-06",
+      "evidence": "Read technical blog Sections 2–4; linked paper not checked in full",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Let π denote the trainer distribution, μ the rollout engine distribution, k the current weight version and v the sampling version. The asynchronous discrepancy splits exactly into two terms. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\log\\pi_{\\theta_k}(a\\mid h)-\\log\\mu_v(a\\mid h)=\\underbrace{\\log\\pi_{\\theta_k}-\\log\\pi_{\\theta_v}}_{\\text{weight lag}}+\\underbrace{\\log\\pi_{\\theta_v}-\\log\\mu_v}_{\\text{kernel mismatch}}",
+          "label": "All right-hand terms are evaluated at the same (a,h); align numerical execution at identical weights first [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "w_{it}=\\frac{\\pi_\\theta(a_{it}\\mid h_{it})}{\\mu_i(a_{it}\\mid h_{it})},\\qquad \\mathcal L=-\\frac1B\\sum_i\\frac{A_i}{T_i}\\sum_{t=1}^{T_i}w_{it}",
+          "label": "Recipe: unclipped token IS with group-centered rewards Aᵢ, normalized by each response length [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "1.5B · 6,000 updates",
+            "Macro pass@1"
+          ],
+          "rows": [
+            [
+              "Synchronous, aligned",
+              "48.91%"
+            ],
+            [
+              "Async IS, standard kernels",
+              "45.32%"
+            ],
+            [
+              "Aligned, lag 2 / 8",
+              "48.80% / 48.53%"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "These are stability results for the tested recipe. A token ratio corrects actions at a given history; it alone does not establish unbiased off-policy gradients over entire trajectories. [1]"
+        }
+      ]
+    },
+    {
+      "id": "production-rl",
+      "paper": "A Practical Recipe for Production RL",
+      "authors": "Edward Yu · Raymond Feng",
+      "url": "https://appliedcompute.network/research/production-rl",
+      "kind": "Main reading",
+      "title": "Record the actual deployment sampling distribution",
+      "dateNote": "2026-11-06",
+      "evidence": "Based on verifiable public index excerpts of the original algorithm and sampled-KL sections; direct access restricted, full experiments not read",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Deployment μ may include temperature and top-p/top-k filtering, so it need not equal raw π at the same weights. The recipe collects SB trajectories per round and takes S updates of batch size B, keeping reference q fixed within a round and refreshing it afterward. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "D_{\\rm KL}(\\pi\\|q)=\\mathbb E_{a\\sim\\mu}\\!\\left[\\frac{q(a)-\\pi(a)+\\pi(a)\\log(\\pi(a)/q(a))}{\\mu(a)}\\right]",
+          "label": "Sampled-token KL at a fixed history, requiring full support under μ and normalized distributions [2]"
+        },
+        {
+          "type": "text",
+          "text": "The q−π terms sum to zero, preserving the same KL. The authors combine the estimator with score centering to reduce vocabulary computation and storage at the cost of sampling variance. [2]"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "With top-p/top-k, some μ(a)=0 and the full-vocabulary identity fails. The authors explicitly acknowledge this bias; empirical stability is not an unbiasedness guarantee. [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-07103",
+      "paper": "A Night at the LLM Zoo: Data Conditioned Flow Matching for Generating Pretrained LLM Weights",
+      "authors": "Scott Biggs · Bedionita Soro · Saumya Gupta · Bruno Andreis · Sung Ju Hwang",
+      "url": "https://arxiv.org/html/2611.07103v1",
+      "kind": "Main reading",
+      "title": "Generate weights conditioned on the training mixture",
+      "dateNote": "2026-11-04 15:16 EST · v1",
+      "evidence": "Read methods, results and transductive limitations; overlap-window catch-up",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Each of the 51M, 124M and 355M scales has 100 GPT-style models, branched from a common trunk onto different data mixtures. Weight deltas are compressed to 50 dimensions before learning mixture-conditioned generation. [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "p\\in\\Delta^4,\\qquad z=\\mathcal P_{50}(\\theta-\\theta_{\\rm trunk}),\\qquad z\\sim q_\\phi(z\\mid p)",
+          "label": "Notation: five-domain mixture p, Gram-PCA code z and conditional flow generator; this is not a power law for mixture-dependent loss [3]"
+        },
+        {
+          "type": "text",
+          "text": "On unseen mixtures, mean perplexity change is about 4.1–5.1%, versus 5.8–6.0% for retrieval. These quantify distortion relative to corresponding trained models, not language-modeling gains. [3]"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "The PCA basis includes held-out models, so representation learning is transductive; mixtures are held out from generator training. This is not end-to-end generalization to entirely unseen weights and arbitrary mixtures. [3]"
+        }
+      ]
+    },
+    {
+      "id": "nccl-reshard",
+      "paper": "Accelerating Reinforcement Learning Weight Refit with the Reshard Collective",
+      "authors": "Youngeun Kwon · Kaushik Kandadi Suresh · Sreeram Potluri · Terry Kong · Sangkug Lym",
+      "url": "https://developer.nvidia.com/blog/accelerating-reinforcement-learning-weight-refit-with-the-reshard-collective/",
+      "kind": "Brief",
+      "title": "Weight refit: transfer only what each destination shard needs",
+      "dateNote": "2026-11-06",
+      "evidence": "Read transfer design and Table 2",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Treat training-to-inference layout conversion as DTensor shard transfer, reusing destination NVLink. For DeepSeek v3 671B on H100, refit fell from 14.9s to 2.6s; this measures weight synchronization, not end-to-end RL speed. [4]"
+        }
+      ]
+    },
+    {
+      "id": "ari-autoresearch",
+      "paper": "Ari Autoresearch: Autonomous Post-Training in AC2",
+      "authors": "Jaray Liu · Sam Denton",
+      "url": "https://appliedcompute.network/research/ari-autoresearch",
+      "kind": "Brief",
+      "title": "Autonomous post-training: choose experiments from failure diagnosis",
+      "dateNote": "2026-11-04",
+      "evidence": "Read original public-index workflow and comparison table; direct access restricted",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In a 16-hour chess case, Qwen3.5‑9B held-out reward rose from 0.118 to 0.629. Trace analysis, periodic checks and persistent notes support experiment selection. Baselines differ across four conditions, so gains cannot all be attributed to research judgment. [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-05860",
+      "paper": "Right, Wrong, or Unfinished: A Competing Risks Framework for Language-Model Reasoning under Token Budgets",
+      "authors": "Boen Jiang , Guanhua Fang , Wen Yu",
+      "url": "https://arxiv.org/abs/2611.05860",
+      "kind": "Brief",
+      "title": "CRATER: unfinished responses are censored, not wrong",
+      "dateNote": "2026-11-03 21:51 EST · v1; overlap-window / delayed catch-up",
+      "evidence": "Based on abstract; full theory and experiments not read",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A competing-risks model predicts correct completion, incorrect completion and unfinished responses for token budgets and routing. The 53.39% cost reduction uses hypothetical prices, with correctness 96.42% versus 97.30%; quality is not matched. [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-08403",
+      "paper": "StepBack: Step-Level Error-Localized Resampling for Efficient Test-Time Reasoning",
+      "authors": "Yang Ouyang , Jung-Eun Kim",
+      "url": "https://arxiv.org/abs/2611.08403",
+      "kind": "Brief",
+      "title": "StepBack resamples a suspected error step and its suffix",
+      "dateNote": "2026-11-05 13:12 EST · v1; overlap-window / delayed catch-up",
+      "evidence": "Based on abstract; full theory and experiments not read",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Localize a likely first error in a few drafts, resample the suffix, then vote. Average accuracy matches self-consistency across seven math and multi-hop QA benchmarks with up to 41.26% fewer tokens; the maximum is not the mean saving. [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-05919",
+      "paper": "Routes of Reasoning: Reading and Reshaping Test-Time Compute in MoE Models",
+      "authors": "Shengjie Wang , Mohsen Fayyaz , Nanyun Peng",
+      "url": "https://arxiv.org/abs/2611.05919",
+      "kind": "Brief",
+      "title": "MoE routing as a control interface for reasoning",
+      "dateNote": "2026-11-03 23:13 EST · v1; overlap-window / delayed catch-up",
+      "evidence": "Based on abstract; full theory and experiments not read",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Probe router logits for six reasoning behaviors and edit related experts to curb over-verification. Across four models and four benchmarks, median token reduction is 30.4%; the abstract reports at most a 0.5-point accuracy loss, not a universal guarantee. [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-06372",
+      "paper": "Give Up to Get More: Priors, Not Policies, Govern Test-Time Compute Allocation",
+      "authors": "Jinhyung Bae",
+      "url": "https://arxiv.org/abs/2611.06372",
+      "kind": "Brief",
+      "title": "Compute allocation: the hardest items need not get most retries",
+      "dateNote": "2026-11-04 06:32 EST · v1; overlap-window / delayed catch-up",
+      "evidence": "Based on abstract; full theory and experiments not read",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The best static retry allocation can be inverted-U shaped. On the hardest workload, Thompson Sampling raises solved share from 14% to 27% with an informative historical prior; without it, tested policies do not beat round-robin, and verifier false acceptances erode gains. [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-06606",
+      "paper": "Verifier-Guided Self-Consistency: Test-Time Reasoning with Imperfect Generators and Verifiers",
+      "authors": "Ekaterina Fadeeva , Xueyan Li , Mrinmaya Sachan , Maxim Panov",
+      "url": "https://arxiv.org/abs/2611.06606",
+      "kind": "Brief",
+      "title": "VGSC combines verifier guidance with stochastic trajectories",
+      "dateNote": "2026-11-04 09:57 EST · v1; overlap-window / delayed catch-up",
+      "evidence": "Based on abstract; full theory and experiments not read",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Propose steps, accept or resample using correctness and future-outcome estimates, then apply answer consistency. The authors interpret this as approximate sampling from a verifier-tilted trajectory distribution; matched-compute comparisons are not verifiable from the abstract. [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-06483",
+      "paper": "What Does Multi-Turn Reinforcement Learning Really Improve in LLM Agents?",
+      "authors": "Kejian Zhu , Zhuoran Jin , Shangqing Tu , Tianyi Men , Yupu Hao , Jiachun Li , Kang Liu , Jun Zhao",
+      "url": "https://arxiv.org/abs/2611.06483",
+      "kind": "Brief",
+      "title": "BudgetMix separates sampling breadth from interaction depth",
+      "dateNote": "2026-11-04 08:24 EST · v1; overlap-window / delayed catch-up",
+      "evidence": "Based on abstract; full theory and experiments not read",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Evaluate with Pass@(K,T). Multi-turn RL gains depend on adequate turn budgets and concentrate in recovery and long-horizon resilience; mixing turn budgets during training addresses deployment variation without establishing universal one-step gains. [11]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://vllm.ai/blog/2026-11-06-zero-mismatch-async-rl",
+      "title": "vLLM · Sections 2–4 and result tables"
+    },
+    {
+      "url": "https://appliedcompute.network/research/production-rl",
+      "title": "Applied Compute · publicly indexed algorithm and sampled-KL sections"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.07103v1",
+      "title": "LLM Zoo · v1 methods, results and Appendix B.3"
+    },
+    {
+      "url": "https://developer.nvidia.com/blog/accelerating-reinforcement-learning-weight-refit-with-the-reshard-collective/",
+      "title": "Accelerating Reinforcement Learning Weight Refit with the Reshard Collective · original technical article"
+    },
+    {
+      "url": "https://appliedcompute.network/research/ari-autoresearch",
+      "title": "Ari Autoresearch: Autonomous Post-Training in AC2 · original technical article"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.05860",
+      "title": "Right, Wrong, or Unfinished: A Competing Risks Framework for Language-Model Reasoning under Token Budgets · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.08403",
+      "title": "StepBack: Step-Level Error-Localized Resampling for Efficient Test-Time Reasoning · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.05919",
+      "title": "Routes of Reasoning: Reading and Reshaping Test-Time Compute in MoE Models · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.06372",
+      "title": "Give Up to Get More: Priors, Not Policies, Govern Test-Time Compute Allocation · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.06606",
+      "title": "Verifier-Guided Self-Consistency: Test-Time Reasoning with Imperfect Generators and Verifiers · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.06483",
+      "title": "What Does Multi-Turn Reinforcement Learning Really Improve in LLM Agents? · abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/html/2406.06484v1",
+      "title": "DeltaNet · v1 Sections 2.2–3.3, chunk algorithm and experiment setup"
+    },
+    {
+      "url": "https://papers.nips.cc/paper_files/paper/2024/hash/d13a3eae72366e61dfdc7eea82eeb685-Abstract-Conference.html",
+      "title": "Official NeurIPS 2024 proceedings (historical)"
+    }
+  ],
+  "classic": {
+    "id": "classic-deltanet",
+    "paperId": "arxiv:2406.06484",
+    "shortTitle": "DeltaNet",
+    "year": 2024,
+    "topics": [
+      "RNN / Linear attention"
+    ],
+    "paper": "Parallelizing Linear Transformers with the Delta Rule over Sequence Length",
+    "authors": "Songlin Yang · Bailin Wang · Yu Zhang · Yikang Shen · Yoon Kim",
+    "url": "https://arxiv.org/html/2406.06484v1",
+    "kind": "Historical classic",
+    "title": "Why does writing residuals lead to a triangular solve?",
+    "dateNote": "NeurIPS 2024; first arXiv posting and version read: v1, 2024-06-10",
+    "evidence": "Read Sections 2.2–3.3 and experiment setup; column-vector chunk notation below is an equivalent derivation",
+    "recognition": {
+      "label": "NeurIPS 2024 · DeltaNet parallel algorithm (proceedings checked 2026-11-07)",
+      "url": "https://papers.nips.cc/paper_files/paper/2024/hash/d13a3eae72366e61dfdc7eea82eeb685-Abstract-Conference.html"
+    },
+    "question": "At fixed head dimension and chunk length, how would you separate key collisions, finite-precision triangular solves and forgetting strength in long-range retrieval?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Linear attention (2020) accumulates key-value outer products, allowing collisions. DeltaNet (2021) reads the old value and writes its residual; this paper makes that recurrence GPU-friendly through chunking. State S∈R^(dᵥ×dₖ), key k, value v and query q satisfy ‖k‖₂=1 and 0<β<1. [12,13]"
+      },
+      {
+        "type": "equation",
+        "tex": "S_t=S_{t-1}+\\beta_t(v_t-S_{t-1}k_t)k_t^\\top,\\qquad o_t=S_tq_t",
+        "label": "Delta rule: equivalent to one matrix-gradient step on ½‖Skₜ−vₜ‖² [12]"
+      },
+      {
+        "type": "equation",
+        "tex": "S_tk_t=(1-\\beta_t)S_{t-1}k_t+\\beta_tv_t,\\qquad S_tx=S_{t-1}x\\quad(k_t^\\top x=0)",
+        "label": "With unit keys: interpolate along the current key and preserve its orthogonal complement"
+      },
+      {
+        "type": "equation",
+        "tex": "e_t=\\beta_t\\!\\left(v_t-S_0k_t-\\sum_{j<t}e_jk_j^\\top k_t\\right),\\qquad S_t=S_0+\\sum_{j\\le t}e_jk_j^\\top",
+        "label": "Within-chunk pseudo-value recurrence; S₀ starts the chunk. Key Gram terms create causal dependencies"
+      },
+      {
+        "type": "equation",
+        "tex": "E=(V-S_0K)B(I+UB)^{-1},\\qquad U_{jt}=\\mathbf1_{\\{j<t\\}}k_j^\\top k_t,\\quad B=\\operatorname{diag}(\\beta_t)",
+        "label": "Equivalent chunk derivation: K, V and E stack columns. Strictly upper-triangular U makes this a triangular solve, not a general dense inverse"
+      },
+      {
+        "type": "equation",
+        "tex": "O=S_0Q+E[(K^\\top Q)\\odot M],\\quad M_{jt}=\\mathbf1_{\\{j\\le t\\}},\\qquad S_{\\rm end}=S_0+EK^\\top",
+        "label": "Once E is available, matrix products yield chunk outputs and final state; this expresses the dependencies captured by the paper’s WY chunk algorithm [12]"
+      },
+      {
+        "type": "note",
+        "title": "Boundary",
+        "text": "Matrix state still passes between chunks; the whole sequence is not fully parallel. Stable contraction with unit keys does not guarantee retrieval: capacity and key geometry still matter. [12]"
+      }
+    ]
+  }
+}
