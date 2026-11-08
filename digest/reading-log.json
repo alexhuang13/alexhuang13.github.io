@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-08",
+    "paperId": "arxiv:1802.09568",
+    "paper": "Shampoo: Preconditioned Stochastic Tensor Optimization",
+    "shortTitle": "Shampoo",
+    "year": 2018,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "recognition": {
+      "label": "ICML 2018 Oral · 官方记录核验2026-11-08",
+      "url": "https://icml.cc/virtual/2018/oral/2881"
+    },
+    "source": "https://proceedings.mlr.press/v80/gupta18a/gupta18a.pdf",
+    "url": "/digest/2026-11-08.html#classic-shampoo"
+  },
+  {
     "date": "2026-11-07",
     "paperId": "arxiv:2406.06484",
     "paper": "Parallelizing Linear Transformers with the Delta Rule over Sequence Length",

@@ -1,0 +1,170 @@
+{
+  "date": "2026-11-08",
+  "number": "026",
+  "publishedAt": "2026-11-08T13:15:30Z",
+  "window": "2026-11-05 08:10 — 2026-11-08 08:10 EST · America/New_York；另补收11月4日已核实的版本扩展",
+  "readingMinutes": 8,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Regularization",
+    "Deep learning theory"
+  ],
+  "edition": "每日研究笔记",
+  "title": "重复数据的代价与矩阵预条件",
+  "subtitle": "数据受限 scaling 的版本扩展 · 精读 Shampoo",
+  "intro": "本期延迟补收一项版本扩展：新增语料验证与四档 weight decay 对照。经典精读 Shampoo，从累积梯度的左右统计量推到 Kronecker 预条件和 regret；不把历史经典计作新闻。",
+  "articles": [
+    {
+      "id": "paper-2605-01640-v2",
+      "paper": "Prescriptive Scaling Laws for Data Constrained Training",
+      "authors": "Justin Lovelace · Christian Belardi · Srivatsa Kundurthy · Shriya Sudhakar · Kilian Q. Weinberger",
+      "url": "https://arxiv.org/html/2605.01640v2",
+      "kind": "版本更新主读",
+      "title": "更多正则化，不是处处都更好",
+      "dateNote": "首发2026-05-02；v2 2026-11-04 18:24 EST · 延迟补收",
+      "evidence": "已比较 v1/v2 正文，核对新增附录 E–F、表20–21；未复现",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "数据固定时，额外训练既降低拟合误差，也可能放大重复代价。原有框架在 Chinchilla（2022）形式上加过拟合项；本次新增 FineWeb‑Edu 整套验证和 λ=0.5、3.0 两档正则化。以下公式为既有方法，新增证据见表与边界。 [1–3]"
+        },
+        {
+          "type": "equation",
+          "tex": "D=U(1+R),\\qquad L_\\lambda(N,U,R)=E_\\lambda+A_\\lambda N^{-\\alpha_\\lambda}+B_\\lambda D^{-\\beta_\\lambda}+P_\\lambda R\\,N/U",
+          "label": "原文一参数惩罚形式：U 为唯一 tokens，R 为首轮以外的轮数，N 为参数量；基础五参数各自拟合 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "λ",
+            "P（表21）",
+            "单轮拟合下限 E（nats，表20）"
+          ],
+          "rows": [
+            [
+              "0.1",
+              "0.02305",
+              "1.8384"
+            ],
+            [
+              "0.5",
+              "0.01286",
+              "1.9111"
+            ],
+            [
+              "1.0",
+              "0.007071",
+              "2.0457"
+            ],
+            [
+              "3.0",
+              "0.000806",
+              "2.7879"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "P 随 λ 下降，单轮基础损失却上升。因此“重复更耐受”不能直接推出“任意预算都更优”。新增 FineWeb‑Edu 实验中，一参数 P=0.02182，接近 FineWeb 的0.02305；这是两个语料的局部检验。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\min_{N,R,\\lambda}L_\\lambda(N,U,R)\\quad\\text{subject to}\\quad 6NU(1+R)\\le C",
+          "label": "解释性预算写法：6ND 是参数-token FLOPs 近似；具体配置选择仍需原文更灵活的四参数惩罚 [1]"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "λ=0.1 的网格与其余档略不同，且各档重新拟合基础 scaling 参数；P 的比值不是隔离 weight decay 的因果效应。新增语料 sweep 最大模型1B、至多16轮，不能无条件外推。 [1]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2605.01640v2",
+      "title": "Prescriptive Scaling Laws · v2 §4、附录 E–F"
+    },
+    {
+      "url": "https://arxiv.org/html/2605.01640v1",
+      "title": "版本基线 · v1（2026-05-02，背景）"
+    },
+    {
+      "url": "https://arxiv.org/abs/2605.01640",
+      "title": "arXiv 原始版本历史"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v80/gupta18a/gupta18a.pdf",
+      "title": "Shampoo · ICML 正文 Algorithm 1、Lemmas 8–9、Theorem 7、§5"
+    },
+    {
+      "url": "https://icml.cc/virtual/2018/oral/2881",
+      "title": "ICML 2018 官方 Oral 记录（历史）"
+    },
+    {
+      "url": "https://arxiv.org/abs/1802.09568",
+      "title": "Shampoo 首发日期与版本历史"
+    }
+  ],
+  "classic": {
+    "id": "classic-shampoo",
+    "paperId": "arxiv:1802.09568",
+    "shortTitle": "Shampoo",
+    "year": 2018,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "paper": "Shampoo: Preconditioned Stochastic Tensor Optimization",
+    "authors": "Vineet Gupta · Tomer Koren · Yoram Singer",
+    "url": "https://proceedings.mlr.press/v80/gupta18a/gupta18a.pdf",
+    "kind": "历史经典",
+    "title": "为什么左右各用一次四次方根？",
+    "dateNote": "ICML 2018 Oral；arXiv 首发2018-02-26；所读 ICML 2018 正式论文",
+    "evidence": "已读 Algorithm 1、§3证明与§5实验设置；矩阵情形，未展开高阶张量定理",
+    "recognition": {
+      "label": "ICML 2018 Oral · 官方记录核验2026-11-08",
+      "url": "https://icml.cc/virtual/2018/oral/2881"
+    },
+    "question": "在相同预训练轨迹上，如何分离“保留历史左右统计量”与“只用当前梯度的 polar”各自带来的收益？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Full-matrix AdaGrad（2011）在 mn 维展开梯度上保存二阶统计，存储为 m²n²。Shampoo 保留矩阵结构，改存 m²+n² 个左右统计量；理论分析的是在线凸损失，不是深网非凸收敛。设 Gₜ=∇fₜ(Wₜ)∈R^(m×n)，ε>0。 [4–6]"
+      },
+      {
+        "type": "equation",
+        "tex": "L_t=\\varepsilon I_m+\\sum_{s\\le t}G_sG_s^\\top,\\qquad R_t=\\varepsilon I_n+\\sum_{s\\le t}G_s^\\top G_s",
+        "label": "算法1：左右 Gram 统计累计历史梯度，而不是 Hessian [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "W_{t+1}=W_t-\\eta L_t^{-1/4}G_tR_t^{-1/4},\\qquad H_t=L_t^{1/4}\\otimes R_t^{1/4}",
+        "label": "原文按行展开：vecᵣ(ΔW)=−ηHₜ⁻¹vecᵣ(G)；不是两个独立逆平方根 [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\varepsilon I_{mn}+\\frac1r\\sum_{s\\le t}g_sg_s^\\top\\preceq L_t^{1/2}\\otimes R_t^{1/2},\\qquad g_s=\\operatorname{vec}_r(G_s)",
+        "label": "原文 Lemma 8：每步梯度秩至多 r；取矩阵平方根连接 full-matrix 度量与 Hₜ [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\sum_{t=1}^T[f_t(W_t)-f_t(W^*)]\\le \\sqrt{2r}\\,D_*\\operatorname{tr}(L_T^{1/4})\\operatorname{tr}(R_T^{1/4}),\\quad D_*=\\max_t\\|W_t-W^*\\|_F",
+        "label": "Theorem 7：η=D*/√(2r)；需凸性、梯度秩界与有限比较距离。两 trace 的乘积是 tr(Hₜ) [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\big((GG^\\top)^\\dagger\\big)^{1/4}G\\big((G^\\top G)^\\dagger\\big)^{1/4}=UV^\\top,\\qquad G=U\\Sigma V^\\top",
+        "label": "解释性单步恒等式：†为伪逆，仅取非零奇异值子空间；移除历史并令 ε=0 后得到 polar"
+      },
+      {
+        "type": "note",
+        "title": "边界",
+        "text": "最后一式只说明无历史极限，不能等同带动量的 Muon 或完整 Shampoo 动力学。原文实验还使用阻尼、有限频率分解等实现选择，理论与实现需分开读。 [4]"
+      }
+    ]
+  }
+}

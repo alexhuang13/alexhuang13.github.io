@@ -1,0 +1,170 @@
+{
+  "date": "2026-11-08",
+  "number": "026",
+  "publishedAt": "2026-11-08T13:15:30Z",
+  "window": "2026-11-05 08:10 — 2026-11-08 08:10 EST · America/New_York; additionally, a verified November 4 version extension",
+  "readingMinutes": 8,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Regularization",
+    "Deep learning theory"
+  ],
+  "edition": "Daily research notes",
+  "title": "The cost of repeated data and matrix preconditioning",
+  "subtitle": "Data-constrained scaling: a version extension · Shampoo",
+  "intro": "One delayed version update adds corpus validation and a four-level weight-decay sweep. The Shampoo classic connects accumulated left/right gradient statistics to Kronecker preconditioning and regret. The historical classic is not counted as news.",
+  "articles": [
+    {
+      "id": "paper-2605-01640-v2",
+      "paper": "Prescriptive Scaling Laws for Data Constrained Training",
+      "authors": "Justin Lovelace · Christian Belardi · Srivatsa Kundurthy · Shriya Sudhakar · Kilian Q. Weinberger",
+      "url": "https://arxiv.org/html/2605.01640v2",
+      "kind": "Version-update reading",
+      "title": "Stronger regularization does not win everywhere",
+      "dateNote": "First posted 2026-05-02; v2 2026-11-04 18:24 EST · delayed catch-up",
+      "evidence": "Compared v1/v2 text and checked added Appendices E–F and Tables 20–21; not reproduced",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "With fixed data, extra training can reduce fitting error while increasing repetition damage. The existing framework adds an overfitting term to the Chinchilla (2022) form. This version adds a full FineWeb-Edu validation and λ=0.5 and 3.0. The formula is existing methodology; the table and boundary describe new evidence. [1–3]"
+        },
+        {
+          "type": "equation",
+          "tex": "D=U(1+R),\\qquad L_\\lambda(N,U,R)=E_\\lambda+A_\\lambda N^{-\\alpha_\\lambda}+B_\\lambda D^{-\\beta_\\lambda}+P_\\lambda R\\,N/U",
+          "label": "One-parameter penalty: U is unique tokens, R extra epochs beyond the first and N parameter count; five base-law parameters are fitted separately [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "λ",
+            "P (Table 21)",
+            "Fitted single-epoch floor E (nats, Table 20)"
+          ],
+          "rows": [
+            [
+              "0.1",
+              "0.02305",
+              "1.8384"
+            ],
+            [
+              "0.5",
+              "0.01286",
+              "1.9111"
+            ],
+            [
+              "1.0",
+              "0.007071",
+              "2.0457"
+            ],
+            [
+              "3.0",
+              "0.000806",
+              "2.7879"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "P falls with λ, while the single-epoch base loss rises. Greater repetition tolerance therefore does not imply superiority at every budget. The added FineWeb-Edu sweep gives one-parameter P=0.02182, near FineWeb’s 0.02305: a local check across two corpora. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\min_{N,R,\\lambda}L_\\lambda(N,U,R)\\quad\\text{subject to}\\quad 6NU(1+R)\\le C",
+          "label": "Illustrative allocation: 6ND is a parameter-token FLOPs approximation; the paper uses a more flexible four-parameter penalty for configuration selection [1]"
+        },
+        {
+          "type": "note",
+          "title": "Boundary",
+          "text": "The λ=0.1 grid differs slightly from the others, and base-law parameters are refitted for each λ. P ratios do not isolate a causal weight-decay effect. The added corpus sweep reaches 1B parameters and 16 epochs; extrapolation remains unverified. [1]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2605.01640v2",
+      "title": "Prescriptive Scaling Laws · v2 Section 4 and Appendices E–F"
+    },
+    {
+      "url": "https://arxiv.org/html/2605.01640v1",
+      "title": "Version baseline · v1 (2026-05-02, background)"
+    },
+    {
+      "url": "https://arxiv.org/abs/2605.01640",
+      "title": "Original arXiv version history"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v80/gupta18a/gupta18a.pdf",
+      "title": "Shampoo · ICML paper Algorithm 1, Lemmas 8–9, Theorem 7 and Section 5"
+    },
+    {
+      "url": "https://icml.cc/virtual/2018/oral/2881",
+      "title": "Official ICML 2018 Oral record (historical)"
+    },
+    {
+      "url": "https://arxiv.org/abs/1802.09568",
+      "title": "Shampoo initial posting and version history"
+    }
+  ],
+  "classic": {
+    "id": "classic-shampoo",
+    "paperId": "arxiv:1802.09568",
+    "shortTitle": "Shampoo",
+    "year": 2018,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "paper": "Shampoo: Preconditioned Stochastic Tensor Optimization",
+    "authors": "Vineet Gupta · Tomer Koren · Yoram Singer",
+    "url": "https://proceedings.mlr.press/v80/gupta18a/gupta18a.pdf",
+    "kind": "Historical classic",
+    "title": "Why a fourth root on each side?",
+    "dateNote": "ICML 2018 Oral; first arXiv posting 2018-02-26; version read: official ICML 2018 paper",
+    "evidence": "Read Algorithm 1, Section 3 proof and Section 5 setup; matrix case only, not the higher-order tensor theorem",
+    "recognition": {
+      "label": "ICML 2018 Oral · official record checked 2026-11-08",
+      "url": "https://icml.cc/virtual/2018/oral/2881"
+    },
+    "question": "Along the same pretraining trajectory, how would you separate benefits of accumulated left/right statistics from those of using only the current gradient’s polar factor?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Full-matrix AdaGrad (2011) stores second-order statistics of flattened mn-dimensional gradients, requiring m²n² storage. Shampoo retains matrix structure and stores m²+n² left/right statistics. Its theory concerns online convex losses, not nonconvex deep-network convergence. Let Gₜ=∇fₜ(Wₜ)∈R^(m×n), with ε>0. [4–6]"
+      },
+      {
+        "type": "equation",
+        "tex": "L_t=\\varepsilon I_m+\\sum_{s\\le t}G_sG_s^\\top,\\qquad R_t=\\varepsilon I_n+\\sum_{s\\le t}G_s^\\top G_s",
+        "label": "Algorithm 1: accumulated left/right Gram statistics, not Hessians [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "W_{t+1}=W_t-\\eta L_t^{-1/4}G_tR_t^{-1/4},\\qquad H_t=L_t^{1/4}\\otimes R_t^{1/4}",
+        "label": "Paper’s row-major flattening: vecᵣ(ΔW)=−ηHₜ⁻¹vecᵣ(G), rather than two independent inverse square roots [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\varepsilon I_{mn}+\\frac1r\\sum_{s\\le t}g_sg_s^\\top\\preceq L_t^{1/2}\\otimes R_t^{1/2},\\qquad g_s=\\operatorname{vec}_r(G_s)",
+        "label": "Lemma 8 assumes each gradient has rank at most r; matrix square roots connect the full-matrix metric to Hₜ [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\sum_{t=1}^T[f_t(W_t)-f_t(W^*)]\\le \\sqrt{2r}\\,D_*\\operatorname{tr}(L_T^{1/4})\\operatorname{tr}(R_T^{1/4}),\\quad D_*=\\max_t\\|W_t-W^*\\|_F",
+        "label": "Theorem 7 uses η=D*/√(2r), convexity, rank bounds and finite comparator distance. The trace product is tr(Hₜ) [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\big((GG^\\top)^\\dagger\\big)^{1/4}G\\big((G^\\top G)^\\dagger\\big)^{1/4}=UV^\\top,\\qquad G=U\\Sigma V^\\top",
+        "label": "Illustrative one-step identity: † denotes pseudoinversion on nonzero singular subspaces. Removing history and setting ε=0 yields the polar factor"
+      },
+      {
+        "type": "note",
+        "title": "Boundary",
+        "text": "The last identity is a history-free limit, not an equivalence of momentum Muon and full Shampoo dynamics. Experiments add damping and periodic decompositions; implementation choices should be distinguished from the theorem. [4]"
+      }
+    ]
+  }
+}

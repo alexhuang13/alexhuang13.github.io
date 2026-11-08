@@ -1,0 +1,21 @@
+RESEARCH DIGEST / 2026-11-08
+The cost of repeated data and matrix preconditioning
+Data-constrained scaling: a version extension · Shampoo
+
+中文: https://alexhuang13.github.io/digest/2026-11-08.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-08.html
+
+Version-update reading
+Stronger regularization does not win everywhere
+Prescriptive Scaling Laws for Data Constrained Training
+https://alexhuang13.github.io/digest/en/2026-11-08.html#paper-2605-01640-v2
+
+Daily classic · 2018
+Why a fourth root on each side?
+https://alexhuang13.github.io/digest/en/2026-11-08.html#classic-shampoo
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-08.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

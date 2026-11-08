@@ -4,8 +4,27 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-07",
+  "latest": "2026-11-08",
   "issues": [
+    {
+      "date": "2026-11-08",
+      "title": "重复数据的代价与矩阵预条件",
+      "url": "/digest/2026-11-08.html",
+      "translations": {
+        "en": {
+          "title": "The cost of repeated data and matrix preconditioning",
+          "url": "/digest/en/2026-11-08.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2605.01640v2",
+        "https://arxiv.org/html/2605.01640v1",
+        "https://arxiv.org/abs/2605.01640",
+        "https://proceedings.mlr.press/v80/gupta18a/gupta18a.pdf",
+        "https://icml.cc/virtual/2018/oral/2881",
+        "https://arxiv.org/abs/1802.09568"
+      ]
+    },
     {
       "date": "2026-11-07",
       "title": "异步误差、生产反馈与配比条件生成",
