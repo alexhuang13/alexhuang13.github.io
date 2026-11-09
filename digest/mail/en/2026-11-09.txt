@@ -1,0 +1,61 @@
+RESEARCH DIGEST / 2026-11-09
+Matrix ownership and parallel small teams
+DMuon‑2 · Parallel Agent Teams · PPO
+
+中文: https://alexhuang13.github.io/digest/2026-11-09.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-09.html
+
+Main reading · delayed catch-up
+One owner per matrix, rather than orthogonalizing each shard
+DMuon-2: Scaling Matrix Optimizers in Data Parallelism with Topology-Aware Matrix Ownership and Communication
+https://alexhuang13.github.io/digest/en/2026-11-09.html#paper-2611-07084
+
+Main reading
+Collaboration lifts the mean; multiple teams retain selection gains
+Test-Time Compute Scales Better with Parallel Agent Teams
+https://alexhuang13.github.io/digest/en/2026-11-09.html#paper-2611-09798
+
+Brief
+s³ learns communication and division of labor
+s$^3$: Simple Scaling of Swarms via Cooperative Multi-agent RL
+https://alexhuang13.github.io/digest/en/2026-11-09.html#paper-2611-08615
+
+Brief
+Verifier noise changes search temperature, but quantitative predictions fail
+Verifier Noise Is a Temperature: Testing Tilt Predictions in Finite-Budget LLM-Guided Search
+https://alexhuang13.github.io/digest/en/2026-11-09.html#paper-2611-09699
+
+Brief
+TTRL: more votes only address finite-sample uncertainty
+On the Reliability of Majority-Vote Pseudo-Labels in Test-Time Reinforcement Learning
+https://alexhuang13.github.io/digest/en/2026-11-09.html#paper-2611-09872
+
+Brief
+AlterNet learns when to stop adding depth
+AlterNet: Adaptive-Depth Mixture-of-Experts with Learned Halting for Elastic Inference
+https://alexhuang13.github.io/digest/en/2026-11-09.html#paper-2611-08741
+
+Brief
+CascadeRec: extra compute may not help cold users
+CascadeRec: Deployed Adaptive LLM Compute Allocation for Multi-Tenant Content Recommendation
+https://alexhuang13.github.io/digest/en/2026-11-09.html#paper-2611-08566
+
+Brief
+APT selects candidates through aspect-wise pairwise tournaments
+Aspect-wise Pairwise Tournaments for Test-Time Selection
+https://alexhuang13.github.io/digest/en/2026-11-09.html#paper-2611-08640
+
+Brief
+MS-pDiT adds scale streams rather than only depth
+Scale as a Modality: Multi-Scale Pixel-Space Diffusion Transformers
+https://alexhuang13.github.io/digest/en/2026-11-09.html#paper-2611-08802
+
+Daily classic · 2017
+PPO clips incentives in the improving direction
+https://alexhuang13.github.io/digest/en/2026-11-09.html#classic-ppo
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-09.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

@@ -4,8 +4,33 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-08",
+  "latest": "2026-11-09",
   "issues": [
+    {
+      "date": "2026-11-09",
+      "title": "矩阵归属与小团队并行",
+      "url": "/digest/2026-11-09.html",
+      "translations": {
+        "en": {
+          "title": "Matrix ownership and parallel small teams",
+          "url": "/digest/en/2026-11-09.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.07084v2",
+        "https://arxiv.org/abs/2611.07084",
+        "https://arxiv.org/html/2611.09798v1",
+        "https://arxiv.org/abs/2611.08615",
+        "https://arxiv.org/abs/2611.09699",
+        "https://arxiv.org/abs/2611.09872",
+        "https://arxiv.org/abs/2611.08741",
+        "https://arxiv.org/abs/2611.08566",
+        "https://arxiv.org/abs/2611.08640",
+        "https://arxiv.org/abs/2611.08802",
+        "https://arxiv.org/pdf/1707.06347v2",
+        "https://dblp.org/rec/journals/corr/SchulmanWDRK17.html"
+      ]
+    },
     {
       "date": "2026-11-08",
       "title": "重复数据的代价与矩阵预条件",

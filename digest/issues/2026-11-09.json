@@ -1,0 +1,323 @@
+{
+  "date": "2026-11-09",
+  "number": "027",
+  "publishedAt": "2026-11-09T14:07:30Z",
+  "window": "2026-11-06 09:02 — 2026-11-09 09:02 EST · America/New_York；较早漏收稿另标日期",
+  "readingMinutes": 12,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Muon",
+    "Test-time scaling",
+    "Post-training"
+  ],
+  "edition": "每日研究笔记",
+  "title": "矩阵归属与小团队并行",
+  "subtitle": "DMuon‑2 · Parallel Agent Teams · 精读 PPO",
+  "intro": "两篇主读：整矩阵更新如何融入分片训练，以及为什么多个小团队可能优于独立代理或单一大团队。简讯覆盖协作训练、验证噪声、推理预算与架构 scaling；经典精读 PPO 的单边裁剪。",
+  "articles": [
+    {
+      "id": "paper-2611-07084",
+      "paper": "DMuon-2: Scaling Matrix Optimizers in Data Parallelism with Topology-Aware Matrix Ownership and Communication",
+      "authors": "Starrick Liu · Ruizhi Chengze · Lufang Chen · Michael Zhao · Ran Yu · Xiaofan Li · Dance Kuzi · Yue Zhang · Zijuan Lin · SongAo Han · YongHua Chen · Ruyi Gan · Hao Wang",
+      "url": "https://arxiv.org/html/2611.07084v2",
+      "kind": "主读 · 延迟补收",
+      "title": "把矩阵交给一个 owner，而非各自正交化分片",
+      "dateNote": "首发11-04 14:43 EST；所读 v2：11-06 04:14 EST；2026年",
+      "evidence": "已读系统设计、吞吐与数值等价设置；对照 v1，未逐项核实所有差异，结果不归为 v2 新增",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "FSDP/ZeRO 的分片与逐元素 AdamW 相容，却不与整矩阵正交化自动交换。DMuon‑2 收集完整矩阵到唯一 owner，按估计计算量分配，再广播更新。 [1,2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\operatorname{polar}\\!\\begin{pmatrix}M_1\\\\M_2\\end{pmatrix}\\ne\\begin{pmatrix}\\operatorname{polar}(M_1)\\\\\\operatorname{polar}(M_2)\\end{pmatrix}\\quad\\text{in general}",
+          "label": "解释性精确 polar 示意；实际实现用有限 Newton–Schulz，并要求与整矩阵算法数值对应 [1]"
+        },
+        {
+          "type": "text",
+          "text": "HSDP 跨副本共享 owner 与优化器状态；更新好一块即可跨节点发布，和后续计算重叠。关键是重排通信与工作归属，不是改动优化目标。 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "256 H100 · 中位吞吐比",
+            "被比较基线"
+          ],
+          "rows": [
+            [
+              "1.05×",
+              "FSDP2 + AdamW"
+            ],
+            [
+              "2.1×",
+              "gather-then-replicate Muon"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "LLM 吞吐实验用随机 tokens，VLA 用预制 LIBERO 批次且不计数据加载；这些是训练步骤吞吐，不是达到同一验证 loss 的耗时优势。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-09798",
+      "paper": "Test-Time Compute Scales Better with Parallel Agent Teams",
+      "authors": "Junlin Wang · Haozhe Chen · Ang Li · Rahul Chalamala · Zhuang Liu",
+      "url": "https://arxiv.org/html/2611.09798v1",
+      "kind": "主读",
+      "title": "协作提高单次均值，多次团队保留挑选收益",
+      "dateNote": "2026-11-06 12:53 EST · v1",
+      "evidence": "已读方法、正态分数模型与成本口径；未复现",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "设总预算为 B 个固定运行时长的代理，每队 k 人，可采 N=B/k 个独立团队。团队内共享发现；跨团队由任务验证器选择最好提交。 [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "X_k\\sim\\mathcal N(\\mu_k,\\sigma_k^2),\\qquad \\mathbb E\\max_{i\\le N}X_{k,i}=\\mu_k+\\sigma_k a_N,\\quad a_N=\\mathbb E\\max_{i\\le N}Z_i",
+          "label": "原文统计模型：各样本独立，Zᵢ为标准正态；a₁=0 [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "V(B,k)\\approx\\mu_k+\\sigma_k\\sqrt{2\\log(B/k)}",
+          "label": "大样本极值近似，不能把 N=1 时的精度当作保证 [3]"
+        },
+        {
+          "type": "text",
+          "text": "Qwen3.8‑27B、B=100：十人小队在12项长程任务中胜过独立代理10项；在测试过百人团队的4项中均胜出。正态模型只预测对9/12项的收益符号。 [3]"
+        },
+        {
+          "type": "note",
+          "title": "边界",
+          "text": "固定代理时长不是固定生成 tokens 或精确 FLOPs；论文另列 GPU时间/商业 token 价格账。结论依赖可评分提交与跨团队样本差异。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-08615",
+      "paper": "s$^3$: Simple Scaling of Swarms via Cooperative Multi-agent RL",
+      "authors": "Kunal Jha , Gonçalo Faria , Shuyue Stella Li , Scott Geng , Faeze Brahman , Noah A. Smith , Yulia Tsvetkov , Max Kleiman-Weiner , Natasha Jaques",
+      "url": "https://arxiv.org/abs/2611.08615",
+      "kind": "简讯",
+      "title": "s³：让沟通与分工进入团队训练",
+      "dateNote": "2026-11-05 14:07 EST · v1；延迟补收",
+      "evidence": "基于摘要；未逐项核验实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "协作多代理 RL 不预先指定角色，让代理决定何时独立工作、分享和读取消息；研究信息聚合与分散探索，以及迁移到更大团队。单队学习与上文固定模型的推理预算分配不同。 [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-09699",
+      "paper": "Verifier Noise Is a Temperature: Testing Tilt Predictions in Finite-Budget LLM-Guided Search",
+      "authors": "Xiaomeng Li",
+      "url": "https://arxiv.org/abs/2611.09699",
+      "kind": "简讯",
+      "title": "验证噪声改变搜索温度，但定量预测会失败",
+      "dateNote": "2026-11-06 11:44 EST · v1",
+      "evidence": "基于摘要；未逐项核验实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在可逆提议与 logistic 分差噪声等条件下，接受更优者给出指数倾斜平稳律；缓存旧分数破坏该设置。预注册有限预算程序搜索检验中，多数方向成立，但收益幅度预测不准。 [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-09872",
+      "paper": "On the Reliability of Majority-Vote Pseudo-Labels in Test-Time Reinforcement Learning",
+      "authors": "Haoyu Wang , Ru Wang , Yuanyuan Wang , Jiaxian Guo , Mingming Gong",
+      "url": "https://arxiv.org/abs/2611.09872",
+      "kind": "简讯",
+      "title": "TTRL：更多投票只降低有限采样不确定性",
+      "dateNote": "2026-11-06 13:49 EST · v1",
+      "evidence": "基于摘要；未逐项核验实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "区分总体多数标签偏差与每题有限 rollout 波动；前者无外部监督通常不可识别。方法按投票可靠性保守重加权 DPO，并缓存以减少自监督遗忘；不等于证明更多采样必然收敛到真标签。 [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-08741",
+      "paper": "AlterNet: Adaptive-Depth Mixture-of-Experts with Learned Halting for Elastic Inference",
+      "authors": "Alexander Kastius",
+      "url": "https://arxiv.org/abs/2611.08741",
+      "kind": "简讯",
+      "title": "AlterNet：学习何时停止增加深度",
+      "dateNote": "2026-11-05 16:46 EST · v1；延迟补收",
+      "evidence": "基于摘要；未逐项核验实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "浅层专家结合迭代计算、深度编码与序列级 halting，训练后可调低推理计算。作者仅给初步基准，尚不能由摘要确认完整质量—算力前沿。 [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-08566",
+      "paper": "CascadeRec: Deployed Adaptive LLM Compute Allocation for Multi-Tenant Content Recommendation",
+      "authors": "Kai Zhao , Guilin Zhang , Xiang Cheng , Xiquan Cui , Henry Heng , Xu Chu , Alet Blanken",
+      "url": "https://arxiv.org/abs/2611.08566",
+      "kind": "简讯",
+      "title": "CascadeRec：额外计算未必帮到冷用户",
+      "dateNote": "2026-11-05 12:30 EST · v1；延迟补收",
+      "evidence": "基于摘要；未逐项核验实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "两级推荐重排按请求升级自一致性、多路径或大模型。生产 A/B 报告约10%推理成本下降、未观察到质量回退；稀疏历史用户的统一大模型重排反而可能降低 NDCG@10。 [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-08640",
+      "paper": "Aspect-wise Pairwise Tournaments for Test-Time Selection",
+      "authors": "Hannah Guan , Yilun Du",
+      "url": "https://arxiv.org/abs/2611.08640",
+      "kind": "简讯",
+      "title": "APT：逐方面作成对淘汰赛",
+      "dateNote": "2026-11-05 14:37 EST · v1；延迟补收",
+      "evidence": "基于摘要；未逐项核验实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用多个自然语言方面验证器投票决定成对比较，逐轮淘汰。五域、三生成器对照中同时比较二元审批、通用成对裁判与匹配预算；优势主要出现在开放式任务。 [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-08802",
+      "paper": "Scale as a Modality: Multi-Scale Pixel-Space Diffusion Transformers",
+      "authors": "Ruibo Chen , Kaishen Wang , Tianyi Xiong , Chenxi Liu , Yanshuo Chen , Heng Huang , Jian Du",
+      "url": "https://arxiv.org/abs/2611.08802",
+      "kind": "简讯",
+      "title": "MS‑pDiT：增加尺度流，而不只加深度",
+      "dateNote": "2026-11-05 18:55 EST · v1；延迟补收",
+      "evidence": "基于摘要；未逐项核验实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "像素空间扩散用不同 patch 尺度的专属流并双向交换信息。ImageNet256 从2流至5流，FID 为4.39、2.31、2.26、2.19；参数近似匹配不自动意味着训练 FLOPs 或采样成本匹配。 [10]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.07084v2",
+      "title": "DMuon‑2 · §2–7、表1及附录 D"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.07084",
+      "title": "DMuon 版本历史"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.09798v1",
+      "title": "Parallel Agent Teams · §2–4、表1–2及附录 J"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.08615",
+      "title": "s$^3$: Simple Scaling of Swarms via Cooperative Multi-agent RL · 摘要与版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.09699",
+      "title": "Verifier Noise Is a Temperature: Testing Tilt Predictions in Finite-Budget LLM-Guided Search · 摘要与版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.09872",
+      "title": "On the Reliability of Majority-Vote Pseudo-Labels in Test-Time Reinforcement Learning · 摘要与版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.08741",
+      "title": "AlterNet: Adaptive-Depth Mixture-of-Experts with Learned Halting for Elastic Inference · 摘要与版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.08566",
+      "title": "CascadeRec: Deployed Adaptive LLM Compute Allocation for Multi-Tenant Content Recommendation · 摘要与版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.08640",
+      "title": "Aspect-wise Pairwise Tournaments for Test-Time Selection · 摘要与版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.08802",
+      "title": "Scale as a Modality: Multi-Scale Pixel-Space Diffusion Transformers · 摘要与版本历史"
+    },
+    {
+      "url": "https://arxiv.org/pdf/1707.06347v2",
+      "title": "PPO · v2 §2–5、Algorithm 1及§6实验"
+    },
+    {
+      "url": "https://dblp.org/rec/journals/corr/SchulmanWDRK17.html",
+      "title": "DBLP · 2017 原始预印本记录（历史）"
+    }
+  ],
+  "classic": {
+    "id": "classic-ppo",
+    "paperId": "arxiv:1707.06347",
+    "shortTitle": "PPO",
+    "year": 2017,
+    "topics": [
+      "Post-training"
+    ],
+    "paper": "Proximal Policy Optimization Algorithms",
+    "authors": "John Schulman · Filip Wolski · Prafulla Dhariwal · Alec Radford · Oleg Klimov",
+    "url": "https://arxiv.org/pdf/1707.06347v2",
+    "kind": "历史经典",
+    "title": "PPO 裁剪的是改善方向的激励",
+    "dateNote": "2017预印本；首发07-20；所读 v2：2017-08-28",
+    "evidence": "已读 PDF §2–6与Algorithm 1；分段写法为等价推导",
+    "recognition": {
+      "label": "策略优化的重要历史工作 · DBLP记录核验2026-11-09",
+      "url": "https://dblp.org/rec/journals/corr/SchulmanWDRK17.html"
+    },
+    "question": "多次 minibatch 更新后，若单个样本已进入裁剪平区，共享参数的其他样本能否继续把它推远，怎样在同一批数据中诊断？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "TRPO（2015）用 KL 信赖域限制更新；PPO（2017）改用可反复 minibatch 优化的一阶目标。固定旧策略 π₀ 采样，优势估计 Â 在该轮训练中视为固定。 [11,12]"
+      },
+      {
+        "type": "equation",
+        "tex": "r_t(\\theta)=\\frac{\\pi_\\theta(a_t\\mid s_t)}{\\pi_0(a_t\\mid s_t)},\\qquad L^{\\rm CPI}(\\theta)=\\widehat{\\mathbb E}_t[r_t(\\theta)\\widehat A_t]",
+        "label": "旧策略状态—动作数据上的代理目标；不是完整当前策略状态分布 [11]"
+      },
+      {
+        "type": "equation",
+        "tex": "L^{\\rm CLIP}=\\widehat{\\mathbb E}_t\\min\\{r_t\\widehat A_t,\\operatorname{clip}(r_t,1-\\epsilon,1+\\epsilon)\\widehat A_t\\}",
+        "label": "原文 Eq.7：取两项较小者，而不只是把 r 截断 [11]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\ell(r,A)=\\begin{cases}A\\min(r,1+\\epsilon),&A\\ge0,\\\\A\\max(r,1-\\epsilon),&A<0.\\end{cases}",
+        "label": "等价分段：好动作的增大概率与坏动作的减小概率，超过阈值后收益变平"
+      },
+      {
+        "type": "equation",
+        "tex": "L^{\\rm CLIP}\\le L^{\\rm CPI},\\qquad \\left.\\nabla_\\theta L^{\\rm CLIP}\\right|_{\\theta=\\theta_0}=\\left.\\nabla_\\theta L^{\\rm CPI}\\right|_{\\theta=\\theta_0}",
+        "label": "ε>0 时的局部一致性：下界的是未裁剪代理目标，而非真实性能 [11]"
+      },
+      {
+        "type": "equation",
+        "tex": "L^{\\rm total}=\\widehat{\\mathbb E}_t[\\ell(r_t,\\widehat A_t)-c_1(V_\\theta(s_t)-V_t^{\\rm targ})^2+c_2\\mathcal H(\\pi_\\theta(\\cdot\\mid s_t))]",
+        "label": "共享网络实现的 Eq.9 形式：策略项、价值拟合和熵奖励；每轮采样后做多轮小批量更新 [11]"
+      },
+      {
+        "type": "note",
+        "title": "边界",
+        "text": "裁剪不强制所有比率留在区间内，也不推出 KL 上界或单调改进。原文还研究自适应 KL 惩罚版本；上述只是常用 clipped 版本。 [11]"
+      }
+    ]
+  }
+}

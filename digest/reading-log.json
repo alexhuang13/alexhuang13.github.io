@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-09",
+    "paperId": "arxiv:1707.06347",
+    "paper": "Proximal Policy Optimization Algorithms",
+    "shortTitle": "PPO",
+    "year": 2017,
+    "topics": [
+      "Post-training"
+    ],
+    "recognition": {
+      "label": "策略优化的重要历史工作 · DBLP记录核验2026-11-09",
+      "url": "https://dblp.org/rec/journals/corr/SchulmanWDRK17.html"
+    },
+    "source": "https://arxiv.org/pdf/1707.06347v2",
+    "url": "/digest/2026-11-09.html#classic-ppo"
+  },
+  {
     "date": "2026-11-08",
     "paperId": "arxiv:1802.09568",
     "paper": "Shampoo: Preconditioned Stochastic Tensor Optimization",
