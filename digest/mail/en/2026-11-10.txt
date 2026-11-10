@@ -1,0 +1,76 @@
+RESEARCH DIGEST / 2026-11-10
+Hypergradient spectra and hidden preference transfer
+BiMuon · Factorization scaling · Regularization and subliminal learning · Lazy Training
+
+中文: https://alexhuang13.github.io/digest/2026-11-10.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-10.html
+
+Close reading · new paper
+Polar updates of hypergradients
+BiMuon: A Geometry-Aware Stochastic Bilevel Optimization Approach
+https://alexhuang13.github.io/digest/en/2026-11-10.html#paper-2611-10188
+
+Close reading · new paper
+Power-law loss does not remove exponential problem-size scaling
+Semiprime Factorization with Discrete Diffusion and Beam Search: Scaling Laws
+https://alexhuang13.github.io/digest/en/2026-11-10.html#paper-2611-10202
+
+Close reading · new paper
+Constraining adaptation can amplify out-of-domain preferences
+Regularization Amplifies Subliminal Learning
+https://alexhuang13.github.io/digest/en/2026-11-10.html#paper-2611-10397
+
+Brief · new paper
+A Black-Box Reduction from Regret to Multi-Level Coverage
+A Black-Box Reduction from Regret to Multi-Level Coverage
+https://alexhuang13.github.io/digest/en/2026-11-10.html#brief-2611-12059
+
+Brief · new paper
+Is Persona Generalization Predictable?
+Is Persona Generalization Predictable?
+https://alexhuang13.github.io/digest/en/2026-11-10.html#brief-2611-12864
+
+Brief · new paper
+TrialDesignBench: Benchmarking Language Models for Phase-I Trial Design Against Clinical Knowledge
+TrialDesignBench: Benchmarking Language Models for Phase-I Trial Design Against Clinical Knowledge
+https://alexhuang13.github.io/digest/en/2026-11-10.html#brief-2611-12640
+
+Brief · new paper
+Test-Time Scaling for Diffusion Language Models with Frequency-Aware Remasking
+Test-Time Scaling for Diffusion Language Models with Frequency-Aware Remasking
+https://alexhuang13.github.io/digest/en/2026-11-10.html#brief-2611-10486
+
+Brief · new paper
+LAION-Audio-XL: A Web-Scale Corpus and Scaling Studies for Contrastive Language-Audio Pretraining
+LAION-Audio-XL: A Web-Scale Corpus and Scaling Studies for Contrastive Language-Audio Pretraining
+https://alexhuang13.github.io/digest/en/2026-11-10.html#brief-2611-11592
+
+Brief · new paper
+Depth as a Candidate Source: Portfolio Allocation for Recurrent Test-Time Scaling in Large Language Models
+Depth as a Candidate Source: Portfolio Allocation for Recurrent Test-Time Scaling in Large Language Models
+https://alexhuang13.github.io/digest/en/2026-11-10.html#brief-2611-12293
+
+Brief · new paper
+WorldMind: Test-Time Scaling for Visual Spatial Reasoning through Latent World Simulation
+WorldMind: Test-Time Scaling for Visual Spatial Reasoning through Latent World Simulation
+https://alexhuang13.github.io/digest/en/2026-11-10.html#brief-2611-10151
+
+Brief · new paper
+SWAM: Scaling World Action Models with Cross-Modal Alignment
+SWAM: Scaling World Action Models with Cross-Modal Alignment
+https://alexhuang13.github.io/digest/en/2026-11-10.html#brief-2611-12870
+
+Brief · new paper
+Scaling Adaptive Prompt Injection Attacks with Agent Swarms
+Scaling Adaptive Prompt Injection Attacks with Agent Swarms
+https://alexhuang13.github.io/digest/en/2026-11-10.html#brief-2611-11861
+
+Daily classic · 2019
+How a large scale freezes features
+https://alexhuang13.github.io/digest/en/2026-11-10.html#classic-lazy-training
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-10.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

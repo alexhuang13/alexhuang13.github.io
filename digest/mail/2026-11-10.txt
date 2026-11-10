@@ -1,0 +1,76 @@
+RESEARCH DIGEST / 2026-11-10
+超梯度的谱与隐藏偏好的迁移
+BiMuon · 分解整数的 scaling · 正则化与隐性学习 · 精读 Lazy Training
+
+中文: https://alexhuang13.github.io/digest/2026-11-10.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-10.html
+
+主读 · 新稿
+对超梯度做 polar 更新
+BiMuon: A Geometry-Aware Stochastic Bilevel Optimization Approach
+https://alexhuang13.github.io/digest/2026-11-10.html#paper-2611-10188
+
+主读 · 新稿
+loss 的幂律未消除问题规模的指数壁垒
+Semiprime Factorization with Discrete Diffusion and Beam Search: Scaling Laws
+https://alexhuang13.github.io/digest/2026-11-10.html#paper-2611-10202
+
+主读 · 新稿
+限制参数变化，仍可能放大域外偏好
+Regularization Amplifies Subliminal Learning
+https://alexhuang13.github.io/digest/2026-11-10.html#paper-2611-10397
+
+简讯 · 新稿
+A Black-Box Reduction from Regret to Multi-Level Coverage
+A Black-Box Reduction from Regret to Multi-Level Coverage
+https://alexhuang13.github.io/digest/2026-11-10.html#brief-2611-12059
+
+简讯 · 新稿
+Is Persona Generalization Predictable?
+Is Persona Generalization Predictable?
+https://alexhuang13.github.io/digest/2026-11-10.html#brief-2611-12864
+
+简讯 · 新稿
+TrialDesignBench: Benchmarking Language Models for Phase-I Trial Design Against Clinical Knowledge
+TrialDesignBench: Benchmarking Language Models for Phase-I Trial Design Against Clinical Knowledge
+https://alexhuang13.github.io/digest/2026-11-10.html#brief-2611-12640
+
+简讯 · 新稿
+Test-Time Scaling for Diffusion Language Models with Frequency-Aware Remasking
+Test-Time Scaling for Diffusion Language Models with Frequency-Aware Remasking
+https://alexhuang13.github.io/digest/2026-11-10.html#brief-2611-10486
+
+简讯 · 新稿
+LAION-Audio-XL: A Web-Scale Corpus and Scaling Studies for Contrastive Language-Audio Pretraining
+LAION-Audio-XL: A Web-Scale Corpus and Scaling Studies for Contrastive Language-Audio Pretraining
+https://alexhuang13.github.io/digest/2026-11-10.html#brief-2611-11592
+
+简讯 · 新稿
+Depth as a Candidate Source: Portfolio Allocation for Recurrent Test-Time Scaling in Large Language Models
+Depth as a Candidate Source: Portfolio Allocation for Recurrent Test-Time Scaling in Large Language Models
+https://alexhuang13.github.io/digest/2026-11-10.html#brief-2611-12293
+
+简讯 · 新稿
+WorldMind: Test-Time Scaling for Visual Spatial Reasoning through Latent World Simulation
+WorldMind: Test-Time Scaling for Visual Spatial Reasoning through Latent World Simulation
+https://alexhuang13.github.io/digest/2026-11-10.html#brief-2611-10151
+
+简讯 · 新稿
+SWAM: Scaling World Action Models with Cross-Modal Alignment
+SWAM: Scaling World Action Models with Cross-Modal Alignment
+https://alexhuang13.github.io/digest/2026-11-10.html#brief-2611-12870
+
+简讯 · 新稿
+Scaling Adaptive Prompt Injection Attacks with Agent Swarms
+Scaling Adaptive Prompt Injection Attacks with Agent Swarms
+https://alexhuang13.github.io/digest/2026-11-10.html#brief-2611-11861
+
+每日精读 · 2019
+大缩放如何冻结特征
+https://alexhuang13.github.io/digest/2026-11-10.html#classic-lazy-training
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-10.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

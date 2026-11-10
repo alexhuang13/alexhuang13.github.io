@@ -1,0 +1,402 @@
+{
+  "date": "2026-11-10",
+  "number": "028",
+  "publishedAt": "2026-11-10T13:25:11.694979+00:00",
+  "window": "2026-11-07 08:18 — 2026-11-10 08:18 EST · America/New_York；延迟补收另标首发日期",
+  "readingMinutes": 17,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Author watch"
+  ],
+  "edition": "每日研究笔记",
+  "title": "超梯度的谱与隐藏偏好的迁移",
+  "subtitle": "BiMuon · 分解整数的 scaling · 正则化与隐性学习 · 精读 Lazy Training",
+  "intro": "三篇主读串起矩阵超梯度、问题难度维度上的 scaling，以及正则化如何改变行为迁移。另收作者新稿与推理预算简讯；经典精读用缩放参数区分特征学习与线性化动力学。",
+  "articles": [
+    {
+      "id": "paper-2611-10188",
+      "paper": "BiMuon: A Geometry-Aware Stochastic Bilevel Optimization Approach",
+      "authors": "Zhen Qin · Zhiyao Zhang · Yingbin Liang · Jia Liu",
+      "url": "https://arxiv.org/html/2611.10188v1",
+      "kind": "主读 · 新稿",
+      "title": "对超梯度做 polar 更新",
+      "dateNote": "v1 · 2026-11-06 15:06 EST；11-10公告 / announced Nov 10",
+      "evidence": "已读 §3–7、定理1及有限 NS 条件",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "隐式微分把下层曲率的逆带入上层梯度。BiMuon 在上层对矩阵超梯度的动量做正交化，下层仍用随机梯度跟踪。下式中导数按矩阵算子理解，均在下层解处取值。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Phi(X)=f(X,Y^*(X)),\\quad Y^*(X)=\\arg\\min_Y g(X,Y),\\qquad \\nabla\\Phi=\\nabla_X f-\\nabla^2_{XY}g(\\nabla^2_{YY}g)^{-1}\\nabla_Y f",
+          "label": "隐式超梯度；下层 μ-强凸使逆算子存在"
+        },
+        {
+          "type": "equation",
+          "tex": "M_t=\\theta M_{t-1}+(1-\\theta)\\widehat H_t,\\qquad X_{t+1}=X_t-\\beta\\operatorname{polar}(M_t)",
+          "label": "算法机制简写；Ĥ 是随机 Neumann 近似超梯度"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathbb E\\|\\nabla\\Phi(X_R)\\|_*\\le C_{\\rm pol}T^{-1/4},\\qquad \\mathbb E\\|\\nabla\\Phi(X_R)\\|_*\\le\\frac{C_{\\rm pol}}{1-\\varepsilon_q}T^{-1/4}",
+          "label": "原文定理1：左为精确 polar，右为有限 NS；R 均匀取自前 T 次迭代"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "需样本级下层强凸、Lipschitz/光滑性、新鲜独立无偏导数及指定步长。有限 NS 还需整个运行中统一的算子误差 εq<1；不能把常用固定5步自动视作满足。ε⁻⁴ 是外层迭代阶，不是端到端速度增益。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-10202",
+      "paper": "Semiprime Factorization with Discrete Diffusion and Beam Search: Scaling Laws",
+      "authors": "Brendan O’Donoghue · Nenad Tomašev · Volodymyr Mnih · Timothy Nguyen · Dalin Guo · Arun Nair · Kenneth Yang · Alexandre Fréchette · Jasper Xian · Jean Tarbouriech · Pavel Tyletski · Ingrid von Glehn · Johannes Bausch · Demis Hassabis · Raia Hadsell",
+      "url": "https://arxiv.org/html/2611.10202v1",
+      "kind": "主读 · 新稿",
+      "title": "loss 的幂律未消除问题规模的指数壁垒",
+      "dateNote": "v1 · 2026-11-06；11-10公告 / announced Nov 10",
+      "evidence": "已读 §3–5、表1–2及附录相关设置",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "给定半素数 n，离散扩散预测两个至多 k 位的因子。单轨迹反复重遮盖与 beam search 是不同解码协议；原文的 scaling 分别讨论数据、模型、去噪步数与 k。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "n=pq,\\quad p,q<2^k;\\qquad L(s)=A s^{-\\alpha}+L_\\infty,\\qquad s_*(k+1)\\approx2s_*(k)",
+          "label": "原文经验拟合：s 为训练步数；末式为固定低 loss 的近似趋势，非复杂度下界"
+        },
+        {
+          "type": "text",
+          "text": "在 k=15–18 的模型中，多一位因子大约需要两倍训练步数。增加推理计算可以帮助已有非零成功率的模型，却未让 k=34 的单轨迹解码产生精确解。 [2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "协议 / 12B、k=34",
+            "预算与样本",
+            "精确分解"
+          ],
+          "rows": [
+            [
+              "单轨迹，无格后处理",
+              "109k训练步；最多16,384去噪步；1,024测试例",
+              "0%"
+            ],
+            [
+              "单轨迹 + Coppersmith",
+              "500去噪步；严格68位子集15,523例",
+              "1例（0.0064%）"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "68位纪录是扩散候选加经典格后处理的一次成功；并非高成功率，更非优于经典分解。小 k 数据有重复且同一素因子多次出现，成对留出不等于未见素因子的泛化。 [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-10397",
+      "paper": "Regularization Amplifies Subliminal Learning",
+      "authors": "Lawrence Feng · Jacob Mitchell Springer · Gaurav R. Ghosal · Ziqian Zhong · Aditi Raghunathan",
+      "url": "https://arxiv.org/html/2611.10397v1",
+      "kind": "主读 · 新稿",
+      "title": "限制参数变化，仍可能放大域外偏好",
+      "dateNote": "v1 · 2026-11-06 21:08 EST；11-10公告 / announced Nov 10",
+      "evidence": "已读 §2、§4–5、Figure 1及附录A",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "教师带偏好提示，却只输出数字序列；学生不见提示，仅做 SFT。研究测量训练域之外的偏好表达。降低 LoRA rank、加参数惩罚和增加独立数据都可加强迁移。 [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Delta W=BA,\\quad\\operatorname{rank}(BA)\\le r;\\qquad \\min_\\theta\\;\\mathbb E_{(x,y)\\sim D_{\\rm teacher}}[-\\log\\pi_\\theta(y\\mid x)]+\\lambda\\|\\theta-\\theta_0\\|_2^2",
+          "label": "两种约束的机制示意；不是一个囊括全文实验的统一目标"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Qwen2.5-7B-Instruct；25.8k数字序列",
+            "全量微调",
+            "rank-1 LoRA"
+          ],
+          "rows": [
+            [
+              "学生直接回答最爱动物为 cat 的频率",
+              "3%",
+              "87%"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "学习率按 rank 调优。表中是直接偏好问答频率，不是训练准确率或通用安全指标；不同目标和迁移协议趋势强弱不同。“偏好复杂度决定最优正则化”仍是作者假说。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-12059",
+      "paper": "A Black-Box Reduction from Regret to Multi-Level Coverage",
+      "authors": "Tuo Liu , Edgar Dobriban , Francesco Orabona",
+      "url": "https://arxiv.org/abs/2611.12059",
+      "kind": "简讯 · 新稿",
+      "title": "A Black-Box Reduction from Regret to Multi-Level Coverage",
+      "dateNote": "v1 · Mon, 9 Nov 2026 08:34:49 UTC",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "多层覆盖：把任意在线算法的线性化 regret 经 Fenchel 对偶转成逐层覆盖与分布一致性控制；两种实例把层数依赖由 √d 改为 √log d。 [4]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-12864",
+      "paper": "Is Persona Generalization Predictable?",
+      "authors": "Olina Mukherjee , Arnav Goel , Aditi Raghunathan , Jacob Mitchell Springer",
+      "url": "https://arxiv.org/abs/2611.12864",
+      "kind": "简讯 · 新稿",
+      "title": "Is Persona Generalization Predictable?",
+      "dateNote": "v1 · Mon, 9 Nov 2026 18:51:03 UTC",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Persona 的域内/域外表达率近似 probit-linear；调学习率等通常沿同一条线移动，改变微调层可改变斜率。是经验规律。 [5]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-12640",
+      "paper": "TrialDesignBench: Benchmarking Language Models for Phase-I Trial Design Against Clinical Knowledge",
+      "authors": "Yihan Hank Tang (1), Peng Yang (2), Jiayi Xin (1), Tianqi Shang (1), Xuyang Chen (1), Ying Yuan (2), Yi Lian (1), Qi Long (1) ((1) University of Pennsylvania, (2) The University of Texas MD Anderson Cancer Center)",
+      "url": "https://arxiv.org/abs/2611.12640",
+      "kind": "简讯 · 新稿",
+      "title": "TrialDesignBench: Benchmarking Language Models for Phase-I Trial Design Against Clinical Knowledge",
+      "dateNote": "v1 · Mon, 9 Nov 2026 16:15:57 UTC",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Qi Long 合著：617个肿瘤早期试验的专家核验设计基准；五个前沿模型均未匹配参考标准。此处只报告基准结论，不提供临床设计建议。 [6]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-10486",
+      "paper": "Test-Time Scaling for Diffusion Language Models with Frequency-Aware Remasking",
+      "authors": "Bowen Zuo , Yue Yu , Dongruo Zhou , Yinglun Zhu",
+      "url": "https://arxiv.org/abs/2611.10486",
+      "kind": "简讯 · 新稿",
+      "title": "Test-Time Scaling for Diffusion Language Models with Frequency-Aware Remasking",
+      "dateNote": "v1 · Sat, 7 Nov 2026 05:26:09 UTC",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "扩散语言模型按预测跨步变化频率分配 remasking；先快速处理简单题，再对困难题改变解码策略。 [7]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-11592",
+      "paper": "LAION-Audio-XL: A Web-Scale Corpus and Scaling Studies for Contrastive Language-Audio Pretraining",
+      "authors": "Gijs Wijngaard , Felix Förster , Ross Wightman , Marianna Nezhurina , Christoph Schuhmann , Jenia Jitsev , A. Sophia Koepke",
+      "url": "https://arxiv.org/abs/2611.11592",
+      "kind": "简讯 · 新稿",
+      "title": "LAION-Audio-XL: A Web-Scale Corpus and Scaling Studies for Contrastive Language-Audio Pretraining",
+      "dateNote": "v1 · Sun, 8 Nov 2026 20:19:38 UTC",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "1.48B音频样本语料与 CLAP2，研究固定算力下模型/数据权衡；语料总规模不等于全部用于每次训练。 [8]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-12293",
+      "paper": "Depth as a Candidate Source: Portfolio Allocation for Recurrent Test-Time Scaling in Large Language Models",
+      "authors": "Chaoyuan Hao , Wentao Yue , Yanyan Wu , Boyuan Gao , Tianyou Lai , Maolin Wang , Yongxin Ni , Hanwen Du , Youhua Li",
+      "url": "https://arxiv.org/abs/2611.12293",
+      "kind": "简讯 · 新稿",
+      "title": "Depth as a Candidate Source: Portfolio Allocation for Recurrent Test-Time Scaling in Large Language Models",
+      "dateNote": "v1 · Mon, 9 Nov 2026 12:17:59 UTC",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "递归深度产生非嵌套的候选成功集合；混合深度扩大 oracle coverage，但这不等于可实际选中的最终准确率。 [9]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-10151",
+      "paper": "WorldMind: Test-Time Scaling for Visual Spatial Reasoning through Latent World Simulation",
+      "authors": "Haoming Wang , Yongjian Fu , Ju Ren , Wei Gao",
+      "url": "https://arxiv.org/abs/2611.10151",
+      "kind": "简讯 · 新稿",
+      "title": "WorldMind: Test-Time Scaling for Visual Spatial Reasoning through Latent World Simulation",
+      "dateNote": "v1 · Fri, 6 Nov 2026 19:13:44 UTC",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "WorldMind 把额外推理预算用于潜在世界模拟，避免反复经过像素；需区分世界模型收益与单纯增加 token。 [10]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-12870",
+      "paper": "SWAM: Scaling World Action Models with Cross-Modal Alignment",
+      "authors": "Yu Zhou , Xinyuan Xia , Xuankun Yang , Yinghao Yang , Wendi Chen , Bowen Liu , Jianhan Ma , Weicheng Duan , Jun Lv , Cewu Lu , Yanwei Li",
+      "url": "https://arxiv.org/abs/2611.12870",
+      "kind": "简讯 · 新稿",
+      "title": "SWAM: Scaling World Action Models with Cross-Modal Alignment",
+      "dateNote": "v1 · Mon, 9 Nov 2026 18:55:04 UTC",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "SWAM：固定预算比较自我中心视频、UMI与机器人示范的混合及跨模态监督；按数据配比/规模实验收录。 [11]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-11861",
+      "paper": "Scaling Adaptive Prompt Injection Attacks with Agent Swarms",
+      "authors": "Alexey Kurakin , Vishal Karande , Alex Bie , Chongyang Shi , Shuang Song , Saeed Mahloujifar , Abdullatif Köksal , Jamie Hayes , Juliette Pluto , Yinghao Sun , Kamalika Chaudhuri",
+      "url": "https://arxiv.org/abs/2611.11861",
+      "kind": "简讯 · 新稿",
+      "title": "Scaling Adaptive Prompt Injection Attacks with Agent Swarms",
+      "dateNote": "v1 · Mon, 9 Nov 2026 04:34:14 UTC",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "代理群驱动自适应攻击，检验增加攻击端能力后提示注入防御是否仍稳健；仅此受控评测中的 scaling，不是通用幂律。 [12]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.10188v1",
+      "title": "BiMuon: A Geometry-Aware Stochastic Bilevel Optimization Approach"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.10202v1",
+      "title": "Semiprime Factorization with Discrete Diffusion and Beam Search: Scaling Laws"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.10397v1",
+      "title": "Regularization Amplifies Subliminal Learning"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.12059",
+      "title": "A Black-Box Reduction from Regret to Multi-Level Coverage"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.12864",
+      "title": "Is Persona Generalization Predictable?"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.12640",
+      "title": "TrialDesignBench: Benchmarking Language Models for Phase-I Trial Design Against Clinical Knowledge"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.10486",
+      "title": "Test-Time Scaling for Diffusion Language Models with Frequency-Aware Remasking"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.11592",
+      "title": "LAION-Audio-XL: A Web-Scale Corpus and Scaling Studies for Contrastive Language-Audio Pretraining"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.12293",
+      "title": "Depth as a Candidate Source: Portfolio Allocation for Recurrent Test-Time Scaling in Large Language Models"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.10151",
+      "title": "WorldMind: Test-Time Scaling for Visual Spatial Reasoning through Latent World Simulation"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.12870",
+      "title": "SWAM: Scaling World Action Models with Cross-Modal Alignment"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.11861",
+      "title": "Scaling Adaptive Prompt Injection Attacks with Agent Swarms"
+    },
+    {
+      "url": "https://arxiv.org/html/1812.07956v5",
+      "title": "Lazy Training · v5 §2–3"
+    },
+    {
+      "url": "https://papers.nips.cc/paper_files/paper/2019/hash/ae614c557843b1df326cb29c57225459-Abstract.html",
+      "title": "NeurIPS 2019 · official proceedings"
+    }
+  ],
+  "classic": {
+    "id": "classic-lazy-training",
+    "paperId": "arxiv:1812.07956",
+    "shortTitle": "Lazy Training",
+    "year": 2019,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "kind": "历史经典",
+    "title": "大缩放如何冻结特征",
+    "paper": "On Lazy Training in Differentiable Programming",
+    "authors": "Lénaïc Chizat · Edouard Oyallon · Francis Bach",
+    "url": "https://arxiv.org/html/1812.07956v5",
+    "dateNote": "首发2018-12-19；NeurIPS 2019；所读 v5：2020-01-07",
+    "evidence": "已读 §1–3、定理2.2–2.4；平方损失动力学为等价推导",
+    "recognition": {
+      "label": "NeurIPS 2019 · 特征学习与核方法的重要历史工作",
+      "url": "https://papers.nips.cc/paper_files/paper/2019/hash/ae614c557843b1df326cb29c57225459-Abstract.html"
+    },
+    "question": "比较 Muon 与 Adam 时，若两者参数位移相近，却 Jacobian 核漂移不同，哪一个量更能区分实际特征学习？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "NTK（2018）连接宽网络与核方法；本作指出，宽度不是进入 lazy regime 的唯一途径，显式输出缩放也可令模型近似其初始切空间。设 h 映参数到 Hilbert 预测空间，Dh 局部 Lipschitz，风险 R 的梯度 Lipschitz。 [13,14]"
+      },
+      {
+        "type": "equation",
+        "tex": "F_\\alpha(w)=\\alpha^{-2}R(\\alpha h(w)),\\qquad \\bar h(w)=h(w_0)+Dh(w_0)(w-w_0)",
+        "label": "α⁻² 保持合适的动力学时间尺度；非线性与切线模型用同一初始化"
+      },
+      {
+        "type": "equation",
+        "tex": "\\dot w=-\\alpha^{-1}Dh(w)^*\\nabla R(\\alpha h(w)),\\quad u=\\alpha h(w),\\quad \\dot u=-K(w)\\nabla R(u),\\quad K(w)=Dh(w)Dh(w)^*",
+        "label": "链式法则：预测空间梯度流被 Jacobian 核预条件"
+      },
+      {
+        "type": "equation",
+        "tex": "\\bar K=Dh(w_0)Dh(w_0)^*,\\qquad R(u)=\\tfrac12\\|u-y\\|^2\\;\\Longrightarrow\\;\\bar u(t)-y=e^{-\\bar Kt}(\\bar u(0)-y)",
+        "label": "切线模型的等价解；正特征值方向指数衰减，核零空间残差不消失"
+      },
+      {
+        "type": "equation",
+        "tex": "\\sup_{t\\le T}\\|w_\\alpha(t)-w_0\\|=O(\\alpha^{-1}),\\quad\\sup_{t\\le T}\\|w_\\alpha(t)-\\bar w_\\alpha(t)\\|=O(\\alpha^{-2}),\\quad\\sup_{t\\le T}\\|\\alpha h(w_\\alpha(t))-\\alpha\\bar h(\\bar w_\\alpha(t))\\|=O(\\alpha^{-1})",
+        "label": "原文定理2.2：h(w₀)=0，固定有限 T，α→∞；常数可依赖 T"
+      },
+      {
+        "type": "text",
+        "text": "证明线索：控制参数位移，再用 Dh 的局部 Lipschitz 性控制核漂移，以 Grönwall 比较两条流。若风险强凸且初始 Jacobian 满射，另有全时间结果；不能从固定 T 的界直接推出。原文 CNN 实验中进入 lazy regime 会降低性能，但未证明所有特征学习模型都更好。 [13]"
+      }
+    ]
+  }
+}

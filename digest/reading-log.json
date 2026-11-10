@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-10",
+    "paperId": "arxiv:1812.07956",
+    "paper": "On Lazy Training in Differentiable Programming",
+    "shortTitle": "Lazy Training",
+    "year": 2019,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "recognition": {
+      "label": "NeurIPS 2019 · 特征学习与核方法的重要历史工作",
+      "url": "https://papers.nips.cc/paper_files/paper/2019/hash/ae614c557843b1df326cb29c57225459-Abstract.html"
+    },
+    "source": "https://arxiv.org/html/1812.07956v5",
+    "url": "/digest/2026-11-10.html#classic-lazy-training"
+  },
+  {
     "date": "2026-11-09",
     "paperId": "arxiv:1707.06347",
     "paper": "Proximal Policy Optimization Algorithms",

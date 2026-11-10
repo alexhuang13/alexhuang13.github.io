@@ -1,0 +1,402 @@
+{
+  "date": "2026-11-10",
+  "number": "028",
+  "publishedAt": "2026-11-10T13:25:11.694979+00:00",
+  "window": "2026-11-07 08:18 — 2026-11-10 08:18 EST · America/New_York; delayed additions retain original dates",
+  "readingMinutes": 17,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Author watch"
+  ],
+  "edition": "Daily research notes",
+  "title": "Hypergradient spectra and hidden preference transfer",
+  "subtitle": "BiMuon · Factorization scaling · Regularization and subliminal learning · Lazy Training",
+  "intro": "Three close readings connect matrix hypergradients, scaling with problem difficulty, and how regularization changes behavioral transfer. Briefs cover author updates and inference budgets; the classic uses an explicit scale to distinguish feature learning from linearized dynamics.",
+  "articles": [
+    {
+      "id": "paper-2611-10188",
+      "paper": "BiMuon: A Geometry-Aware Stochastic Bilevel Optimization Approach",
+      "authors": "Zhen Qin · Zhiyao Zhang · Yingbin Liang · Jia Liu",
+      "url": "https://arxiv.org/html/2611.10188v1",
+      "kind": "Close reading · new paper",
+      "title": "Polar updates of hypergradients",
+      "dateNote": "v1 · 2026-11-06 15:06 EST; announced Nov 10",
+      "evidence": "Read §3–7, Theorem 1 and the finite-NS condition",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Implicit differentiation inserts inverse lower-level curvature into the upper-level gradient. BiMuon orthogonalizes momentum of a matrix hypergradient upstairs while tracking the lower-level solution with stochastic gradients. Derivatives below are matrix operators evaluated at the lower-level solution. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Phi(X)=f(X,Y^*(X)),\\quad Y^*(X)=\\arg\\min_Y g(X,Y),\\qquad \\nabla\\Phi=\\nabla_X f-\\nabla^2_{XY}g(\\nabla^2_{YY}g)^{-1}\\nabla_Y f",
+          "label": "Implicit hypergradient; μ-strong convexity downstairs ensures invertibility"
+        },
+        {
+          "type": "equation",
+          "tex": "M_t=\\theta M_{t-1}+(1-\\theta)\\widehat H_t,\\qquad X_{t+1}=X_t-\\beta\\operatorname{polar}(M_t)",
+          "label": "Algorithm schematic; Ĥ is a stochastic Neumann hypergradient estimate"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathbb E\\|\\nabla\\Phi(X_R)\\|_*\\le C_{\\rm pol}T^{-1/4},\\qquad \\mathbb E\\|\\nabla\\Phi(X_R)\\|_*\\le\\frac{C_{\\rm pol}}{1-\\varepsilon_q}T^{-1/4}",
+          "label": "Theorem 1: exact polar on the left, finite NS on the right; R is uniform over the first T iterates"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Requires sample-level lower strong convexity, Lipschitz/smoothness assumptions, fresh independent unbiased derivatives and specified stepsizes. Finite NS additionally requires a uniform operator error εq<1 throughout the run; a conventional fixed five steps does not automatically ensure it. ε⁻⁴ counts outer iterations, not end-to-end speedup. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-10202",
+      "paper": "Semiprime Factorization with Discrete Diffusion and Beam Search: Scaling Laws",
+      "authors": "Brendan O’Donoghue · Nenad Tomašev · Volodymyr Mnih · Timothy Nguyen · Dalin Guo · Arun Nair · Kenneth Yang · Alexandre Fréchette · Jasper Xian · Jean Tarbouriech · Pavel Tyletski · Ingrid von Glehn · Johannes Bausch · Demis Hassabis · Raia Hadsell",
+      "url": "https://arxiv.org/html/2611.10202v1",
+      "kind": "Close reading · new paper",
+      "title": "Power-law loss does not remove exponential problem-size scaling",
+      "dateNote": "v1 · 2026-11-06; announced Nov 10",
+      "evidence": "Read §3–5, Tables 1–2 and relevant appendix setup",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Given a semiprime n, discrete diffusion predicts two factors of at most k bits. Repeated remasking on one trajectory and beam search are distinct decoding protocols. Scaling is studied separately in data, model size, denoising steps and k. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "n=pq,\\quad p,q<2^k;\\qquad L(s)=A s^{-\\alpha}+L_\\infty,\\qquad s_*(k+1)\\approx2s_*(k)",
+          "label": "Empirical fits: s counts training steps; the last relation approximates a fixed low-loss trend, not a complexity lower bound"
+        },
+        {
+          "type": "text",
+          "text": "For k=15–18, another factor bit needs roughly twice as many training steps. More inference compute helps models already achieving nonzero success, but did not produce exact factors with standalone k=34 decoding. [2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Protocol / 12B, k=34",
+            "Budget and sample",
+            "Exact factorization"
+          ],
+          "rows": [
+            [
+              "Single trajectory, no lattice postprocessing",
+              "109k training steps; up to 16,384 denoising steps; 1,024 tests",
+              "0%"
+            ],
+            [
+              "Single trajectory + Coppersmith",
+              "500 denoising steps; 15,523 strict 68-bit tests",
+              "1 case (0.0064%)"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The 68-bit record is one success combining a diffusion candidate with classical lattice postprocessing, not high solve rates or superiority over classical factoring. Small-k data repeat examples and prime factors; held-out pairs do not imply generalization to unseen primes. [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-10397",
+      "paper": "Regularization Amplifies Subliminal Learning",
+      "authors": "Lawrence Feng · Jacob Mitchell Springer · Gaurav R. Ghosal · Ziqian Zhong · Aditi Raghunathan",
+      "url": "https://arxiv.org/html/2611.10397v1",
+      "kind": "Close reading · new paper",
+      "title": "Constraining adaptation can amplify out-of-domain preferences",
+      "dateNote": "v1 · 2026-11-06 21:08 EST; announced Nov 10",
+      "evidence": "Read §2, §4–5, Figure 1 and Appendix A",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A teacher receives a preference prompt but outputs only number sequences. The student never sees that prompt and only runs SFT; transfer is measured outside the training domain. Lower LoRA rank, parameter penalties and more unique data can each strengthen transfer. [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Delta W=BA,\\quad\\operatorname{rank}(BA)\\le r;\\qquad \\min_\\theta\\;\\mathbb E_{(x,y)\\sim D_{\\rm teacher}}[-\\log\\pi_\\theta(y\\mid x)]+\\lambda\\|\\theta-\\theta_0\\|_2^2",
+          "label": "Schematic mechanisms of two constraints, not one objective covering every experiment"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Qwen2.5-7B-Instruct; 25.8k number sequences",
+            "Full fine-tuning",
+            "Rank-1 LoRA"
+          ],
+          "rows": [
+            [
+              "Frequency of directly naming cat as favorite animal",
+              "3%",
+              "87%"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Learning rates are tuned by rank. The table measures direct preference answers, not training accuracy or general safety. Trend strength differs across targets and transfer protocols. Preference complexity determining optimal regularization remains an author hypothesis. [3]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-12059",
+      "paper": "A Black-Box Reduction from Regret to Multi-Level Coverage",
+      "authors": "Tuo Liu , Edgar Dobriban , Francesco Orabona",
+      "url": "https://arxiv.org/abs/2611.12059",
+      "kind": "Brief · new paper",
+      "title": "A Black-Box Reduction from Regret to Multi-Level Coverage",
+      "dateNote": "v1 · Mon, 9 Nov 2026 08:34:49 UTC",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Multi-level coverage: Fenchel duality converts linearized regret from an online learner into per-level coverage and distributional consistency control; two instantiations improve level dependence from √d to √log d. [4]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-12864",
+      "paper": "Is Persona Generalization Predictable?",
+      "authors": "Olina Mukherjee , Arnav Goel , Aditi Raghunathan , Jacob Mitchell Springer",
+      "url": "https://arxiv.org/abs/2611.12864",
+      "kind": "Brief · new paper",
+      "title": "Is Persona Generalization Predictable?",
+      "dateNote": "v1 · Mon, 9 Nov 2026 18:51:03 UTC",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In-domain and out-of-domain persona rates are approximately probit-linear. Hyperparameters often move models along one line, while changing fine-tuned layers can change its slope. This is empirical. [5]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-12640",
+      "paper": "TrialDesignBench: Benchmarking Language Models for Phase-I Trial Design Against Clinical Knowledge",
+      "authors": "Yihan Hank Tang (1), Peng Yang (2), Jiayi Xin (1), Tianqi Shang (1), Xuyang Chen (1), Ying Yuan (2), Yi Lian (1), Qi Long (1) ((1) University of Pennsylvania, (2) The University of Texas MD Anderson Cancer Center)",
+      "url": "https://arxiv.org/abs/2611.12640",
+      "kind": "Brief · new paper",
+      "title": "TrialDesignBench: Benchmarking Language Models for Phase-I Trial Design Against Clinical Knowledge",
+      "dateNote": "v1 · Mon, 9 Nov 2026 16:15:57 UTC",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Qi Long coauthors a benchmark of 617 early oncology trials with expert-validated designs; five frontier models fail to match the reference standard. This reports benchmark findings, not clinical design advice. [6]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-10486",
+      "paper": "Test-Time Scaling for Diffusion Language Models with Frequency-Aware Remasking",
+      "authors": "Bowen Zuo , Yue Yu , Dongruo Zhou , Yinglun Zhu",
+      "url": "https://arxiv.org/abs/2611.10486",
+      "kind": "Brief · new paper",
+      "title": "Test-Time Scaling for Diffusion Language Models with Frequency-Aware Remasking",
+      "dateNote": "v1 · Sat, 7 Nov 2026 05:26:09 UTC",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Diffusion LMs use cross-step prediction-change frequencies for remasking: solve easy questions quickly, then change decoding strategies on harder ones. [7]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-11592",
+      "paper": "LAION-Audio-XL: A Web-Scale Corpus and Scaling Studies for Contrastive Language-Audio Pretraining",
+      "authors": "Gijs Wijngaard , Felix Förster , Ross Wightman , Marianna Nezhurina , Christoph Schuhmann , Jenia Jitsev , A. Sophia Koepke",
+      "url": "https://arxiv.org/abs/2611.11592",
+      "kind": "Brief · new paper",
+      "title": "LAION-Audio-XL: A Web-Scale Corpus and Scaling Studies for Contrastive Language-Audio Pretraining",
+      "dateNote": "v1 · Sun, 8 Nov 2026 20:19:38 UTC",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A 1.48B-sample audio corpus and CLAP2 examine model/data tradeoffs at fixed compute; corpus size is not the data used in every run. [8]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-12293",
+      "paper": "Depth as a Candidate Source: Portfolio Allocation for Recurrent Test-Time Scaling in Large Language Models",
+      "authors": "Chaoyuan Hao , Wentao Yue , Yanyan Wu , Boyuan Gao , Tianyou Lai , Maolin Wang , Yongxin Ni , Hanwen Du , Youhua Li",
+      "url": "https://arxiv.org/abs/2611.12293",
+      "kind": "Brief · new paper",
+      "title": "Depth as a Candidate Source: Portfolio Allocation for Recurrent Test-Time Scaling in Large Language Models",
+      "dateNote": "v1 · Mon, 9 Nov 2026 12:17:59 UTC",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Different recurrent depths have non-nested success sets. Mixing depths improves oracle coverage, which is not the same as achievable final selection accuracy. [9]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-10151",
+      "paper": "WorldMind: Test-Time Scaling for Visual Spatial Reasoning through Latent World Simulation",
+      "authors": "Haoming Wang , Yongjian Fu , Ju Ren , Wei Gao",
+      "url": "https://arxiv.org/abs/2611.10151",
+      "kind": "Brief · new paper",
+      "title": "WorldMind: Test-Time Scaling for Visual Spatial Reasoning through Latent World Simulation",
+      "dateNote": "v1 · Fri, 6 Nov 2026 19:13:44 UTC",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "WorldMind allocates inference budget to latent world simulation rather than repeated pixel decoding; world-model gains must be distinguished from merely generating more tokens. [10]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-12870",
+      "paper": "SWAM: Scaling World Action Models with Cross-Modal Alignment",
+      "authors": "Yu Zhou , Xinyuan Xia , Xuankun Yang , Yinghao Yang , Wendi Chen , Bowen Liu , Jianhan Ma , Weicheng Duan , Jun Lv , Cewu Lu , Yanwei Li",
+      "url": "https://arxiv.org/abs/2611.12870",
+      "kind": "Brief · new paper",
+      "title": "SWAM: Scaling World Action Models with Cross-Modal Alignment",
+      "dateNote": "v1 · Mon, 9 Nov 2026 18:55:04 UTC",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "SWAM compares mixtures of egocentric video, UMI and robot demonstrations and cross-modal supervision at fixed budget; included for its data-mixture and scale experiments. [11]"
+        }
+      ]
+    },
+    {
+      "id": "brief-2611-11861",
+      "paper": "Scaling Adaptive Prompt Injection Attacks with Agent Swarms",
+      "authors": "Alexey Kurakin , Vishal Karande , Alex Bie , Chongyang Shi , Shuang Song , Saeed Mahloujifar , Abdullatif Köksal , Jamie Hayes , Juliette Pluto , Yinghao Sun , Kamalika Chaudhuri",
+      "url": "https://arxiv.org/abs/2611.11861",
+      "kind": "Brief · new paper",
+      "title": "Scaling Adaptive Prompt Injection Attacks with Agent Swarms",
+      "dateNote": "v1 · Mon, 9 Nov 2026 04:34:14 UTC",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Agent swarms drive adaptive attacks to test defenses as attacker capability increases; scaling here concerns this controlled evaluation, not a universal power law. [12]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.10188v1",
+      "title": "BiMuon: A Geometry-Aware Stochastic Bilevel Optimization Approach"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.10202v1",
+      "title": "Semiprime Factorization with Discrete Diffusion and Beam Search: Scaling Laws"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.10397v1",
+      "title": "Regularization Amplifies Subliminal Learning"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.12059",
+      "title": "A Black-Box Reduction from Regret to Multi-Level Coverage"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.12864",
+      "title": "Is Persona Generalization Predictable?"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.12640",
+      "title": "TrialDesignBench: Benchmarking Language Models for Phase-I Trial Design Against Clinical Knowledge"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.10486",
+      "title": "Test-Time Scaling for Diffusion Language Models with Frequency-Aware Remasking"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.11592",
+      "title": "LAION-Audio-XL: A Web-Scale Corpus and Scaling Studies for Contrastive Language-Audio Pretraining"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.12293",
+      "title": "Depth as a Candidate Source: Portfolio Allocation for Recurrent Test-Time Scaling in Large Language Models"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.10151",
+      "title": "WorldMind: Test-Time Scaling for Visual Spatial Reasoning through Latent World Simulation"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.12870",
+      "title": "SWAM: Scaling World Action Models with Cross-Modal Alignment"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.11861",
+      "title": "Scaling Adaptive Prompt Injection Attacks with Agent Swarms"
+    },
+    {
+      "url": "https://arxiv.org/html/1812.07956v5",
+      "title": "Lazy Training · v5 §2–3"
+    },
+    {
+      "url": "https://papers.nips.cc/paper_files/paper/2019/hash/ae614c557843b1df326cb29c57225459-Abstract.html",
+      "title": "NeurIPS 2019 · official proceedings"
+    }
+  ],
+  "classic": {
+    "id": "classic-lazy-training",
+    "paperId": "arxiv:1812.07956",
+    "shortTitle": "Lazy Training",
+    "year": 2019,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "kind": "Historical classic",
+    "title": "How a large scale freezes features",
+    "paper": "On Lazy Training in Differentiable Programming",
+    "authors": "Lénaïc Chizat · Edouard Oyallon · Francis Bach",
+    "url": "https://arxiv.org/html/1812.07956v5",
+    "dateNote": "First posted 2018-12-19; NeurIPS 2019; read v5: 2020-01-07",
+    "evidence": "Read §1–3 and Theorems 2.2–2.4; squared-loss dynamics are an equivalent derivation",
+    "recognition": {
+      "label": "NeurIPS 2019 · foundational work on feature learning and kernel limits",
+      "url": "https://papers.nips.cc/paper_files/paper/2019/hash/ae614c557843b1df326cb29c57225459-Abstract.html"
+    },
+    "question": "When comparing Muon with Adam, if parameter displacements are similar but Jacobian-kernel drift differs, which quantity better distinguishes actual feature learning?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "NTK (2018) connects wide networks to kernels. This paper shows that width is not the only route to lazy training: explicit output scaling can make a model behave like its initial tangent space. Let h map parameters to a Hilbert prediction space, with locally Lipschitz Dh and Lipschitz gradient of risk R. [13,14]"
+      },
+      {
+        "type": "equation",
+        "tex": "F_\\alpha(w)=\\alpha^{-2}R(\\alpha h(w)),\\qquad \\bar h(w)=h(w_0)+Dh(w_0)(w-w_0)",
+        "label": "α⁻² preserves an appropriate dynamical timescale; nonlinear and tangent models share initialization"
+      },
+      {
+        "type": "equation",
+        "tex": "\\dot w=-\\alpha^{-1}Dh(w)^*\\nabla R(\\alpha h(w)),\\quad u=\\alpha h(w),\\quad \\dot u=-K(w)\\nabla R(u),\\quad K(w)=Dh(w)Dh(w)^*",
+        "label": "Chain rule: the Jacobian kernel preconditions prediction-space gradient flow"
+      },
+      {
+        "type": "equation",
+        "tex": "\\bar K=Dh(w_0)Dh(w_0)^*,\\qquad R(u)=\\tfrac12\\|u-y\\|^2\\;\\Longrightarrow\\;\\bar u(t)-y=e^{-\\bar Kt}(\\bar u(0)-y)",
+        "label": "Equivalent solution for the tangent model: exponential decay in positive-eigenvalue directions; nullspace residual remains"
+      },
+      {
+        "type": "equation",
+        "tex": "\\sup_{t\\le T}\\|w_\\alpha(t)-w_0\\|=O(\\alpha^{-1}),\\quad\\sup_{t\\le T}\\|w_\\alpha(t)-\\bar w_\\alpha(t)\\|=O(\\alpha^{-2}),\\quad\\sup_{t\\le T}\\|\\alpha h(w_\\alpha(t))-\\alpha\\bar h(\\bar w_\\alpha(t))\\|=O(\\alpha^{-1})",
+        "label": "Theorem 2.2: h(w₀)=0, fixed finite T, α→∞; constants can depend on T"
+      },
+      {
+        "type": "text",
+        "text": "Proof route: control parameter displacement, bound kernel drift through local Lipschitzness of Dh, then compare the flows with Grönwall. Strongly convex risk and a surjective initial Jacobian enable a separate all-time result; it does not follow directly from fixed-T bounds. CNN experiments show degraded performance in the lazy regime, not a theorem that every feature-learning model is better. [13]"
+      }
+    ]
+  }
+}

@@ -4,8 +4,35 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-09",
+  "latest": "2026-11-10",
   "issues": [
+    {
+      "date": "2026-11-10",
+      "title": "超梯度的谱与隐藏偏好的迁移",
+      "url": "/digest/2026-11-10.html",
+      "translations": {
+        "en": {
+          "title": "Hypergradient spectra and hidden preference transfer",
+          "url": "/digest/en/2026-11-10.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.10188v1",
+        "https://arxiv.org/html/2611.10202v1",
+        "https://arxiv.org/html/2611.10397v1",
+        "https://arxiv.org/abs/2611.12059",
+        "https://arxiv.org/abs/2611.12864",
+        "https://arxiv.org/abs/2611.12640",
+        "https://arxiv.org/abs/2611.10486",
+        "https://arxiv.org/abs/2611.11592",
+        "https://arxiv.org/abs/2611.12293",
+        "https://arxiv.org/abs/2611.10151",
+        "https://arxiv.org/abs/2611.12870",
+        "https://arxiv.org/abs/2611.11861",
+        "https://arxiv.org/html/1812.07956v5",
+        "https://papers.nips.cc/paper_files/paper/2019/hash/ae614c557843b1df326cb29c57225459-Abstract.html"
+      ]
+    },
     {
       "date": "2026-11-09",
       "title": "矩阵归属与小团队并行",
