@@ -1,0 +1,96 @@
+RESEARCH DIGEST / 2026-11-11
+覆盖率塌缩、预算漂移与鲁棒 Muon
+参考策略重置 · 有限预算 scaling · Byzantine-Robust Muon · 精读 D3PM
+
+中文: https://alexhuang13.github.io/digest/2026-11-11.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-11.html
+
+主读 · 新稿
+奖励上升时，最优响应仍可能消失
+A Theory of Policy Optimization in Post-Training: Coverage Collapse and Reference Resets
+https://alexhuang13.github.io/digest/2026-11-11.html#paper-2611-14467
+
+主读 · 新稿
+有限预算下，最优配比不是常数
+Beyond the Log-Linear Frontier: Pre-Asymptotic Analysis of Finite-Budget Neural Scaling Laws
+https://alexhuang13.github.io/digest/2026-11-11.html#paper-2611-13534
+
+主读 · 新稿
+先聚合动量，再选择矩阵更新几何
+Byzantine-Robust Muon: Resilient Momentum Orthogonalization for Distributed Learning
+https://alexhuang13.github.io/digest/2026-11-11.html#paper-2611-13137
+
+简讯 · 新稿
+Forward-Value Discretization: Faster Stochastic Diffusion Sampling Without High-Order Approximation
+Forward-Value Discretization: Faster Stochastic Diffusion Sampling Without High-Order Approximation
+https://alexhuang13.github.io/digest/2026-11-11.html#paper-2611-14328
+
+简讯 · 新稿
+A Margin Perspective on LoRA: Robustness to Catastrophic Forgetting and Adapter Merging (MaLoRA)
+A Margin Perspective on LoRA: Robustness to Catastrophic Forgetting and Adapter Merging (MaLoRA)
+https://alexhuang13.github.io/digest/2026-11-11.html#paper-2611-14397
+
+简讯 · 新稿
+An Analytical Model of Compute-limited Multistage Training Pipelines
+An Analytical Model of Compute-limited Multistage Training Pipelines
+https://alexhuang13.github.io/digest/2026-11-11.html#paper-2611-13276
+
+简讯 · 新稿
+Exploiting Feature-invariant Scaling Laws for Efficient A/B Experimentation in Recommendation Systems
+Exploiting Feature-invariant Scaling Laws for Efficient A/B Experimentation in Recommendation Systems
+https://alexhuang13.github.io/digest/2026-11-11.html#paper-2611-13539
+
+简讯 · 新稿
+Branch-and-Commit for Frozen RL Agents: When and Where to Spend Test-Time Compute
+Branch-and-Commit for Frozen RL Agents: When and Where to Spend Test-Time Compute
+https://alexhuang13.github.io/digest/2026-11-11.html#paper-2611-13003
+
+简讯 · 新稿
+Bits or permutations? Spending a fixed inference budget on weight precision or on option-order averaging in small local language models
+Bits or permutations? Spending a fixed inference budget on weight precision or on option-order averaging in small local language models
+https://alexhuang13.github.io/digest/2026-11-11.html#paper-2611-14413
+
+简讯 · 新稿
+Precision on Demand: Escalating Weight Bits at Uncertain Decoding Steps in a Small Local Model
+Precision on Demand: Escalating Weight Bits at Uncertain Decoding Steps in a Small Local Model
+https://alexhuang13.github.io/digest/2026-11-11.html#paper-2611-14418
+
+简讯 · 新稿
+G-STAR: Group-Scaled Token Capacity for Deeply Compressed Autoregressive Generation
+G-STAR: Group-Scaled Token Capacity for Deeply Compressed Autoregressive Generation
+https://alexhuang13.github.io/digest/2026-11-11.html#paper-2611-13004
+
+简讯 · 延迟补收
+Decoupled Asynchronous System for Humanoids (DASH): Latency-Agnostic Scaling of Vision-Language-Action Models for Humanoid Manipulation
+Decoupled Asynchronous System for Humanoids (DASH): Latency-Agnostic Scaling of Vision-Language-Action Models for Humanoid Manipulation
+https://alexhuang13.github.io/digest/2026-11-11.html#paper-2611-11854
+
+简讯 · 延迟补收
+Ensemble Routing for Prompt-Adaptive Cost-Aware LLM Inference
+Ensemble Routing for Prompt-Adaptive Cost-Aware LLM Inference
+https://alexhuang13.github.io/digest/2026-11-11.html#paper-2611-10193
+
+简讯 · 延迟补收
+Scaling Optimization-Oriented Hypernetworks for Implicit Neural Representations
+Scaling Optimization-Oriented Hypernetworks for Implicit Neural Representations
+https://alexhuang13.github.io/digest/2026-11-11.html#paper-2611-10509
+
+简讯 · 延迟补收
+DISCOVER: Online Variance-Guided Data Discovery for Budgeted Multimodal GRPO
+DISCOVER: Online Variance-Guided Data Discovery for Budgeted Multimodal GRPO
+https://alexhuang13.github.io/digest/2026-11-11.html#paper-2611-11145
+
+版本更新 · 延迟补收
+学习时间谱：v3 更换主实验设置
+Smooth Scaling Laws Hide Stepwise Token Learning
+https://alexhuang13.github.io/digest/2026-11-11.html#paper-2606-29858
+
+每日精读 · 2021
+把离散噪声写进转移核
+https://alexhuang13.github.io/digest/2026-11-11.html#classic-d3pm
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-11.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

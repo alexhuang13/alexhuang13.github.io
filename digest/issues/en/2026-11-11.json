@@ -1,0 +1,499 @@
+{
+  "date": "2026-11-11",
+  "number": "029",
+  "publishedAt": "2026-11-11T13:07:48Z",
+  "readingMinutes": 16,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Post-training",
+    "Scaling laws",
+    "Muon"
+  ],
+  "articles": [
+    {
+      "id": "paper-2611-14467",
+      "paper": "A Theory of Policy Optimization in Post-Training: Coverage Collapse and Reference Resets",
+      "authors": "Audrey Huang · Nan Jiang · Sham M. Kakade · Sadhika Malladi · Akshay Krishnamurthy · Dylan J. Foster",
+      "url": "https://arxiv.org/html/2611.14467v1",
+      "dateNote": "v1 · 2026-11-10 13:31 EST",
+      "kind": "Close reading · new paper",
+      "title": "Reward can rise while optimal responses vanish",
+      "evidence": "Read §1–4 and the lower bound in Appendix C",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Treat a full response as an action in a contextual bandit, with prompt distribution μ and optimal-response set Y*. Coverage cost averages the draws needed to see a first optimal response on each prompt. Mean reward does not determine this quantity. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal C_\\pi=\\mathbb E_{x\\sim\\mu}\\!\\left[\\frac{1}{\\pi(\\mathcal Y_x^\\star\\mid x)}\\right],\\qquad J(\\pi)=\\mathbb E_{x\\sim\\mu,y\\sim\\pi(\\cdot\\mid x)}[r(x,y)]",
+          "label": "Smaller coverage cost is better; the two quantities track optimal answers and average performance respectively"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal C_{\\pi_0}\\le6,\\qquad \\exists t<T:\\quad \\mathcal C_{\\pi_t}=\\exp\\!\\big(\\Theta(\\varepsilon^{-1/2})\\big),\\qquad T=\\Omega\\!\\left(\\frac{\\mathcal C_{\\pi_t}}{\\alpha\\sqrt{\\varepsilon}}\\right)",
+          "label": "Existential lower bound in §2.1: one prompt, tabular softmax, exact gradients, fixed stepsize α; ε-optimal at all iterations from T onward"
+        },
+        {
+          "type": "equation",
+          "tex": "\\pi^\\star_{\\eta,t}=\\arg\\max_\\pi\\{J(\\pi)-\\eta^{-1}D_{\\rm KL}(\\pi\\|\\pi_t)\\},\\qquad \\pi^\\star_{\\eta,t}(y\\mid x)\\propto\\pi_t(y\\mid x)e^{\\eta r(x,y)}",
+          "label": "APMD inner target; reset the reference to the current policy and solve only approximately"
+        },
+        {
+          "type": "text",
+          "text": "Reward still increases strictly during the collapse phase of the counterexample. Exact inner solves accumulate exponential tilts relative to the initial policy; approximate inner solves require additional error control. [1]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The lower bound also covers KL regularization to a fixed initial reference. Positive results concern softmax-linear policies over frozen features and the paper’s PPO/Kimi/Rebel variants under stated conditions; they do not directly explain every full-model LLM training curve. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13534",
+      "paper": "Beyond the Log-Linear Frontier: Pre-Asymptotic Analysis of Finite-Budget Neural Scaling Laws",
+      "authors": "Tianyu Zhao · Zhixiang Ren",
+      "url": "https://arxiv.org/html/2611.13534v1",
+      "dateNote": "v1 · 2026-11-09 22:56 EST",
+      "kind": "Close reading · new paper",
+      "title": "Optimal mixtures can move with finite budgets",
+      "evidence": "Read §2, §4.1 and §5.2–5.3",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Chinchilla (2022) yields a simple iso-compute allocation from single-power fits. This paper lets domains have different learning exponents and combines multiple powers on capacity and data axes, explaining why fitted slopes can drift over finite ranges. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal E_{\\rm mix}(w;D)=\\sum_{k=1}^K c_k(Dw_k)^{-\\beta_k},\\quad w_k^\\star=\\left(\\frac{c_k\\beta_kD^{-\\beta_k}}{\\nu}\\right)^{1/(1+\\beta_k)},\\quad \\sum_k w_k^\\star=1",
+          "label": "Proposition 4.1: cₖ, βₖ>0; D is the token budget and ν solves a monotone scalar equation"
+        },
+        {
+          "type": "text",
+          "text": "KKT equalizes the marginal value of increasing each domain share. The budget term cancels after normalization when all exponents coincide. Next set u=log N, v=log D and s=log(C/6), and minimize the separable surrogate risk U(u)+V(v) along u+v=s. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "U'(u^\\star)=V'(v^\\star),\\qquad \\frac{du^\\star}{ds}=\\frac{V''(v^\\star)}{U''(u^\\star)+V''(v^\\star)}",
+          "label": "Local compute-allocation slope from Theorem 5.1: interior optimum with positive curvature on both axes"
+        },
+        {
+          "type": "equation",
+          "tex": "\\nabla_r^2\\min_\\xi\\bar{\\mathcal E}(r,\\xi)=H_{rr}-H_{r\\xi}H_{\\xi\\xi}^{-1}H_{\\xi r},\\qquad r=(u,v)",
+          "label": "Theorem 5.2: smooth interior local optimum branch with positive definite Hξξ; freezing hyperparameters omits the second term"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Water-filling assumes additive domain losses. With cross-domain transfer, data exhaustion, or optimizer changes across scales, validate the surrogate at held-out budgets before extrapolating. [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13137",
+      "paper": "Byzantine-Robust Muon: Resilient Momentum Orthogonalization for Distributed Learning",
+      "authors": "Grigory Malinovsky · Yury Demidovich · Peter Richtárik",
+      "url": "https://arxiv.org/html/2611.13137v1",
+      "dateNote": "v1 · 2026-11-09 14:18 EST",
+      "kind": "Close reading · new paper",
+      "title": "Aggregate momentum before choosing matrix update geometry",
+      "evidence": "Read §3–5, Theorem 4.4 and Table 6",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Honest workers send local momentum. The server robustly aggregates it into M, then minimizes a linear objective in a spectral-norm trust region. Aggregation errors are measured in the dual nuclear norm, separating adversarial estimation from update geometry. [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "m_i^+=(1-\\alpha)m_i+\\alpha g_i,\\quad M=\\operatorname{ARAgg}((m_i^+)_i),\\quad \\Delta X\\in\\arg\\min_{\\|D\\|_{\\rm op}\\le\\eta}\\langle M,D\\rangle",
+          "label": "Algorithm 1: exact polar supplies a solution; malicious workers can send arbitrary values"
+        },
+        {
+          "type": "equation",
+          "tex": "\\frac1G\\sum_{i\\in\\mathcal G}\\|\\nabla f_i-\\nabla f\\|_*\\le B\\|\\nabla f\\|_*+\\zeta,\\qquad 1-\\bar\\delta-4c\\delta B>0",
+          "label": "Relative heterogeneity B and absolute offset ζ; δ bounds the Byzantine fraction, c is the aggregation constant, and δ̄ parameterizes oracle error"
+        },
+        {
+          "type": "text",
+          "text": "The positive quantity is the denominator of the nonconvex average-stationarity bound. Under an approximate oracle, the adversarial numerator terms are unchanged, but the smaller denominator can raise the error floor. [3]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "TinyStories · test perplexity per byte",
+            "Benign",
+            "Directional attack, strength 3"
+          ],
+          "rows": [
+            [
+              "Muon-NS",
+              "1.875",
+              "1.938"
+            ],
+            [
+              "AdamW",
+              "2.268",
+              "2.358"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Table 6 reports five-seed means for a 38.15M byte model at 1,200 rounds, seven honest workers and two benign or Byzantine messages, all using unbucketed RFA. Muon has lower absolute perplexity; the difference in degradation relative to each benign baseline remains uncertain. Five NS steps do not certify the oracle condition. [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-14328",
+      "paper": "Forward-Value Discretization: Faster Stochastic Diffusion Sampling Without High-Order Approximation",
+      "authors": "Yuchen Jiao · Na Li · Changxiao Cai · Yuting Wei · Gen Li",
+      "url": "https://arxiv.org/abs/2611.14328",
+      "dateNote": "v1 · 2026-11-10 11:53 EST",
+      "kind": "Brief · new paper",
+      "title": "Forward-Value Discretization: Faster Stochastic Diffusion Sampling Without High-Order Approximation",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Coauthored by Yuting Wei: for the stochastic samplers analyzed, the worst-case convergence order remains first order even with exact scores. F-DDPM uses past predictions and noise to construct a lookahead point, with one network evaluation per iteration. [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-14397",
+      "paper": "A Margin Perspective on LoRA: Robustness to Catastrophic Forgetting and Adapter Merging (MaLoRA)",
+      "authors": "Ziqing Xu · Hancheng Min · Lachlan Ewen MacDonald · Salma Tarmoun · Enrique Mallada · Weijie Su · Rene Vidal",
+      "url": "https://arxiv.org/abs/2611.14397",
+      "dateNote": "v1 · 2026-11-10 12:44 EST",
+      "kind": "Brief · new paper",
+      "title": "A Margin Perspective on LoRA: Robustness to Catastrophic Forgetting and Adapter Merging (MaLoRA)",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Coauthored by Weijie Su and René Vidal: in a multiclass linear model with nearly orthogonal tasks, optimal LoRA aligns with a fine-tuning max-margin solution in an intermediate regularization regime, motivating the retention, adaptation, and merging analysis. [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13276",
+      "paper": "An Analytical Model of Compute-limited Multistage Training Pipelines",
+      "authors": "Nishil Patel · Jin Hwa Lee · Basile Confavreux · Andrew Saxe",
+      "url": "https://arxiv.org/abs/2611.13276",
+      "dateNote": "v1 · 2026-11-09 16:41 EST",
+      "kind": "Brief · new paper",
+      "title": "An Analytical Model of Compute-limited Multistage Training Pipelines",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A tractable surrogate with linear-autoencoder pretraining, noisy-label SFT and sparse-reward RL studies compute allocation across stages; the representation-dependent Bayes error has inverse square-root scaling in the pretraining sample ratio. [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13539",
+      "paper": "Exploiting Feature-invariant Scaling Laws for Efficient A/B Experimentation in Recommendation Systems",
+      "authors": "Zhiliang Chen · Sammy Nammari · Jiahao Su · Xiaoqiang Luo",
+      "url": "https://arxiv.org/abs/2611.13539",
+      "dateNote": "v1 · 2026-11-09 23:02 EST",
+      "kind": "Brief · new paper",
+      "title": "Exploiting Feature-invariant Scaling Laws for Efficient A/B Experimentation in Recommendation Systems",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Recommenders use shared scaling trends across feature changes to predict full-scale A/B effects and intervals from smaller experiments; validated across three model families. [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13003",
+      "paper": "Branch-and-Commit for Frozen RL Agents: When and Where to Spend Test-Time Compute",
+      "authors": "Sahar Admoni · Assaf Hallak · Yftah Ziser · Ofra Amir",
+      "url": "https://arxiv.org/abs/2611.13003",
+      "dateNote": "v1 · 2026-11-08 11:57 EST",
+      "kind": "Brief · new paper",
+      "title": "Branch-and-Commit for Frozen RL Agents: When and Where to Spend Test-Time Compute",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Frozen RL with clonable environment state: allocate branches where candidate returns are dispersed. The authors attribute much of the gain to selecting among stochastic realizations of the same action; deployment must be able to resume the chosen trajectory. [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-14413",
+      "paper": "Bits or permutations? Spending a fixed inference budget on weight precision or on option-order averaging in small local language models",
+      "authors": "Mohammed Nayeem Khan · Logesh L · Aliyas Ahmad Misri",
+      "url": "https://arxiv.org/abs/2611.14413",
+      "dateNote": "v1 · 2026-11-10 12:53 EST",
+      "kind": "Brief · new paper",
+      "title": "Bits or permutations? Spending a fixed inference budget on weight precision or on option-order averaging in small local language models",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Using weight bytes read times passes as the budget, compares precision with repeated option permutations for small-model multiple choice. Simulated quantization and proxy cost do not measure real inference latency. [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-14418",
+      "paper": "Precision on Demand: Escalating Weight Bits at Uncertain Decoding Steps in a Small Local Model",
+      "authors": "Mohammed Nayeem Khan · Logesh L · Aliyas Ahmad Misri",
+      "url": "https://arxiv.org/abs/2611.14418",
+      "dateNote": "v1 · 2026-11-10 12:57 EST",
+      "kind": "Brief · new paper",
+      "title": "Precision on Demand: Escalating Weight Bits at Uncertain Decoding Steps in a Small Local Model",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Simulated quantization on Qwen3-0.6B uses low-precision confidence to decide which steps to rerun at high precision, comparing selective reruns with all-high and all-low modes using weight bytes read per token. [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13004",
+      "paper": "G-STAR: Group-Scaled Token Capacity for Deeply Compressed Autoregressive Generation",
+      "authors": "Xu Huang · Ye Huang · Xiaotong Li · Zhengrong Yue · Jialv Zou · Minhao Jing · Haodong Li · Wenhao Yan · Yaxin Luo · Duomin Wang · Daquan Zhou",
+      "url": "https://arxiv.org/abs/2611.13004",
+      "dateNote": "v1 · 2026-11-08 11:59 EST",
+      "kind": "Brief · new paper",
+      "title": "G-STAR: Group-Scaled Token Capacity for Deeply Compressed Autoregressive Generation",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "At a fixed nominal information budget, image-token group size scales quadratically with per-axis spatial compression; the authors examine tradeoffs in within-group dependence, generation quality, and inference cost. [11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-11854",
+      "paper": "Decoupled Asynchronous System for Humanoids (DASH): Latency-Agnostic Scaling of Vision-Language-Action Models for Humanoid Manipulation",
+      "authors": "Bingzhang Wang · Nathan Zhao · Jialeng Ni · Jiajin Zheng · Yin Zhang · Kehua Chen · Jian Yao",
+      "url": "https://arxiv.org/abs/2611.11854",
+      "dateNote": "v1 · 2026-11-08 23:23 EST",
+      "kind": "Brief · delayed addition",
+      "title": "Decoupled Asynchronous System for Humanoids (DASH): Latency-Agnostic Scaling of Vision-Language-Action Models for Humanoid Manipulation",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "DASH runs a slow semantic backbone asynchronously with a fast action head. In latency-aware RoboTwin simulation it maintains 20 Hz as the backbone grows from 0.8B to 8B. The number measures control rate. [12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-10193",
+      "paper": "Ensemble Routing for Prompt-Adaptive Cost-Aware LLM Inference",
+      "authors": "Saul Urso · Emanuele Carlini · Patrizio Dazzi · Matteo Mordacchini",
+      "url": "https://arxiv.org/abs/2611.10193",
+      "dateNote": "v1 · 2026-11-06 15:12 EST",
+      "kind": "Brief · delayed addition",
+      "title": "Ensemble Routing for Prompt-Adaptive Cost-Aware LLM Inference",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "PISA-E selects ensemble membership and cardinality conditional on the prompt and evaluates inference budgets under an adjustable cost–quality preference. [13]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-10509",
+      "paper": "Scaling Optimization-Oriented Hypernetworks for Implicit Neural Representations",
+      "authors": "Lulu Cai · Hanxiang Ren · Siyan Dong · Li Sun · Jiefeng Wu · Youyi Zheng · Yi Ma · Yanchao Yang",
+      "url": "https://arxiv.org/abs/2611.10509",
+      "dateNote": "v1 · 2026-11-07 01:19 EST",
+      "kind": "Brief · delayed addition",
+      "title": "Scaling Optimization-Oriented Hypernetworks for Implicit Neural Representations",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Replacing an MLP hypernetwork with attention removes quartic parameter growth in target implicit-network width for the proposed parameterization. Width-independent parameter count does not imply constant activation or runtime cost. [14]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-11145",
+      "paper": "DISCOVER: Online Variance-Guided Data Discovery for Budgeted Multimodal GRPO",
+      "authors": "Peyman Gholami · Shivam Chandhok · Saber Malekmohammadi · Shayan Shams · Robert Xiao · Leonid Sigal",
+      "url": "https://arxiv.org/abs/2611.11145",
+      "dateNote": "v1 · 2026-11-08 00:27 EST",
+      "kind": "Brief · delayed addition",
+      "title": "DISCOVER: Online Variance-Guided Data Discovery for Budgeted Multimodal GRPO",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Under annotation and rollout budgets, DISCOVER propagates sparse reward feedback across semantic clusters and refreshes data utility as the policy changes; included for RL budget allocation. [15]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2606-29858",
+      "paper": "Smooth Scaling Laws Hide Stepwise Token Learning",
+      "authors": "Pingjie Wang · Zechen Hu · Peiru Yang · Fu Guo · Debing Zhang",
+      "url": "https://arxiv.org/html/2606.29858v3",
+      "dateNote": "First posted 2026-06-29; v3: 2026-11-07 10:49 EST",
+      "kind": "Version update · delayed addition",
+      "title": "Learning-time spectra: v3 changes the main experimental setup",
+      "evidence": "Compared v2/v3 Figure 3, §4.1 and §6; not a full re-audit",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The v3 Figure 3 / §4.1 step-axis experiment switches from the large MoE described in v2 to a specified 1.5B dense model trained on 300B tokens. The learning-time spectrum from fitted sigmoid loss drops reconstructs the aggregate loss derivative. The mechanism and curriculum idea already appear in v2; the changed experimental setup is the update. [16,17]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.14467v1",
+      "title": "A Theory of Policy Optimization in Post-Training: Coverage Collapse and Reference Resets · Read §1–4 and the lower bound in Appendix C"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.13534v1",
+      "title": "Beyond the Log-Linear Frontier: Pre-Asymptotic Analysis of Finite-Budget Neural Scaling Laws · Read §2, §4.1 and §5.2–5.3"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.13137v1",
+      "title": "Byzantine-Robust Muon: Resilient Momentum Orthogonalization for Distributed Learning · Read §3–5, Theorem 4.4 and Table 6"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.14328",
+      "title": "Forward-Value Discretization: Faster Stochastic Diffusion Sampling Without High-Order Approximation · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.14397",
+      "title": "A Margin Perspective on LoRA: Robustness to Catastrophic Forgetting and Adapter Merging (MaLoRA) · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.13276",
+      "title": "An Analytical Model of Compute-limited Multistage Training Pipelines · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.13539",
+      "title": "Exploiting Feature-invariant Scaling Laws for Efficient A/B Experimentation in Recommendation Systems · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.13003",
+      "title": "Branch-and-Commit for Frozen RL Agents: When and Where to Spend Test-Time Compute · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.14413",
+      "title": "Bits or permutations? Spending a fixed inference budget on weight precision or on option-order averaging in small local language models · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.14418",
+      "title": "Precision on Demand: Escalating Weight Bits at Uncertain Decoding Steps in a Small Local Model · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.13004",
+      "title": "G-STAR: Group-Scaled Token Capacity for Deeply Compressed Autoregressive Generation · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.11854",
+      "title": "Decoupled Asynchronous System for Humanoids (DASH): Latency-Agnostic Scaling of Vision-Language-Action Models for Humanoid Manipulation · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.10193",
+      "title": "Ensemble Routing for Prompt-Adaptive Cost-Aware LLM Inference · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.10509",
+      "title": "Scaling Optimization-Oriented Hypernetworks for Implicit Neural Representations · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.11145",
+      "title": "DISCOVER: Online Variance-Guided Data Discovery for Budgeted Multimodal GRPO · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/html/2606.29858v3",
+      "title": "Smooth Scaling Laws Hide Stepwise Token Learning · Compared v2/v3 Figure 3, §4.1 and §6; not a full re-audit"
+    },
+    {
+      "url": "https://arxiv.org/html/2606.29858v2",
+      "title": "v2 · prior version for comparison"
+    },
+    {
+      "url": "https://arxiv.org/html/2107.03006v3",
+      "title": "D3PM v3 · §2–6 and Appendix A.2.2"
+    },
+    {
+      "url": "https://proceedings.neurips.cc/paper/2021/hash/958c530554f78bcd8e97125b70e6973d-Abstract.html",
+      "title": "Official NeurIPS 2021 proceedings"
+    }
+  ],
+  "edition": "Daily research notes",
+  "title": "Coverage collapse, allocation drift, and robust Muon",
+  "subtitle": "Reference resets · Finite-budget scaling · Byzantine-Robust Muon · D3PM",
+  "window": "2026-11-08 08:07 — 2026-11-11 08:07 EST; delayed additions retain their original dates",
+  "intro": "Three distinctions anchor this issue: mean reward versus the probability of an optimal response, local slopes versus asymptotic power laws, and absolute performance under attack versus the extra degradation due to attack. Briefs include new work by Wharton authors; the classic dissects D3PM transition kernels.",
+  "classic": {
+    "id": "classic-d3pm",
+    "paperId": "arxiv:2107.03006",
+    "shortTitle": "D3PM",
+    "year": 2021,
+    "topics": [
+      "Diffusion models"
+    ],
+    "kind": "Historical classic",
+    "title": "Put discrete noise into the transition kernel",
+    "paper": "Structured Denoising Diffusion Models in Discrete State-Spaces",
+    "authors": "Jacob Austin · Daniel D. Johnson · Jonathan Ho · Daniel Tarlow · Rianne van den Berg",
+    "url": "https://arxiv.org/html/2107.03006v3",
+    "dateNote": "First posted 2021-07-07; NeurIPS 2021; read v3: 2023-02-22",
+    "evidence": "Read §2–6 and Appendix A.2.2; single-coordinate form and absorption survival are equivalent derivations",
+    "recognition": {
+      "label": "NeurIPS 2021 · foundational discrete diffusion work",
+      "url": "https://proceedings.neurips.cc/paper/2021/hash/958c530554f78bcd8e97125b70e6973d-Abstract.html"
+    },
+    "question": "At the same total masking rate, how would you rewrite the tractable posterior for block rather than independent masking, and isolate kernel effects from sampling budget?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "DDPM (2020) adds Gaussian noise in continuous space. D3PM (2021) retains forward corruption and reverse generation, replacing corruption of each categorical coordinate with a Markov matrix. Noise can respect local neighborhoods or absorb into [MASK]. The equations use one coordinate. [18,19]"
+      },
+      {
+        "type": "equation",
+        "tex": "Q_t(i,j)=q(x_t=j\\mid x_{t-1}=i),\\quad \\bar Q_t=Q_1\\cdots Q_t,\\quad q(x_t=j\\mid x_0=i)=\\bar Q_t(i,j)",
+        "label": "Row-stochastic transition matrices; draw training corruptions directly from the cumulative kernel"
+      },
+      {
+        "type": "equation",
+        "tex": "q(x_{t-1}=k\\mid x_t=j,x_0=i)=\\frac{\\bar Q_{t-1}(i,k)Q_t(k,j)}{\\bar Q_t(i,j)}",
+        "label": "Bayes rule with positive denominator; the clean class makes the reverse target tractable"
+      },
+      {
+        "type": "equation",
+        "tex": "p_\\theta(k\\mid j)\\propto \\sum_i \\bar Q_{t-1}(i,k)Q_t(k,j)\\,\\tilde p_\\theta(i\\mid j)",
+        "label": "Equation 4 sums forward joint probabilities before normalization; forbidden forward edges remain unavailable in reverse"
+      },
+      {
+        "type": "equation",
+        "tex": "Q_t=(1-\\beta_t)I+\\beta_t\\mathbf 1 e_m^\\top,\\qquad q(x_t\\ne m\\mid x_0\\ne m)=\\prod_{s=1}^{t}(1-\\beta_s)",
+        "label": "Absorbing kernel: m is the mask; survival follows directly because the chain never exits the absorbing state"
+      },
+      {
+        "type": "equation",
+        "tex": "L_\\lambda=L_{\\rm vb}+\\lambda\\,\\mathbb E_{x_0,x_t}[-\\log\\tilde p_\\theta(x_0\\mid x_t)]",
+        "label": "Add an auxiliary clean-token prediction term to the negative variational-bound loss, with time sampled by the training rule"
+      },
+      {
+        "type": "text",
+        "text": "Text8, LM1B and CIFAR-10 experiments show that kernel choice affects outcomes; tractable discrete kernels alone do not guarantee fewer sampling steps or better samples. [18]"
+      }
+    ]
+  }
+}

@@ -1,0 +1,499 @@
+{
+  "date": "2026-11-11",
+  "number": "029",
+  "publishedAt": "2026-11-11T13:07:48Z",
+  "readingMinutes": 16,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Post-training",
+    "Scaling laws",
+    "Muon"
+  ],
+  "articles": [
+    {
+      "id": "paper-2611-14467",
+      "paper": "A Theory of Policy Optimization in Post-Training: Coverage Collapse and Reference Resets",
+      "authors": "Audrey Huang · Nan Jiang · Sham M. Kakade · Sadhika Malladi · Akshay Krishnamurthy · Dylan J. Foster",
+      "url": "https://arxiv.org/html/2611.14467v1",
+      "dateNote": "v1 · 2026-11-10 13:31 EST",
+      "kind": "主读 · 新稿",
+      "title": "奖励上升时，最优响应仍可能消失",
+      "evidence": "已读 §1–4 与附录 C 的下界陈述",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "把整段响应当作 contextual bandit 的动作，记提示分布为 μ，最优响应集为 Y*。覆盖成本是每题等到首个最优响应所需采样数的平均值，不能用平均奖励代替。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal C_\\pi=\\mathbb E_{x\\sim\\mu}\\!\\left[\\frac{1}{\\pi(\\mathcal Y_x^\\star\\mid x)}\\right],\\qquad J(\\pi)=\\mathbb E_{x\\sim\\mu,y\\sim\\pi(\\cdot\\mid x)}[r(x,y)]",
+          "label": "覆盖成本越小越好；两项分别追踪最优解与平均表现"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal C_{\\pi_0}\\le6,\\qquad \\exists t<T:\\quad \\mathcal C_{\\pi_t}=\\exp\\!\\big(\\Theta(\\varepsilon^{-1/2})\\big),\\qquad T=\\Omega\\!\\left(\\frac{\\mathcal C_{\\pi_t}}{\\alpha\\sqrt{\\varepsilon}}\\right)",
+          "label": "原文 §2.1 的存在性下界：单提示、表格 softmax、精确梯度、固定步长 α；T 后始终 ε-最优"
+        },
+        {
+          "type": "equation",
+          "tex": "\\pi^\\star_{\\eta,t}=\\arg\\max_\\pi\\{J(\\pi)-\\eta^{-1}D_{\\rm KL}(\\pi\\|\\pi_t)\\},\\qquad \\pi^\\star_{\\eta,t}(y\\mid x)\\propto\\pi_t(y\\mid x)e^{\\eta r(x,y)}",
+          "label": "APMD 的内层目标；每轮把参考设为当前策略，实际只近似求解"
+        },
+        {
+          "type": "text",
+          "text": "在反例的塌缩阶段，奖励仍严格改善。若每轮精确求解，反复倾斜得到相对初始策略的累计指数权重；近似内层则需要额外控制误差。 [1]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "下界也涵盖固定初始参考的 KL 正则。正结果针对冻结特征的 softmax 线性策略及论文条件下的 PPO/Kimi/Rebel 变体；不能直接解释全参数 LLM 的每条训练曲线。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13534",
+      "paper": "Beyond the Log-Linear Frontier: Pre-Asymptotic Analysis of Finite-Budget Neural Scaling Laws",
+      "authors": "Tianyu Zhao · Zhixiang Ren",
+      "url": "https://arxiv.org/html/2611.13534v1",
+      "dateNote": "v1 · 2026-11-09 22:56 EST",
+      "kind": "主读 · 新稿",
+      "title": "有限预算下，最优配比不是常数",
+      "evidence": "已读 §2、§4.1、§5.2–5.3",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Chinchilla（2022）的单幂律拟合给出简单的等算力分配。本文让不同域有不同学习指数，并将容量与数据方向写成多个幂律的组合，解释有限范围内拟合斜率为何漂移。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal E_{\\rm mix}(w;D)=\\sum_{k=1}^K c_k(Dw_k)^{-\\beta_k},\\quad w_k^\\star=\\left(\\frac{c_k\\beta_kD^{-\\beta_k}}{\\nu}\\right)^{1/(1+\\beta_k)},\\quad \\sum_k w_k^\\star=1",
+          "label": "原文命题4.1：cₖ、βₖ>0；D为总 token 数，ν由单调标量方程确定"
+        },
+        {
+          "type": "text",
+          "text": "KKT 令各域多分配一点比例的边际收益相同。只有所有指数相同时，预算项才会在归一化后消掉。再令 u=log N、v=log D、s=log(C/6)，在 u+v=s 上最小化可分离代理风险 U(u)+V(v)。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "U'(u^\\star)=V'(v^\\star),\\qquad \\frac{du^\\star}{ds}=\\frac{V''(v^\\star)}{U''(u^\\star)+V''(v^\\star)}",
+          "label": "原文定理5.1 的局部算力分配斜率：内点且两轴严格正曲率"
+        },
+        {
+          "type": "equation",
+          "tex": "\\nabla_r^2\\min_\\xi\\bar{\\mathcal E}(r,\\xi)=H_{rr}-H_{r\\xi}H_{\\xi\\xi}^{-1}H_{\\xi r},\\qquad r=(u,v)",
+          "label": "定理5.2：光滑局部内点最优支、Hξξ正定；固定超参数会漏掉第二项"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "水位解依赖域损失可加。域间迁移、数据耗尽或优化器随规模变化时，应先用独立预算点检验代理模型再外推。 [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13137",
+      "paper": "Byzantine-Robust Muon: Resilient Momentum Orthogonalization for Distributed Learning",
+      "authors": "Grigory Malinovsky · Yury Demidovich · Peter Richtárik",
+      "url": "https://arxiv.org/html/2611.13137v1",
+      "dateNote": "v1 · 2026-11-09 14:18 EST",
+      "kind": "主读 · 新稿",
+      "title": "先聚合动量，再选择矩阵更新几何",
+      "evidence": "已读 §3–5、定理4.4及表6",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "诚实 worker 发送本地动量，服务器鲁棒聚合得到 M，再做谱范数信赖域内的线性最小化。聚合误差以对偶核范数衡量；这把抗攻击的估计问题和更新几何分开。 [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "m_i^+=(1-\\alpha)m_i+\\alpha g_i,\\quad M=\\operatorname{ARAgg}((m_i^+)_i),\\quad \\Delta X\\in\\arg\\min_{\\|D\\|_{\\rm op}\\le\\eta}\\langle M,D\\rangle",
+          "label": "算法1：精确 polar 给出一个解；恶意 worker 可发送任意值"
+        },
+        {
+          "type": "equation",
+          "tex": "\\frac1G\\sum_{i\\in\\mathcal G}\\|\\nabla f_i-\\nabla f\\|_*\\le B\\|\\nabla f\\|_*+\\zeta,\\qquad 1-\\bar\\delta-4c\\delta B>0",
+          "label": "相对异质性 B 与绝对偏差 ζ；δ 是恶意比例上界，c 为聚合常数，δ̄ 为近似 oracle 误差参数"
+        },
+        {
+          "type": "text",
+          "text": "该正量是非凸平均平稳性界的分母；原文在近似 oracle 下保留分子中的攻击项，但分母变小会抬高误差下限。 [3]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "TinyStories · 每字节测试困惑度",
+            "无攻击",
+            "定向攻击强度3"
+          ],
+          "rows": [
+            [
+              "Muon-NS",
+              "1.875",
+              "1.938"
+            ],
+            [
+              "AdamW",
+              "2.268",
+              "2.358"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "表6为38.15M字节模型、1200轮、5种子均值，7名诚实 worker 加2条良性或恶意消息，同用无分桶 RFA。Muon 的绝对困惑度较低；相对各自无攻击基线的额外劣化差异仍不确定。5步 NS 不自动满足 oracle 条件。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-14328",
+      "paper": "Forward-Value Discretization: Faster Stochastic Diffusion Sampling Without High-Order Approximation",
+      "authors": "Yuchen Jiao · Na Li · Changxiao Cai · Yuting Wei · Gen Li",
+      "url": "https://arxiv.org/abs/2611.14328",
+      "dateNote": "v1 · 2026-11-10 11:53 EST",
+      "kind": "简讯 · 新稿",
+      "title": "Forward-Value Discretization: Faster Stochastic Diffusion Sampling Without High-Order Approximation",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Yuting Wei 合著：作者给出所分析的随机采样器即使用精确 score，最坏收敛阶也仍为一阶。F-DDPM 用已有预测和噪声构造前瞻点，每轮一次网络评估。 [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-14397",
+      "paper": "A Margin Perspective on LoRA: Robustness to Catastrophic Forgetting and Adapter Merging (MaLoRA)",
+      "authors": "Ziqing Xu · Hancheng Min · Lachlan Ewen MacDonald · Salma Tarmoun · Enrique Mallada · Weijie Su · Rene Vidal",
+      "url": "https://arxiv.org/abs/2611.14397",
+      "dateNote": "v1 · 2026-11-10 12:44 EST",
+      "kind": "简讯 · 新稿",
+      "title": "A Margin Perspective on LoRA: Robustness to Catastrophic Forgetting and Adapter Merging (MaLoRA)",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Weijie Su、René Vidal 合著：在任务近正交的多类线性模型中，中等正则区间内最优 LoRA 与微调数据最大间隔解对齐；原文据此分析保留、适应和合并。 [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13276",
+      "paper": "An Analytical Model of Compute-limited Multistage Training Pipelines",
+      "authors": "Nishil Patel · Jin Hwa Lee · Basile Confavreux · Andrew Saxe",
+      "url": "https://arxiv.org/abs/2611.13276",
+      "dateNote": "v1 · 2026-11-09 16:41 EST",
+      "kind": "简讯 · 新稿",
+      "title": "An Analytical Model of Compute-limited Multistage Training Pipelines",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "线性自编码预训练、噪声标签 SFT 与稀疏奖励 RL 的可解代理模型，分析跨阶段算力分配；表示误差随预训练样本比率出现反平方根规律。 [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13539",
+      "paper": "Exploiting Feature-invariant Scaling Laws for Efficient A/B Experimentation in Recommendation Systems",
+      "authors": "Zhiliang Chen · Sammy Nammari · Jiahao Su · Xiaoqiang Luo",
+      "url": "https://arxiv.org/abs/2611.13539",
+      "dateNote": "v1 · 2026-11-09 23:02 EST",
+      "kind": "简讯 · 新稿",
+      "title": "Exploiting Feature-invariant Scaling Laws for Efficient A/B Experimentation in Recommendation Systems",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "推荐系统利用多种特征变更的共享缩放趋势，从小规模 A/B 试验预测全规模效果与区间；跨三个模型族验证。 [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13003",
+      "paper": "Branch-and-Commit for Frozen RL Agents: When and Where to Spend Test-Time Compute",
+      "authors": "Sahar Admoni · Assaf Hallak · Yftah Ziser · Ofra Amir",
+      "url": "https://arxiv.org/abs/2611.13003",
+      "dateNote": "v1 · 2026-11-08 11:57 EST",
+      "kind": "简讯 · 新稿",
+      "title": "Branch-and-Commit for Frozen RL Agents: When and Where to Spend Test-Time Compute",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "可复制环境状态的冻结 RL：把分支调用集中到回报候选分散的状态。作者发现主要增益来自挑选同一动作的不同随机实现，部署需能恢复选中轨迹。 [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-14413",
+      "paper": "Bits or permutations? Spending a fixed inference budget on weight precision or on option-order averaging in small local language models",
+      "authors": "Mohammed Nayeem Khan · Logesh L · Aliyas Ahmad Misri",
+      "url": "https://arxiv.org/abs/2611.14413",
+      "dateNote": "v1 · 2026-11-10 12:53 EST",
+      "kind": "简讯 · 新稿",
+      "title": "Bits or permutations? Spending a fixed inference budget on weight precision or on option-order averaging in small local language models",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "以权重读取字节数乘遍数为预算，在小模型多选任务中比较保留精度和多次重排选项。模拟量化与代理成本不等同于真实推理延迟。 [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-14418",
+      "paper": "Precision on Demand: Escalating Weight Bits at Uncertain Decoding Steps in a Small Local Model",
+      "authors": "Mohammed Nayeem Khan · Logesh L · Aliyas Ahmad Misri",
+      "url": "https://arxiv.org/abs/2611.14418",
+      "dateNote": "v1 · 2026-11-10 12:57 EST",
+      "kind": "简讯 · 新稿",
+      "title": "Precision on Demand: Escalating Weight Bits at Uncertain Decoding Steps in a Small Local Model",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Qwen3-0.6B 的模拟量化实验按低精度解码置信度决定是否重算高精度步骤；比较选择性重算与全高/全低精度，成本为每 token 权重读取字节。 [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13004",
+      "paper": "G-STAR: Group-Scaled Token Capacity for Deeply Compressed Autoregressive Generation",
+      "authors": "Xu Huang · Ye Huang · Xiaotong Li · Zhengrong Yue · Jialv Zou · Minhao Jing · Haodong Li · Wenhao Yan · Yaxin Luo · Duomin Wang · Daquan Zhou",
+      "url": "https://arxiv.org/abs/2611.13004",
+      "dateNote": "v1 · 2026-11-08 11:59 EST",
+      "kind": "简讯 · 新稿",
+      "title": "G-STAR: Group-Scaled Token Capacity for Deeply Compressed Autoregressive Generation",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在固定名义信息预算下，图像 token 的分组大小随每轴空间压缩率平方增长；作者测量组内依赖、生成质量与推理成本的权衡。 [11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-11854",
+      "paper": "Decoupled Asynchronous System for Humanoids (DASH): Latency-Agnostic Scaling of Vision-Language-Action Models for Humanoid Manipulation",
+      "authors": "Bingzhang Wang · Nathan Zhao · Jialeng Ni · Jiajin Zheng · Yin Zhang · Kehua Chen · Jian Yao",
+      "url": "https://arxiv.org/abs/2611.11854",
+      "dateNote": "v1 · 2026-11-08 23:23 EST",
+      "kind": "简讯 · 延迟补收",
+      "title": "Decoupled Asynchronous System for Humanoids (DASH): Latency-Agnostic Scaling of Vision-Language-Action Models for Humanoid Manipulation",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "DASH 将慢语义骨干与快动作头异步执行；在计入时延的 RoboTwin 模拟中，骨干从0.8B增至8B时维持20Hz。该数字是控制速率。 [12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-10193",
+      "paper": "Ensemble Routing for Prompt-Adaptive Cost-Aware LLM Inference",
+      "authors": "Saul Urso · Emanuele Carlini · Patrizio Dazzi · Matteo Mordacchini",
+      "url": "https://arxiv.org/abs/2611.10193",
+      "dateNote": "v1 · 2026-11-06 15:12 EST",
+      "kind": "简讯 · 延迟补收",
+      "title": "Ensemble Routing for Prompt-Adaptive Cost-Aware LLM Inference",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "PISA-E 以 prompt 为条件联合选择集成成员和数量，在可调成本—质量目标下评估推理预算。 [13]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-10509",
+      "paper": "Scaling Optimization-Oriented Hypernetworks for Implicit Neural Representations",
+      "authors": "Lulu Cai · Hanxiang Ren · Siyan Dong · Li Sun · Jiefeng Wu · Youyi Zheng · Yi Ma · Yanchao Yang",
+      "url": "https://arxiv.org/abs/2611.10509",
+      "dateNote": "v1 · 2026-11-07 01:19 EST",
+      "kind": "简讯 · 延迟补收",
+      "title": "Scaling Optimization-Oriented Hypernetworks for Implicit Neural Representations",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用 attention 代替 MLP 超网络后，作者的参数化去掉了超网络参数量对目标隐式网络宽度的四次增长；参数量独立不意味着激活与运行成本独立。 [14]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-11145",
+      "paper": "DISCOVER: Online Variance-Guided Data Discovery for Budgeted Multimodal GRPO",
+      "authors": "Peyman Gholami · Shivam Chandhok · Saber Malekmohammadi · Shayan Shams · Robert Xiao · Leonid Sigal",
+      "url": "https://arxiv.org/abs/2611.11145",
+      "dateNote": "v1 · 2026-11-08 00:27 EST",
+      "kind": "简讯 · 延迟补收",
+      "title": "DISCOVER: Online Variance-Guided Data Discovery for Budgeted Multimodal GRPO",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "DISCOVER 在有限标注与 rollout 预算下，按语义簇传播稀疏 reward 反馈，再随策略变化刷新数据效用；按 RL 预算分配收录。 [15]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2606-29858",
+      "paper": "Smooth Scaling Laws Hide Stepwise Token Learning",
+      "authors": "Pingjie Wang · Zechen Hu · Peiru Yang · Fu Guo · Debing Zhang",
+      "url": "https://arxiv.org/html/2606.29858v3",
+      "dateNote": "首发2026-06-29；v3：2026-11-07 10:49 EST",
+      "kind": "版本更新 · 延迟补收",
+      "title": "学习时间谱：v3 更换主实验设置",
+      "evidence": "对照 v2/v3 的 Figure 3、§4.1 与 §6；不逐项重审全部实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v3 的 Figure 3 / §4.1 将步数轴主实验从 v2 所述的大型 MoE 改为明确的1.5B dense、300B训练 token；用 token 的 sigmoid 损失下降时点构造学习时间谱，重建总损失的导数。机制和课程化思路在 v2 已有；这里收录实验设置变化，不把它们当 v3 新结论。 [16,17]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.14467v1",
+      "title": "A Theory of Policy Optimization in Post-Training: Coverage Collapse and Reference Resets · 已读 §1–4 与附录 C 的下界陈述"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.13534v1",
+      "title": "Beyond the Log-Linear Frontier: Pre-Asymptotic Analysis of Finite-Budget Neural Scaling Laws · 已读 §2、§4.1、§5.2–5.3"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.13137v1",
+      "title": "Byzantine-Robust Muon: Resilient Momentum Orthogonalization for Distributed Learning · 已读 §3–5、定理4.4及表6"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.14328",
+      "title": "Forward-Value Discretization: Faster Stochastic Diffusion Sampling Without High-Order Approximation · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.14397",
+      "title": "A Margin Perspective on LoRA: Robustness to Catastrophic Forgetting and Adapter Merging (MaLoRA) · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.13276",
+      "title": "An Analytical Model of Compute-limited Multistage Training Pipelines · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.13539",
+      "title": "Exploiting Feature-invariant Scaling Laws for Efficient A/B Experimentation in Recommendation Systems · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.13003",
+      "title": "Branch-and-Commit for Frozen RL Agents: When and Where to Spend Test-Time Compute · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.14413",
+      "title": "Bits or permutations? Spending a fixed inference budget on weight precision or on option-order averaging in small local language models · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.14418",
+      "title": "Precision on Demand: Escalating Weight Bits at Uncertain Decoding Steps in a Small Local Model · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.13004",
+      "title": "G-STAR: Group-Scaled Token Capacity for Deeply Compressed Autoregressive Generation · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.11854",
+      "title": "Decoupled Asynchronous System for Humanoids (DASH): Latency-Agnostic Scaling of Vision-Language-Action Models for Humanoid Manipulation · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.10193",
+      "title": "Ensemble Routing for Prompt-Adaptive Cost-Aware LLM Inference · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.10509",
+      "title": "Scaling Optimization-Oriented Hypernetworks for Implicit Neural Representations · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.11145",
+      "title": "DISCOVER: Online Variance-Guided Data Discovery for Budgeted Multimodal GRPO · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/html/2606.29858v3",
+      "title": "Smooth Scaling Laws Hide Stepwise Token Learning · 对照 v2/v3 的 Figure 3、§4.1 与 §6；不逐项重审全部实验"
+    },
+    {
+      "url": "https://arxiv.org/html/2606.29858v2",
+      "title": "v2 · 旧版对照"
+    },
+    {
+      "url": "https://arxiv.org/html/2107.03006v3",
+      "title": "D3PM v3 · §2–6、附录 A.2.2"
+    },
+    {
+      "url": "https://proceedings.neurips.cc/paper/2021/hash/958c530554f78bcd8e97125b70e6973d-Abstract.html",
+      "title": "NeurIPS 2021 官方论文集"
+    }
+  ],
+  "edition": "每日研究笔记",
+  "title": "覆盖率塌缩、预算漂移与鲁棒 Muon",
+  "subtitle": "参考策略重置 · 有限预算 scaling · Byzantine-Robust Muon · 精读 D3PM",
+  "window": "2026-11-08 08:07 — 2026-11-11 08:07 EST；索引延迟补收另标原日期",
+  "intro": "本期关注三个容易混淆的量：平均奖励与最优响应概率、有限预算下的局部斜率与渐近幂律、受攻击时的绝对性能与额外性能下降。另收 Wharton 作者新稿，经典精读 D3PM 的离散转移核。",
+  "classic": {
+    "id": "classic-d3pm",
+    "paperId": "arxiv:2107.03006",
+    "shortTitle": "D3PM",
+    "year": 2021,
+    "topics": [
+      "Diffusion models"
+    ],
+    "kind": "历史经典",
+    "title": "把离散噪声写进转移核",
+    "paper": "Structured Denoising Diffusion Models in Discrete State-Spaces",
+    "authors": "Jacob Austin · Daniel D. Johnson · Jonathan Ho · Daniel Tarlow · Rianne van den Berg",
+    "url": "https://arxiv.org/html/2107.03006v3",
+    "dateNote": "首发2021-07-07；NeurIPS 2021；所读 v3：2023-02-22",
+    "evidence": "已读 §2–6、附录 A.2.2；单坐标式和吸收生存概率为等价推导",
+    "recognition": {
+      "label": "NeurIPS 2021 · 离散扩散的重要历史工作",
+      "url": "https://proceedings.neurips.cc/paper/2021/hash/958c530554f78bcd8e97125b70e6973d-Abstract.html"
+    },
+    "question": "在总遮盖率相同的前提下，独立 token 遮盖换成成块遮盖，怎样重写解析后验，才能把核的影响与采样预算分开？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "DDPM（2020）在连续空间加高斯噪声。D3PM（2021）沿用前向破坏、反向生成的思路，但把每个类别坐标的破坏改写成马尔可夫矩阵；噪声可以有局部邻接结构，也可吸收到 [MASK]。以下用单坐标写式。 [18,19]"
+      },
+      {
+        "type": "equation",
+        "tex": "Q_t(i,j)=q(x_t=j\\mid x_{t-1}=i),\\quad \\bar Q_t=Q_1\\cdots Q_t,\\quad q(x_t=j\\mid x_0=i)=\\bar Q_t(i,j)",
+        "label": "行随机转移矩阵；训练可直接从累计核取样"
+      },
+      {
+        "type": "equation",
+        "tex": "q(x_{t-1}=k\\mid x_t=j,x_0=i)=\\frac{\\bar Q_{t-1}(i,k)Q_t(k,j)}{\\bar Q_t(i,j)}",
+        "label": "Bayes 公式，分母为正；给定干净类别后，反向目标可解析求出"
+      },
+      {
+        "type": "equation",
+        "tex": "p_\\theta(k\\mid j)\\propto \\sum_i \\bar Q_{t-1}(i,k)Q_t(k,j)\\,\\tilde p_\\theta(i\\mid j)",
+        "label": "原文 Eq.4 对前向联合分布求和再归一化；禁止的正向边仍不可能反向出现"
+      },
+      {
+        "type": "equation",
+        "tex": "Q_t=(1-\\beta_t)I+\\beta_t\\mathbf 1 e_m^\\top,\\qquad q(x_t\\ne m\\mid x_0\\ne m)=\\prod_{s=1}^{t}(1-\\beta_s)",
+        "label": "吸收核：m 是 mask；后一式为无跳出吸收态的直接推导"
+      },
+      {
+        "type": "equation",
+        "tex": "L_\\lambda=L_{\\rm vb}+\\lambda\\,\\mathbb E_{x_0,x_t}[-\\log\\tilde p_\\theta(x_0\\mid x_t)]",
+        "label": "在负变分下界损失上加入干净 token 的辅助预测，时间按训练规则采样"
+      },
+      {
+        "type": "text",
+        "text": "原文的 text8、LM1B 和 CIFAR-10 实验说明转移核的选择会影响结果；离散核的解析性本身不保证更少采样步或更好样本。 [18]"
+      }
+    ]
+  }
+}

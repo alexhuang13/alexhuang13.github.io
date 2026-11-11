@@ -4,8 +4,40 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-10",
+  "latest": "2026-11-11",
   "issues": [
+    {
+      "date": "2026-11-11",
+      "title": "覆盖率塌缩、预算漂移与鲁棒 Muon",
+      "url": "/digest/2026-11-11.html",
+      "translations": {
+        "en": {
+          "title": "Coverage collapse, allocation drift, and robust Muon",
+          "url": "/digest/en/2026-11-11.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.14467v1",
+        "https://arxiv.org/html/2611.13534v1",
+        "https://arxiv.org/html/2611.13137v1",
+        "https://arxiv.org/abs/2611.14328",
+        "https://arxiv.org/abs/2611.14397",
+        "https://arxiv.org/abs/2611.13276",
+        "https://arxiv.org/abs/2611.13539",
+        "https://arxiv.org/abs/2611.13003",
+        "https://arxiv.org/abs/2611.14413",
+        "https://arxiv.org/abs/2611.14418",
+        "https://arxiv.org/abs/2611.13004",
+        "https://arxiv.org/abs/2611.11854",
+        "https://arxiv.org/abs/2611.10193",
+        "https://arxiv.org/abs/2611.10509",
+        "https://arxiv.org/abs/2611.11145",
+        "https://arxiv.org/html/2606.29858v3",
+        "https://arxiv.org/html/2606.29858v2",
+        "https://arxiv.org/html/2107.03006v3",
+        "https://proceedings.neurips.cc/paper/2021/hash/958c530554f78bcd8e97125b70e6973d-Abstract.html"
+      ]
+    },
     {
       "date": "2026-11-10",
       "title": "超梯度的谱与隐藏偏好的迁移",
