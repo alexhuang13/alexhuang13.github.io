@@ -1,0 +1,368 @@
+{
+  "date": "2026-11-12",
+  "number": "030",
+  "publishedAt": "2026-11-12T13:16:22Z",
+  "readingMinutes": 15,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Post-training"
+  ],
+  "articles": [
+    {
+      "id": "paper-2605-08541",
+      "paper": "Tokens-per-Parameter Coverage Is Critical for Robust LLM Scaling Law Extrapolation",
+      "authors": "Joshua Shay Kricheli · Alexander Lawrence Reid · Soumajyoti Sarkar · Venkata Gandikota · Paulo Shakarian",
+      "url": "https://arxiv.org/html/2605.08541v4",
+      "kind": "Close reading · version update",
+      "title": "Why a fixed-ratio ray cannot identify two scale terms",
+      "dateNote": "First posted 2026-05-08; v4 · 2026-11-09 18:23 EST",
+      "evidence": "Compared v3/v4; read v4 §3.1–3.2, Propositions 1–2 and Appendix C",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "For a Chinchilla-style loss, N counts parameters and D counts training tokens. A small fit error at fixed tokens per parameter k need not separate the model and data terms. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "L=E+A N^{-\\alpha}+B D^{-\\beta},\\quad D=kN,\\qquad \\frac{\\partial_B L}{\\partial_A L}=k^{-\\beta}N^{\\alpha-\\beta}",
+          "label": "At α=β, one ray identifies only A+B k⁻ᵝ; near equality makes the two columns nearly collinear"
+        },
+        {
+          "type": "equation",
+          "tex": "j_B=cj_A+O(\\varepsilon),\\quad \\varepsilon=|\\alpha-\\beta|\\quad\\Longrightarrow\\quad\\lambda_{\\min}(J^\\top J)=O(\\varepsilon^2),\\quad\\kappa(J^\\top J)=\\Omega(\\varepsilon^{-2})",
+          "label": "Proposition 2: fixed bounded design and the paper’s column-norm conditions; the cancelling direction leaves a first-order residual"
+        },
+        {
+          "type": "equation",
+          "tex": "V_K=K^{-1}\\sum_{\\ell=1}^K k_\\ell^{-2\\beta_{\\rm eff}}-\\left(K^{-1}\\sum_{\\ell=1}^K k_\\ell^{-\\beta_{\\rm eff}}\\right)^2",
+          "label": "Proposition 1 uses variance across transformed ratios as a pre-training design check against a target-dependent threshold"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "V4 adds an explicit multi-ray conditioning screen and an audit of 24 recoverable published designs; 11 pass at a target condition number of 100. The leading-order screen concerns the scale-coefficient block under the stated model conditions, not identifiability of the full nonlinear fit. [1,2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-37914",
+      "paper": "Muon Makes the First Mixture-of-Experts Layer Harder to Balance",
+      "authors": "Marcos Hernanz",
+      "url": "https://arxiv.org/html/2610.37914v2",
+      "kind": "Close reading · delayed addition",
+      "title": "The first router has to cancel a common input shift",
+      "dateNote": "First posted 2026-10-27; v2 · 2026-11-10 11:36 EST",
+      "evidence": "Read §3–5; compared the main results in v1/v2",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Router biases b affect top-k selection; load balancing updates b each step from selection counts. Bias span measures the correction needed for persistent score differences, not instantaneous load variance. [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "s_i(x)=\\sigma(w_i^\\top x),\\quad \\mathcal T(x)=\\operatorname{TopK}_i[s_i(x)+b_i],\\quad b_i^+=b_i+u\\,\\operatorname{sign}(1/E-\\ell_i)",
+          "label": "E experts; ℓᵢ is the expert’s fraction of all selections"
+        },
+        {
+          "type": "equation",
+          "tex": "w_i^\\top x=w_i^\\top\\bar x+w_i^\\top(x-\\bar x),\\qquad S=\\max_i b_i-\\min_i b_i",
+          "label": "Unequal projections of the input mean can give many tokens the same expert preference"
+        },
+        {
+          "type": "text",
+          "text": "On FineWeb-Edu with 55M active parameters, first-layer bias span tracks the backbone optimizer more than the router optimizer. Centering only the router inputs strongly reduces early overload while leaving expert inputs intact. [3]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The main mechanism and centering control already appear in v1; the core measurements in v2 are not new findings. Results from two small models, a particular router and short tuning runs do not establish inevitable imbalance in large-scale MoE training. [3,4]"
+        }
+      ]
+    },
+    {
+      "id": "blog-botpsy",
+      "paper": "BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model",
+      "authors": "Milan Gritta · Jihye Back · JinUk Cho · Ohjoon Kwon · Patrik Lambert · Mathias Buus · Amril Nurman",
+      "url": "https://huggingface.co/blog/qvac/botpsy",
+      "kind": "Close reading · technical blog",
+      "title": "Learn tool use, then recover general capabilities",
+      "dateNote": "2026-11-11",
+      "evidence": "Read Methodology, Figure 4 and results",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Qwen3.5-0.8B first receives tool-trajectory SFT, then on-policy distillation from three 4B specialists in tool use, reasoning and instruction following. Two DAPO rounds then emphasize tool calls and broaden to other verifiable tasks. [5]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal L_{\\rm OPD}\\ \\propto\\ \\mathbb E_{x,\\,s_t\\sim\\pi_S}\\!\\left[D_{\\rm KL}\\!\\left(\\pi_S(\\cdot\\mid s_t)\\,\\|\\,\\pi_{T(x)}(\\cdot\\mid s_t)\\right)\\right]",
+          "label": "Mechanism schematic: student-generated prefix sₜ and one teacher T(x) per prompt; unspecified loss weights are omitted"
+        },
+        {
+          "type": "text",
+          "text": "The first RL round gives partial credit for tool names, argument names and values. Figure 4 shows knowledge and instruction-following scores falling after SFT and recovering during distillation. [5]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Author-reported benchmark score",
+            "0.8B base",
+            "BotPsy"
+          ],
+          "rows": [
+            [
+              "BFCL v4",
+              "23.4",
+              "44.0"
+            ],
+            [
+              "ACEBench",
+              "30.1",
+              "58.7"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The table compares the whole pipeline with its base, not compute-matched stage ablations. It cannot isolate the contributions of teacher size, data mixture and RL. [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19013",
+      "paper": "Data Density Scaling Laws for Image Self-Distillation",
+      "authors": "Alvard Barseghyan · Ani Vanyan · Hakob Tamazyan · Hrant Khachatrian",
+      "url": "https://arxiv.org/html/2610.19013v2",
+      "kind": "Brief · version update",
+      "title": "Image self-distillation: more detail on extrapolation errors and fitting",
+      "dateNote": "First posted 2026-10-13; v2 · 2026-11-10 10:15 EST",
+      "evidence": "Compared contents, §6 and new appendices across v1/v2",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The Oct 15 issue covered repetition density. V2 adds confidence intervals for extrapolation errors, fitting objectives and parameter bounds, plus dataset construction and training configurations. The advantage of the 1.5% Maxar subset was already in v1. [6,7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13414",
+      "paper": "Free Lunch Uncertainty: Sequence-Level Rényi Entropy from Particle Decoding for Adaptive LLM Reasoning",
+      "authors": "Erfan Baghaei Potraghloo · Milad Heidari Sorkhehdizaj · Shahab Rahimirad · Aliasghar Pourghani · Seyedarmin Azizi · Souvik Kundu · Abolfazl Hashemi · Joseph Campbell · Vijay Gupta",
+      "url": "https://arxiv.org/abs/2611.13414",
+      "kind": "Brief · delayed addition",
+      "title": "Free Lunch Uncertainty: Sequence-Level Rényi Entropy from Particle Decoding for Adaptive LLM Reasoning",
+      "dateNote": "v1 · 2026-11-09 19:49 EST",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Power-SMC’s normalizer estimate can be reused to read out sequence Rényi entropy and gate additional particles; zero marginal cost presupposes particle decoding. [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13907",
+      "paper": "EVAThink: Evidence Sufficiency-Guided Training for Adaptive Thinking in Video Understanding",
+      "authors": "Changti Wu · Ruizhe Fan · Bin Wang · Lei Zhang · Yuxiang Zhang",
+      "url": "https://arxiv.org/abs/2611.13907",
+      "kind": "Brief · delayed addition",
+      "title": "EVAThink: Evidence Sufficiency-Guided Training for Adaptive Thinking in Video Understanding",
+      "dateNote": "v1 · 2026-11-10 06:01 EST",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Paired evidence-dense and evidence-sparse examples at the same frame budget train reasoning on demand. This allocates reasoning at a fixed visual-input budget. [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13442",
+      "paper": "ForeSpark: Joint Draft and Verification Budget Scheduling for Parallel Speculative Decoding",
+      "authors": "Jaeyong Song · Daniel Wang · Pratyush Patel · Jonny Kong · Preyas Shah · Shobhit Kanaujia",
+      "url": "https://arxiv.org/abs/2611.13442",
+      "kind": "Brief · delayed addition",
+      "title": "ForeSpark: Joint Draft and Verification Budget Scheduling for Parallel Speculative Decoding",
+      "dateNote": "v1 · 2026-11-09 20:37 EST",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "ForeSpark jointly chooses parallel draft and verification lengths under serving load; it targets system goodput rather than reasoning capability. [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-10165",
+      "paper": "AutoEMatic: Runtime-Adaptive Mixed-Precision LLM Inference via Automatic Exponent-Mantissa Refinement",
+      "authors": "Akshat Ramachandran · Reena Elangovan · Rangharajan Venkatesan · Charbel Sakr · Tijmen Blankevoort · Brucek Khailany · Tushar Krishna",
+      "url": "https://arxiv.org/abs/2611.10165",
+      "kind": "Brief · delayed addition",
+      "title": "AutoEMatic: Runtime-Adaptive Mixed-Precision LLM Inference via Automatic Exponent-Mantissa Refinement",
+      "dateNote": "v1 · 2026-11-06 14:40 EST",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "AutoEMatic allocates weight, activation and KV precision using token entropy and hidden-state changes, evaluating accuracy and throughput against bit width. [11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-14246",
+      "paper": "SinkState: On-the-Fly SVD of Recurrent States for Efficient Hybrid LLM Serving",
+      "authors": "Haolin Jiang · Weihang Li · Zhongzhu Zhou · Jinwen Pan · Santosh Pandey · Hang Liu",
+      "url": "https://arxiv.org/abs/2611.14246",
+      "kind": "Brief · delayed addition",
+      "title": "SinkState: On-the-Fly SVD of Recurrent States for Efficient Hybrid LLM Serving",
+      "dateNote": "v1 · 2026-11-10 10:57 EST",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "SinkState stores linear-attention states of hybrid models in low-rank form to reduce state traffic as batch size grows; gains depend on model and system. [12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13306",
+      "paper": "Train High, Ship Low: Efficient LoRA Synchronization for Distributed On-Policy Post-Training",
+      "authors": "Shenghui Li · Li Ju · Thiemo Voigt",
+      "url": "https://arxiv.org/abs/2611.13306",
+      "kind": "Brief · delayed addition",
+      "title": "Train High, Ship Low: Efficient LoRA Synchronization for Distributed On-Policy Post-Training",
+      "dateNote": "v1 · 2026-11-09 17:18 EST",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "HiLo synchronizes policy versions by sending compressed gradients and replaying the optimizer on rollout workers. It studies synchronization bandwidth in online post-training and requires identical decoded gradients and reproducible execution. [13]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2605.08541v4",
+      "title": "Tokens-per-Parameter Coverage Is Critical for Robust LLM Scaling Law Extrapolation · Compared v3/v4; read v4 §3.1–3.2, Propositions 1–2 and Appendix C"
+    },
+    {
+      "url": "https://arxiv.org/html/2605.08541v3",
+      "title": "Prior version · Tokens-per-Parameter Coverage Is Critical for Robust LLM Scaling Law Extrapolation"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.37914v2",
+      "title": "Muon Makes the First Mixture-of-Experts Layer Harder to Balance · Read §3–5; compared the main results in v1/v2"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.37914v1",
+      "title": "Prior version · Muon Makes the First Mixture-of-Experts Layer Harder to Balance"
+    },
+    {
+      "url": "https://huggingface.co/blog/qvac/botpsy",
+      "title": "BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model · Read Methodology, Figure 4 and results"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.19013v2",
+      "title": "Data Density Scaling Laws for Image Self-Distillation · Compared contents, §6 and new appendices across v1/v2"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.19013v1",
+      "title": "Prior version · Data Density Scaling Laws for Image Self-Distillation"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.13414",
+      "title": "Free Lunch Uncertainty: Sequence-Level Rényi Entropy from Particle Decoding for Adaptive LLM Reasoning · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.13907",
+      "title": "EVAThink: Evidence Sufficiency-Guided Training for Adaptive Thinking in Video Understanding · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.13442",
+      "title": "ForeSpark: Joint Draft and Verification Budget Scheduling for Parallel Speculative Decoding · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.10165",
+      "title": "AutoEMatic: Runtime-Adaptive Mixed-Precision LLM Inference via Automatic Exponent-Mantissa Refinement · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.14246",
+      "title": "SinkState: On-the-Fly SVD of Recurrent States for Efficient Hybrid LLM Serving · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.13306",
+      "title": "Train High, Ship Low: Efficient LoRA Synchronization for Distributed On-Policy Post-Training · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/html/2305.13048v2",
+      "title": "RWKV v2 · §2–4"
+    },
+    {
+      "url": "https://aclanthology.org/2023.findings-emnlp.936/",
+      "title": "Findings of EMNLP 2023 · ACL proceedings"
+    }
+  ],
+  "edition": "Daily research notes",
+  "title": "Identifying scaling laws, balancing MoE, and training small agents",
+  "subtitle": "TPP coverage · Muon and first-layer routing · BotPsy · RWKV",
+  "window": "2026-11-09 08:16 — 2026-11-12 08:16 EST; delayed additions retain original dates",
+  "intro": "A fixed data ratio can fit a curve without separating the effects of data and parameters. Two other close readings examine first-layer routing under Muon and a small agent’s post-training recipe. The classic derives RWKV’s normalized recurrence.",
+  "classic": {
+    "id": "classic-rwkv",
+    "paperId": "arxiv:2305.13048",
+    "shortTitle": "RWKV",
+    "year": 2023,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "kind": "Historical classic",
+    "title": "Two recurrent states for normalized attention",
+    "paper": "RWKV: Reinventing RNNs for the Transformer Era",
+    "authors": "Bo Peng · Eric Alcaide · Quentin Anthony · Alon Albalak · Samuel Arcadinho · Stella Biderman · Huanqi Cao · Xin Cheng · Michael Chung · Matteo Grella · Kranthi Kiran GV · Xuzheng He · Haowen Hou · Jiaju Lin · Przemyslaw Kazienko · Jan Kocon · Jiaming Kong · Bartlomiej Koptyra · Hayden Lau · Krishna Sri Ipsit Mantri · Ferdinand Mom · Atsushi Saito · Guangyu Song · Xiangru Tang · Bolun Wang · Johan S. Wind · Stanislaw Wozniak · Ruichong Zhang · Zhenyuan Zhang · Qihang Zhao · Peng Zhou · Qinghua Zhou · Jian Zhu · Rui-Jie Zhu",
+    "url": "https://arxiv.org/html/2305.13048v2",
+    "dateNote": "First posted 2023-05-22; read v2: 2023-12-11 UTC; Findings of EMNLP 2023",
+    "evidence": "Read §2–4; scalar recurrence and affine composition are equivalent derivations",
+    "recognition": {
+      "label": "Findings of EMNLP 2023 · representative modern recurrent model",
+      "url": "https://aclanthology.org/2023.findings-emnlp.936/"
+    },
+    "question": "If two old tokens receive nearly equal historical weight in one channel, can the current query separate them again? What state or gate would be needed?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "AFT (2021) aggregates values with positional biases and key weights without pairwise query–key dot products. RWKV restricts those biases to channelwise exponential decay, compressing history into numerator and denominator states. The notation below is for one channel. [14,15]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\rho=e^{-w},\\quad w\\ge0,\\qquad A_{t-1}=\\sum_{i<t}\\rho^{t-1-i}e^{k_i}v_i,\\quad B_{t-1}=\\sum_{i<t}\\rho^{t-1-i}e^{k_i}",
+        "label": "Keys and values are kᵢ and vᵢ; ρ controls the channel’s memory"
+      },
+      {
+        "type": "equation",
+        "tex": "A_t=\\rho A_{t-1}+e^{k_t}v_t,\\qquad B_t=\\rho B_{t-1}+e^{k_t},\\qquad A_0=B_0=0",
+        "label": "Rearranging the sums yields the online recurrence; state size is independent of context length"
+      },
+      {
+        "type": "equation",
+        "tex": "\\operatorname{wkv}_t=\\frac{A_{t-1}+e^{u+k_t}v_t}{B_{t-1}+e^{u+k_t}},\\qquad o_t=W_o\\big(\\sigma(r_t)\\odot\\operatorname{wkv}_t\\big)",
+        "label": "Equations 16–17: current token gets a separate bonus u; receptance gates the vector output"
+      },
+      {
+        "type": "equation",
+        "tex": "(m_2,b_2)\\circ(m_1,b_1)=(m_2m_1,m_2b_1+b_2)",
+        "label": "Equivalent derivation: each step is affine, and associativity permits a parallel prefix computation of training states"
+      },
+      {
+        "type": "text",
+        "text": "Fixed-size history helps autoregressive decoding, but is not lossless storage of arbitrary past content. The paper’s evaluations and the recurrence identity are distinct forms of evidence. [14]"
+      }
+    ]
+  }
+}

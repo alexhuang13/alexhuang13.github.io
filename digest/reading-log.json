@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-12",
+    "paperId": "arxiv:2305.13048",
+    "paper": "RWKV: Reinventing RNNs for the Transformer Era",
+    "shortTitle": "RWKV",
+    "year": 2023,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "recognition": {
+      "label": "Findings of EMNLP 2023 · 现代递归模型的代表工作",
+      "url": "https://aclanthology.org/2023.findings-emnlp.936/"
+    },
+    "source": "https://arxiv.org/html/2305.13048v2",
+    "url": "/digest/2026-11-12.html#classic-rwkv"
+  },
+  {
     "date": "2026-11-11",
     "paperId": "arxiv:2107.03006",
     "paper": "Structured Denoising Diffusion Models in Discrete State-Spaces",

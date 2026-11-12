@@ -1,0 +1,66 @@
+RESEARCH DIGEST / 2026-11-12
+识别 scaling law、平衡 MoE 与训练小型代理
+TPP 覆盖 · Muon 与首层路由 · BotPsy · 精读 RWKV
+
+中文: https://alexhuang13.github.io/digest/2026-11-12.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-12.html
+
+主读 · 版本更新
+一条固定配比射线为何识别不了两个尺度项
+Tokens-per-Parameter Coverage Is Critical for Robust LLM Scaling Law Extrapolation
+https://alexhuang13.github.io/digest/2026-11-12.html#paper-2605-08541
+
+主读 · 延迟补读
+首层路由的困难来自输入偏移
+Muon Makes the First Mixture-of-Experts Layer Harder to Balance
+https://alexhuang13.github.io/digest/2026-11-12.html#paper-2610-37914
+
+主读 · 技术博客
+先学工具调用，再补回通用能力
+BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model
+https://alexhuang13.github.io/digest/2026-11-12.html#blog-botpsy
+
+简讯 · 版本更新
+视觉自蒸馏：补充外推误差与拟合细节
+Data Density Scaling Laws for Image Self-Distillation
+https://alexhuang13.github.io/digest/2026-11-12.html#paper-2610-19013
+
+简讯 · 延迟补收
+Free Lunch Uncertainty: Sequence-Level Rényi Entropy from Particle Decoding for Adaptive LLM Reasoning
+Free Lunch Uncertainty: Sequence-Level Rényi Entropy from Particle Decoding for Adaptive LLM Reasoning
+https://alexhuang13.github.io/digest/2026-11-12.html#paper-2611-13414
+
+简讯 · 延迟补收
+EVAThink: Evidence Sufficiency-Guided Training for Adaptive Thinking in Video Understanding
+EVAThink: Evidence Sufficiency-Guided Training for Adaptive Thinking in Video Understanding
+https://alexhuang13.github.io/digest/2026-11-12.html#paper-2611-13907
+
+简讯 · 延迟补收
+ForeSpark: Joint Draft and Verification Budget Scheduling for Parallel Speculative Decoding
+ForeSpark: Joint Draft and Verification Budget Scheduling for Parallel Speculative Decoding
+https://alexhuang13.github.io/digest/2026-11-12.html#paper-2611-13442
+
+简讯 · 延迟补收
+AutoEMatic: Runtime-Adaptive Mixed-Precision LLM Inference via Automatic Exponent-Mantissa Refinement
+AutoEMatic: Runtime-Adaptive Mixed-Precision LLM Inference via Automatic Exponent-Mantissa Refinement
+https://alexhuang13.github.io/digest/2026-11-12.html#paper-2611-10165
+
+简讯 · 延迟补收
+SinkState: On-the-Fly SVD of Recurrent States for Efficient Hybrid LLM Serving
+SinkState: On-the-Fly SVD of Recurrent States for Efficient Hybrid LLM Serving
+https://alexhuang13.github.io/digest/2026-11-12.html#paper-2611-14246
+
+简讯 · 延迟补收
+Train High, Ship Low: Efficient LoRA Synchronization for Distributed On-Policy Post-Training
+Train High, Ship Low: Efficient LoRA Synchronization for Distributed On-Policy Post-Training
+https://alexhuang13.github.io/digest/2026-11-12.html#paper-2611-13306
+
+每日精读 · 2023
+把归一化注意力写成两个递归状态
+https://alexhuang13.github.io/digest/2026-11-12.html#classic-rwkv
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-12.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

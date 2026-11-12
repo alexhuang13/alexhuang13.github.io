@@ -1,0 +1,368 @@
+{
+  "date": "2026-11-12",
+  "number": "030",
+  "publishedAt": "2026-11-12T13:16:22Z",
+  "readingMinutes": 15,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Post-training"
+  ],
+  "articles": [
+    {
+      "id": "paper-2605-08541",
+      "paper": "Tokens-per-Parameter Coverage Is Critical for Robust LLM Scaling Law Extrapolation",
+      "authors": "Joshua Shay Kricheli · Alexander Lawrence Reid · Soumajyoti Sarkar · Venkata Gandikota · Paulo Shakarian",
+      "url": "https://arxiv.org/html/2605.08541v4",
+      "kind": "主读 · 版本更新",
+      "title": "一条固定配比射线为何识别不了两个尺度项",
+      "dateNote": "首发 2026-05-08；v4 · 2026-11-09 18:23 EST",
+      "evidence": "对照 v3/v4；读 v4 §3.1–3.2、命题1–2、附录 C",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "对 Chinchilla 型损失，N 为参数量、D 为训练 token 数。在固定 token/参数比 k 下，即使拟合误差很小，模型项和数据项也可能无法分开。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "L=E+A N^{-\\alpha}+B D^{-\\beta},\\quad D=kN,\\qquad \\frac{\\partial_B L}{\\partial_A L}=k^{-\\beta}N^{\\alpha-\\beta}",
+          "label": "当 α=β 时，单射线只能识别 A+B k⁻ᵝ；近似相等时，两列几乎共线"
+        },
+        {
+          "type": "equation",
+          "tex": "j_B=cj_A+O(\\varepsilon),\\quad \\varepsilon=|\\alpha-\\beta|\\quad\\Longrightarrow\\quad\\lambda_{\\min}(J^\\top J)=O(\\varepsilon^2),\\quad\\kappa(J^\\top J)=\\Omega(\\varepsilon^{-2})",
+          "label": "命题2：固定有界设计、列范数满足文中条件；沿抵消方向的残差是一阶小量"
+        },
+        {
+          "type": "equation",
+          "tex": "V_K=K^{-1}\\sum_{\\ell=1}^K k_\\ell^{-2\\beta_{\\rm eff}}-\\left(K^{-1}\\sum_{\\ell=1}^K k_\\ell^{-\\beta_{\\rm eff}}\\right)^2",
+          "label": "命题1以不同配比的变换方差作预训练前设计检查；要与目标条件数对应的阈值比较"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "v4 新增显式的多射线条件数筛查及24个可恢复公开设计的审计；目标条件数100时11个通过。这个领先阶筛查针对尺度系数块及文中模型条件，不保证整个非线性拟合可识别。 [1,2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-37914",
+      "paper": "Muon Makes the First Mixture-of-Experts Layer Harder to Balance",
+      "authors": "Marcos Hernanz",
+      "url": "https://arxiv.org/html/2610.37914v2",
+      "kind": "主读 · 延迟补读",
+      "title": "首层路由的困难来自输入偏移",
+      "dateNote": "首发 2026-10-27；v2 · 2026-11-10 11:36 EST",
+      "evidence": "读 §3–5；对照 v1/v2 的主要结果",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "路由器的偏置 b 只决定进入 top-k 的专家；负载平衡每步用计数反馈更新 b。偏置跨度测的是抵消系统性分数差需要多大校正，不是当步负载方差。 [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "s_i(x)=\\sigma(w_i^\\top x),\\quad \\mathcal T(x)=\\operatorname{TopK}_i[s_i(x)+b_i],\\quad b_i^+=b_i+u\\,\\operatorname{sign}(1/E-\\ell_i)",
+          "label": "E 个专家，ℓᵢ 是该专家占全部选择次数的比例"
+        },
+        {
+          "type": "equation",
+          "tex": "w_i^\\top x=w_i^\\top\\bar x+w_i^\\top(x-\\bar x),\\qquad S=\\max_i b_i-\\min_i b_i",
+          "label": "对输入均值投影若在专家间差异大，许多 token 会共享同一偏好"
+        },
+        {
+          "type": "text",
+          "text": "FineWeb-Edu 上的 55M 活跃参数模型中，切换骨干优化器后首层偏置跨度随之变化；单换路由器影响小。只对路由输入中心化也显著压低早期超载，专家输入保持原样。 [3]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "主要机制与中心化对照在 v1 已有；v2 的核心读数不作为新增结果。两种小模型、特定路由与短程调参下的现象，不足以断言大规模 MoE 训练必然更难平衡。 [3,4]"
+        }
+      ]
+    },
+    {
+      "id": "blog-botpsy",
+      "paper": "BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model",
+      "authors": "Milan Gritta · Jihye Back · JinUk Cho · Ohjoon Kwon · Patrik Lambert · Mathias Buus · Amril Nurman",
+      "url": "https://huggingface.co/blog/qvac/botpsy",
+      "kind": "主读 · 技术博客",
+      "title": "先学工具调用，再补回通用能力",
+      "dateNote": "2026-11-11",
+      "evidence": "已读 Methodology、Figure 4 和结果",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Qwen3.5-0.8B 先做工具轨迹 SFT，再由工具、推理、指令三个 4B 教师做在策略蒸馏，最后运行两轮 DAPO：先以工具调用为主，再加入更广的可验证任务。 [5]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal L_{\\rm OPD}\\ \\propto\\ \\mathbb E_{x,\\,s_t\\sim\\pi_S}\\!\\left[D_{\\rm KL}\\!\\left(\\pi_S(\\cdot\\mid s_t)\\,\\|\\,\\pi_{T(x)}(\\cdot\\mid s_t)\\right)\\right]",
+          "label": "机制示意：学生生成前缀 sₜ，每个提示 x 路由到一名教师 T(x)；不指定博客未公开的权重"
+        },
+        {
+          "type": "text",
+          "text": "第一轮 RL 给予工具名、参数名和参数值分级分数。Figure 4 中，SFT 后知识和指令跟随下降，蒸馏阶段回升。 [5]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "作者报告的评测分数",
+            "0.8B 基座",
+            "BotPsy"
+          ],
+          "rows": [
+            [
+              "BFCL v4",
+              "23.4",
+              "44.0"
+            ],
+            [
+              "ACEBench",
+              "30.1",
+              "58.7"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "表是整条训练管线的前后对照，不是单阶段算力匹配的消融。不能据此分离教师规模、数据组成和 RL 各自的贡献。 [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-19013",
+      "paper": "Data Density Scaling Laws for Image Self-Distillation",
+      "authors": "Alvard Barseghyan · Ani Vanyan · Hakob Tamazyan · Hrant Khachatrian",
+      "url": "https://arxiv.org/html/2610.19013v2",
+      "kind": "简讯 · 版本更新",
+      "title": "视觉自蒸馏：补充外推误差与拟合细节",
+      "dateNote": "首发 2026-10-13；v2 · 2026-11-10 10:15 EST",
+      "evidence": "对照 v1/v2 的目录、§6 与新增附录",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "10月15日已收录重复密度结果。v2 新列出外推误差的置信区间、拟合目标和参数边界，并补充数据集构建与训练配置；1.5% Maxar 子集的优势在旧版已有。 [6,7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13414",
+      "paper": "Free Lunch Uncertainty: Sequence-Level Rényi Entropy from Particle Decoding for Adaptive LLM Reasoning",
+      "authors": "Erfan Baghaei Potraghloo · Milad Heidari Sorkhehdizaj · Shahab Rahimirad · Aliasghar Pourghani · Seyedarmin Azizi · Souvik Kundu · Abolfazl Hashemi · Joseph Campbell · Vijay Gupta",
+      "url": "https://arxiv.org/abs/2611.13414",
+      "kind": "简讯 · 延迟补收",
+      "title": "Free Lunch Uncertainty: Sequence-Level Rényi Entropy from Particle Decoding for Adaptive LLM Reasoning",
+      "dateNote": "v1 · 2026-11-09 19:49 EST",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Power-SMC 的归一化常数估计可复用于序列 Rényi 熵读数，并用于追加粒子预算的门控；零边际成本以已运行粒子解码为前提。 [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13907",
+      "paper": "EVAThink: Evidence Sufficiency-Guided Training for Adaptive Thinking in Video Understanding",
+      "authors": "Changti Wu · Ruizhe Fan · Bin Wang · Lei Zhang · Yuxiang Zhang",
+      "url": "https://arxiv.org/abs/2611.13907",
+      "kind": "简讯 · 延迟补收",
+      "title": "EVAThink: Evidence Sufficiency-Guided Training for Adaptive Thinking in Video Understanding",
+      "dateNote": "v1 · 2026-11-10 06:01 EST",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在相同视频帧预算下用证据稠密/稀疏的配对样本训练按需推理。处理的是固定视觉输入预算下的推理分配，不是仅多采帧。 [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13442",
+      "paper": "ForeSpark: Joint Draft and Verification Budget Scheduling for Parallel Speculative Decoding",
+      "authors": "Jaeyong Song · Daniel Wang · Pratyush Patel · Jonny Kong · Preyas Shah · Shobhit Kanaujia",
+      "url": "https://arxiv.org/abs/2611.13442",
+      "kind": "简讯 · 延迟补收",
+      "title": "ForeSpark: Joint Draft and Verification Budget Scheduling for Parallel Speculative Decoding",
+      "dateNote": "v1 · 2026-11-09 20:37 EST",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "ForeSpark 联合选择并行草稿长度和校验长度，按服务负载分配计算；目标是系统吞吐量，而非增加模型解题能力。 [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-10165",
+      "paper": "AutoEMatic: Runtime-Adaptive Mixed-Precision LLM Inference via Automatic Exponent-Mantissa Refinement",
+      "authors": "Akshat Ramachandran · Reena Elangovan · Rangharajan Venkatesan · Charbel Sakr · Tijmen Blankevoort · Brucek Khailany · Tushar Krishna",
+      "url": "https://arxiv.org/abs/2611.10165",
+      "kind": "简讯 · 延迟补收",
+      "title": "AutoEMatic: Runtime-Adaptive Mixed-Precision LLM Inference via Automatic Exponent-Mantissa Refinement",
+      "dateNote": "v1 · 2026-11-06 14:40 EST",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "AutoEMatic 按 token 分布熵和层内隐藏态变化动态分配权重、激活和 KV 精度，评测位宽与准确率、吞吐的权衡。 [11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-14246",
+      "paper": "SinkState: On-the-Fly SVD of Recurrent States for Efficient Hybrid LLM Serving",
+      "authors": "Haolin Jiang · Weihang Li · Zhongzhu Zhou · Jinwen Pan · Santosh Pandey · Hang Liu",
+      "url": "https://arxiv.org/abs/2611.14246",
+      "kind": "简讯 · 延迟补收",
+      "title": "SinkState: On-the-Fly SVD of Recurrent States for Efficient Hybrid LLM Serving",
+      "dateNote": "v1 · 2026-11-10 10:57 EST",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "SinkState 按低秩结构保存混合模型的线性注意力状态，目标是缓解批量增大时的状态读写；低秩化的收益取决于模型与系统。 [12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-13306",
+      "paper": "Train High, Ship Low: Efficient LoRA Synchronization for Distributed On-Policy Post-Training",
+      "authors": "Shenghui Li · Li Ju · Thiemo Voigt",
+      "url": "https://arxiv.org/abs/2611.13306",
+      "kind": "简讯 · 延迟补收",
+      "title": "Train High, Ship Low: Efficient LoRA Synchronization for Distributed On-Policy Post-Training",
+      "dateNote": "v1 · 2026-11-09 17:18 EST",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "HiLo 把策略版本同步改成发送压缩梯度、在 rollout worker 重放优化器；比较的是在线后训练的同步带宽，需相同解码梯度与可复现执行。 [13]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2605.08541v4",
+      "title": "Tokens-per-Parameter Coverage Is Critical for Robust LLM Scaling Law Extrapolation · 对照 v3/v4；读 v4 §3.1–3.2、命题1–2、附录 C"
+    },
+    {
+      "url": "https://arxiv.org/html/2605.08541v3",
+      "title": "旧版对照 · Tokens-per-Parameter Coverage Is Critical for Robust LLM Scaling Law Extrapolation"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.37914v2",
+      "title": "Muon Makes the First Mixture-of-Experts Layer Harder to Balance · 读 §3–5；对照 v1/v2 的主要结果"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.37914v1",
+      "title": "旧版对照 · Muon Makes the First Mixture-of-Experts Layer Harder to Balance"
+    },
+    {
+      "url": "https://huggingface.co/blog/qvac/botpsy",
+      "title": "BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model · 已读 Methodology、Figure 4 和结果"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.19013v2",
+      "title": "Data Density Scaling Laws for Image Self-Distillation · 对照 v1/v2 的目录、§6 与新增附录"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.19013v1",
+      "title": "旧版对照 · Data Density Scaling Laws for Image Self-Distillation"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.13414",
+      "title": "Free Lunch Uncertainty: Sequence-Level Rényi Entropy from Particle Decoding for Adaptive LLM Reasoning · 基于摘要与版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.13907",
+      "title": "EVAThink: Evidence Sufficiency-Guided Training for Adaptive Thinking in Video Understanding · 基于摘要与版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.13442",
+      "title": "ForeSpark: Joint Draft and Verification Budget Scheduling for Parallel Speculative Decoding · 基于摘要与版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.10165",
+      "title": "AutoEMatic: Runtime-Adaptive Mixed-Precision LLM Inference via Automatic Exponent-Mantissa Refinement · 基于摘要与版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.14246",
+      "title": "SinkState: On-the-Fly SVD of Recurrent States for Efficient Hybrid LLM Serving · 基于摘要与版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.13306",
+      "title": "Train High, Ship Low: Efficient LoRA Synchronization for Distributed On-Policy Post-Training · 基于摘要与版本历史"
+    },
+    {
+      "url": "https://arxiv.org/html/2305.13048v2",
+      "title": "RWKV v2 · §2–4"
+    },
+    {
+      "url": "https://aclanthology.org/2023.findings-emnlp.936/",
+      "title": "Findings of EMNLP 2023 · ACL 论文集"
+    }
+  ],
+  "edition": "每日研究笔记",
+  "title": "识别 scaling law、平衡 MoE 与训练小型代理",
+  "subtitle": "TPP 覆盖 · Muon 与首层路由 · BotPsy · 精读 RWKV",
+  "window": "2026-11-09 08:16 — 2026-11-12 08:16 EST；延迟补收保留原日期",
+  "intro": "固定数据配比能拟合曲线，却未必能区分数据和参数的作用。另两篇主读拆解 Muon 的首层路由偏置与小型代理的后训练配方；经典精读 RWKV 的归一化递归。",
+  "classic": {
+    "id": "classic-rwkv",
+    "paperId": "arxiv:2305.13048",
+    "shortTitle": "RWKV",
+    "year": 2023,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "kind": "历史经典",
+    "title": "把归一化注意力写成两个递归状态",
+    "paper": "RWKV: Reinventing RNNs for the Transformer Era",
+    "authors": "Bo Peng · Eric Alcaide · Quentin Anthony · Alon Albalak · Samuel Arcadinho · Stella Biderman · Huanqi Cao · Xin Cheng · Michael Chung · Matteo Grella · Kranthi Kiran GV · Xuzheng He · Haowen Hou · Jiaju Lin · Przemyslaw Kazienko · Jan Kocon · Jiaming Kong · Bartlomiej Koptyra · Hayden Lau · Krishna Sri Ipsit Mantri · Ferdinand Mom · Atsushi Saito · Guangyu Song · Xiangru Tang · Bolun Wang · Johan S. Wind · Stanislaw Wozniak · Ruichong Zhang · Zhenyuan Zhang · Qihang Zhao · Peng Zhou · Qinghua Zhou · Jian Zhu · Rui-Jie Zhu",
+    "url": "https://arxiv.org/html/2305.13048v2",
+    "dateNote": "首发2023-05-22；所读 v2：2023-12-11 UTC；Findings of EMNLP 2023",
+    "evidence": "读 §2–4；标量递推与仿射结合律为等价推导",
+    "recognition": {
+      "label": "Findings of EMNLP 2023 · 现代递归模型的代表工作",
+      "url": "https://aclanthology.org/2023.findings-emnlp.936/"
+    },
+    "question": "若两个旧 token 的历史权重在同一通道里几乎相等，仅凭当前 query 能否重新区分它们？要加入怎样的状态或门控？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "AFT（2021）用位置偏置和键权重聚合值，省去两两 query–key 点积。RWKV 把位置偏置约束为逐通道指数衰减，使整个历史压缩成分子和分母两个状态。下面用单通道记号。 [14,15]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\rho=e^{-w},\\quad w\\ge0,\\qquad A_{t-1}=\\sum_{i<t}\\rho^{t-1-i}e^{k_i}v_i,\\quad B_{t-1}=\\sum_{i<t}\\rho^{t-1-i}e^{k_i}",
+        "label": "kᵢ、vᵢ 为键和值，ρ 决定该通道保留多长的历史"
+      },
+      {
+        "type": "equation",
+        "tex": "A_t=\\rho A_{t-1}+e^{k_t}v_t,\\qquad B_t=\\rho B_{t-1}+e^{k_t},\\qquad A_0=B_0=0",
+        "label": "把和式重排得到在线递推；状态大小不随上下文长度增长"
+      },
+      {
+        "type": "equation",
+        "tex": "\\operatorname{wkv}_t=\\frac{A_{t-1}+e^{u+k_t}v_t}{B_{t-1}+e^{u+k_t}},\\qquad o_t=W_o\\big(\\sigma(r_t)\\odot\\operatorname{wkv}_t\\big)",
+        "label": "原文式16–17：当前 token 有单独加成 u；向量输出再由 receptance 门控"
+      },
+      {
+        "type": "equation",
+        "tex": "(m_2,b_2)\\circ(m_1,b_1)=(m_2m_1,m_2b_1+b_2)",
+        "label": "等价推导：每步是仿射映射，结合律允许用并行前缀计算训练状态"
+      },
+      {
+        "type": "text",
+        "text": "固定维数的历史状态有利于自回归解码，但不是任意历史内容的无损存储。原文模型评测与此处递推恒等式是两种不同证据。 [14]"
+      }
+    ]
+  }
+}

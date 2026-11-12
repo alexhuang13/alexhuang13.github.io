@@ -4,8 +4,36 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-11",
+  "latest": "2026-11-12",
   "issues": [
+    {
+      "date": "2026-11-12",
+      "title": "识别 scaling law、平衡 MoE 与训练小型代理",
+      "url": "/digest/2026-11-12.html",
+      "translations": {
+        "en": {
+          "title": "Identifying scaling laws, balancing MoE, and training small agents",
+          "url": "/digest/en/2026-11-12.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2605.08541v4",
+        "https://arxiv.org/html/2605.08541v3",
+        "https://arxiv.org/html/2610.37914v2",
+        "https://arxiv.org/html/2610.37914v1",
+        "https://huggingface.co/blog/qvac/botpsy",
+        "https://arxiv.org/html/2610.19013v2",
+        "https://arxiv.org/html/2610.19013v1",
+        "https://arxiv.org/abs/2611.13414",
+        "https://arxiv.org/abs/2611.13907",
+        "https://arxiv.org/abs/2611.13442",
+        "https://arxiv.org/abs/2611.10165",
+        "https://arxiv.org/abs/2611.14246",
+        "https://arxiv.org/abs/2611.13306",
+        "https://arxiv.org/html/2305.13048v2",
+        "https://aclanthology.org/2023.findings-emnlp.936/"
+      ]
+    },
     {
       "date": "2026-11-11",
       "title": "覆盖率塌缩、预算漂移与鲁棒 Muon",

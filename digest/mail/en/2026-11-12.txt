@@ -1,0 +1,66 @@
+RESEARCH DIGEST / 2026-11-12
+Identifying scaling laws, balancing MoE, and training small agents
+TPP coverage · Muon and first-layer routing · BotPsy · RWKV
+
+中文: https://alexhuang13.github.io/digest/2026-11-12.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-12.html
+
+Close reading · version update
+Why a fixed-ratio ray cannot identify two scale terms
+Tokens-per-Parameter Coverage Is Critical for Robust LLM Scaling Law Extrapolation
+https://alexhuang13.github.io/digest/en/2026-11-12.html#paper-2605-08541
+
+Close reading · delayed addition
+The first router has to cancel a common input shift
+Muon Makes the First Mixture-of-Experts Layer Harder to Balance
+https://alexhuang13.github.io/digest/en/2026-11-12.html#paper-2610-37914
+
+Close reading · technical blog
+Learn tool use, then recover general capabilities
+BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model
+https://alexhuang13.github.io/digest/en/2026-11-12.html#blog-botpsy
+
+Brief · version update
+Image self-distillation: more detail on extrapolation errors and fitting
+Data Density Scaling Laws for Image Self-Distillation
+https://alexhuang13.github.io/digest/en/2026-11-12.html#paper-2610-19013
+
+Brief · delayed addition
+Free Lunch Uncertainty: Sequence-Level Rényi Entropy from Particle Decoding for Adaptive LLM Reasoning
+Free Lunch Uncertainty: Sequence-Level Rényi Entropy from Particle Decoding for Adaptive LLM Reasoning
+https://alexhuang13.github.io/digest/en/2026-11-12.html#paper-2611-13414
+
+Brief · delayed addition
+EVAThink: Evidence Sufficiency-Guided Training for Adaptive Thinking in Video Understanding
+EVAThink: Evidence Sufficiency-Guided Training for Adaptive Thinking in Video Understanding
+https://alexhuang13.github.io/digest/en/2026-11-12.html#paper-2611-13907
+
+Brief · delayed addition
+ForeSpark: Joint Draft and Verification Budget Scheduling for Parallel Speculative Decoding
+ForeSpark: Joint Draft and Verification Budget Scheduling for Parallel Speculative Decoding
+https://alexhuang13.github.io/digest/en/2026-11-12.html#paper-2611-13442
+
+Brief · delayed addition
+AutoEMatic: Runtime-Adaptive Mixed-Precision LLM Inference via Automatic Exponent-Mantissa Refinement
+AutoEMatic: Runtime-Adaptive Mixed-Precision LLM Inference via Automatic Exponent-Mantissa Refinement
+https://alexhuang13.github.io/digest/en/2026-11-12.html#paper-2611-10165
+
+Brief · delayed addition
+SinkState: On-the-Fly SVD of Recurrent States for Efficient Hybrid LLM Serving
+SinkState: On-the-Fly SVD of Recurrent States for Efficient Hybrid LLM Serving
+https://alexhuang13.github.io/digest/en/2026-11-12.html#paper-2611-14246
+
+Brief · delayed addition
+Train High, Ship Low: Efficient LoRA Synchronization for Distributed On-Policy Post-Training
+Train High, Ship Low: Efficient LoRA Synchronization for Distributed On-Policy Post-Training
+https://alexhuang13.github.io/digest/en/2026-11-12.html#paper-2611-13306
+
+Daily classic · 2023
+Two recurrent states for normalized attention
+https://alexhuang13.github.io/digest/en/2026-11-12.html#classic-rwkv
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-12.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/
