@@ -1,0 +1,91 @@
+RESEARCH DIGEST / 2026-11-13
+Noise preconditioning, prefix screening, and local Muon rates
+SignSGD · PreG · Muon · classic signSGD
+
+中文: https://alexhuang13.github.io/digest/2026-11-13.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-13.html
+
+Close reading · first arXiv posting
+Noise turns the sign discontinuity into a local slope
+When and How SignSGD Outperforms SGD: A Functional Scaling Law Perspective
+https://alexhuang13.github.io/digest/en/2026-11-13.html#paper-2611-16560
+
+Close reading · first arXiv posting
+Start more prefixes and finish fewer paths
+Early Signals, Strong Decisions: Prefix-Guided Sampling for Parallel Test-Time Scaling
+https://alexhuang13.github.io/digest/en/2026-11-13.html#paper-2611-14965
+
+Close reading · first arXiv posting
+The local rate comes from linearization
+Optimal higher order convergence rates for the MUON optimizer
+https://alexhuang13.github.io/digest/en/2026-11-13.html#paper-2611-15825
+
+Brief · first arXiv posting
+Unbundling Multimodal Vision Encoding
+Unbundling Multimodal Vision Encoding
+https://alexhuang13.github.io/digest/en/2026-11-13.html#paper-2611-17334
+
+Brief · first arXiv posting
+Human or Synthetic? What a Fixed Budget Buys for Post-Training
+Human or Synthetic? What a Fixed Budget Buys for Post-Training
+https://alexhuang13.github.io/digest/en/2026-11-13.html#paper-2611-16895
+
+Brief · first arXiv posting
+Pretraining Data Statistics Shape the Phases of Learning Entity Comparison in Language Models
+Pretraining Data Statistics Shape the Phases of Learning Entity Comparison in Language Models
+https://alexhuang13.github.io/digest/en/2026-11-13.html#paper-2611-16882
+
+Brief · first arXiv posting
+SALA: Semantically Aligned Latent Actions Enable Dual-Axis Scaling of Embodied Foundation Models
+SALA: Semantically Aligned Latent Actions Enable Dual-Axis Scaling of Embodied Foundation Models
+https://alexhuang13.github.io/digest/en/2026-11-13.html#paper-2611-17110
+
+Brief · first arXiv posting
+Are Scaling Laws of Universal MLIPs Universal?
+Are Scaling Laws of Universal MLIPs Universal?
+https://alexhuang13.github.io/digest/en/2026-11-13.html#paper-2611-15603
+
+Brief · first arXiv posting
+Iris-Z: Scaling One Generative Model Past Specialist Geometry Models
+Iris-Z: Scaling One Generative Model Past Specialist Geometry Models
+https://alexhuang13.github.io/digest/en/2026-11-13.html#paper-2611-16010
+
+Brief · first arXiv posting
+Physics-based simulation unlocks scaling laws for generalizable MRI reconstruction
+Physics-based simulation unlocks scaling laws for generalizable MRI reconstruction
+https://alexhuang13.github.io/digest/en/2026-11-13.html#paper-2611-15758
+
+Brief · first arXiv posting
+Effective Teacher Support for Reasoning Distillation
+Effective Teacher Support for Reasoning Distillation
+https://alexhuang13.github.io/digest/en/2026-11-13.html#paper-2611-14850
+
+Brief · version comparison
+Meta-Scaling Laws: On the Invariance and Generality of Neural Scaling
+Meta-Scaling Laws: On the Invariance and Generality of Neural Scaling
+https://alexhuang13.github.io/digest/en/2026-11-13.html#paper-2605-07546
+
+Brief · version comparison
+Delegating Authorization to Misaligned Agents: Coalitional Alignment and Safe Control
+Delegating Authorization to Misaligned Agents: Coalitional Alignment and Safe Control
+https://alexhuang13.github.io/digest/en/2026-11-13.html#paper-2609-15803
+
+Brief · version comparison
+What Hallucinations Have We Measured? Semantic Illusion, Confabulation, and Expressed Uncertainty
+What Hallucinations Have We Measured? Semantic Illusion, Confabulation, and Expressed Uncertainty
+https://alexhuang13.github.io/digest/en/2026-11-13.html#paper-2610-38520
+
+Brief · technical blog
+Adapting TRELLIS.2 geometry
+The Definitive Fine-Tuning Guide for 3D Generation Models
+https://alexhuang13.github.io/digest/en/2026-11-13.html#blog-trellis2-lora
+
+Daily classic · 2018
+Distributed optimization as sign voting
+https://alexhuang13.github.io/digest/en/2026-11-13.html#classic-signsgd
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-13.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

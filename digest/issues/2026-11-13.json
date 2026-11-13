@@ -1,0 +1,465 @@
+{
+  "date": "2026-11-13",
+  "number": "031",
+  "publishedAt": "2026-11-13T13:20:10Z",
+  "readingMinutes": 15,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Post-training"
+  ],
+  "articles": [
+    {
+      "id": "paper-2611-16560",
+      "paper": "When and How SignSGD Outperforms SGD: A Functional Scaling Law Perspective",
+      "authors": "Zilin Wang · Binghui Li · Jia-Nan Wang · Lean Wang · Jinbo Wang · Lei Wu",
+      "url": "https://arxiv.org/html/2611.16560v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "噪声把 sign 的跳跃变成局部斜率",
+      "dateNote": "v1 · 2026-11-12 04:47 EST",
+      "evidence": "已读 §2–3、§6.1；此前已报告会议接收，此处为 arXiv 首版",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "令 g 是单坐标真梯度、a 是单样本噪声标准差，B 为 batch size。高斯代理噪声下，梯度幅度远小于批噪声时，平均 sign 的响应近似线性。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "B^{-1/2}\\mathbb E[\\operatorname{sign}(g+aZ/\\sqrt B)]=B^{-1/2}\\bigl[2\\Phi(g\\sqrt B/a)-1\\bigr]\\approx\\sqrt{2/\\pi}\\,g/a,\\quad Z\\sim N(0,1)",
+          "label": "§6.1 的标量展开；大信号时响应饱和"
+        },
+        {
+          "type": "equation",
+          "tex": "a_i^2\\asymp\\lambda_i(H),\\quad g_i=\\lambda_i(H)e_i\\quad\\Longrightarrow\\quad g_i/a_i\\asymp\\sqrt{\\lambda_i(H)}e_i",
+          "label": "对角特征下噪声方差与曲率同阶，故局部漂移像平方根曲率"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathbb E[\\mathcal E_t]\\asymp S(t)+\\int_0^tK(t-\\tau)n_B(\\tau)\\,d\\tau,\\qquad S(t)\\asymp t^{-2s},\\quad K(t)\\asymp t^{-(2-2/q)}",
+          "label": "定理3.1：内在时间 t；s、q 来自文中的源条件和谱衰减，n_B 为噪声注入强度"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "与 SGD 相比，信号衰减更快、噪声遗忘更慢；硬任务与易任务的比较不同。定理针对对角幂律回归的 SDE，依赖曲率对齐、学习率与时间条件；预训练实验并未证明矩阵 Muon 同样如此。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-14965",
+      "paper": "Early Signals, Strong Decisions: Prefix-Guided Sampling for Parallel Test-Time Scaling",
+      "authors": "Jie Ren · Jonathan Rosenfeld · Neil Thompson",
+      "url": "https://arxiv.org/html/2611.14965v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "先扩宽前缀池，再完成少数路径",
+      "dateNote": "v1 · 2026-11-10 22:18 EST",
+      "evidence": "读 §3–5、表1",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "PreG 先采长度 k 的推理前缀，按内部置信度排序，只完成最高的 α 比例。设全路径长度为 T，B 为生成 token 预算；下式忽略取整及实际长度差异。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "B=M_{\\rm pre}k+M_{\\rm comp}(T-k),\\quad M_{\\rm comp}=\\alpha M_{\\rm pre}=\\frac{\\alpha B}{k+\\alpha(T-k)}",
+          "label": "缩小 α 加强筛选，但减少完成路径数"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Pr(\\text{correct wins})\\approx \\Phi(\\sqrt M\\,\\mu/\\sigma)",
+          "label": "命题1的近似：独立有界路径边际、均值 μ、方差 σ²；用于理解聚合，不是排序后样本独立性的保证"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Qwen3-8B · 300k token · 表1准确率",
+            "BRUMO",
+            "GPQA-D"
+          ],
+          "rows": [
+            [
+              "LL",
+              "78.87",
+              "70.12"
+            ],
+            [
+              "LL-PreG",
+              "81.43",
+              "69.39"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "筛选对临界问题最有用，但同一规则不保证每个基准获益。这里优化推理选答；丢弃低置信前缀会改变采样分布，并未给出无偏策略梯度。 [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-15825",
+      "paper": "Optimal higher order convergence rates for the MUON optimizer",
+      "authors": "Thomas Beretti · Thang Do · Steffen Dereich · Arnulf Jentzen",
+      "url": "https://arxiv.org/html/2611.15825v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "极小点附近的速率来自线性化",
+      "dateNote": "v1 · 2026-11-11 13:41 EST",
+      "evidence": "读定义1.1、2.2–2.3、定理1.2及引理2.7",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "关键在于归一化分母含正偏置 b₀,₁。有限次奇多项式正交化在动量趋近零时近似标量乘法；不能把这一邻域的行为理解为精确 polar 展平所有奇异值。 [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\operatorname{NS}_b^0(M)=\\frac{M}{b_{0,0}\\|M\\|+b_{0,1}},\\quad \\operatorname{NS}_b^K(M)=cM+o(\\|M\\|),\\quad c=b_{0,1}^{-1}\\prod_{k=1}^K b_{k,0}",
+          "label": "引理2.7 的一阶项；正线性系数折进有效步长"
+        },
+        {
+          "type": "equation",
+          "tex": "\\rho_{\\rm Muon}=\\rho_{\\rm momentum}=\\frac{\\sqrt\\chi-1}{\\sqrt\\chi+1},\\qquad \\rho_{\\rm GD}=\\frac{\\chi-1}{\\chi+1}",
+          "label": "定理1.2的最优局部 χ-rate，χ 是极小点 Hessian 的条件数"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "定理采用确定性局部分析、正定 Hessian 和指定的归一化；没有证明无偏置归一化、精确 polar 或远离极小点的随机训练具备同样速率。也没有解释相对于动量法的局部加速。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-17334",
+      "paper": "Unbundling Multimodal Vision Encoding",
+      "authors": "Ellis Brown · Chris Hoang · Shengyi Qian · Shang-Wen Li · Mike Lewis · Marjan Ghazvininejad · Luke Zettlemoyer · Lucas Beyer · Mengye Ren · Jakob Verbeek · Saining Xie · Hu Xu",
+      "url": "https://arxiv.org/abs/2611.17334",
+      "kind": "简讯 · arXiv 首发",
+      "title": "Unbundling Multimodal Vision Encoding",
+      "dateNote": "v1 · 2026-11-12 13:59 EST",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Luke Zettlemoyer 合著。控制数据和全生命周期算力后，联合从零训练的视觉编码器可追平预训练编码器；专用视觉容量有价值，也可放在融合后的早层。 [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-16895",
+      "paper": "Human or Synthetic? What a Fixed Budget Buys for Post-Training",
+      "authors": "Shourik Banerjee · Ethan Mendes · Mohit Raghavendra · Wei Xu · Alan Ritter",
+      "url": "https://arxiv.org/abs/2611.16895",
+      "kind": "简讯 · arXiv 首发",
+      "title": "Human or Synthetic? What a Fixed Budget Buys for Post-Training",
+      "dateNote": "v1 · 2026-11-12 09:51 EST",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "按标注美元预算而不是样本数比较 DPO 偏好数据。低到中等预算合成数据较有效；帮助性与摘要任务的结果不同。 [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-16882",
+      "paper": "Pretraining Data Statistics Shape the Phases of Learning Entity Comparison in Language Models",
+      "authors": "Yik Siu Chan · Jing Huang · Yanai Elazar · Atticus Geiger",
+      "url": "https://arxiv.org/abs/2611.16882",
+      "kind": "简讯 · arXiv 首发",
+      "title": "Pretraining Data Statistics Shape the Phases of Learning Entity Comparison in Language Models",
+      "dateNote": "v1 · 2026-11-12 09:45 EST",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "163M模型在天然与合成数据混合实验中，实体比较从频率捷径到位置捷径再到正确判断；数据统计可改变各阶段。 [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-17110",
+      "paper": "SALA: Semantically Aligned Latent Actions Enable Dual-Axis Scaling of Embodied Foundation Models",
+      "authors": "Jiachun Jin · Zetong Zhou · Haonan Wang · Xiao Yang · Jun Zhu · Zhijie Deng",
+      "url": "https://arxiv.org/abs/2611.17110",
+      "kind": "简讯 · arXiv 首发",
+      "title": "SALA: Semantically Aligned Latent Actions Enable Dual-Axis Scaling of Embodied Foundation Models",
+      "dateNote": "v1 · 2026-11-12 12:04 EST",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用文本语义邻域对齐无配对的人类与机器人潜动作；分别扩大通用预训练视频和任务视频，评估机器人动作预测及下游收益。 [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-15603",
+      "paper": "Are Scaling Laws of Universal MLIPs Universal?",
+      "authors": "Theo Keane · Anthony Onwuli · Richard Tomsett · Robert M. Forrest · Jonathan J. Bean",
+      "url": "https://arxiv.org/abs/2611.15603",
+      "kind": "简讯 · arXiv 首发",
+      "title": "Are Scaling Laws of Universal MLIPs Universal?",
+      "dateNote": "v1 · 2026-11-11 10:19 EST",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "跨三种机器学习原子势比较训练集大小和抽样策略。外推到分布偏移测试集时，抽样方法排序可能反转，结构数不足以概括数据价值。 [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-16010",
+      "paper": "Iris-Z: Scaling One Generative Model Past Specialist Geometry Models",
+      "authors": "Alejandro Cañada · Chema Garabito",
+      "url": "https://arxiv.org/abs/2611.16010",
+      "kind": "简讯 · arXiv 首发",
+      "title": "Iris-Z: Scaling One Generative Model Past Specialist Geometry Models",
+      "dateNote": "v1 · 2026-11-11 16:08 EST",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Iris-Z 共同生成图像和深度，比较通用生成骨干扩大后与专用深度模型的表现；这是特定评测中的规模比较。 [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-15758",
+      "paper": "Physics-based simulation unlocks scaling laws for generalizable MRI reconstruction",
+      "authors": "Hong Shang · Zijian Zhan · Sen Jia · Xiang Fan · Jintao Meng · Yang Zhou · Xiang Zhou · Tianyu He · Xinran Chen · Qiaoling Zeng · Keyan Yu · Jianhua Yao · Dong Liang",
+      "url": "https://arxiv.org/abs/2611.15758",
+      "kind": "简讯 · arXiv 首发",
+      "title": "Physics-based simulation unlocks scaling laws for generalizable MRI reconstruction",
+      "dateNote": "v1 · 2026-11-11 12:36 EST",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "SIM 用物理模拟构造多样训练数据，研究模拟数据与算力如何改善 MRI 重建的跨域泛化；论文结果不等于临床部署验证。 [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-14850",
+      "paper": "Effective Teacher Support for Reasoning Distillation",
+      "authors": "Lavinia Ghita · Dhruv Desai",
+      "url": "https://arxiv.org/abs/2611.14850",
+      "kind": "简讯 · arXiv 首发",
+      "title": "Effective Teacher Support for Reasoning Distillation",
+      "dateNote": "v1 · 2026-11-10 19:00 EST",
+      "evidence": "基于摘要和版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "前向 KL 蒸馏按保留教师词表概率的支持大小做预算扫描。Qwen3 设置中极小支持仍保持 MMLU-Pro，不能据此推断在全部任务上等价。 [11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2605-07546",
+      "paper": "Meta-Scaling Laws: On the Invariance and Generality of Neural Scaling",
+      "authors": "Xing Han · Liu Ziyin · Suchi Saria · Paul Pu Liang",
+      "url": "https://arxiv.org/html/2605.07546v3",
+      "kind": "简讯 · 版本对照",
+      "title": "Meta-Scaling Laws: On the Invariance and Generality of Neural Scaling",
+      "dateNote": "首发 2026-05-08；v3 · 2026-11-11 13:51 EST",
+      "evidence": "对照两版相关章节",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "新增附录 C.3 对信息分辨率估计误差做敏感性推导：固定拟合系数，误差既影响数据项，也可留下不随 D 增大消失的损失底误差。 [12,13]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-15803",
+      "paper": "Delegating Authorization to Misaligned Agents: Coalitional Alignment and Safe Control",
+      "authors": "Natalie Collina · Surbhi Goel · Aaron Roth · Sikata Bela Sengupta",
+      "url": "https://arxiv.org/html/2609.15803v2",
+      "kind": "简讯 · 版本对照",
+      "title": "Delegating Authorization to Misaligned Agents: Coalitional Alignment and Safe Control",
+      "dateNote": "首发 2026-09-14；v2 · 2026-11-11 16:21 EST",
+      "evidence": "对照两版相关章节",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Aaron Roth 合著。新增附录 B.3 近似联盟稳定性：在定理3的设置下，用覆盖系数对各审阅者的容忍误差加权，控制相对基线的最坏回报损失。 [14,15]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-38520",
+      "paper": "What Hallucinations Have We Measured? Semantic Illusion, Confabulation, and Expressed Uncertainty",
+      "authors": "Hazel H. Kim · Jakub Binkowski · Ekaterina Fadeeva · Juan David Guerra · Yijie Hao · Zheng Yi Ho · Baixiang Huang · Buyun Liang · Siyuan Liang · Anh Tuan Luu · Potsawee Manakul · Shahrad Mohammadzadeh · Niels Mündler-Sasahara · Aidar Myrzakhan · Artem Shelmanov · Zhiqiang Shen · Kai Shu · Ponhvoan Srey · Dacheng Tao · René Vidal · Haofei Yu · Lei Yu · Hongxiang Zhang · Yarin Gal · Hinrich Schütze · Philip H.S. Torr",
+      "url": "https://arxiv.org/html/2610.38520v2",
+      "kind": "简讯 · 版本对照",
+      "title": "What Hallucinations Have We Measured? Semantic Illusion, Confabulation, and Expressed Uncertainty",
+      "dateNote": "首发 2026-10-28；v2 · 2026-11-11 14:05 EST",
+      "evidence": "对照两版相关章节",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "René Vidal 合著。新版重组并明确 §6.2 的可访问知识测量：在不加知识的改述与解码变体中能否答对；语义错觉与持续编造的分类及主要结果旧版已有。 [16,17]"
+        }
+      ]
+    },
+    {
+      "id": "blog-trellis2-lora",
+      "paper": "The Definitive Fine-Tuning Guide for 3D Generation Models",
+      "authors": "Suvaditya Mukherjee · Merve Noyan · Pedro Cuenca",
+      "url": "https://huggingface.co/blog/3d-lora-finetuning",
+      "kind": "简讯 · 技术博客",
+      "title": "TRELLIS.2 的几何适配",
+      "dateNote": "2026-11-12",
+      "evidence": "已读实验设置与训练方法",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用188件鞋类资产构造窄域实验，针对 TRELLIS.2 的几何问题选择性训练 LoRA，保留不需适配的组件。这个案例说明模块选择的重要性，未建立跨品类结论。 [18]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.16560v1",
+      "title": "When and How SignSGD Outperforms SGD: A Functional Scaling Law Perspective · 已读 §2–3、§6.1；此前已报告会议接收，此处为 arXiv 首版"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.14965v1",
+      "title": "Early Signals, Strong Decisions: Prefix-Guided Sampling for Parallel Test-Time Scaling · 读 §3–5、表1"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.15825v1",
+      "title": "Optimal higher order convergence rates for the MUON optimizer · 读定义1.1、2.2–2.3、定理1.2及引理2.7"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.17334",
+      "title": "Unbundling Multimodal Vision Encoding · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.16895",
+      "title": "Human or Synthetic? What a Fixed Budget Buys for Post-Training · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.16882",
+      "title": "Pretraining Data Statistics Shape the Phases of Learning Entity Comparison in Language Models · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.17110",
+      "title": "SALA: Semantically Aligned Latent Actions Enable Dual-Axis Scaling of Embodied Foundation Models · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.15603",
+      "title": "Are Scaling Laws of Universal MLIPs Universal? · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.16010",
+      "title": "Iris-Z: Scaling One Generative Model Past Specialist Geometry Models · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.15758",
+      "title": "Physics-based simulation unlocks scaling laws for generalizable MRI reconstruction · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.14850",
+      "title": "Effective Teacher Support for Reasoning Distillation · 基于摘要和版本历史"
+    },
+    {
+      "url": "https://arxiv.org/html/2605.07546v3",
+      "title": "Meta-Scaling Laws: On the Invariance and Generality of Neural Scaling · 对照两版相关章节"
+    },
+    {
+      "url": "https://arxiv.org/html/2605.07546v2",
+      "title": "旧版对照 · Meta-Scaling Laws: On the Invariance and Generality of Neural Scaling"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.15803v2",
+      "title": "Delegating Authorization to Misaligned Agents: Coalitional Alignment and Safe Control · 对照两版相关章节"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.15803v1",
+      "title": "旧版对照 · Delegating Authorization to Misaligned Agents: Coalitional Alignment and Safe Control"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.38520v2",
+      "title": "What Hallucinations Have We Measured? Semantic Illusion, Confabulation, and Expressed Uncertainty · 对照两版相关章节"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.38520v1",
+      "title": "旧版对照 · What Hallucinations Have We Measured? Semantic Illusion, Confabulation, and Expressed Uncertainty"
+    },
+    {
+      "url": "https://huggingface.co/blog/3d-lora-finetuning",
+      "title": "The Definitive Fine-Tuning Guide for 3D Generation Models · 已读实验设置与训练方法"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v80/bernstein18a/bernstein18a.pdf",
+      "title": "ICML 2018 正文 · §2–4"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v80/bernstein18a.html",
+      "title": "ICML 2018 官方论文集"
+    }
+  ],
+  "edition": "每日研究笔记",
+  "title": "噪声预条件、前缀筛选与 Muon 的局部速率",
+  "subtitle": "SignSGD · PreG · Muon · 经典 signSGD",
+  "window": "2026-11-10 08:20 — 2026-11-13 08:20 EST",
+  "intro": "三篇主读分别关注训练噪声怎样改变曲率、推理前缀怎样分配生成预算，以及 Muon 在极小点附近究竟快在哪里。经典精读回到 signSGD 的一位通信与符号误差。",
+  "classic": {
+    "id": "classic-signsgd",
+    "paperId": "arxiv:1802.04434",
+    "shortTitle": "signSGD",
+    "year": 2018,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "kind": "历史经典",
+    "title": "把分布式优化变成符号投票",
+    "paper": "signSGD: Compressed Optimisation for Non-Convex Problems",
+    "authors": "Jeremy Bernstein · Yu-Xiang Wang · Kamyar Azizzadenesheli · Anima Anandkumar",
+    "url": "https://proceedings.mlr.press/v80/bernstein18a/bernstein18a.pdf",
+    "dateNote": "arXiv 首发2018-02-12 ET；读 ICML 2018 会议版",
+    "evidence": "读 §2–4；一步下降和二项式为简化推导",
+    "recognition": {
+      "label": "ICML 2018 · 一位梯度压缩的代表工作",
+      "url": "https://proceedings.mlr.press/v80/bernstein18a.html"
+    },
+    "question": "若各 worker 的噪声由共享样本或同步随机性导致正相关，固定平均误符号率时，投票还能得到什么误差率？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "逐元素取符号让每个 worker 每坐标只发一位。代价是失去梯度幅度，因此证明首先要控制符号出错率，而不能直接套用无偏梯度的 SGD 分析。 [19,20]"
+      },
+      {
+        "type": "equation",
+        "tex": "x_{k+1}=x_k-\\eta\\,\\operatorname{sign}(\\hat g_k),\\quad f(x+d)\\le f(x)+g^\\top d+\\tfrac12\\sum_i L_i d_i^2",
+        "label": "算法1和逐坐标光滑上界；g=∇f(x)"
+      },
+      {
+        "type": "equation",
+        "tex": "q_i=\\Pr(\\operatorname{sign}(\\hat g_i)\\ne\\operatorname{sign}(g_i)),\\quad \\mathbb E[g_i\\operatorname{sign}(\\hat g_i)]=|g_i|(1-2q_i)",
+        "label": "二值无平局时的等价恒等式；错误符号把下降翻为上升"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathbb E[f(x^+)-f(x)]\\le-\\eta\\|g\\|_1+2\\eta\\sum_i|g_i|q_i+\\tfrac{\\eta^2}{2}\\|L\\|_1",
+        "label": "一步上界：主要下降、符号错误罚项与曲率代价"
+      },
+      {
+        "type": "equation",
+        "tex": "q_i^{\\rm vote}=\\Pr\\big(\\operatorname{Binomial}(m,q_i)>m/2\\big)",
+        "label": "独立同分布 worker、奇数 m 的简化；qᵢ<1/2 时投票可抑制错误"
+      },
+      {
+        "type": "text",
+        "text": "定理1在有界下界、逐坐标光滑和方差条件下，取每步 batch 为 K、步长正比于 K⁻¹ᐟ²，得到平均梯度一范数的期望为 O(K⁻¹ᐟ²)。总 oracle 次数为 K²。投票改进的证明另用对称单峰噪声。 [19]"
+      }
+    ]
+  }
+}

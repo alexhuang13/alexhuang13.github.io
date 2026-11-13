@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-13",
+    "paperId": "arxiv:1802.04434",
+    "paper": "signSGD: Compressed Optimisation for Non-Convex Problems",
+    "shortTitle": "signSGD",
+    "year": 2018,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "recognition": {
+      "label": "ICML 2018 · 一位梯度压缩的代表工作",
+      "url": "https://proceedings.mlr.press/v80/bernstein18a.html"
+    },
+    "source": "https://proceedings.mlr.press/v80/bernstein18a/bernstein18a.pdf",
+    "url": "/digest/2026-11-13.html#classic-signsgd"
+  },
+  {
     "date": "2026-11-12",
     "paperId": "arxiv:2305.13048",
     "paper": "RWKV: Reinventing RNNs for the Transformer Era",

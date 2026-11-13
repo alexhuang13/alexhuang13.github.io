@@ -4,8 +4,41 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-12",
+  "latest": "2026-11-13",
   "issues": [
+    {
+      "date": "2026-11-13",
+      "title": "噪声预条件、前缀筛选与 Muon 的局部速率",
+      "url": "/digest/2026-11-13.html",
+      "translations": {
+        "en": {
+          "title": "Noise preconditioning, prefix screening, and local Muon rates",
+          "url": "/digest/en/2026-11-13.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.16560v1",
+        "https://arxiv.org/html/2611.14965v1",
+        "https://arxiv.org/html/2611.15825v1",
+        "https://arxiv.org/abs/2611.17334",
+        "https://arxiv.org/abs/2611.16895",
+        "https://arxiv.org/abs/2611.16882",
+        "https://arxiv.org/abs/2611.17110",
+        "https://arxiv.org/abs/2611.15603",
+        "https://arxiv.org/abs/2611.16010",
+        "https://arxiv.org/abs/2611.15758",
+        "https://arxiv.org/abs/2611.14850",
+        "https://arxiv.org/html/2605.07546v3",
+        "https://arxiv.org/html/2605.07546v2",
+        "https://arxiv.org/html/2609.15803v2",
+        "https://arxiv.org/html/2609.15803v1",
+        "https://arxiv.org/html/2610.38520v2",
+        "https://arxiv.org/html/2610.38520v1",
+        "https://huggingface.co/blog/3d-lora-finetuning",
+        "https://proceedings.mlr.press/v80/bernstein18a/bernstein18a.pdf",
+        "https://proceedings.mlr.press/v80/bernstein18a.html"
+      ]
+    },
     {
       "date": "2026-11-12",
       "title": "识别 scaling law、平衡 MoE 与训练小型代理",

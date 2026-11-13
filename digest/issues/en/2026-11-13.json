@@ -1,0 +1,465 @@
+{
+  "date": "2026-11-13",
+  "number": "031",
+  "publishedAt": "2026-11-13T13:20:10Z",
+  "readingMinutes": 15,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Post-training"
+  ],
+  "articles": [
+    {
+      "id": "paper-2611-16560",
+      "paper": "When and How SignSGD Outperforms SGD: A Functional Scaling Law Perspective",
+      "authors": "Zilin Wang · Binghui Li · Jia-Nan Wang · Lean Wang · Jinbo Wang · Lei Wu",
+      "url": "https://arxiv.org/html/2611.16560v1",
+      "kind": "Close reading · first arXiv posting",
+      "title": "Noise turns the sign discontinuity into a local slope",
+      "dateNote": "v1 · 2026-11-12 04:47 EST",
+      "evidence": "Read §2–3 and §6.1; acceptance was previously reported by the author, and this is the first arXiv version",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Let g be one coordinate of the true gradient, a its single-sample noise standard deviation, and B the batch size. Under the Gaussian noise surrogate, mean sign responds nearly linearly when the gradient is small relative to batch noise. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "B^{-1/2}\\mathbb E[\\operatorname{sign}(g+aZ/\\sqrt B)]=B^{-1/2}\\bigl[2\\Phi(g\\sqrt B/a)-1\\bigr]\\approx\\sqrt{2/\\pi}\\,g/a,\\quad Z\\sim N(0,1)",
+          "label": "Scalar expansion from §6.1; the response saturates for large signals"
+        },
+        {
+          "type": "equation",
+          "tex": "a_i^2\\asymp\\lambda_i(H),\\quad g_i=\\lambda_i(H)e_i\\quad\\Longrightarrow\\quad g_i/a_i\\asymp\\sqrt{\\lambda_i(H)}e_i",
+          "label": "With diagonal features and curvature-aligned noise variance, the local drift has square-root curvature"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathbb E[\\mathcal E_t]\\asymp S(t)+\\int_0^tK(t-\\tau)n_B(\\tau)\\,d\\tau,\\qquad S(t)\\asymp t^{-2s},\\quad K(t)\\asymp t^{-(2-2/q)}",
+          "label": "Theorem 3.1: intrinsic time t; s and q come from the source and spectral-decay conditions; n_B is noise injection"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Signal error decays faster and noise is forgotten more slowly than for SGD, yielding different comparisons in hard and easy regimes. The theorem concerns a diagonal power-law regression SDE under curvature alignment and stepsize and time conditions. Pretraining results do not establish the same mechanism for matrix Muon. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-14965",
+      "paper": "Early Signals, Strong Decisions: Prefix-Guided Sampling for Parallel Test-Time Scaling",
+      "authors": "Jie Ren · Jonathan Rosenfeld · Neil Thompson",
+      "url": "https://arxiv.org/html/2611.14965v1",
+      "kind": "Close reading · first arXiv posting",
+      "title": "Start more prefixes and finish fewer paths",
+      "dateNote": "v1 · 2026-11-10 22:18 EST",
+      "evidence": "Read §3–5 and Table 1",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "PreG samples reasoning prefixes of length k, ranks them by internal confidence, and completes only the top fraction α. Let T be full path length and B the generation-token budget; the expression ignores rounding and variable path lengths. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "B=M_{\\rm pre}k+M_{\\rm comp}(T-k),\\quad M_{\\rm comp}=\\alpha M_{\\rm pre}=\\frac{\\alpha B}{k+\\alpha(T-k)}",
+          "label": "A smaller α filters more aggressively but reduces the number of completed paths"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Pr(\\text{correct wins})\\approx \\Phi(\\sqrt M\\,\\mu/\\sigma)",
+          "label": "Proposition 1 approximation for independent bounded path margins with mean μ and variance σ²; explains aggregation without asserting independence after ranking"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Qwen3-8B · 300k tokens · Table 1 accuracy",
+            "BRUMO",
+            "GPQA-D"
+          ],
+          "rows": [
+            [
+              "LL",
+              "78.87",
+              "70.12"
+            ],
+            [
+              "LL-PreG",
+              "81.43",
+              "69.39"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Screening is most useful near the decision boundary, but a single rule does not improve every benchmark. This is inference-time answer selection: dropping low-confidence prefixes changes the sampling distribution and provides no unbiased policy-gradient estimator. [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-15825",
+      "paper": "Optimal higher order convergence rates for the MUON optimizer",
+      "authors": "Thomas Beretti · Thang Do · Steffen Dereich · Arnulf Jentzen",
+      "url": "https://arxiv.org/html/2611.15825v1",
+      "kind": "Close reading · first arXiv posting",
+      "title": "The local rate comes from linearization",
+      "dateNote": "v1 · 2026-11-11 13:41 EST",
+      "evidence": "Read Definitions 1.1 and 2.2–2.3, Theorem 1.2 and Lemma 2.7",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The normalization denominator has a positive offset b₀,₁. As momentum vanishes, finitely many odd polynomial steps act locally like scalar multiplication. This is different from exact polar flattening of all nonzero singular values. [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\operatorname{NS}_b^0(M)=\\frac{M}{b_{0,0}\\|M\\|+b_{0,1}},\\quad \\operatorname{NS}_b^K(M)=cM+o(\\|M\\|),\\quad c=b_{0,1}^{-1}\\prod_{k=1}^K b_{k,0}",
+          "label": "First-order term from Lemma 2.7; the positive coefficient is absorbed into the effective stepsize"
+        },
+        {
+          "type": "equation",
+          "tex": "\\rho_{\\rm Muon}=\\rho_{\\rm momentum}=\\frac{\\sqrt\\chi-1}{\\sqrt\\chi+1},\\qquad \\rho_{\\rm GD}=\\frac{\\chi-1}{\\chi+1}",
+          "label": "Optimal local χ-rate of Theorem 1.2, with χ the Hessian condition number at the minimum"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The theorem uses deterministic local analysis, positive definite Hessian and the specified normalization. It does not give the same rate for zero-offset normalization, exact polar or stochastic training far from the minimum, nor establish local acceleration over momentum. [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-17334",
+      "paper": "Unbundling Multimodal Vision Encoding",
+      "authors": "Ellis Brown · Chris Hoang · Shengyi Qian · Shang-Wen Li · Mike Lewis · Marjan Ghazvininejad · Luke Zettlemoyer · Lucas Beyer · Mengye Ren · Jakob Verbeek · Saining Xie · Hu Xu",
+      "url": "https://arxiv.org/abs/2611.17334",
+      "kind": "Brief · first arXiv posting",
+      "title": "Unbundling Multimodal Vision Encoding",
+      "dateNote": "v1 · 2026-11-12 13:59 EST",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Coauthored by Luke Zettlemoyer. With common data and matched lifetime compute, jointly trained vision encoders match pretrained ones; dedicated visual capacity helps and can sit inside early fusion layers. [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-16895",
+      "paper": "Human or Synthetic? What a Fixed Budget Buys for Post-Training",
+      "authors": "Shourik Banerjee · Ethan Mendes · Mohit Raghavendra · Wei Xu · Alan Ritter",
+      "url": "https://arxiv.org/abs/2611.16895",
+      "kind": "Brief · first arXiv posting",
+      "title": "Human or Synthetic? What a Fixed Budget Buys for Post-Training",
+      "dateNote": "v1 · 2026-11-12 09:51 EST",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Compares DPO preference data by annotation dollars rather than sample count. Synthetic data is more cost-effective at low-to-moderate budgets, with different outcomes for helpfulness and summarization. [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-16882",
+      "paper": "Pretraining Data Statistics Shape the Phases of Learning Entity Comparison in Language Models",
+      "authors": "Yik Siu Chan · Jing Huang · Yanai Elazar · Atticus Geiger",
+      "url": "https://arxiv.org/abs/2611.16882",
+      "kind": "Brief · first arXiv posting",
+      "title": "Pretraining Data Statistics Shape the Phases of Learning Entity Comparison in Language Models",
+      "dateNote": "v1 · 2026-11-12 09:45 EST",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In 163M-model natural/synthetic mixture experiments, entity comparison moves from frequency to position shortcuts and then correct answers; data statistics affect the phases. [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-17110",
+      "paper": "SALA: Semantically Aligned Latent Actions Enable Dual-Axis Scaling of Embodied Foundation Models",
+      "authors": "Jiachun Jin · Zetong Zhou · Haonan Wang · Xiao Yang · Jun Zhu · Zhijie Deng",
+      "url": "https://arxiv.org/abs/2611.17110",
+      "kind": "Brief · first arXiv posting",
+      "title": "SALA: Semantically Aligned Latent Actions Enable Dual-Axis Scaling of Embodied Foundation Models",
+      "dateNote": "v1 · 2026-11-12 12:04 EST",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Aligns latent human and robot actions through textual neighborhoods without paired data, scaling general pretraining video and task-specific video separately. [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-15603",
+      "paper": "Are Scaling Laws of Universal MLIPs Universal?",
+      "authors": "Theo Keane · Anthony Onwuli · Richard Tomsett · Robert M. Forrest · Jonathan J. Bean",
+      "url": "https://arxiv.org/abs/2611.15603",
+      "kind": "Brief · first arXiv posting",
+      "title": "Are Scaling Laws of Universal MLIPs Universal?",
+      "dateNote": "v1 · 2026-11-11 10:19 EST",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Compares training-set size and sampling policies for three learned interatomic potentials. Policy rankings can reverse under distribution shift; structure count alone does not determine data value. [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-16010",
+      "paper": "Iris-Z: Scaling One Generative Model Past Specialist Geometry Models",
+      "authors": "Alejandro Cañada · Chema Garabito",
+      "url": "https://arxiv.org/abs/2611.16010",
+      "kind": "Brief · first arXiv posting",
+      "title": "Iris-Z: Scaling One Generative Model Past Specialist Geometry Models",
+      "dateNote": "v1 · 2026-11-11 16:08 EST",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Iris-Z jointly generates images and depth and compares a scaled general generative backbone with specialist depth models on the evaluated benchmarks. [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-15758",
+      "paper": "Physics-based simulation unlocks scaling laws for generalizable MRI reconstruction",
+      "authors": "Hong Shang · Zijian Zhan · Sen Jia · Xiang Fan · Jintao Meng · Yang Zhou · Xiang Zhou · Tianyu He · Xinran Chen · Qiaoling Zeng · Keyan Yu · Jianhua Yao · Dong Liang",
+      "url": "https://arxiv.org/abs/2611.15758",
+      "kind": "Brief · first arXiv posting",
+      "title": "Physics-based simulation unlocks scaling laws for generalizable MRI reconstruction",
+      "dateNote": "v1 · 2026-11-11 12:36 EST",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "SIM uses physics-simulated data to study data and compute scaling for cross-domain MRI reconstruction; the reported results are not clinical deployment validation. [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-14850",
+      "paper": "Effective Teacher Support for Reasoning Distillation",
+      "authors": "Lavinia Ghita · Dhruv Desai",
+      "url": "https://arxiv.org/abs/2611.14850",
+      "kind": "Brief · first arXiv posting",
+      "title": "Effective Teacher Support for Reasoning Distillation",
+      "dateNote": "v1 · 2026-11-10 19:00 EST",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Sweeps teacher vocabulary support for forward-KL distillation. Very small support preserves MMLU-Pro in the reported Qwen3 settings, which does not imply equivalence across tasks. [11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2605-07546",
+      "paper": "Meta-Scaling Laws: On the Invariance and Generality of Neural Scaling",
+      "authors": "Xing Han · Liu Ziyin · Suchi Saria · Paul Pu Liang",
+      "url": "https://arxiv.org/html/2605.07546v3",
+      "kind": "Brief · version comparison",
+      "title": "Meta-Scaling Laws: On the Invariance and Generality of Neural Scaling",
+      "dateNote": "First posted 2026-05-08; v3 · 2026-11-11 13:51 EST",
+      "evidence": "Compared relevant sections across both versions",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "New Appendix C.3 derives sensitivity to estimated information resolution: holding fitted coefficients fixed, estimation errors affect the data term and can leave a loss-floor error that survives increasing D. [12,13]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-15803",
+      "paper": "Delegating Authorization to Misaligned Agents: Coalitional Alignment and Safe Control",
+      "authors": "Natalie Collina · Surbhi Goel · Aaron Roth · Sikata Bela Sengupta",
+      "url": "https://arxiv.org/html/2609.15803v2",
+      "kind": "Brief · version comparison",
+      "title": "Delegating Authorization to Misaligned Agents: Coalitional Alignment and Safe Control",
+      "dateNote": "First posted 2026-09-14; v2 · 2026-11-11 16:21 EST",
+      "evidence": "Compared relevant sections across both versions",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Coauthored by Aaron Roth. New Appendix B.3 bounds the worst return shortfall from baseline under approximate coalition stability, using coverage coefficients to weight reviewers’ tolerances in the setting of Theorem 3. [14,15]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-38520",
+      "paper": "What Hallucinations Have We Measured? Semantic Illusion, Confabulation, and Expressed Uncertainty",
+      "authors": "Hazel H. Kim · Jakub Binkowski · Ekaterina Fadeeva · Juan David Guerra · Yijie Hao · Zheng Yi Ho · Baixiang Huang · Buyun Liang · Siyuan Liang · Anh Tuan Luu · Potsawee Manakul · Shahrad Mohammadzadeh · Niels Mündler-Sasahara · Aidar Myrzakhan · Artem Shelmanov · Zhiqiang Shen · Kai Shu · Ponhvoan Srey · Dacheng Tao · René Vidal · Haofei Yu · Lei Yu · Hongxiang Zhang · Yarin Gal · Hinrich Schütze · Philip H.S. Torr",
+      "url": "https://arxiv.org/html/2610.38520v2",
+      "kind": "Brief · version comparison",
+      "title": "What Hallucinations Have We Measured? Semantic Illusion, Confabulation, and Expressed Uncertainty",
+      "dateNote": "First posted 2026-10-28; v2 · 2026-11-11 14:05 EST",
+      "evidence": "Compared relevant sections across both versions",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Coauthored by René Vidal. V2 reorganizes and makes the §6.2 behavioral-accessibility protocol explicit: can paraphrases and decoding variants elicit a correct answer without added knowledge? The taxonomy and core findings already appeared in v1. [16,17]"
+        }
+      ]
+    },
+    {
+      "id": "blog-trellis2-lora",
+      "paper": "The Definitive Fine-Tuning Guide for 3D Generation Models",
+      "authors": "Suvaditya Mukherjee · Merve Noyan · Pedro Cuenca",
+      "url": "https://huggingface.co/blog/3d-lora-finetuning",
+      "kind": "Brief · technical blog",
+      "title": "Adapting TRELLIS.2 geometry",
+      "dateNote": "2026-11-12",
+      "evidence": "Read the experiment setup and training method",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A narrow-domain experiment uses 188 footwear assets and selectively trains LoRA for TRELLIS.2 geometry, leaving unrelated components frozen. The case illustrates module selection without establishing transfer across categories. [18]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.16560v1",
+      "title": "When and How SignSGD Outperforms SGD: A Functional Scaling Law Perspective · Read §2–3 and §6.1; acceptance was previously reported by the author, and this is the first arXiv version"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.14965v1",
+      "title": "Early Signals, Strong Decisions: Prefix-Guided Sampling for Parallel Test-Time Scaling · Read §3–5 and Table 1"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.15825v1",
+      "title": "Optimal higher order convergence rates for the MUON optimizer · Read Definitions 1.1 and 2.2–2.3, Theorem 1.2 and Lemma 2.7"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.17334",
+      "title": "Unbundling Multimodal Vision Encoding · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.16895",
+      "title": "Human or Synthetic? What a Fixed Budget Buys for Post-Training · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.16882",
+      "title": "Pretraining Data Statistics Shape the Phases of Learning Entity Comparison in Language Models · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.17110",
+      "title": "SALA: Semantically Aligned Latent Actions Enable Dual-Axis Scaling of Embodied Foundation Models · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.15603",
+      "title": "Are Scaling Laws of Universal MLIPs Universal? · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.16010",
+      "title": "Iris-Z: Scaling One Generative Model Past Specialist Geometry Models · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.15758",
+      "title": "Physics-based simulation unlocks scaling laws for generalizable MRI reconstruction · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.14850",
+      "title": "Effective Teacher Support for Reasoning Distillation · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/html/2605.07546v3",
+      "title": "Meta-Scaling Laws: On the Invariance and Generality of Neural Scaling · Compared relevant sections across both versions"
+    },
+    {
+      "url": "https://arxiv.org/html/2605.07546v2",
+      "title": "Prior version · Meta-Scaling Laws: On the Invariance and Generality of Neural Scaling"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.15803v2",
+      "title": "Delegating Authorization to Misaligned Agents: Coalitional Alignment and Safe Control · Compared relevant sections across both versions"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.15803v1",
+      "title": "Prior version · Delegating Authorization to Misaligned Agents: Coalitional Alignment and Safe Control"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.38520v2",
+      "title": "What Hallucinations Have We Measured? Semantic Illusion, Confabulation, and Expressed Uncertainty · Compared relevant sections across both versions"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.38520v1",
+      "title": "Prior version · What Hallucinations Have We Measured? Semantic Illusion, Confabulation, and Expressed Uncertainty"
+    },
+    {
+      "url": "https://huggingface.co/blog/3d-lora-finetuning",
+      "title": "The Definitive Fine-Tuning Guide for 3D Generation Models · Read the experiment setup and training method"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v80/bernstein18a/bernstein18a.pdf",
+      "title": "ICML 2018 paper · §2–4"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v80/bernstein18a.html",
+      "title": "Official ICML 2018 proceedings"
+    }
+  ],
+  "edition": "Daily research notes",
+  "title": "Noise preconditioning, prefix screening, and local Muon rates",
+  "subtitle": "SignSGD · PreG · Muon · classic signSGD",
+  "window": "2026-11-10 08:20 — 2026-11-13 08:20 EST",
+  "intro": "Three readings ask how training noise changes curvature, how inference prefixes allocate generation, and what makes Muon fast locally. The classic revisits one-bit communication and sign errors in signSGD.",
+  "classic": {
+    "id": "classic-signsgd",
+    "paperId": "arxiv:1802.04434",
+    "shortTitle": "signSGD",
+    "year": 2018,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "kind": "Historical classic",
+    "title": "Distributed optimization as sign voting",
+    "paper": "signSGD: Compressed Optimisation for Non-Convex Problems",
+    "authors": "Jeremy Bernstein · Yu-Xiang Wang · Kamyar Azizzadenesheli · Anima Anandkumar",
+    "url": "https://proceedings.mlr.press/v80/bernstein18a/bernstein18a.pdf",
+    "dateNote": "First arXiv posting February 12, 2018 ET; read the ICML 2018 version",
+    "evidence": "Read §2–4; one-step descent and binomial expressions are simplified derivations",
+    "recognition": {
+      "label": "ICML 2018 · foundational one-bit gradient compression",
+      "url": "https://proceedings.mlr.press/v80/bernstein18a.html"
+    },
+    "question": "If worker noise is positively correlated due to shared samples or randomness, what voting error rate remains possible at a fixed marginal wrong-sign rate?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Taking coordinatewise signs lets each worker send one bit per coordinate. Gradient magnitudes are lost, so the analysis controls wrong-sign probabilities rather than reusing an unbiased-SGD proof. [19,20]"
+      },
+      {
+        "type": "equation",
+        "tex": "x_{k+1}=x_k-\\eta\\,\\operatorname{sign}(\\hat g_k),\\quad f(x+d)\\le f(x)+g^\\top d+\\tfrac12\\sum_i L_i d_i^2",
+        "label": "Algorithm 1 and coordinatewise smoothness; g=∇f(x)"
+      },
+      {
+        "type": "equation",
+        "tex": "q_i=\\Pr(\\operatorname{sign}(\\hat g_i)\\ne\\operatorname{sign}(g_i)),\\quad \\mathbb E[g_i\\operatorname{sign}(\\hat g_i)]=|g_i|(1-2q_i)",
+        "label": "Equivalent identity with binary signs and no ties; a wrong sign reverses descent"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathbb E[f(x^+)-f(x)]\\le-\\eta\\|g\\|_1+2\\eta\\sum_i|g_i|q_i+\\tfrac{\\eta^2}{2}\\|L\\|_1",
+        "label": "One-step bound: nominal descent, wrong-sign penalty, and curvature cost"
+      },
+      {
+        "type": "equation",
+        "tex": "q_i^{\\rm vote}=\\Pr\\big(\\operatorname{Binomial}(m,q_i)>m/2\\big)",
+        "label": "Simplification for iid workers and odd m; voting suppresses error when qᵢ<1/2"
+      },
+      {
+        "type": "text",
+        "text": "Under a lower bound, coordinatewise smoothness and variance conditions, Theorem 1 takes batch K and stepsize proportional to K⁻¹ᐟ², giving an expected average gradient ℓ₁ norm of O(K⁻¹ᐟ²). This uses K² stochastic gradient calls. The improved voting bound also uses symmetric unimodal noise. [19]"
+      }
+    ]
+  }
+}

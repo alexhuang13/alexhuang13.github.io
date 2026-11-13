@@ -1,0 +1,91 @@
+RESEARCH DIGEST / 2026-11-13
+噪声预条件、前缀筛选与 Muon 的局部速率
+SignSGD · PreG · Muon · 经典 signSGD
+
+中文: https://alexhuang13.github.io/digest/2026-11-13.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-13.html
+
+主读 · arXiv 首发
+噪声把 sign 的跳跃变成局部斜率
+When and How SignSGD Outperforms SGD: A Functional Scaling Law Perspective
+https://alexhuang13.github.io/digest/2026-11-13.html#paper-2611-16560
+
+主读 · arXiv 首发
+先扩宽前缀池，再完成少数路径
+Early Signals, Strong Decisions: Prefix-Guided Sampling for Parallel Test-Time Scaling
+https://alexhuang13.github.io/digest/2026-11-13.html#paper-2611-14965
+
+主读 · arXiv 首发
+极小点附近的速率来自线性化
+Optimal higher order convergence rates for the MUON optimizer
+https://alexhuang13.github.io/digest/2026-11-13.html#paper-2611-15825
+
+简讯 · arXiv 首发
+Unbundling Multimodal Vision Encoding
+Unbundling Multimodal Vision Encoding
+https://alexhuang13.github.io/digest/2026-11-13.html#paper-2611-17334
+
+简讯 · arXiv 首发
+Human or Synthetic? What a Fixed Budget Buys for Post-Training
+Human or Synthetic? What a Fixed Budget Buys for Post-Training
+https://alexhuang13.github.io/digest/2026-11-13.html#paper-2611-16895
+
+简讯 · arXiv 首发
+Pretraining Data Statistics Shape the Phases of Learning Entity Comparison in Language Models
+Pretraining Data Statistics Shape the Phases of Learning Entity Comparison in Language Models
+https://alexhuang13.github.io/digest/2026-11-13.html#paper-2611-16882
+
+简讯 · arXiv 首发
+SALA: Semantically Aligned Latent Actions Enable Dual-Axis Scaling of Embodied Foundation Models
+SALA: Semantically Aligned Latent Actions Enable Dual-Axis Scaling of Embodied Foundation Models
+https://alexhuang13.github.io/digest/2026-11-13.html#paper-2611-17110
+
+简讯 · arXiv 首发
+Are Scaling Laws of Universal MLIPs Universal?
+Are Scaling Laws of Universal MLIPs Universal?
+https://alexhuang13.github.io/digest/2026-11-13.html#paper-2611-15603
+
+简讯 · arXiv 首发
+Iris-Z: Scaling One Generative Model Past Specialist Geometry Models
+Iris-Z: Scaling One Generative Model Past Specialist Geometry Models
+https://alexhuang13.github.io/digest/2026-11-13.html#paper-2611-16010
+
+简讯 · arXiv 首发
+Physics-based simulation unlocks scaling laws for generalizable MRI reconstruction
+Physics-based simulation unlocks scaling laws for generalizable MRI reconstruction
+https://alexhuang13.github.io/digest/2026-11-13.html#paper-2611-15758
+
+简讯 · arXiv 首发
+Effective Teacher Support for Reasoning Distillation
+Effective Teacher Support for Reasoning Distillation
+https://alexhuang13.github.io/digest/2026-11-13.html#paper-2611-14850
+
+简讯 · 版本对照
+Meta-Scaling Laws: On the Invariance and Generality of Neural Scaling
+Meta-Scaling Laws: On the Invariance and Generality of Neural Scaling
+https://alexhuang13.github.io/digest/2026-11-13.html#paper-2605-07546
+
+简讯 · 版本对照
+Delegating Authorization to Misaligned Agents: Coalitional Alignment and Safe Control
+Delegating Authorization to Misaligned Agents: Coalitional Alignment and Safe Control
+https://alexhuang13.github.io/digest/2026-11-13.html#paper-2609-15803
+
+简讯 · 版本对照
+What Hallucinations Have We Measured? Semantic Illusion, Confabulation, and Expressed Uncertainty
+What Hallucinations Have We Measured? Semantic Illusion, Confabulation, and Expressed Uncertainty
+https://alexhuang13.github.io/digest/2026-11-13.html#paper-2610-38520
+
+简讯 · 技术博客
+TRELLIS.2 的几何适配
+The Definitive Fine-Tuning Guide for 3D Generation Models
+https://alexhuang13.github.io/digest/2026-11-13.html#blog-trellis2-lora
+
+每日精读 · 2018
+把分布式优化变成符号投票
+https://alexhuang13.github.io/digest/2026-11-13.html#classic-signsgd
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-13.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/
