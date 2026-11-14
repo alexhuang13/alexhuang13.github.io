@@ -1,0 +1,276 @@
+{
+  "date": "2026-11-14",
+  "number": "032",
+  "publishedAt": "2026-11-14T13:46:09Z",
+  "readingMinutes": 10,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Post-training"
+  ],
+  "articles": [
+    {
+      "id": "paper-2611-16905",
+      "paper": "Factored One-sided Adam-Moment for Practical and Scalable SOAP",
+      "authors": "Jaemyung Yu · Byeongho Heo · Sangdoo Yun · Dongyoon Han",
+      "url": "https://arxiv.org/html/2611.16905v1",
+      "kind": "Close reading · first arXiv posting",
+      "title": "Recovering second moments with input-side rotation",
+      "dateNote": "v1 · 2026-11-12 09:59 EST",
+      "evidence": "Read §2–5, Eq. (6), and Table 2",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "SOAP (2024) maintains rotations on both sides of the gradient matrix and runs Adam in the rotated basis. FOAM keeps the input eigenvectors Q and uses row and column statistics in the spirit of Adafactor (2018). Let G be the m×n gradient matrix, with input and output second-moment factors R and L. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathbb E[\\operatorname{vec}(G)\\operatorname{vec}(G)^\\top]=R\\otimes L,\\quad Q^\\top RQ=\\operatorname{diag}(\\lambda)\\quad\\Rightarrow\\quad \\mathbb E[(GQ)_{ij}^2]=L_{ii}\\lambda_j",
+          "label": "Lemma 1; assumes K-FAC separability and column-major vectorization"
+        },
+        {
+          "type": "equation",
+          "tex": "\\widehat V_{ij}=\\frac{\\operatorname{tr}(R)}{\\|\\widehat r\\|_1\\|\\widehat c\\|_1}\\widehat r_i\\widehat c_j",
+          "label": "Eq. (6); bias-corrected EMAs of row and column means, with reconstructed mass fixed at tr(R)"
+        },
+        {
+          "type": "text",
+          "text": "Experiments tune each optimizer at 124M, 350M, and 760M. The table uses the 760M model, 15.49B FineWeb tokens, and 8×H100. Final losses are three-seed means ± standard deviations. Time to target uses the same validation-loss threshold of 2.847 in every row. [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Optimizer",
+            "Final loss (nats)",
+            "Matrix-group state (GiB)",
+            "Hours to target"
+          ],
+          "rows": [
+            [
+              "AdamW",
+              "2.847 ± .004",
+              "5.27",
+              "10.55"
+            ],
+            [
+              "Muon",
+              "2.806 ± .005",
+              "2.64",
+              "11.12"
+            ],
+            [
+              "SOAP",
+              "2.791 ± .005",
+              "23.73",
+              "22.66"
+            ],
+            [
+              "FOAM",
+              "2.796 ± .005",
+              "11.87",
+              "10.53"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Under the factorization, the population second moment sums to tr(R)tr(L). Eq. (6) therefore recovers the rank-one shape in the population; the written normalization requires tr(L)=1 for the absolute scale. Measured times depend on the training parallelization. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-16956",
+      "paper": "Lara Mini Base: Language Diversity as a Resource, Not a Trade-off",
+      "authors": "Translated team",
+      "url": "https://arxiv.org/html/2611.16956v1",
+      "kind": "Close reading · first arXiv posting",
+      "title": "Replacing multilingual data from a fixed checkpoint",
+      "dateNote": "v1 · 2026-11-12 10:28 EST",
+      "evidence": "Read §4, §6.1–6.2, Fig. 6, and Appendix C.1",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Translated’s MoE base has 7.2B total and 0.6B active parameters and trains on roughly 6T tokens. From a 5.4T checkpoint, the authors run two 100B-token anneals, replacing multilingual data with English in one branch. Writing scores as a function of mixture weights makes the direction of substitution explicit. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "p=(.27,.33,.40),\\quad p^\\prime=(.60,0,.40),\\quad \\Delta S_j=S_j(p^\\prime;\\theta_{5.4\\mathrm{T}})-S_j(p;\\theta_{5.4\\mathrm{T}})",
+          "label": "Notation for these notes; coordinates are English, other languages, and code/math/SFT-like data; j indexes benchmark groups"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Fig. 6 · Increasing the English share",
+            "Mean score change (points)"
+          ],
+          "rows": [
+            [
+              "English (8)",
+              "+0.3"
+            ],
+            [
+              "Multilingual (9)",
+              "−2.7"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Separate single-run, 100B-token ablations compare optimizers around 0.5B active parameters. Reading the curves at matched training loss, the authors report that AdamW needs 1.5–1.9 times as many tokens as Muon. [2]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The mixture comparison covers one late checkpoint and one substitution direction. Full-run mixture effects, the separate contributions of routing and data selection, and end-to-end time at matched quality remain unresolved. [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-16764",
+      "paper": "Efficient Periocular Recognition through Model Scaling and Cross Spectral VIS NIR Verification",
+      "authors": "Fabian Stockhard · Juan E. Tapia · Christoph Busch",
+      "url": "https://arxiv.org/html/2611.16764v1",
+      "kind": "Brief · first arXiv posting",
+      "title": "Efficient Periocular Recognition through Model Scaling and Cross Spectral VIS NIR Verification",
+      "dateNote": "v1 · 2026-11-12 08:14 EST",
+      "evidence": "Read experimental setup, Tables V–IX, and discussion",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "AdaEye varies crop, backbone width, and embedding size. Direct periocular inputs reduce recognition-network cost from 6.30 to 1.64 GMACs/image. Error shifts differ between native periocular and face protocols, and some compressed variants are unstable across training seeds. [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-17191",
+      "paper": "Maximizing Capacity Utilization of LoRA Adapters for Mitigating the Learning-Forgetting Trade-off",
+      "authors": "Tomohiro Sawada · Kartik Goyal",
+      "url": "https://arxiv.org/abs/2611.17191",
+      "kind": "Brief · first arXiv posting",
+      "title": "Maximizing Capacity Utilization of LoRA Adapters for Mitigating the Learning-Forgetting Trade-off",
+      "dateNote": "v1 · 2026-11-12 12:55 EST",
+      "evidence": "Based on abstract and version history",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Rank sweeps on three models use an SVD-free Rényi-2 effective-rank penalty to spread update energy. In mixed-domain runs a coefficient of 0.01 reduces mean Wiki perplexity at every tested rank ≥16. [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2602-10811",
+      "paper": "EST: Towards Efficient Scaling Laws in Click-Through Rate Prediction via Unified Modeling",
+      "authors": "Mingyang Liu · Yong Bai · Zhangming Chan · Sishuo Chen · Xiang-Rong Sheng · Han Zhu · Jian Xu · Xinyang Chen",
+      "url": "https://arxiv.org/html/2602.10811v2",
+      "kind": "Brief · version comparison",
+      "title": "EST adds sparsity sweeps and user-activity strata",
+      "dateNote": "First posted 2026-02-11; v2 · 2026-11-12 03:32 EST",
+      "evidence": "Compared §6.3–6.4 in v1 and v2",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The click-through-rate model EST adds top-K sweeps for candidate attention and an evaluation stratified by user history length. Table 5 reports GAUC 0.6515 for Top-5 and 0.6511 without sparsification. The scaling curves already appear in v1. [5,6]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.16905v1",
+      "title": "Factored One-sided Adam-Moment for Practical and Scalable SOAP · Read §2–5, Eq. (6), and Table 2"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.16956v1",
+      "title": "Lara Mini Base: Language Diversity as a Resource, Not a Trade-off · Read §4, §6.1–6.2, Fig. 6, and Appendix C.1"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.16764v1",
+      "title": "Efficient Periocular Recognition through Model Scaling and Cross Spectral VIS NIR Verification · Read experimental setup, Tables V–IX, and discussion"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.17191",
+      "title": "Maximizing Capacity Utilization of LoRA Adapters for Mitigating the Learning-Forgetting Trade-off · Based on abstract and version history"
+    },
+    {
+      "url": "https://arxiv.org/html/2602.10811v2",
+      "title": "EST: Towards Efficient Scaling Laws in Click-Through Rate Prediction via Unified Modeling · Compared §6.3–6.4 in v1 and v2"
+    },
+    {
+      "url": "https://arxiv.org/html/2602.10811v1",
+      "title": "Prior version · EST: Towards Efficient Scaling Laws in Click-Through Rate Prediction via Unified Modeling"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2212.08073v1",
+      "title": "Paper v1 · §3–4"
+    },
+    {
+      "url": "https://www.semanticscholar.org/paper/3936fd3c6187f606c6e4e2e20b196dbc41cc4654",
+      "title": "Semantic Scholar citation record · checked 2026-11-14"
+    },
+    {
+      "url": "https://arxiv.org/abs/2204.05862",
+      "title": "Historical background · Bai et al. (2022), Helpful and Harmless RLHF"
+    }
+  ],
+  "edition": "Daily research notes",
+  "title": "One-sided preconditioning and multilingual data mixtures",
+  "subtitle": "FOAM · Lara Mini Base · Constitutional AI",
+  "window": "2026-11-11 08:46 — 2026-11-14 08:46 EST",
+  "intro": "FOAM approximates the rotated second moment with two vectors and benchmarks against Muon at three scales. Lara Mini Base starts from a common checkpoint to measure the effect of substituting English for multilingual data over the final 100B-token branches. The classic unpacks principle sampling and soft labels in Constitutional AI.",
+  "classic": {
+    "id": "classic-constitutional-ai",
+    "paperId": "arxiv:2212.08073",
+    "shortTitle": "Constitutional AI",
+    "year": 2022,
+    "topics": [
+      "Post-training"
+    ],
+    "kind": "Historical classic",
+    "title": "Turning written principles into preference supervision",
+    "paper": "Constitutional AI: Harmlessness from AI Feedback",
+    "authors": "Yuntao Bai · Saurav Kadavath · Sandipan Kundu · Amanda Askell · et al.",
+    "url": "https://arxiv.org/pdf/2212.08073v1",
+    "dateNote": "First posted 2022-12-15 ET; read v1",
+    "evidence": "Read §3–4; equations formalize the reported pipeline",
+    "recognition": {
+      "label": "Semantic Scholar · 4,021 citations (checked 2026-11-14)",
+      "url": "https://www.semanticscholar.org/paper/3936fd3c6187f606c6e4e2e20b196dbc41cc4654"
+    },
+    "question": "If principles systematically disagree about a class of responses, how would you design stratified sampling and a holdout set to distinguish judge miscalibration from genuine disagreement among principles?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "The 2022 helpful-and-harmless RLHF work trains a preference model from human comparisons. Constitutional AI splits harmlessness supervision into two decisions: have a model revise answers using written principles, then have an independent feedback model compare responses under a principle. Helpfulness labels still come from humans. [7,9]"
+      },
+      {
+        "type": "equation",
+        "tex": "y_0\\sim\\pi_{\\rm helpful}(\\cdot\\mid x),\\quad c_t\\sim q(\\cdot\\mid x,y_{t-1},a_t),\\quad y_t\\sim q(\\cdot\\mid x,y_{t-1},c_t,a_t)",
+        "label": "Notation for §3.1. x is a red-team prompt, aₜ is the sampled principle, cₜ is a critique, and yₜ is the revision"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathcal L_{\\rm SL}(\\theta)=-\\mathbb E_{(x,y)\\sim\\mathcal D_{\\rm rev}\\cup\\mathcal D_{\\rm help}}\\log\\pi_\\theta(y\\mid x)",
+        "label": "Supervised learning fits revisions from all stages and includes helpful examples; the expectation samples the training mixture"
+      },
+      {
+        "type": "equation",
+        "tex": "p_a=\\frac{e^{\\ell_A}}{e^{\\ell_A}+e^{\\ell_B}},\\quad \\widehat p_\\phi=\\sigma\\big(r_\\phi(x,y_A)-r_\\phi(x,y_B)\\big)",
+        "label": "Soft labels in §4.1; ℓ is the feedback model’s log probability for each option under principle a. A score difference parameterizes the preference model"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathcal L_{\\rm pair}(\\phi)=-\\mathbb E\\big[p_a\\log\\widehat p_\\phi+(1-p_a)\\log(1-\\widehat p_\\phi)\\big]",
+        "label": "Mathematical form for the harmlessness part of preference fitting; training also uses helpfulness comparisons. RL then starts from SL-CAI"
+      },
+      {
+        "type": "text",
+        "text": "In the human Elo comparisons in §4.3, RL-CAI scored higher on harmlessness than the RLHF and SL-CAI systems in the paper. Overconfidence in chain-of-thought feedback led the authors to clamp those soft targets to [0.4, 0.6]. Longer RL runs still produced boilerplate or overly stern responses. Elo measures relative preferences; transfer to other populations and prompt distributions requires evaluation. [7]"
+      }
+    ]
+  }
+}

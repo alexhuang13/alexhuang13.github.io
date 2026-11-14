@@ -1,0 +1,41 @@
+RESEARCH DIGEST / 2026-11-14
+One-sided preconditioning and multilingual data mixtures
+FOAM · Lara Mini Base · Constitutional AI
+
+中文: https://alexhuang13.github.io/digest/2026-11-14.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-14.html
+
+Close reading · first arXiv posting
+Recovering second moments with input-side rotation
+Factored One-sided Adam-Moment for Practical and Scalable SOAP
+https://alexhuang13.github.io/digest/en/2026-11-14.html#paper-2611-16905
+
+Close reading · first arXiv posting
+Replacing multilingual data from a fixed checkpoint
+Lara Mini Base: Language Diversity as a Resource, Not a Trade-off
+https://alexhuang13.github.io/digest/en/2026-11-14.html#paper-2611-16956
+
+Brief · first arXiv posting
+Efficient Periocular Recognition through Model Scaling and Cross Spectral VIS NIR Verification
+Efficient Periocular Recognition through Model Scaling and Cross Spectral VIS NIR Verification
+https://alexhuang13.github.io/digest/en/2026-11-14.html#paper-2611-16764
+
+Brief · first arXiv posting
+Maximizing Capacity Utilization of LoRA Adapters for Mitigating the Learning-Forgetting Trade-off
+Maximizing Capacity Utilization of LoRA Adapters for Mitigating the Learning-Forgetting Trade-off
+https://alexhuang13.github.io/digest/en/2026-11-14.html#paper-2611-17191
+
+Brief · version comparison
+EST adds sparsity sweeps and user-activity strata
+EST: Towards Efficient Scaling Laws in Click-Through Rate Prediction via Unified Modeling
+https://alexhuang13.github.io/digest/en/2026-11-14.html#paper-2602-10811
+
+Daily classic · 2022
+Turning written principles into preference supervision
+https://alexhuang13.github.io/digest/en/2026-11-14.html#classic-constitutional-ai
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-14.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

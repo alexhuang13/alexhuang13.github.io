@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-14",
+    "paperId": "arxiv:2212.08073",
+    "paper": "Constitutional AI: Harmlessness from AI Feedback",
+    "shortTitle": "Constitutional AI",
+    "year": 2022,
+    "topics": [
+      "Post-training"
+    ],
+    "recognition": {
+      "label": "Semantic Scholar · 4,021 次引用（2026-11-14 查询）",
+      "url": "https://www.semanticscholar.org/paper/3936fd3c6187f606c6e4e2e20b196dbc41cc4654"
+    },
+    "source": "https://arxiv.org/pdf/2212.08073v1",
+    "url": "/digest/2026-11-14.html#classic-constitutional-ai"
+  },
+  {
     "date": "2026-11-13",
     "paperId": "arxiv:1802.04434",
     "paper": "signSGD: Compressed Optimisation for Non-Convex Problems",

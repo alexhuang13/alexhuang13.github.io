@@ -1,0 +1,276 @@
+{
+  "date": "2026-11-14",
+  "number": "032",
+  "publishedAt": "2026-11-14T13:46:09Z",
+  "readingMinutes": 10,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Post-training"
+  ],
+  "articles": [
+    {
+      "id": "paper-2611-16905",
+      "paper": "Factored One-sided Adam-Moment for Practical and Scalable SOAP",
+      "authors": "Jaemyung Yu · Byeongho Heo · Sangdoo Yun · Dongyoon Han",
+      "url": "https://arxiv.org/html/2611.16905v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "只旋转输入侧，如何恢复二阶矩",
+      "dateNote": "v1 · 2026-11-12 09:59 EST",
+      "evidence": "已读 §2–5、式(6)、表2",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "SOAP（2024）在梯度矩阵的两侧维护旋转，并在旋转基底做 Adam。FOAM 保留输入侧特征向量 Q，随后借用 Adafactor（2018）的行列统计。设 G 为 m×n 的梯度矩阵，R、L 分别为输入侧与输出侧的二阶因子。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathbb E[\\operatorname{vec}(G)\\operatorname{vec}(G)^\\top]=R\\otimes L,\\quad Q^\\top RQ=\\operatorname{diag}(\\lambda)\\quad\\Rightarrow\\quad \\mathbb E[(GQ)_{ij}^2]=L_{ii}\\lambda_j",
+          "label": "原文引理1；假设 K-FAC 可分离形式，列优先向量化"
+        },
+        {
+          "type": "equation",
+          "tex": "\\widehat V_{ij}=\\frac{\\operatorname{tr}(R)}{\\|\\widehat r\\|_1\\|\\widehat c\\|_1}\\widehat r_i\\widehat c_j",
+          "label": "式(6)；行均值和列均值各自做偏差校正 EMA；重建总和固定为 tr(R)"
+        },
+        {
+          "type": "text",
+          "text": "矩阵组实验覆盖 124M、350M、760M，逐尺寸调参。下表是 760M、FineWeb 15.49B token、8×H100。终点损失为三种子均值 ± 标准差。各行达标时间使用同一验证损失阈值 2.847。 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "优化器",
+            "终点损失（nat）",
+            "矩阵组状态（GiB）",
+            "达标（小时）"
+          ],
+          "rows": [
+            [
+              "AdamW",
+              "2.847 ± .004",
+              "5.27",
+              "10.55"
+            ],
+            [
+              "Muon",
+              "2.806 ± .005",
+              "2.64",
+              "11.12"
+            ],
+            [
+              "SOAP",
+              "2.791 ± .005",
+              "23.73",
+              "22.66"
+            ],
+            [
+              "FOAM",
+              "2.796 ± .005",
+              "11.87",
+              "10.53"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "按上述分解，总体二阶矩的总和是 tr(R)tr(L)。因此式(6)在总体下恢复秩一形状；按所写归一化，绝对尺度还要求 tr(L)=1。实测耗时依赖训练并行方案。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-16956",
+      "paper": "Lara Mini Base: Language Diversity as a Resource, Not a Trade-off",
+      "authors": "Translated team",
+      "url": "https://arxiv.org/html/2611.16956v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "固定检查点，替换最后一段的多语数据",
+      "dateNote": "v1 · 2026-11-12 10:28 EST",
+      "evidence": "已读 §4、§6.1–6.2、图6、附录C.1",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Translated 团队的 MoE 基座有 7.2B 总参数、0.6B 活跃参数，训练约 6T token。作者在 5.4T 检查点分叉，用同样的 100B token 退火预算，只将多语语料换成英语。把分数写成数据配比的函数，可以看清这次实验识别的是哪一条替换方向。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "p=(.27,.33,.40),\\quad p^\\prime=(.60,0,.40),\\quad \\Delta S_j=S_j(p^\\prime;\\theta_{5.4\\mathrm{T}})-S_j(p;\\theta_{5.4\\mathrm{T}})",
+          "label": "笔记记号；分量依次为英语、其他语言、代码／数学／类 SFT 数据，j 指评测组"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "图6 · 增加英语份额",
+            "平均分变化（分）"
+          ],
+          "rows": [
+            [
+              "English (8)",
+              "+0.3"
+            ],
+            [
+              "Multilingual (9)",
+              "−2.7"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "另一个对照在约 0.5B 活跃参数、单次 100B token 短预训练中比较优化器。按相同训练损失读曲线，作者报告 AdamW 需要 Muon 的 1.5–1.9 倍 token。 [2]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "配比对照只覆盖一个后期检查点与一个替换方向。长程数据配比效应、路由结构与数据筛选各自的贡献，以及相同质量下的端到端时间仍待辨识。 [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-16764",
+      "paper": "Efficient Periocular Recognition through Model Scaling and Cross Spectral VIS NIR Verification",
+      "authors": "Fabian Stockhard · Juan E. Tapia · Christoph Busch",
+      "url": "https://arxiv.org/html/2611.16764v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "Efficient Periocular Recognition through Model Scaling and Cross Spectral VIS NIR Verification",
+      "dateNote": "v1 · 2026-11-12 08:14 EST",
+      "evidence": "已读实验设置、表V–IX及讨论",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "AdaEye 联合改变输入区域、骨干宽度和嵌入维数。直接处理眼周区域把识别网络的代价从 6.30 降至 1.64 GMAC/图；原生眼周与人脸协议的误差变化方向不同，部分压缩组合跨种子训练失稳。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-17191",
+      "paper": "Maximizing Capacity Utilization of LoRA Adapters for Mitigating the Learning-Forgetting Trade-off",
+      "authors": "Tomohiro Sawada · Kartik Goyal",
+      "url": "https://arxiv.org/abs/2611.17191",
+      "kind": "简讯 · arXiv 首发",
+      "title": "Maximizing Capacity Utilization of LoRA Adapters for Mitigating the Learning-Forgetting Trade-off",
+      "dateNote": "v1 · 2026-11-12 12:55 EST",
+      "evidence": "基于摘要与版本历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在三种模型上扫描 LoRA rank，用无 SVD 的 Rényi-2 有效秩正则分散更新能量。混合领域实验中，系数 0.01 在测试的 rank ≥16 设置均降低平均 Wiki 困惑度。 [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2602-10811",
+      "paper": "EST: Towards Efficient Scaling Laws in Click-Through Rate Prediction via Unified Modeling",
+      "authors": "Mingyang Liu · Yong Bai · Zhangming Chan · Sishuo Chen · Xiang-Rong Sheng · Han Zhu · Jian Xu · Xinyang Chen",
+      "url": "https://arxiv.org/html/2602.10811v2",
+      "kind": "简讯 · 版本对照",
+      "title": "EST 新增稀疏度与用户活跃度分层实验",
+      "dateNote": "首发 2026-02-11；v2 · 2026-11-12 03:32 EST",
+      "evidence": "对照 v1 与 v2 的 §6.3–6.4",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "点击率预测模型 EST 新增对候选注意力的 top-K 扫描与按历史行为长度分层的评估。表5的 Top-5 和不稀疏版本 GAUC 分别为 0.6515 和 0.6511。规模曲线已见 v1。 [5,6]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.16905v1",
+      "title": "Factored One-sided Adam-Moment for Practical and Scalable SOAP · 已读 §2–5、式(6)、表2"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.16956v1",
+      "title": "Lara Mini Base: Language Diversity as a Resource, Not a Trade-off · 已读 §4、§6.1–6.2、图6、附录C.1"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.16764v1",
+      "title": "Efficient Periocular Recognition through Model Scaling and Cross Spectral VIS NIR Verification · 已读实验设置、表V–IX及讨论"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.17191",
+      "title": "Maximizing Capacity Utilization of LoRA Adapters for Mitigating the Learning-Forgetting Trade-off · 基于摘要与版本历史"
+    },
+    {
+      "url": "https://arxiv.org/html/2602.10811v2",
+      "title": "EST: Towards Efficient Scaling Laws in Click-Through Rate Prediction via Unified Modeling · 对照 v1 与 v2 的 §6.3–6.4"
+    },
+    {
+      "url": "https://arxiv.org/html/2602.10811v1",
+      "title": "旧版对照 · EST: Towards Efficient Scaling Laws in Click-Through Rate Prediction via Unified Modeling"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2212.08073v1",
+      "title": "论文正文 v1 · §3–4"
+    },
+    {
+      "url": "https://www.semanticscholar.org/paper/3936fd3c6187f606c6e4e2e20b196dbc41cc4654",
+      "title": "Semantic Scholar 引文记录 · 2026-11-14 查询"
+    },
+    {
+      "url": "https://arxiv.org/abs/2204.05862",
+      "title": "背景旧文 · Bai 等，2022，Helpful and Harmless RLHF"
+    }
+  ],
+  "edition": "每日研究笔记",
+  "title": "单侧预条件与多语数据配比",
+  "subtitle": "FOAM · Lara Mini Base · Constitutional AI",
+  "window": "2026-11-11 08:46 — 2026-11-14 08:46 EST",
+  "intro": "FOAM 用两个向量近似旋转后的二阶矩，并在三个模型规模上与 Muon 比较。Lara Mini Base 固定同一检查点，测量最后 100B token 中英语与多语数据的替换效应。经典精读拆解 Constitutional AI 的原则采样与软标签。",
+  "classic": {
+    "id": "classic-constitutional-ai",
+    "paperId": "arxiv:2212.08073",
+    "shortTitle": "Constitutional AI",
+    "year": 2022,
+    "topics": [
+      "Post-training"
+    ],
+    "kind": "历史经典",
+    "title": "把书面原则变成偏好监督",
+    "paper": "Constitutional AI: Harmlessness from AI Feedback",
+    "authors": "Yuntao Bai · Saurav Kadavath · Sandipan Kundu · Amanda Askell · et al.",
+    "url": "https://arxiv.org/pdf/2212.08073v1",
+    "dateNote": "arXiv 首发 2022-12-15 ET；读 v1",
+    "evidence": "读 §3–4；公式整理原文流程",
+    "recognition": {
+      "label": "Semantic Scholar · 4,021 次引用（2026-11-14 查询）",
+      "url": "https://www.semanticscholar.org/paper/3936fd3c6187f606c6e4e2e20b196dbc41cc4654"
+    },
+    "question": "若原则之间对同一类回答持系统性分歧，怎样设计分层抽样与留出集，以区分反馈模型误校准和原则间真实分歧？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "2022 年的 helpful-and-harmless RLHF 以人的成对判断训练偏好模型。Constitutional AI 把无害性监督拆成两个决策：让模型依书面原则改写答案，再让独立反馈模型依原则比较两份回答。帮助性标签仍来自人。 [7,9]"
+      },
+      {
+        "type": "equation",
+        "tex": "y_0\\sim\\pi_{\\rm helpful}(\\cdot\\mid x),\\quad c_t\\sim q(\\cdot\\mid x,y_{t-1},a_t),\\quad y_t\\sim q(\\cdot\\mid x,y_{t-1},c_t,a_t)",
+        "label": "§3.1 的记号化。x 是红队提示，aₜ 是本轮抽取的原则，cₜ 是批评，yₜ 是改写"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathcal L_{\\rm SL}(\\theta)=-\\mathbb E_{(x,y)\\sim\\mathcal D_{\\rm rev}\\cup\\mathcal D_{\\rm help}}\\log\\pi_\\theta(y\\mid x)",
+        "label": "监督阶段拟合各轮改写，并混入帮助性示例；期望表示对训练混合采样"
+      },
+      {
+        "type": "equation",
+        "tex": "p_a=\\frac{e^{\\ell_A}}{e^{\\ell_A}+e^{\\ell_B}},\\quad \\widehat p_\\phi=\\sigma\\big(r_\\phi(x,y_A)-r_\\phi(x,y_B)\\big)",
+        "label": "§4.1 软标签；ℓ 是反馈模型按原则 a 对 A、B 的选项对数概率。偏好模型以分差参数化比较概率"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathcal L_{\\rm pair}(\\phi)=-\\mathbb E\\big[p_a\\log\\widehat p_\\phi+(1-p_a)\\log(1-\\widehat p_\\phi)\\big]",
+        "label": "偏好拟合的数学写法，展示无害性项；帮助性比较也进入训练。拟合后从 SL-CAI 初始化策略做 RL"
+      },
+      {
+        "type": "text",
+        "text": "§4.3 的人工 Elo 比较中，RL-CAI 的无害性评分高于文中 RLHF 与 SL-CAI；链式推理反馈的过度自信促使作者把其软目标裁到 [0.4, 0.6]，长时间 RL 仍出现模板化或过于严厉的回答。Elo 是相对偏好度量，外推到其他人群与提示分布需要重新评估。 [7]"
+      }
+    ]
+  }
+}

@@ -4,8 +4,30 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-13",
+  "latest": "2026-11-14",
   "issues": [
+    {
+      "date": "2026-11-14",
+      "title": "单侧预条件与多语数据配比",
+      "url": "/digest/2026-11-14.html",
+      "translations": {
+        "en": {
+          "title": "One-sided preconditioning and multilingual data mixtures",
+          "url": "/digest/en/2026-11-14.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.16905v1",
+        "https://arxiv.org/html/2611.16956v1",
+        "https://arxiv.org/html/2611.16764v1",
+        "https://arxiv.org/abs/2611.17191",
+        "https://arxiv.org/html/2602.10811v2",
+        "https://arxiv.org/html/2602.10811v1",
+        "https://arxiv.org/pdf/2212.08073v1",
+        "https://www.semanticscholar.org/paper/3936fd3c6187f606c6e4e2e20b196dbc41cc4654",
+        "https://arxiv.org/abs/2204.05862"
+      ]
+    },
     {
       "date": "2026-11-13",
       "title": "噪声预条件、前缀筛选与 Muon 的局部速率",
