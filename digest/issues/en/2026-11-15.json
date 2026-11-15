@@ -141,7 +141,7 @@
       "blocks": [
         {
           "type": "text",
-          "text": "A frozen feature extractor defines attraction to real data and repulsion from other synthetic examples, optimizing images and their augmentations directly. On ImageNet-1k with 10 images per class, noise initialization and hard-label ResNet-18 training, the best MoCo-v3 variant reaches 27.0% test accuracy versus 11.7% for the strongest noise-initialized baseline. Coverage is feature-space dependent, and the paper reports same-encoder evaluation separately. [4]"
+          "text": "A frozen feature extractor defines attraction to real data and repulsion from other synthetic examples, optimizing images and their augmentations directly. On ImageNet-1k with 10 images per class, noise initialization and hard-label ResNet-18 training, the best MoCo-v3 variant reaches 27.0% test accuracy versus 11.7% for the strongest noise-initialized baseline. Coverage is feature-space dependent, and the paper reports same-encoder evaluation separately. [5]"
         }
       ]
     },
@@ -157,7 +157,7 @@
       "blocks": [
         {
           "type": "text",
-          "text": "Coverage expands from 8 to 10 models. V3 explicitly excludes Panopticon from the shared-dataset comparison in Fig. 1 because its FLOPs scale differently with width. The observation that some remote-sensing classifiers retain high relative accuracy at very low compute already appeared in v2. [5,6]"
+          "text": "Coverage expands from 8 to 10 models. V3 explicitly excludes Panopticon from the shared-dataset comparison in Fig. 1 because its FLOPs scale differently with width. The observation that some remote-sensing classifiers retain high relative accuracy at very low compute already appeared in v2. [6,7]"
         }
       ]
     }
@@ -174,6 +174,10 @@
     {
       "url": "https://arxiv.org/html/2603.01514v2",
       "title": "Training Dynamics of Softmax Self-Attention: Fast Global Convergence via Preconditioning · Compared v1/v2; read the v2 experiment and appendix"
+    },
+    {
+      "url": "https://arxiv.org/html/2603.01514v1",
+      "title": "Prior version · Training Dynamics of Softmax Self-Attention: Fast Global Convergence via Preconditioning"
     },
     {
       "url": "https://arxiv.org/html/2611.16642v1",
@@ -228,7 +232,7 @@
     "blocks": [
       {
         "type": "text",
-        "text": "Score SDE (2021) sends a high-noise sample back to the data end along a deterministic probability-flow ODE, typically requiring multiple network evaluations. Consistency Models learn each trajectory’s endpoint directly, with the identity map at the low-noise boundary. Let t be the Gaussian noise standard deviation and pₜ the perturbed marginal. [7,9]"
+        "text": "Score SDE (2021) sends a high-noise sample back to the data end along a deterministic probability-flow ODE, typically requiring multiple network evaluations. Consistency Models learn each trajectory’s endpoint directly, with the identity map at the low-noise boundary. Let t be the Gaussian noise standard deviation and pₜ the perturbed marginal. [8,10]"
       },
       {
         "type": "equation",
@@ -257,7 +261,7 @@
       },
       {
         "type": "text",
-        "text": "In Table 1 on CIFAR-10, CD reaches FID 3.55 and 2.93 with one and two network evaluations. NFE counts network calls per sample, and FID compares feature distributions of generated and real images. [7]"
+        "text": "In Table 1 on CIFAR-10, CD reaches FID 3.55 and 2.93 with one and two network evaluations. NFE counts network calls per sample, and FID compares feature distributions of generated and real images. [8]"
       }
     ]
   }

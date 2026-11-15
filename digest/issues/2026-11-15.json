@@ -141,7 +141,7 @@
       "blocks": [
         {
           "type": "text",
-          "text": "用冻结特征提取器定义真实样本的吸引和其他合成样本的排斥，直接优化图像与其增强视图。ImageNet-1k、每类 10 张、噪声初始化、硬标签训练 ResNet-18 时，论文最好的 MoCo-v3 方案为 27.0% 测试准确率，最强同初始化基线为 11.7%。覆盖率按特征空间定义，作者单列了同编码器评测的结果。 [4]"
+          "text": "用冻结特征提取器定义真实样本的吸引和其他合成样本的排斥，直接优化图像与其增强视图。ImageNet-1k、每类 10 张、噪声初始化、硬标签训练 ResNet-18 时，论文最好的 MoCo-v3 方案为 27.0% 测试准确率，最强同初始化基线为 11.7%。覆盖率按特征空间定义，作者单列了同编码器评测的结果。 [5]"
         }
       ]
     },
@@ -157,7 +157,7 @@
       "blocks": [
         {
           "type": "text",
-          "text": "模型范围由 8 扩至 10 个。新版明确将 Panopticon 排除在图1的同一数据集对照之外，因为其 FLOPs 随宽度变化的关系不同。极低算力预算下部分遥感分类能保留较高相对准确率的观察已见 v2。 [5,6]"
+          "text": "模型范围由 8 扩至 10 个。新版明确将 Panopticon 排除在图1的同一数据集对照之外，因为其 FLOPs 随宽度变化的关系不同。极低算力预算下部分遥感分类能保留较高相对准确率的观察已见 v2。 [6,7]"
         }
       ]
     }
@@ -174,6 +174,10 @@
     {
       "url": "https://arxiv.org/html/2603.01514v2",
       "title": "Training Dynamics of Softmax Self-Attention: Fast Global Convergence via Preconditioning · 对照 v1/v2；读 v2 实验正文与附录"
+    },
+    {
+      "url": "https://arxiv.org/html/2603.01514v1",
+      "title": "旧版对照 · Training Dynamics of Softmax Self-Attention: Fast Global Convergence via Preconditioning"
     },
     {
       "url": "https://arxiv.org/html/2611.16642v1",
@@ -228,7 +232,7 @@
     "blocks": [
       {
         "type": "text",
-        "text": "Score SDE（2021）的概率流 ODE 可把高噪样本沿确定性轨迹送回数据端，常规求解需要多次网络评估。Consistency Models 直接学习每条轨迹的终点，并在低噪边界固定为恒等映射。设 t 是高斯扰动标准差，pₜ 是扰动后的边缘分布。 [7,9]"
+        "text": "Score SDE（2021）的概率流 ODE 可把高噪样本沿确定性轨迹送回数据端，常规求解需要多次网络评估。Consistency Models 直接学习每条轨迹的终点，并在低噪边界固定为恒等映射。设 t 是高斯扰动标准差，pₜ 是扰动后的边缘分布。 [8,10]"
       },
       {
         "type": "equation",
@@ -257,7 +261,7 @@
       },
       {
         "type": "text",
-        "text": "表1的 CIFAR-10 中，同一 CD 方法在 1、2 次网络评估下 FID 分别为 3.55、2.93。NFE 记录单样本网络调用次数，FID 比较生成和真实图像的特征分布。 [7]"
+        "text": "表1的 CIFAR-10 中，同一 CD 方法在 1、2 次网络评估下 FID 分别为 3.55、2.93。NFE 记录单样本网络调用次数，FID 比较生成和真实图像的特征分布。 [8]"
       }
     ]
   }
