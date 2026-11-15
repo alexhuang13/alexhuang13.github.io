@@ -1,0 +1,41 @@
+RESEARCH DIGEST / 2026-11-15
+Muon 的批量拐点与预训练的预算外推
+BlinkMimic · ArchSpace · Hera · Consistency Models
+
+中文: https://alexhuang13.github.io/digest/2026-11-15.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-15.html
+
+主读 · arXiv 首发
+小批量何时改变 Muon 的有效下降
+BlinkMimic: Training a Humanoid Motion Tracker in Minutes on a Single GPU
+https://alexhuang13.github.io/digest/2026-11-15.html#paper-2611-16422
+
+主读 · arXiv 首发
+把最优损失面与调参代价分开
+ArchSpace: Recording, Reviewing, and Referencing LLM Architecture Research
+https://alexhuang13.github.io/digest/2026-11-15.html#paper-2611-17332
+
+主读 · 版本对照
+Hera 新增非线性预测中的 Muon 对照
+Training Dynamics of Softmax Self-Attention: Fast Global Convergence via Preconditioning
+https://alexhuang13.github.io/digest/2026-11-15.html#paper-2603-01514
+
+简讯 · arXiv 首发
+合成集以逐类分布覆盖为目标
+Dataset Distillation via Drifting
+https://alexhuang13.github.io/digest/2026-11-15.html#paper-2611-16642
+
+简讯 · 版本对照
+遥感骨干缩宽研究扩至十个模型
+How Much of a Model Do We Need? Redundancy and Slimmability in Remote Sensing Foundation Models
+https://alexhuang13.github.io/digest/2026-11-15.html#paper-2601-22841
+
+每日精读 · 2023
+同一条轨迹，只预测一次终点
+https://alexhuang13.github.io/digest/2026-11-15.html#classic-consistency-models
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-15.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

@@ -1,0 +1,41 @@
+RESEARCH DIGEST / 2026-11-15
+Muon’s batch-size knee and pretraining beyond the fitted budget
+BlinkMimic · ArchSpace · Hera · Consistency Models
+
+中文: https://alexhuang13.github.io/digest/2026-11-15.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-15.html
+
+Close reading · first arXiv release
+When smaller batches weaken Muon’s descent
+BlinkMimic: Training a Humanoid Motion Tracker in Minutes on a Single GPU
+https://alexhuang13.github.io/digest/en/2026-11-15.html#paper-2611-16422
+
+Close reading · first arXiv release
+Separating the optimal loss surface from tuning penalties
+ArchSpace: Recording, Reviewing, and Referencing LLM Architecture Research
+https://alexhuang13.github.io/digest/en/2026-11-15.html#paper-2611-17332
+
+Close reading · version comparison
+Hera adds a Muon baseline for nonlinear forecasting
+Training Dynamics of Softmax Self-Attention: Fast Global Convergence via Preconditioning
+https://alexhuang13.github.io/digest/en/2026-11-15.html#paper-2603-01514
+
+Brief · first arXiv release
+Synthetic data target class-conditional coverage
+Dataset Distillation via Drifting
+https://alexhuang13.github.io/digest/en/2026-11-15.html#paper-2611-16642
+
+Brief · version comparison
+Remote-sensing width study expands to ten models
+How Much of a Model Do We Need? Redundancy and Slimmability in Remote Sensing Foundation Models
+https://alexhuang13.github.io/digest/en/2026-11-15.html#paper-2601-22841
+
+Daily classic · 2023
+Predicting a shared trajectory endpoint in one pass
+https://alexhuang13.github.io/digest/en/2026-11-15.html#classic-consistency-models
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-15.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

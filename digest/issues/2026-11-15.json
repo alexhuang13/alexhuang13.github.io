@@ -1,0 +1,264 @@
+{
+  "date": "2026-11-15",
+  "number": "033",
+  "publishedAt": "2026-11-15T13:52:54Z",
+  "readingMinutes": 10,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Post-training"
+  ],
+  "articles": [
+    {
+      "id": "paper-2611-16422",
+      "paper": "BlinkMimic: Training a Humanoid Motion Tracker in Minutes on a Single GPU",
+      "authors": "Fuyi Chen",
+      "url": "https://arxiv.org/html/2611.16422v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "小批量何时改变 Muon 的有效下降",
+      "dateNote": "v1 提交 2026-11-12 02:31 EST · 11 月 13 日公告",
+      "evidence": "已读 §4.1、§5.1–5.3、附录 A.4",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "BlinkMimic 用可微世界模型训练模拟 Unitree G1 的动作跟踪策略。附录用局部二次模型解释批量拐点：设动量矩阵为真信号加噪声，噪声的逐元素方差与批量 B 成反比。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "P_B=\\operatorname{polar}(\\bar G+E_B),\\qquad \\ell(W)-\\ell(W-\\eta P_B)\\approx\\eta\\langle\\bar G,P_B\\rangle-\\tfrac12\\eta^2\\langle P_B,HP_B\\rangle",
+          "label": "附录 A.4 的启发式；H 是局部 Hessian，内积为 Frobenius 内积"
+        },
+        {
+          "type": "text",
+          "text": "附录近似把曲率项视为常数。B 下降时，若信号与更新的对齐量逼近曲率代价，单位步的净下降就会快速收缩。用 B=1,024 拟合后，B=512 的预先预测为 2,280–2,630 步，单种子实测 2,301。 [1]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "完整方案在 RTX 4090 上平均 3.4 分钟达成三次连续无失败检查点（40 段 LAFAN1、每段四个副本，平均回报至少 0.82，计时排除离线评测）。收益来自整套配方；换用 Adam 的消融沿用原方案步长和批量。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-17332",
+      "paper": "ArchSpace: Recording, Reviewing, and Referencing LLM Architecture Research",
+      "authors": "Jie Wang · Tong Zhu · JiaHao Kuang · Zhe Xu · Yunkai Chai · Dehong Zheng · Yu Cheng · Tao Ji · ZhouHan Lin · Qi Zhang · Bowen Zhou",
+      "url": "https://arxiv.org/html/2611.17332v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "把最优损失面与调参代价分开",
+      "dateNote": "v1 提交 2026-11-12 13:59 EST · 11 月 13 日公告",
+      "evidence": "已读 §4.1–4.5、表4、附录 C.5",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "ArchSpace 为 Qwen3.5 和 OLMo3 各建一条算力阶梯。设 M 是每 token 训练 FLOPs，D 是 token 数，在固定 C=MD 下最小化拟合损失面。每个模型与预算先扫学习率和 batch，取最小观测损失拟合基面。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "L^*(M,D)=L_\\infty+(\\alpha_M M^{-\\gamma_M}+\\alpha_D D^{-\\gamma_D})^{\\gamma_{MD}},\\qquad \\widehat L=L^*+\\Delta L",
+          "label": "式(3)；耦合指数为 1 时退化成加法。偏离最优超参的损失罚项单独拟合"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Delta L=2h\\big[\\cosh(u-\\gamma_{\\eta,B}v)-1+\\rho(\\cosh v-1)\\big],\\quad u=\\log(\\eta/\\eta^*),\\quad v=\\log(B/B^*)",
+          "label": "原文经验参数化；第一项允许最优学习率随 batch 移动"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "冻结系数后，沿拟合的算力最优路径外推至最大拟合预算 10 倍，表4的损失 MAPE 为 0.32%；仅基面为 0.33%。这些外推点仍在原有 token/参数比范围内。对约 130–160 token/参数的长训练，作者另作了超参搜索。 [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2603-01514",
+      "paper": "Training Dynamics of Softmax Self-Attention: Fast Global Convergence via Preconditioning",
+      "authors": "Gautam Goel · Mahdi Soltanolkotabi · Peter Bartlett",
+      "url": "https://arxiv.org/html/2603.01514v2",
+      "kind": "主读 · 版本对照",
+      "title": "Hera 新增非线性预测中的 Muon 对照",
+      "dateNote": "v1 提交 2026-03-02；v2 提交 2026-11-11 06:59 EST · 11 月 13 日公告",
+      "evidence": "对照 v1/v2；读 v2 实验正文与附录",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "新版加入 Lorenz–63 一步预测。三层 softmax attention 读入连续五个状态，以固定读出预测下一状态。Hera 在白化后的坐标独立更新两个矩阵；Hera-PSD 将它们绑定起来。 [3,4]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\text{Hera-PSD:}\\quad (\\widetilde U,\\widetilde V)=\\bigl(B(I+K^\\top K)^{-1},B\\bigr)",
+          "label": "实验中的参数化；Muon 与 AdamW 更新原始注意力矩阵"
+        },
+        {
+          "type": "text",
+          "text": "从单一轨迹顺序取 500/500/500 个训练、验证、测试样本。各方法先扫 44 个配置，再以验证 MSE 选长跑配置。下表是 4,096 次全批更新后，五个新初始化的平均测试 MSE。 [3]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "方法",
+            "测试 MSE"
+          ],
+          "rows": [
+            [
+              "Hera",
+              "0.04135"
+            ],
+            [
+              "Hera-PSD",
+              "0.27297"
+            ],
+            [
+              "Muon",
+              "1.83235"
+            ],
+            [
+              "AdamW",
+              "2.22217"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "这组新增结果来自单一动力系统轨迹。原文有限样本保证使用植入线性模型与独立样本；表中误差也没有控制每步耗时。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-16642",
+      "paper": "Dataset Distillation via Drifting",
+      "authors": "George Cazenavette · Angelina Quan · Giannis Daras · Antonio Torralba · Vincent Sitzmann",
+      "url": "https://arxiv.org/html/2611.16642v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "合成集以逐类分布覆盖为目标",
+      "dateNote": "v1 提交 2026-11-12 06:17 EST · 11 月 13 日公告",
+      "evidence": "已读 §3.2 与表1–2",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用冻结特征提取器定义真实样本的吸引和其他合成样本的排斥，直接优化图像与其增强视图。ImageNet-1k、每类 10 张、噪声初始化、硬标签训练 ResNet-18 时，论文最好的 MoCo-v3 方案为 27.0% 测试准确率，最强同初始化基线为 11.7%。覆盖率按特征空间定义，作者单列了同编码器评测的结果。 [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2601-22841",
+      "paper": "How Much of a Model Do We Need? Redundancy and Slimmability in Remote Sensing Foundation Models",
+      "authors": "Leonard Hackel · Tom Burgert · Begüm Demir",
+      "url": "https://arxiv.org/html/2601.22841v3",
+      "kind": "简讯 · 版本对照",
+      "title": "遥感骨干缩宽研究扩至十个模型",
+      "dateNote": "v1 提交 2026-01-30；v3 提交 2026-11-11 10:49 EST · 11 月 13 日公告",
+      "evidence": "比较 v2/v3 的图1及模型覆盖",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "模型范围由 8 扩至 10 个。新版明确将 Panopticon 排除在图1的同一数据集对照之外，因为其 FLOPs 随宽度变化的关系不同。极低算力预算下部分遥感分类能保留较高相对准确率的观察已见 v2。 [5,6]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.16422v1",
+      "title": "BlinkMimic: Training a Humanoid Motion Tracker in Minutes on a Single GPU · 已读 §4.1、§5.1–5.3、附录 A.4"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.17332v1",
+      "title": "ArchSpace: Recording, Reviewing, and Referencing LLM Architecture Research · 已读 §4.1–4.5、表4、附录 C.5"
+    },
+    {
+      "url": "https://arxiv.org/html/2603.01514v2",
+      "title": "Training Dynamics of Softmax Self-Attention: Fast Global Convergence via Preconditioning · 对照 v1/v2；读 v2 实验正文与附录"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.16642v1",
+      "title": "Dataset Distillation via Drifting · 已读 §3.2 与表1–2"
+    },
+    {
+      "url": "https://arxiv.org/html/2601.22841v3",
+      "title": "How Much of a Model Do We Need? Redundancy and Slimmability in Remote Sensing Foundation Models · 比较 v2/v3 的图1及模型覆盖"
+    },
+    {
+      "url": "https://arxiv.org/html/2601.22841v2",
+      "title": "旧版对照 · How Much of a Model Do We Need? Redundancy and Slimmability in Remote Sensing Foundation Models"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v202/song23a/song23a.pdf",
+      "title": "ICML 2023 会议全文 · §2–6"
+    },
+    {
+      "url": "https://www.semanticscholar.org/paper/ac974291d7e3a152067382675524f3e3c2ded11b",
+      "title": "Semantic Scholar 引文记录 · 2026-11-15 查询"
+    },
+    {
+      "url": "https://arxiv.org/abs/2011.13456",
+      "title": "背景旧文 · Score SDE 与概率流 ODE"
+    }
+  ],
+  "edition": "每日研究笔记",
+  "title": "Muon 的批量拐点与预训练的预算外推",
+  "subtitle": "BlinkMimic · ArchSpace · Hera · Consistency Models",
+  "window": "2026-11-12 08:52 — 2026-11-15 08:52 EST",
+  "intro": "本期从 11 月 13 日 arXiv 公告补录两项规模对照，并读 Hera 新版加入的 Muon 基线。经典精读回到 Consistency Models，用同一条概率流轨迹解释一步生成。",
+  "classic": {
+    "id": "classic-consistency-models",
+    "paperId": "arxiv:2303.01469",
+    "shortTitle": "Consistency Models",
+    "year": 2023,
+    "topics": [
+      "Diffusion models"
+    ],
+    "kind": "历史经典",
+    "title": "同一条轨迹，只预测一次终点",
+    "paper": "Consistency Models",
+    "authors": "Yang Song · Prafulla Dhariwal · Mark Chen · Ilya Sutskever",
+    "url": "https://proceedings.mlr.press/v202/song23a/song23a.pdf",
+    "dateNote": "arXiv 首发 2023-03-02 ET；读 ICML 2023 会议版",
+    "evidence": "已读 §2–6 与附录 A.2",
+    "recognition": {
+      "label": "ICML 2023 · Semantic Scholar 2,480 次引用（2026-11-15）",
+      "url": "https://www.semanticscholar.org/paper/ac974291d7e3a152067382675524f3e3c2ded11b"
+    },
+    "question": "固定蒸馏网络容量时，如何分配时间网格密度，才能让小噪声段的求解器误差与有限训练带来的配对残差更好平衡？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Score SDE（2021）的概率流 ODE 可把高噪样本沿确定性轨迹送回数据端，常规求解需要多次网络评估。Consistency Models 直接学习每条轨迹的终点，并在低噪边界固定为恒等映射。设 t 是高斯扰动标准差，pₜ 是扰动后的边缘分布。 [7,9]"
+      },
+      {
+        "type": "equation",
+        "tex": "p_t=p_{\\rm data}*\\mathcal N(0,t^2I),\\quad \\dot x_t=-t\\nabla\\log p_t(x_t),\\quad f(x_t,t)=x_\\epsilon,\\quad f(x,\\epsilon)=x",
+        "label": "原文 §2–3；同一条轨迹上的 f 值相同"
+      },
+      {
+        "type": "equation",
+        "tex": "f_\\theta(x,t)=c_{\\rm skip}(t)x+c_{\\rm out}(t)F_\\theta(x,t),\\qquad c_{\\rm skip}(\\epsilon)=1,\\quad c_{\\rm out}(\\epsilon)=0",
+        "label": "跳连把边界条件写进参数化"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathcal L_{\\rm CD}=\\mathbb E\\big[\\lambda(t_n)d(f_\\theta(x_{t_{n+1}},t_{n+1}),f_{\\theta^-}(\\widehat x^\\phi_{t_n},t_n))\\big]",
+        "label": "算法2；由教师 score 与 ODE 求解器从后一个时点算出前点。目标网络用 EMA 并停止梯度"
+      },
+      {
+        "type": "equation",
+        "tex": "\\sup_{n,x}\\|f_\\theta(x,t_n)-f^\\phi(x,t_n)\\|_2=O((\\Delta t)^p)",
+        "label": "定理1；零蒸馏损失、对输入 Lipschitz、求解器一致局部误差为 p+1 阶。界的目标是教师经验 ODE"
+      },
+      {
+        "type": "equation",
+        "tex": "(x_{t_n},x_{t_{n+1}})=(x_0+t_n z,x_0+t_{n+1}z),\\qquad z\\sim\\mathcal N(0,I)",
+        "label": "算法3用同一高斯噪声配对；该构造替代教师步，理论联系使用细网格极限"
+      },
+      {
+        "type": "text",
+        "text": "表1的 CIFAR-10 中，同一 CD 方法在 1、2 次网络评估下 FID 分别为 3.55、2.93。NFE 记录单样本网络调用次数，FID 比较生成和真实图像的特征分布。 [7]"
+      }
+    ]
+  }
+}

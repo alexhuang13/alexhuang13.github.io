@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-15",
+    "paperId": "arxiv:2303.01469",
+    "paper": "Consistency Models",
+    "shortTitle": "Consistency Models",
+    "year": 2023,
+    "topics": [
+      "Diffusion models"
+    ],
+    "recognition": {
+      "label": "ICML 2023 · Semantic Scholar 2,480 次引用（2026-11-15）",
+      "url": "https://www.semanticscholar.org/paper/ac974291d7e3a152067382675524f3e3c2ded11b"
+    },
+    "source": "https://proceedings.mlr.press/v202/song23a/song23a.pdf",
+    "url": "/digest/2026-11-15.html#classic-consistency-models"
+  },
+  {
     "date": "2026-11-14",
     "paperId": "arxiv:2212.08073",
     "paper": "Constitutional AI: Harmlessness from AI Feedback",

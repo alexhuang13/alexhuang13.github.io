@@ -1,0 +1,264 @@
+{
+  "date": "2026-11-15",
+  "number": "033",
+  "publishedAt": "2026-11-15T13:52:54Z",
+  "readingMinutes": 10,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Post-training"
+  ],
+  "articles": [
+    {
+      "id": "paper-2611-16422",
+      "paper": "BlinkMimic: Training a Humanoid Motion Tracker in Minutes on a Single GPU",
+      "authors": "Fuyi Chen",
+      "url": "https://arxiv.org/html/2611.16422v1",
+      "kind": "Close reading · first arXiv release",
+      "title": "When smaller batches weaken Muon’s descent",
+      "dateNote": "v1 submitted 2026-11-12 02:31 EST · announced Nov 13",
+      "evidence": "Read §4.1, §5.1–5.3, and Appendix A.4",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "BlinkMimic trains motion tracking for a simulated Unitree G1 through a differentiable world model. The appendix uses a local quadratic model to explain the batch-size knee, treating momentum as signal plus noise with entrywise variance inversely proportional to batch size B. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "P_B=\\operatorname{polar}(\\bar G+E_B),\\qquad \\ell(W)-\\ell(W-\\eta P_B)\\approx\\eta\\langle\\bar G,P_B\\rangle-\\tfrac12\\eta^2\\langle P_B,HP_B\\rangle",
+          "label": "Appendix A.4 heuristic; H is the local Hessian and the inner product is Frobenius"
+        },
+        {
+          "type": "text",
+          "text": "The appendix treats the curvature term as approximately constant. As B falls, progress per step shrinks rapidly when alignment approaches the curvature cost. After fitting at B=1,024, the preregistered prediction at B=512 was 2,280–2,630 iterations; one seed took 2,301. [1]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The full recipe reaches three consecutive clean checkpoints in 3.4 minutes on average on an RTX 4090 (40 LAFAN1 clips, four replicas each, mean return at least 0.82; timing excludes offline evaluation). This is a whole-recipe result, and the Adam swap holds the recipe’s step size and batch fixed. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-17332",
+      "paper": "ArchSpace: Recording, Reviewing, and Referencing LLM Architecture Research",
+      "authors": "Jie Wang · Tong Zhu · JiaHao Kuang · Zhe Xu · Yunkai Chai · Dehong Zheng · Yu Cheng · Tao Ji · ZhouHan Lin · Qi Zhang · Bowen Zhou",
+      "url": "https://arxiv.org/html/2611.17332v1",
+      "kind": "Close reading · first arXiv release",
+      "title": "Separating the optimal loss surface from tuning penalties",
+      "dateNote": "v1 submitted 2026-11-12 13:59 EST · announced Nov 13",
+      "evidence": "Read §4.1–4.5, Table 4, and Appendix C.5",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "ArchSpace builds compute ladders for Qwen3.5 and OLMo3. Let M denote training FLOPs per token and D the token count. The fitted surface is minimized at fixed C=MD. For each model–budget pair, learning rate and batch are swept, and their best measured loss fits the base surface. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "L^*(M,D)=L_\\infty+(\\alpha_M M^{-\\gamma_M}+\\alpha_D D^{-\\gamma_D})^{\\gamma_{MD}},\\qquad \\widehat L=L^*+\\Delta L",
+          "label": "Eq. (3); coupling exponent 1 recovers the additive form. The loss penalty for off-optimum hyperparameters is fitted separately"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Delta L=2h\\big[\\cosh(u-\\gamma_{\\eta,B}v)-1+\\rho(\\cosh v-1)\\big],\\quad u=\\log(\\eta/\\eta^*),\\quad v=\\log(B/B^*)",
+          "label": "Empirical parameterization; the first term lets the best learning rate shift with batch size"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "With coefficients frozen, extrapolations along the fitted compute-optimal path up to ten times the largest fit budget yield Table 4 loss MAPE of 0.32%; the base surface alone gives 0.33%. These runs stay within the original tokens-per-parameter range. The authors ran a separate hyperparameter search for long training at about 130–160 tokens per parameter. [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2603-01514",
+      "paper": "Training Dynamics of Softmax Self-Attention: Fast Global Convergence via Preconditioning",
+      "authors": "Gautam Goel · Mahdi Soltanolkotabi · Peter Bartlett",
+      "url": "https://arxiv.org/html/2603.01514v2",
+      "kind": "Close reading · version comparison",
+      "title": "Hera adds a Muon baseline for nonlinear forecasting",
+      "dateNote": "v1 submitted 2026-03-02; v2 submitted 2026-11-11 06:59 EST · announced Nov 13",
+      "evidence": "Compared v1/v2; read the v2 experiment and appendix",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "V2 adds one-step Lorenz–63 forecasting. Three softmax-attention layers read five successive states and a fixed readout predicts the next state. Hera updates two matrices independently in whitened coordinates, while Hera-PSD ties them together. [3,4]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\text{Hera-PSD:}\\quad (\\widetilde U,\\widetilde V)=\\bigl(B(I+K^\\top K)^{-1},B\\bigr)",
+          "label": "Experimental parameterization; Muon and AdamW update the raw attention matrices"
+        },
+        {
+          "type": "text",
+          "text": "The train, validation, and test splits are consecutive blocks of 500 examples from one trajectory. Each method screens 44 configurations, with validation MSE used to select the long-run configuration. The table gives mean test MSE over five fresh initializations after 4,096 full-batch updates. [3]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Method",
+            "Test MSE"
+          ],
+          "rows": [
+            [
+              "Hera",
+              "0.04135"
+            ],
+            [
+              "Hera-PSD",
+              "0.27297"
+            ],
+            [
+              "Muon",
+              "1.83235"
+            ],
+            [
+              "AdamW",
+              "2.22217"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The new results come from one dynamical-system trajectory. The finite-sample guarantee uses planted linear models and independent samples, and the table does not control for time per step. [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-16642",
+      "paper": "Dataset Distillation via Drifting",
+      "authors": "George Cazenavette · Angelina Quan · Giannis Daras · Antonio Torralba · Vincent Sitzmann",
+      "url": "https://arxiv.org/html/2611.16642v1",
+      "kind": "Brief · first arXiv release",
+      "title": "Synthetic data target class-conditional coverage",
+      "dateNote": "v1 submitted 2026-11-12 06:17 EST · announced Nov 13",
+      "evidence": "Read §3.2 and Tables 1–2",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A frozen feature extractor defines attraction to real data and repulsion from other synthetic examples, optimizing images and their augmentations directly. On ImageNet-1k with 10 images per class, noise initialization and hard-label ResNet-18 training, the best MoCo-v3 variant reaches 27.0% test accuracy versus 11.7% for the strongest noise-initialized baseline. Coverage is feature-space dependent, and the paper reports same-encoder evaluation separately. [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2601-22841",
+      "paper": "How Much of a Model Do We Need? Redundancy and Slimmability in Remote Sensing Foundation Models",
+      "authors": "Leonard Hackel · Tom Burgert · Begüm Demir",
+      "url": "https://arxiv.org/html/2601.22841v3",
+      "kind": "Brief · version comparison",
+      "title": "Remote-sensing width study expands to ten models",
+      "dateNote": "v1 submitted 2026-01-30; v3 submitted 2026-11-11 10:49 EST · announced Nov 13",
+      "evidence": "Compared Fig. 1 and model coverage in v2/v3",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Coverage expands from 8 to 10 models. V3 explicitly excludes Panopticon from the shared-dataset comparison in Fig. 1 because its FLOPs scale differently with width. The observation that some remote-sensing classifiers retain high relative accuracy at very low compute already appeared in v2. [5,6]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.16422v1",
+      "title": "BlinkMimic: Training a Humanoid Motion Tracker in Minutes on a Single GPU · Read §4.1, §5.1–5.3, and Appendix A.4"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.17332v1",
+      "title": "ArchSpace: Recording, Reviewing, and Referencing LLM Architecture Research · Read §4.1–4.5, Table 4, and Appendix C.5"
+    },
+    {
+      "url": "https://arxiv.org/html/2603.01514v2",
+      "title": "Training Dynamics of Softmax Self-Attention: Fast Global Convergence via Preconditioning · Compared v1/v2; read the v2 experiment and appendix"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.16642v1",
+      "title": "Dataset Distillation via Drifting · Read §3.2 and Tables 1–2"
+    },
+    {
+      "url": "https://arxiv.org/html/2601.22841v3",
+      "title": "How Much of a Model Do We Need? Redundancy and Slimmability in Remote Sensing Foundation Models · Compared Fig. 1 and model coverage in v2/v3"
+    },
+    {
+      "url": "https://arxiv.org/html/2601.22841v2",
+      "title": "Prior version · How Much of a Model Do We Need? Redundancy and Slimmability in Remote Sensing Foundation Models"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v202/song23a/song23a.pdf",
+      "title": "ICML 2023 paper · §2–6"
+    },
+    {
+      "url": "https://www.semanticscholar.org/paper/ac974291d7e3a152067382675524f3e3c2ded11b",
+      "title": "Semantic Scholar citation record · checked 2026-11-15"
+    },
+    {
+      "url": "https://arxiv.org/abs/2011.13456",
+      "title": "Historical background · Score SDE and the probability-flow ODE"
+    }
+  ],
+  "edition": "Daily research notes",
+  "title": "Muon’s batch-size knee and pretraining beyond the fitted budget",
+  "subtitle": "BlinkMimic · ArchSpace · Hera · Consistency Models",
+  "window": "2026-11-12 08:52 — 2026-11-15 08:52 EST",
+  "intro": "This issue picks up two scaling comparisons from the November 13 arXiv announcements and reads the new Muon baseline in Hera. The classic revisits Consistency Models and explains one-step generation through a shared probability-flow trajectory.",
+  "classic": {
+    "id": "classic-consistency-models",
+    "paperId": "arxiv:2303.01469",
+    "shortTitle": "Consistency Models",
+    "year": 2023,
+    "topics": [
+      "Diffusion models"
+    ],
+    "kind": "Historical classic",
+    "title": "Predicting a shared trajectory endpoint in one pass",
+    "paper": "Consistency Models",
+    "authors": "Yang Song · Prafulla Dhariwal · Mark Chen · Ilya Sutskever",
+    "url": "https://proceedings.mlr.press/v202/song23a/song23a.pdf",
+    "dateNote": "First arXiv posting 2023-03-02 ET; read the ICML 2023 version",
+    "evidence": "Read §2–6 and Appendix A.2",
+    "recognition": {
+      "label": "ICML 2023 · 2,480 Semantic Scholar citations (2026-11-15)",
+      "url": "https://www.semanticscholar.org/paper/ac974291d7e3a152067382675524f3e3c2ded11b"
+    },
+    "question": "At fixed student capacity, how should the time grid be allocated to balance solver error at low noise against pairwise residuals from finite training?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Score SDE (2021) sends a high-noise sample back to the data end along a deterministic probability-flow ODE, typically requiring multiple network evaluations. Consistency Models learn each trajectory’s endpoint directly, with the identity map at the low-noise boundary. Let t be the Gaussian noise standard deviation and pₜ the perturbed marginal. [7,9]"
+      },
+      {
+        "type": "equation",
+        "tex": "p_t=p_{\\rm data}*\\mathcal N(0,t^2I),\\quad \\dot x_t=-t\\nabla\\log p_t(x_t),\\quad f(x_t,t)=x_\\epsilon,\\quad f(x,\\epsilon)=x",
+        "label": "Sections 2–3; f is constant along each trajectory"
+      },
+      {
+        "type": "equation",
+        "tex": "f_\\theta(x,t)=c_{\\rm skip}(t)x+c_{\\rm out}(t)F_\\theta(x,t),\\qquad c_{\\rm skip}(\\epsilon)=1,\\quad c_{\\rm out}(\\epsilon)=0",
+        "label": "The skip connection enforces the boundary condition"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathcal L_{\\rm CD}=\\mathbb E\\big[\\lambda(t_n)d(f_\\theta(x_{t_{n+1}},t_{n+1}),f_{\\theta^-}(\\widehat x^\\phi_{t_n},t_n))\\big]",
+        "label": "Algorithm 2: a teacher score and ODE solver take a step from the later time to the earlier time. The target network uses EMA and stopped gradients"
+      },
+      {
+        "type": "equation",
+        "tex": "\\sup_{n,x}\\|f_\\theta(x,t_n)-f^\\phi(x,t_n)\\|_2=O((\\Delta t)^p)",
+        "label": "Theorem 1: zero distillation loss, Lipschitz dependence on input, and uniform solver local error of order p+1. The target is the teacher’s empirical ODE"
+      },
+      {
+        "type": "equation",
+        "tex": "(x_{t_n},x_{t_{n+1}})=(x_0+t_n z,x_0+t_{n+1}z),\\qquad z\\sim\\mathcal N(0,I)",
+        "label": "Algorithm 3 pairs perturbations using shared Gaussian noise. This replaces the teacher step, with the theoretical connection made in the fine-grid limit"
+      },
+      {
+        "type": "text",
+        "text": "In Table 1 on CIFAR-10, CD reaches FID 3.55 and 2.93 with one and two network evaluations. NFE counts network calls per sample, and FID compares feature distributions of generated and real images. [7]"
+      }
+    ]
+  }
+}

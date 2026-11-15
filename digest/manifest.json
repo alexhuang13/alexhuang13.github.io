@@ -4,8 +4,30 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-14",
+  "latest": "2026-11-15",
   "issues": [
+    {
+      "date": "2026-11-15",
+      "title": "Muon 的批量拐点与预训练的预算外推",
+      "url": "/digest/2026-11-15.html",
+      "translations": {
+        "en": {
+          "title": "Muon’s batch-size knee and pretraining beyond the fitted budget",
+          "url": "/digest/en/2026-11-15.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.16422v1",
+        "https://arxiv.org/html/2611.17332v1",
+        "https://arxiv.org/html/2603.01514v2",
+        "https://arxiv.org/html/2611.16642v1",
+        "https://arxiv.org/html/2601.22841v3",
+        "https://arxiv.org/html/2601.22841v2",
+        "https://proceedings.mlr.press/v202/song23a/song23a.pdf",
+        "https://www.semanticscholar.org/paper/ac974291d7e3a152067382675524f3e3c2ded11b",
+        "https://arxiv.org/abs/2011.13456"
+      ]
+    },
     {
       "date": "2026-11-14",
       "title": "单侧预条件与多语数据配比",
