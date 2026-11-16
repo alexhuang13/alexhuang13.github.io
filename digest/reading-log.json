@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-16",
+    "paperId": "arxiv:1611.03530",
+    "paper": "Understanding Deep Learning Requires Rethinking Generalization",
+    "shortTitle": "Rethinking Generalization",
+    "year": 2017,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "recognition": {
+      "label": "ICLR 2017 Oral",
+      "url": "https://openreview.net/forum?id=Sy8gdB9xx"
+    },
+    "source": "https://arxiv.org/pdf/1611.03530v2",
+    "url": "/digest/2026-11-16.html#classic-rethinking-generalization"
+  },
+  {
     "date": "2026-11-15",
     "paperId": "arxiv:2303.01469",
     "paper": "Consistency Models",

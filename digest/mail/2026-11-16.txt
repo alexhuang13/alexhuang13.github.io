@@ -1,0 +1,41 @@
+RESEARCH DIGEST / 2026-11-16
+Muon 的临时衰减与洗牌动量
+Muon 预训练 · 无放回有限和 · 推理算力 · 随机标签
+
+中文: https://alexhuang13.github.io/digest/2026-11-16.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-16.html
+
+主读 · arXiv 首发
+关掉权重衰减，为什么几千步后还有效？
+Delayed Effects of Temporary Weight Decay in Muon Pretraining
+https://alexhuang13.github.io/digest/2026-11-16.html#paper-2611-17876
+
+主读 · arXiv 首发
+无放回洗牌下，Muon 的动量需要看数据
+Muon Attains O(ε⁻³) Iteration Complexity under Shuffling
+https://alexhuang13.github.io/digest/2026-11-16.html#paper-2611-18124
+
+简讯 · arXiv 首发
+安全异常检测可能面对有限规模最优点
+Condensing Law of Security Information
+https://alexhuang13.github.io/digest/2026-11-16.html#paper-2611-17918
+
+简讯 · arXiv 首发
+多智能体的收益要与独立采样分开估计
+More Agents, More Samples, or More Thinking? Untangling Coordination, Ensembling, and Test-Time Compute in Multi-Agent LLMs
+https://alexhuang13.github.io/digest/2026-11-16.html#paper-2611-17610
+
+简讯 · arXiv 首发
+逐字重复与多样表达教出的知识不同
+LECAT: Measuring LLM Category Learning from Pretraining Data
+https://alexhuang13.github.io/digest/2026-11-16.html#paper-2611-18419
+
+每日精读 · 2017
+随机标签能插值，真标签为何能泛化？
+https://alexhuang13.github.io/digest/2026-11-16.html#classic-rethinking-generalization
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-16.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

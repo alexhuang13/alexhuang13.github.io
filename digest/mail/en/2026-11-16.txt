@@ -1,0 +1,41 @@
+RESEARCH DIGEST / 2026-11-16
+Temporary weight decay and momentum under shuffling
+Muon pretraining · without-replacement finite sums · inference compute · randomized labels
+
+中文: https://alexhuang13.github.io/digest/2026-11-16.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-16.html
+
+Main reading · arXiv v1
+Why does weight decay still matter thousands of steps after removal?
+Delayed Effects of Temporary Weight Decay in Muon Pretraining
+https://alexhuang13.github.io/digest/en/2026-11-16.html#paper-2611-17876
+
+Main reading · arXiv v1
+Muon momentum under without-replacement shuffling depends on the finite sum
+Muon Attains O(ε⁻³) Iteration Complexity under Shuffling
+https://alexhuang13.github.io/digest/en/2026-11-16.html#paper-2611-18124
+
+Brief · arXiv v1
+A finite-size optimum for security anomaly detection
+Condensing Law of Security Information
+https://alexhuang13.github.io/digest/en/2026-11-16.html#paper-2611-17918
+
+Brief · arXiv v1
+Separate agent coordination gains from independent sampling gains
+More Agents, More Samples, or More Thinking? Untangling Coordination, Ensembling, and Test-Time Compute in Multi-Agent LLMs
+https://alexhuang13.github.io/digest/en/2026-11-16.html#paper-2611-17610
+
+Brief · arXiv v1
+Verbatim repetition and varied expressions teach different category knowledge
+LECAT: Measuring LLM Category Learning from Pretraining Data
+https://alexhuang13.github.io/digest/en/2026-11-16.html#paper-2611-18419
+
+Daily classic · 2017
+Random labels can be interpolated. Why do true labels generalize?
+https://alexhuang13.github.io/digest/en/2026-11-16.html#classic-rethinking-generalization
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-16.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

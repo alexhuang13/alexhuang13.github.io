@@ -1,0 +1,273 @@
+{
+  "date": "2026-11-16",
+  "number": "034",
+  "publishedAt": "2026-11-16T18:40:59Z",
+  "readingMinutes": 10,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Deep learning theory"
+  ],
+  "edition": "Daily research notes",
+  "title": "Temporary weight decay and momentum under shuffling",
+  "subtitle": "Muon pretraining · without-replacement finite sums · inference compute · randomized labels",
+  "window": "2026-11-13 to 2026-11-16 (Philadelphia time)",
+  "intro": "Two new papers examine how weight norms carry the effect of early decay and why momentum in without-replacement training depends on the problem. Briefs cover multi-agent budget comparisons and the form of pretraining data. The classic revisits randomized labels.",
+  "articles": [
+    {
+      "id": "paper-2611-17876",
+      "paper": "Delayed Effects of Temporary Weight Decay in Muon Pretraining",
+      "authors": "Md Rifat Arefin · Ravid Shwartz-Ziv · Ernie Chang · Chinnadhurai Sankar · Rylan Conway · Aristide Baratin · Irina Rish · Adithya Sagar · Patrick Huber",
+      "url": "https://arxiv.org/html/2611.17876v1",
+      "kind": "Main reading · arXiv v1",
+      "title": "Why does weight decay still matter thousands of steps after removal?",
+      "dateNote": "v1 submitted 2026-11-13 at 03:05 EST · Nov 16 listing",
+      "evidence": "Read Figure 1, §§3–6, and Appendices G–H",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The intervention applies decoupled weight decay to hidden weight matrices during a short window. Early decay reduces weight norms, while Muon normalizes matrix update norms. Once decay ends, the runs follow the same update rule, but smaller weights still take larger steps relative to their size. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "W_{t+1}=(1-\\eta_t\\lambda_t)W_t-\\eta_t U_t,\\qquad \\lambda_t=\\lambda\\mathbf 1_{\\{s\\le t<e\\}}",
+          "label": "Equation (1). η is the learning rate, U is the Muon matrix update, and decay is active on [s,e)."
+        },
+        {
+          "type": "text",
+          "text": "After decay ends, suppose consecutive updates have approximately equal Frobenius norms. Let a be update norm divided by weight norm, and κ the weight–update inner product divided by squared update norm. Expanding the squared weight norm yields the recurrence below. Similar κ trajectories imply a slowly changing gap in inverse squared relative step sizes. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "a_t=\\frac{\\|\\Delta W_t\\|_F}{\\|W_t\\|_F},\\quad \\kappa_t=\\frac{\\langle W_t,\\Delta W_t\\rangle_F}{\\|\\Delta W_t\\|_F^2},\\quad a_{t+1}^{-2}-a_t^{-2}\\approx 1+2\\kappa_t",
+          "label": "Appendix G. The recurrence is exact when consecutive update norms are equal."
+        },
+        {
+          "type": "text",
+          "text": "A decay window covering the first 44% of steps, selected at 162M, was transferred directly to 1.4B (FineWeb100B, 28,000 updates). Its validation loss was 0.26 nats above no decay when the window ended. It crossed the baseline at 73% of training and finished 0.0275 nats lower. A separate comparison fixes the window at the first 10% of training. [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Parameters",
+            "First 10%",
+            "No decay",
+            "Best tested constant"
+          ],
+          "rows": [
+            [
+              "162M",
+              "3.3710",
+              "3.3860",
+              "3.3768"
+            ],
+            [
+              "405M",
+              "3.0287",
+              "3.0537",
+              "3.0462"
+            ],
+            [
+              "1.4B",
+              "2.6506",
+              "2.6754",
+              "2.6743"
+            ],
+            [
+              "3.4B",
+              "2.4720",
+              "2.4832",
+              "2.4843"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Norm resets at 162M and 405M support weight norm as the mediator of most of the gain. The recurrence describes persistent step-size differences. Final loss is measured in the training comparisons. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-18124",
+      "paper": "Muon Attains O(ε⁻³) Iteration Complexity under Shuffling",
+      "authors": "Kun Huang · Shi Pu · Karl Henrik Johansson",
+      "url": "https://arxiv.org/html/2611.18124v1",
+      "kind": "Main reading · arXiv v1",
+      "title": "Muon momentum under without-replacement shuffling depends on the finite sum",
+      "dateNote": "v1 submitted 2026-11-13 at 07:52 EST · Nov 16 listing",
+      "evidence": "Read §§2–3 and Appendix B",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The lower-bounded objective averages N smooth components visited once per epoch in an arbitrary order. The analysis uses an exact matrix polar direction and holds momentum fixed within each run. The growth condition below controls the mean squared norm of the component gradients. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "f(W)=\\frac1N\\sum_{i=1}^N f_i(W),\\qquad \\frac1N\\sum_{i=1}^N\\|\\nabla f_i(W)\\|_F^2\\le D_0+D_1\\|\\nabla f(W)\\|_F^2",
+          "label": "Growth condition. D₀ bounds component-gradient energy that can remain at a stationary point."
+        },
+        {
+          "type": "text",
+          "text": "When β exceeds a problem-dependent threshold and η is constant, Theorem 3.1 gives the leading terms below, with additional transients that decay with T. Δ is the initial objective gap, L is the component-gradient Lipschitz constant, r is the smaller matrix dimension, and the star denotes the nuclear norm. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\frac1T\\sum_{t<T}\\|\\nabla f(W_t)\\|_* = \\mathcal O\\!\\left(\\frac{\\Delta}{\\eta T}+\\frac{Lr\\eta}{1-\\beta}+(1-\\beta)N\\sqrt{rD_0}\\right)\\quad\\text{(leading terms)}",
+          "label": "Equation (4). The first two terms reflect finite training and movement of the iterates. Component heterogeneity leaves the last term."
+        },
+        {
+          "type": "text",
+          "text": "With fixed problem constants and D₀>0, setting 1−β proportional to T to the power −1/3 and η proportional to T to the power −2/3 balances all three terms at order T to the power −1/3. The counterexample takes N=4K+1, with one component gradient locally equal to N and the rest equal to −1. A run of K negative inputs flips momentum when β < (N+1)⁻¹⁄ᴷ, causing net epoch motion in the positive full-gradient direction. [2]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Complexity counts individual component updates. The counterexample holds for every permutation when the step size within an epoch is constant and at most 1/(2N). It limits a universal choice of fixed momentum. [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-17918",
+      "paper": "Condensing Law of Security Information",
+      "authors": "Qi Tan · Tianyu Cui · Qi Li · Ke Xu",
+      "url": "https://arxiv.org/abs/2611.17918v1",
+      "kind": "Brief · arXiv v1",
+      "title": "A finite-size optimum for security anomaly detection",
+      "dateNote": "v1 submitted 2026-11-13 at 03:57 EST",
+      "evidence": "Based on the abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The authors propose that a larger model may more readily reconstruct an anomalous input as a common pattern, erasing anomaly information in its intermediate representation. The abstract reports information-theoretic bounds linking restoration error, representation retention, and task error, and proposes a U-shaped error curve as a function of model size. [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-17610",
+      "paper": "More Agents, More Samples, or More Thinking? Untangling Coordination, Ensembling, and Test-Time Compute in Multi-Agent LLMs",
+      "authors": "Seyed Mahmoud Sajjadi Mohammadabadi",
+      "url": "https://arxiv.org/html/2611.17610v1",
+      "kind": "Brief · arXiv v1",
+      "title": "Separate agent coordination gains from independent sampling gains",
+      "dateNote": "v1 submitted 2026-11-12 at 19:18 EST · Nov 16 listing",
+      "evidence": "Read §3.5, §§4–5, and Tables 5–6",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "This synthesis of nine studies distinguishes single-pass, sample-matched, declared-resource-matched, and Pareto-frontier comparators. Across the sample- or resource-matched contrasts, multi-agent accuracy averaged 4.2 percentage points below the baseline. Equal sample counts can leave token use, latency, and cost unequal. The two positive Pareto contrasts are reported separately. [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-18419",
+      "paper": "LECAT: Measuring LLM Category Learning from Pretraining Data",
+      "authors": "Jimin Mun · Maarten Sap · Yanai Elazar",
+      "url": "https://arxiv.org/abs/2611.18419v1",
+      "kind": "Brief · arXiv v1",
+      "title": "Verbatim repetition and varied expressions teach different category knowledge",
+      "dateNote": "v1 submitted 2026-11-13 at 11:59 EST · Nov 16 listing",
+      "evidence": "Based on the abstract",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The authors distinguish memorizing category properties, generalizing to new entities, and applying knowledge in context. They analyze open models on 199 category–feature pairs and train a 68M model from scratch with controlled data expressions. The abstract reports that exact repetition reduces flexible use, while mixing different forms of expression improves it. [5]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-rethinking-generalization",
+    "paperId": "arxiv:1611.03530",
+    "shortTitle": "Rethinking Generalization",
+    "year": 2017,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "paper": "Understanding Deep Learning Requires Rethinking Generalization",
+    "authors": "Chiyuan Zhang · Samy Bengio · Moritz Hardt · Benjamin Recht · Oriol Vinyals",
+    "url": "https://arxiv.org/pdf/1611.03530v2",
+    "kind": "Classic reading",
+    "title": "Random labels can be interpolated. Why do true labels generalize?",
+    "dateNote": "arXiv v1 2016-11-10 ET · ICLR 2017 conference version",
+    "evidence": "Read §§2 and 4, Table 1, and Appendix C. Conference record [7].",
+    "recognition": {
+      "label": "ICLR 2017 Oral",
+      "url": "https://openreview.net/forum?id=Sy8gdB9xx"
+    },
+    "question": "With architecture, initialization distribution, and optimizer fixed, what measurable complexity of the trained predictor would track interpolation and generalization as the randomized-label fraction changes?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "The paper compares the same network trained with true labels and fixed random labels. On CIFAR-10, Inception without data augmentation or weight decay reached 100% training accuracy in both cases. Its test accuracies were 85.75% and 9.78%, respectively. This comparison separates fitting the sample from generalizing beyond it. [6]"
+      },
+      {
+        "type": "text",
+        "text": "Theorem 1 gives a construction. For n distinct inputs, choose a shared projection vector a that makes the projected values sᵢ distinct. Sort the values and place thresholds between successive projections. [6]"
+      },
+      {
+        "type": "equation",
+        "tex": "s_i=a^\\top x_i,\\qquad b_1<s_1<b_2<s_2<\\cdots<b_n<s_n",
+        "label": "A continuously sampled a avoids projection collisions almost surely."
+      },
+      {
+        "type": "equation",
+        "tex": "f(x)=\\sum_{j=1}^n w_j(a^\\top x-b_j)_+,\\qquad A_{ij}=(s_i-b_j)_+",
+        "label": "Each hidden unit shares the same projection. A is the hidden activation matrix on the sample."
+      },
+      {
+        "type": "equation",
+        "tex": "A_{ij}=0\\ (i<j),\\qquad A_{ii}=s_i-b_i>0,\\qquad w=A^{-1}y",
+        "label": "Triangularity gives exact interpolation for arbitrary real targets with 2n+d parameters."
+      },
+      {
+        "type": "text",
+        "text": "If every sign labeling can be interpolated, a bounded-output formulation shows why whole-class complexity gives the same answer for the two training runs. The empirical Rademacher expression below restates the argument in §2. [6]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widehat{\\mathfrak R}_n(\\mathcal F)=\\mathbb E_{\\sigma}\\!\\left[\\sup_{f\\in\\mathcal F}\\frac1n\\sum_{i=1}^n\\sigma_i f(x_i)\\right]=1\\qquad(|f(x_i)|\\le1)",
+        "label": "Each sign vector has an interpolant f(xᵢ)=σᵢ, attaining the termwise upper bound."
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "The construction establishes existence of an interpolant. The experiment separately demonstrates that SGD fits randomized labels. Explaining low test error on true labels requires information about the trained function or the label structure. [6]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.17876v1",
+      "title": "Temporary decay paper · Figure 1, §§3–6, Appendices G–H"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.18124v1",
+      "title": "Muon under shuffling · Algorithm 1, Assumptions 2.1–2.2, Theorems 3.1–3.2"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.17918v1",
+      "title": "Model size and information retention in security tasks · arXiv abstract"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.17610v1",
+      "title": "Multi-agent inference compute · §3.5, §§4–5, Tables 5–6"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.18419v1",
+      "title": "Category knowledge expression in pretraining · arXiv abstract"
+    },
+    {
+      "url": "https://arxiv.org/pdf/1611.03530v2",
+      "title": "ICLR 2017 paper · §§2 and 4, Appendix C"
+    },
+    {
+      "url": "https://openreview.net/forum?id=Sy8gdB9xx",
+      "title": "OpenReview · ICLR 2017 Oral"
+    }
+  ]
+}

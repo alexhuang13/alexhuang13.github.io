@@ -4,8 +4,28 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-15",
+  "latest": "2026-11-16",
   "issues": [
+    {
+      "date": "2026-11-16",
+      "title": "Muon 的临时衰减与洗牌动量",
+      "url": "/digest/2026-11-16.html",
+      "translations": {
+        "en": {
+          "title": "Temporary weight decay and momentum under shuffling",
+          "url": "/digest/en/2026-11-16.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.17876v1",
+        "https://arxiv.org/html/2611.18124v1",
+        "https://arxiv.org/abs/2611.17918v1",
+        "https://arxiv.org/html/2611.17610v1",
+        "https://arxiv.org/abs/2611.18419v1",
+        "https://arxiv.org/pdf/1611.03530v2",
+        "https://openreview.net/forum?id=Sy8gdB9xx"
+      ]
+    },
     {
       "date": "2026-11-15",
       "title": "Muon 的批量拐点与预训练的预算外推",

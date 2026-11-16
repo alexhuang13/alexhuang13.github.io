@@ -1,0 +1,273 @@
+{
+  "date": "2026-11-16",
+  "number": "034",
+  "publishedAt": "2026-11-16T18:40:59Z",
+  "readingMinutes": 10,
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Deep learning theory"
+  ],
+  "edition": "每日研究笔记",
+  "title": "Muon 的临时衰减与洗牌动量",
+  "subtitle": "Muon 预训练 · 无放回有限和 · 推理算力 · 随机标签",
+  "window": "2026-11-13 至 2026-11-16（费城时间）",
+  "intro": "两篇新稿分别研究 Muon 的权重范数如何保留早期衰减的影响，以及无放回训练中动量为何依赖问题。另看多智能体预算对照与预训练数据的表达方式。经典精读重访随机标签实验。",
+  "articles": [
+    {
+      "id": "paper-2611-17876",
+      "paper": "Delayed Effects of Temporary Weight Decay in Muon Pretraining",
+      "authors": "Md Rifat Arefin · Ravid Shwartz-Ziv · Ernie Chang · Chinnadhurai Sankar · Rylan Conway · Aristide Baratin · Irina Rish · Adithya Sagar · Patrick Huber",
+      "url": "https://arxiv.org/html/2611.17876v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "关掉权重衰减，为什么几千步后还有效？",
+      "dateNote": "v1 提交 2026-11-13 03:05 EST · 11 月 16 日公告",
+      "evidence": "已读图 1、§3–6、附录 G–H",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "作者只在一段训练窗口对隐藏层矩阵施加 decoupled weight decay。早期衰减缩小了权重范数，而 Muon 对矩阵更新的范数有归一化。撤掉衰减时，两次训练的更新规则相同，但较小的权重范数仍对应较大的相对步长。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "W_{t+1}=(1-\\eta_t\\lambda_t)W_t-\\eta_t U_t,\\qquad \\lambda_t=\\lambda\\mathbf 1_{\\{s\\le t<e\\}}",
+          "label": "式 (1)。η 为学习率，U 为 Muon 矩阵更新，衰减仅在 [s,e) 内开启。"
+        },
+        {
+          "type": "text",
+          "text": "撤掉衰减后，若相邻更新的 Frobenius 范数近似相同，令 a 为更新范数与权重范数之比，κ 为权重沿当前更新的内积除以更新范数平方。展开权重平方范数即可得到下式。两次训练的 κ 若接近，逆平方相对步长的差会缓慢变化。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "a_t=\\frac{\\|\\Delta W_t\\|_F}{\\|W_t\\|_F},\\quad \\kappa_t=\\frac{\\langle W_t,\\Delta W_t\\rangle_F}{\\|\\Delta W_t\\|_F^2},\\quad a_{t+1}^{-2}-a_t^{-2}\\approx 1+2\\kappa_t",
+          "label": "附录 G；更新范数严格相同时，递推为等式。"
+        },
+        {
+          "type": "text",
+          "text": "从 162M 选出的前 44% 衰减窗口直接移植到 1.4B（FineWeb100B，28,000 步）。撤除时验证损失比无衰减高 0.26 nats，到总步数 73% 才交叉，最终低 0.0275 nats。另一组固定前 10% 的对照如下。 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "参数量",
+            "前 10%",
+            "不衰减",
+            "最佳已测常数"
+          ],
+          "rows": [
+            [
+              "162M",
+              "3.3710",
+              "3.3860",
+              "3.3768"
+            ],
+            [
+              "405M",
+              "3.0287",
+              "3.0537",
+              "3.0462"
+            ],
+            [
+              "1.4B",
+              "2.6506",
+              "2.6754",
+              "2.6743"
+            ],
+            [
+              "3.4B",
+              "2.4720",
+              "2.4832",
+              "2.4843"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "162M 和 405M 的范数重置支持权重范数介导多数收益。递推描述步长如何持续变化；最终损失仍要由训练对照测量。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-18124",
+      "paper": "Muon Attains O(ε⁻³) Iteration Complexity under Shuffling",
+      "authors": "Kun Huang · Shi Pu · Karl Henrik Johansson",
+      "url": "https://arxiv.org/html/2611.18124v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "无放回洗牌下，Muon 的动量需要看数据",
+      "dateNote": "v1 提交 2026-11-13 07:52 EST · 11 月 16 日公告",
+      "evidence": "已读 §2–3、附录 B",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "设目标是 N 个光滑分量的平均且有下界，每个 epoch 按任意排列无放回访问。分析用精确矩阵 polar 方向，动量系数在一次训练内固定。分量梯度的平均平方范数受下列增长条件控制。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "f(W)=\\frac1N\\sum_{i=1}^N f_i(W),\\qquad \\frac1N\\sum_{i=1}^N\\|\\nabla f_i(W)\\|_F^2\\le D_0+D_1\\|\\nabla f(W)\\|_F^2",
+          "label": "增长条件。D₀ 控制全梯度为零时仍可能存在的分量梯度。"
+        },
+        {
+          "type": "text",
+          "text": "当动量系数 β 高于问题相关阈值、步长 η 固定时，定理 3.1 给出如下主导项，并有随 T 衰减的初始化项。Δ 是初始目标差，L 是分量梯度的 Lipschitz 常数，r 是矩阵最小边长，星号表示核范数。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\frac1T\\sum_{t<T}\\|\\nabla f(W_t)\\|_* = \\mathcal O\\!\\left(\\frac{\\Delta}{\\eta T}+\\frac{Lr\\eta}{1-\\beta}+(1-\\beta)N\\sqrt{rD_0}\\right)\\quad\\text{(leading terms)}",
+          "label": "式 (4)。前两项分别来自有限训练预算和迭代点移动，末项为分量异质性留下的误差底。"
+        },
+        {
+          "type": "text",
+          "text": "固定问题常数且 D₀>0 时，取 1−β 与 T 的 −1/3 次幂同阶，η 与 T 的 −2/3 次幂同阶，三项都按 T 的 −1/3 次幂衰减。反例把 N 设为 4K+1，令一个分量梯度在局部为 N，其余为 −1。当 β < (N+1)⁻¹⁄ᴷ 时，连续 K 个负输入足以翻转动量，故每轮净位移可朝着全梯度的正方向。 [2]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "复杂度以单次分量更新计。反例对每种排列都成立，步长在每轮内固定且至多 1/(2N)。这给固定动量的适用范围划出边界。 [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-17918",
+      "paper": "Condensing Law of Security Information",
+      "authors": "Qi Tan · Tianyu Cui · Qi Li · Ke Xu",
+      "url": "https://arxiv.org/abs/2611.17918v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "安全异常检测可能面对有限规模最优点",
+      "dateNote": "v1 提交 2026-11-13 03:57 EST",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "作者提出，随模型变大，异常输入更容易被还原成常见模式，异常信息便可能在中间表征中丢失。摘要报告了连接还原误差、表征保留率及任务误差的信息论界，并提出安全任务误差随模型规模呈 U 形的假说。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-17610",
+      "paper": "More Agents, More Samples, or More Thinking? Untangling Coordination, Ensembling, and Test-Time Compute in Multi-Agent LLMs",
+      "authors": "Seyed Mahmoud Sajjadi Mohammadabadi",
+      "url": "https://arxiv.org/html/2611.17610v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "多智能体的收益要与独立采样分开估计",
+      "dateNote": "v1 提交 2026-11-12 19:18 EST · 11 月 16 日公告",
+      "evidence": "已读 §3.5、§4–5 及表 5–6",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "九项研究的汇总将比较对象分为单次回答、同样本数、匹配所声明资源、Pareto 前沿四类。按样本数或单项预算匹配的对照汇总中，多智能体平均准确率差为 −4.2 个百分点。匹配样本数不保证匹配 token、时延或钱，两个 Pareto 对照的正结果单独列出。 [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-18419",
+      "paper": "LECAT: Measuring LLM Category Learning from Pretraining Data",
+      "authors": "Jimin Mun · Maarten Sap · Yanai Elazar",
+      "url": "https://arxiv.org/abs/2611.18419v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "逐字重复与多样表达教出的知识不同",
+      "dateNote": "v1 提交 2026-11-13 11:59 EST · 11 月 16 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "作者区分记忆类别属性、泛化到新对象、根据语境灵活应用三个层次。开放权重模型分析覆盖 199 个类别–属性对，另从头训练 68M 模型控制语料的表达方式。摘要报告，重复同一句式降低灵活使用知识的表现，混合多种表达则改善表现。 [5]"
+        }
+      ]
+    }
+  ],
+  "classic": {
+    "id": "classic-rethinking-generalization",
+    "paperId": "arxiv:1611.03530",
+    "shortTitle": "Rethinking Generalization",
+    "year": 2017,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "paper": "Understanding Deep Learning Requires Rethinking Generalization",
+    "authors": "Chiyuan Zhang · Samy Bengio · Moritz Hardt · Benjamin Recht · Oriol Vinyals",
+    "url": "https://arxiv.org/pdf/1611.03530v2",
+    "kind": "历史经典",
+    "title": "随机标签能插值，真标签为何能泛化？",
+    "dateNote": "arXiv 首发 2016-11-10 ET · 读 ICLR 2017 会议版",
+    "evidence": "已读 §2、§4、表 1、附录 C；会议记录 [7]",
+    "recognition": {
+      "label": "ICLR 2017 Oral",
+      "url": "https://openreview.net/forum?id=Sy8gdB9xx"
+    },
+    "question": "固定网络、初始化分布与优化器，只改变随机标签比例时，哪种训练后可量化的复杂度能同时反映插值和泛化差异？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "论文比较同一网络在真标签和固定随机标签上的行为。以 CIFAR-10 Inception 为例，关闭数据增强和权重衰减时，两种标签的训练准确率均为 100%，测试准确率分别为 85.75% 和 9.78%。这个对照把能否拟合与拟合后的泛化分开。 [6]"
+      },
+      {
+        "type": "text",
+        "text": "定理 1 给出构造。对 n 个互异的输入，选共享投影向量 a，使投影值 sᵢ 两两不同，排序后在相邻投影点间选阈值。 [6]"
+      },
+      {
+        "type": "equation",
+        "tex": "s_i=a^\\top x_i,\\qquad b_1<s_1<b_2<s_2<\\cdots<b_n<s_n",
+        "label": "随机连续选取 a 几乎必然可避开投影重合。"
+      },
+      {
+        "type": "equation",
+        "tex": "f(x)=\\sum_{j=1}^n w_j(a^\\top x-b_j)_+,\\qquad A_{ij}=(s_i-b_j)_+",
+        "label": "每个隐藏单元复用同一投影；A 是样本上的隐层响应矩阵。"
+      },
+      {
+        "type": "equation",
+        "tex": "A_{ij}=0\\ (i<j),\\qquad A_{ii}=s_i-b_i>0,\\qquad w=A^{-1}y",
+        "label": "下三角结构让任意实值标签都能精确插值，只需 2n+d 个参数。"
+      },
+      {
+        "type": "text",
+        "text": "若函数类能插值任意训练点上的 ±1 标记，取损失理论中常用的有界输出类，就能看出仅凭全类复杂度无法区分两次训练。下面是按 §2 重写的经验 Rademacher 表达。 [6]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widehat{\\mathfrak R}_n(\\mathcal F)=\\mathbb E_{\\sigma}\\!\\left[\\sup_{f\\in\\mathcal F}\\frac1n\\sum_{i=1}^n\\sigma_i f(x_i)\\right]=1\\qquad(|f(x_i)|\\le1)",
+        "label": "每组符号都可取 f(xᵢ)=σᵢ，逐项达到上界。"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "构造证明插值函数存在。实验另行验证 SGD 能拟合随机标签。若要解释真标签上的低测试误差，还需要描述训练所选函数或标签结构。 [6]"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.17876v1",
+      "title": "临时衰减论文正文 · 图 1、§3–6、附录 G–H"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.18124v1",
+      "title": "洗牌下的 Muon · 算法 1、假设 2.1–2.2、定理 3.1–3.2"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.17918v1",
+      "title": "安全任务的模型规模与信息保留 · arXiv 摘要"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.17610v1",
+      "title": "多智能体推理算力 · §3.5、§4–5、表 5–6"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.18419v1",
+      "title": "预训练中的类别知识表达 · arXiv 摘要"
+    },
+    {
+      "url": "https://arxiv.org/pdf/1611.03530v2",
+      "title": "ICLR 2017 论文全文 · §2、§4、附录 C"
+    },
+    {
+      "url": "https://openreview.net/forum?id=Sy8gdB9xx",
+      "title": "OpenReview · ICLR 2017 Oral"
+    }
+  ]
+}
