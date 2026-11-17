@@ -1,0 +1,101 @@
+RESEARCH DIGEST / 2026-11-17
+Latent Feedback, Distillation Optimizers, and Inference Audits
+Repeated training · Muon distillation · Adaptive inference · Recurrent networks
+
+中文: https://alexhuang13.github.io/digest/2026-11-17.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-17.html
+
+Main read · First arXiv posting
+Spend extra compute on latent feedback or more epochs?
+Latent Feedback Is a Compute and Data Amplifier
+https://alexhuang13.github.io/digest/en/2026-11-17.html#paper-2611-20404
+
+Main read · First arXiv posting
+All-2D Muon shows no consistent advantage in short-run KL distillation
+Do Pretraining Optimizer Gains Transfer to KL Distillation?
+https://alexhuang13.github.io/digest/en/2026-11-17.html#paper-2611-19419
+
+Main read · First arXiv posting
+How to bound risk after selecting the sampling budget on calibration data?
+Anytime-Valid PAC-Bayes Certificates for Adaptive Test-Time Scaling
+https://alexhuang13.github.io/digest/en/2026-11-17.html#paper-2611-21241
+
+Brief · First arXiv posting
+Randomized trial of instructor-designed AI
+Instructor-designed AI improves learning in a randomized trial across 19 universities
+https://alexhuang13.github.io/digest/en/2026-11-17.html#paper-2611-19099
+
+Brief · First arXiv posting
+Averaging for high-dimensional adaptive-momentum dynamics
+High-dimensional limit theorems for adaptive variants of SGD I: Ballistic limits
+https://alexhuang13.github.io/digest/en/2026-11-17.html#paper-2611-19059
+
+Brief · First arXiv posting
+Learning rules change the size of circuits implementing the Fourier algorithm
+Grokking Can Be Steered: Selecting Desirable Solutions By Choice Of Learning Rule
+https://alexhuang13.github.io/digest/en/2026-11-17.html#paper-2611-19477
+
+Brief · First arXiv posting
+Parallel branches at matched parameters and training compute
+Multi-Branch Transformer
+https://alexhuang13.github.io/digest/en/2026-11-17.html#paper-2611-19800
+
+Brief · First arXiv posting
+Diverse plans beat same-plan resampling as action budget increases
+PlanDiv: Test-Time Scaling with Latent Plans for Vision-Language-Action Models
+https://alexhuang13.github.io/digest/en/2026-11-17.html#paper-2611-20010
+
+Brief · First arXiv posting
+Data composition for low-resource laughter synthesis
+A Systematic Study of Cross-Token Transfer for Data-Efficient Non-Verbal Text-to-Speech
+https://alexhuang13.github.io/digest/en/2026-11-17.html#paper-2611-19145
+
+Brief · First arXiv posting
+Estimating multi-step action values on a tool dependency graph
+ToolGraph as a Q-Function for Test-Time Scaling of Tool-Use Agents
+https://alexhuang13.github.io/digest/en/2026-11-17.html#paper-2611-20569
+
+Brief · First arXiv posting
+Routing gains remain uncertain under a cost constraint
+Routing Beyond Task Categories: A Cost-Aware LAB-Bench Study
+https://alexhuang13.github.io/digest/en/2026-11-17.html#paper-2611-20732
+
+Brief · First arXiv posting
+First K2-Horizon report details asynchronous trajectories spanning policies
+K2-Horizon: A Frontier Fleet of Open Source Language Models
+https://alexhuang13.github.io/digest/en/2026-11-17.html#paper-2611-21003
+
+Brief · Substantive revision
+Hierarchical feature recovery adds general noise sensitivity
+Optimal scaling laws in learning hierarchical multi-index models
+https://alexhuang13.github.io/digest/en/2026-11-17.html#paper-2602-05846
+
+Brief · Substantive revision
+Grokking thresholds get cross-seed calibration checks
+How Large Must a Model Be to Grok? A competition between memorisation and generalisation timescales
+https://alexhuang13.github.io/digest/en/2026-11-17.html#paper-2605-09724
+
+Brief · Substantive revision
+Reasoning aggregation adds a within-answer disagreement penalty
+Joint Consistency: A Unified Test-Time Aggregation Framework via Energy Minimization
+https://alexhuang13.github.io/digest/en/2026-11-17.html#paper-2605-06219
+
+Brief · Substantive revision
+Sparse linear RNNs get fixed-state-capacity ablations
+Sparse Delta Memory: Scaling the State of Linear RNNs through Sparsity
+https://alexhuang13.github.io/digest/en/2026-11-17.html#paper-2607-07386
+
+Brief · Substantive revision
+Step-level token allocation gets fixed-total-budget tests
+SmartThinker: Learning High-Density Reasoning via Step-Level Token Allocation
+https://alexhuang13.github.io/digest/en/2026-11-17.html#paper-2507-04348
+
+Daily classic · 2013
+Why RNN gradients explode and what clipping controls
+https://alexhuang13.github.io/digest/en/2026-11-17.html#classic-rnn-gradient-clipping
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-17.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

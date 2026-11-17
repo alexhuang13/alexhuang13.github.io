@@ -1,0 +1,539 @@
+{
+  "date": "2026-11-17",
+  "number": "035",
+  "publishedAt": "2026-11-17T13:52:00Z",
+  "readingMinutes": 11,
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Post-training",
+    "RNN"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "Daily Research Notes",
+  "title": "Latent Feedback, Distillation Optimizers, and Inference Audits",
+  "subtitle": "Repeated training · Muon distillation · Adaptive inference · Recurrent networks",
+  "intro": "At fixed parameter count and training FLOPs, when does latent feedback beat more passes over the data? What happens to Muon in short-run distillation? A third study bounds risk after searching inference budgets. The classic revisits gradient explosion and clipping in RNNs.",
+  "window": "November 14–17, 2026 (Philadelphia time, including the November 17 arXiv announcements)",
+  "articles": [
+    {
+      "id": "paper-2611-20404",
+      "paper": "Latent Feedback Is a Compute and Data Amplifier",
+      "authors": "Benhao Huang · Chaitanya Dwivedi · Xuezhe Ma · Alexander Moreno · Hector Liu",
+      "url": "https://arxiv.org/html/2611.20404v1",
+      "kind": "Main read · First arXiv posting",
+      "title": "Spend extra compute on latent feedback or more epochs?",
+      "dateNote": "v1 submitted November 15, 2026 ET · November 17 announcement",
+      "evidence": "Read Sections 2–5, Table 1 and Appendix F",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Feed the previous token’s top-layer state back into the current input. Training approximates this recurrence with one or two parallel passes and computes loss and gradients only on the last pass. The comparison holds fixed non-embedding parameters N, unique tokens U and FLOP budget F, measured in vanilla Transformer epochs over U. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "u_t=e_t+W\\operatorname{rms}(h_{t-1}),\\qquad R_s=F/c_s",
+          "label": "Feedback uses cₛ times the baseline’s training FLOPs per token, leaving Rₛ epochs under the same budget."
+        },
+        {
+          "type": "equation",
+          "tex": "L_s=E+\\left[\\left(\\frac{A}{(v_sN)^\\alpha}\\right)^q+\\left(\\frac{B}{D_s^\\beta}\\right)^q\\right]^{1/q},\\qquad D_s=U\\left[1+R^*\\left(1-e^{-(R_s-1)/R^*}\\right)\\right]\\quad(R_s\\ge1)",
+          "label": "Paper’s fitted law. For Rₛ<1, Dₛ=URₛ. The capacity multiplier vₛ is 1 for the vanilla Transformer."
+        },
+        {
+          "type": "text",
+          "text": "To first order, the capacity multiplier lowers the capacity term, while extra forward passes reduce repeat exposure and raise the data term. The Dolma 3 comparison below matches model size and validation loss, using a budget of two vanilla Transformer epochs and varying unique tokens per non-embedding parameter. [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Unique tokens / parameter",
+            "Training FLOPs saved"
+          ],
+          "rows": [
+            [
+              "12.5",
+              "−8%"
+            ],
+            [
+              "100",
+              "15–18%"
+            ],
+            [
+              "400",
+              "44–48%"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Fitting on 60M–271M models yielded at most 0.29% relative validation-loss error at the held-out 778M size. The comparison constrains deployed model size. If parameter count can grow, a larger equal-compute Transformer has 0.006–0.012 lower loss throughout the fitted grid. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-19419",
+      "paper": "Do Pretraining Optimizer Gains Transfer to KL Distillation?",
+      "authors": "Lavinia Ghita · Dhruv Desai",
+      "url": "https://arxiv.org/html/2611.19419v1",
+      "kind": "Main read · First arXiv posting",
+      "title": "All-2D Muon shows no consistent advantage in short-run KL distillation",
+      "dateNote": "v1 submitted November 14, 2026 ET · November 17 announcement",
+      "evidence": "Read Sections 2–5 and Figures 1–3",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Four instruction-tuned Qwen pairs share a tokenizer within each pair. The token-level forward KL compares the fixed teacher q with student p. Training averages the answer region A and reasoning region C separately within each example, so longer reasoning does not take more weight from the answer. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\ell_{it}=D_{\\mathrm{KL}}(q_{it}\\|p_{\\theta,it}),\\qquad L_i=\\tfrac12\\operatorname{mean}_{t\\in A_i}\\ell_{it}+\\tfrac12\\operatorname{mean}_{t\\in C_i}\\ell_{it}",
+          "label": "Training objective with both regions present. Validation pools all supervised tokens with equal weight."
+        },
+        {
+          "type": "text",
+          "text": "The protocol uses 79,535 Nemotron reasoning traces, global batch 144, 1,683 steps and three seeds. All-2D applies spectral updates to embeddings and the output head as well. The table shows comparisons explicitly reported in the paper. [2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Qwen student←teacher",
+            "Minimum validation KL comparison"
+          ],
+          "rows": [
+            [
+              "0.6B←1.7B",
+              "AdamW ≈ SOAP ≈ All-2D Muon"
+            ],
+            [
+              "4B←8B / 14B←32B",
+              "AdamW < SOAP, All-2D Muon"
+            ],
+            [
+              "32B←72B (Qwen2.5)",
+              "AdamW < AdaGrad"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "All completed matrix recipes took more trainer time, which includes teacher inference, validation and checkpointing. The result is for the fixed budget, All-2D parameter assignment and offline traces. Hidden-layer-only Muon and downstream accuracy were outside the comparison. [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-21241",
+      "paper": "Anytime-Valid PAC-Bayes Certificates for Adaptive Test-Time Scaling",
+      "authors": "Xiaoyu Li · Jiangxuan Long",
+      "url": "https://arxiv.org/html/2611.21241v1",
+      "kind": "Main read · First arXiv posting",
+      "title": "How to bound risk after selecting the sampling budget on calibration data?",
+      "dateNote": "v1 submitted November 16, 2026 ET · November 17 announcement",
+      "evidence": "Read Sections 3–4, 6, 8.2 and Appendix A",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A recipe is a randomized predictor combining prompts, sampling budgets, allocation rules and verifiers. The prior P is independent of calibration data. Q may be chosen using the i.i.d. calibration problems and execution records. For losses between 0 and 1, summing fixed-time failures δ/[n(n+1)] gives one event covering every n and Q. [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\operatorname{kl}(\\widehat L_n(Q)\\|L(Q))\\le \\frac{D_{\\mathrm{KL}}(Q\\|P)+\\log(2\\sqrt n\\,n(n+1)/\\delta)}{n}",
+          "label": "Theorem 4.1. Selecting one of M recipes under a uniform prior costs log M / n. Invert binary kl for the risk upper bound."
+        },
+        {
+          "type": "equation",
+          "tex": "\\Pr\\{\\mathrm{vote}_b(x)\\ne y\\mid x\\}\\le(m-1)e^{-b\\Delta_x^2/2},\\qquad \\Delta_x=p_x(y)-\\max_{a\\ne y}p_x(a)>0",
+          "label": "Simpler bound from Proposition 6.1 for b independent samples and answer support at most m. If a wrong answer is more probable, the probability of voting correctly instead has an exponentially decaying upper bound."
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "On GSM8K, gpt-4.1-mini selected b=5 from four budgets. With 659 calibration problems, the upper bound was 0.109 and the risk on 660 held-out problems was 0.039. The uniform bound can be loose. The prior and family of recipes must be fixed before inspecting calibration records. [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-19099",
+      "paper": "Instructor-designed AI improves learning in a randomized trial across 19 universities",
+      "authors": "Jun Li · Robert Bray · Sébastien Martin · Hamsa Bastani (Wharton) · et al.",
+      "url": "https://arxiv.org/html/2611.19099v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Randomized trial of instructor-designed AI",
+      "dateNote": "v1 submitted November 13, 2026 ET · November 17 announcement",
+      "evidence": "Read results, Figure 3 and Methods",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Across 19 universities and about 7,200 students, course-level randomization and a difference-in-differences regression using historical outcomes gave a student-level exam effect of +0.32 SD (95% CI [0.06, 0.59]). Activity and satisfaction showed no significant change. The treatment let instructors design and deploy tools and encompassed heterogeneous interventions. [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-19059",
+      "paper": "High-dimensional limit theorems for adaptive variants of SGD I: Ballistic limits",
+      "authors": "Aukosh Jagannath · Varnan Sarangian",
+      "url": "https://arxiv.org/abs/2611.19059v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Averaging for high-dimensional adaptive-momentum dynamics",
+      "dateNote": "v1 submitted November 13, 2026 ET · November 17 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Averaging handles memory from momentum and preconditioning to obtain effective high-dimensional Markov dynamics. Examples include Adam, Newton–Schulz Muon and a hybrid optimizer on XOR. [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-19477",
+      "paper": "Grokking Can Be Steered: Selecting Desirable Solutions By Choice Of Learning Rule",
+      "authors": "Pascal Sager · Benjamin Grewe · Pau Vilimelis Aceituno · Thilo Stadelmann",
+      "url": "https://arxiv.org/abs/2611.19477v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Learning rules change the size of circuits implementing the Fourier algorithm",
+      "dateNote": "v1 submitted November 14, 2026 ET · November 17 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "On modular addition, the rules that grok recover a Fourier algorithm. Neuron-level credit equalization or rescaled decay increases effective circuit size from 60% to 99%. Muon, Adam and Shampoo yield more concentrated circuits under the tested setup. [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-19800",
+      "paper": "Multi-Branch Transformer",
+      "authors": "Gaotang Li · Lingjie Chen · Chunyuan Deng · et al.",
+      "url": "https://arxiv.org/abs/2611.19800v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Parallel branches at matched parameters and training compute",
+      "dateNote": "v1 submitted November 15, 2026 ET · November 17 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "MoE pretraining spans four total model sizes from 0.8B to 2.1B. The two-branch Wide-Shallow variant improves on the sequential control at matched budgets, and the Balanced variant improves further. [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-20010",
+      "paper": "PlanDiv: Test-Time Scaling with Latent Plans for Vision-Language-Action Models",
+      "authors": "Hanbo Zhang · Lianlei Shan · Liuhaichen Yang · Zezhi Tang",
+      "url": "https://arxiv.org/abs/2611.20010v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Diverse plans beat same-plan resampling as action budget increases",
+      "dateNote": "v1 submitted November 15, 2026 ET · November 17 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Decoding eight latent plans after one backbone pass gives 69.9% five-task chain success on CALVIN ABC→D. Eight-candidate autoregressive, plan-free and same-plan controls reach at most 64.9%. [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-19145",
+      "paper": "A Systematic Study of Cross-Token Transfer for Data-Efficient Non-Verbal Text-to-Speech",
+      "authors": "Jing Pan · Haibin Wu · Minxue Niu · Florian Metze · Yuzong Liu",
+      "url": "https://arxiv.org/abs/2611.19145v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Data composition for low-resource laughter synthesis",
+      "dateNote": "v1 submitted November 13, 2026 ET · November 17 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In CosyVoice 2, adding 3,200 cough examples to 200 laughter examples raises laughter F1 from 0.170 to 0.529, versus 0.495 with 1,600 laughter examples alone. [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-20569",
+      "paper": "ToolGraph as a Q-Function for Test-Time Scaling of Tool-Use Agents",
+      "authors": "Ke Shen · Ankita Bhaumik · Li Dong · Shengjie Liu · Shuzhen Li · Naveed Ahmed Janvekar",
+      "url": "https://arxiv.org/abs/2611.20569v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Estimating multi-step action values on a tool dependency graph",
+      "dateNote": "v1 submitted November 16, 2026 ET · November 17 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Builds a directed graph using parameter matching and execution probes with or without a predecessor tool. It estimates goal-conditioned action values via dynamic programming, distilled GraphSAGE or LLM scoring, comparing with retrieval on the same graph over two benchmarks and three backbones. [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-20732",
+      "paper": "Routing Beyond Task Categories: A Cost-Aware LAB-Bench Study",
+      "authors": "Ahmed Tariq · Leo Guinan",
+      "url": "https://arxiv.org/abs/2611.20732v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Routing gains remain uncertain under a cost constraint",
+      "dateNote": "v1 submitted November 16, 2026 ET · November 17 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "On 144 new items with a USD 0.678 budget per 1,000 queries, a policy that defers after reading the first answer improves on a 95/5 mixture by 1.35 percentage points (paired 95% CI [−0.14, 3.47]). [11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-21003",
+      "paper": "K2-Horizon: A Frontier Fleet of Open Source Language Models",
+      "authors": "K2 Team · Zhengzhong Liu · Haonan Li · et al.",
+      "url": "https://arxiv.org/html/2611.21003v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "First K2-Horizon report details asynchronous trajectories spanning policies",
+      "dateNote": "v1 submitted November 16, 2026 ET · November 17 announcement",
+      "evidence": "Read Sections 2 and 6.1–6.3",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The models were released earlier. The new report documents preserving tool state over weight pushes and resuming trajectories at call boundaries. Each token uses its own behavior policy in the importance ratio, capped at 2, with a maximum lag of five versions and sequence-mean weighting. [12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2602-05846",
+      "paper": "Optimal scaling laws in learning hierarchical multi-index models",
+      "authors": "Leonardo Defilippis · Florent Krzakala · Bruno Loureiro · Antoine Maillard",
+      "url": "https://arxiv.org/pdf/2602.05846v2",
+      "kind": "Brief · Substantive revision",
+      "title": "Hierarchical feature recovery adds general noise sensitivity",
+      "dateNote": "First posted February 5 · v2 November 16, 2026 ET",
+      "evidence": "Compared relevant sections in both versions",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "New Section 3.4 and Appendix C treat a shared even link function. Theorem 3.13 gives the kth Bayes-AMP weak-recovery threshold as order k to the power 2γβ⋆, with β⋆ the noise sensitivity exponent. The spectral estimator attains the algorithmic bounds. [13, 14]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2605-09724",
+      "paper": "How Large Must a Model Be to Grok? A competition between memorisation and generalisation timescales",
+      "authors": "Yiding Song · Hanming Ye",
+      "url": "https://arxiv.org/pdf/2605.09724v3",
+      "kind": "Brief · Substantive revision",
+      "title": "Grokking thresholds get cross-seed calibration checks",
+      "dateNote": "First posted May 10 · v3 November 14, 2026 ET",
+      "evidence": "Compared relevant sections in both versions",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Version 3 rewrites the comparison between measured and fitted thresholds, reports a systematic offset between the onset of delayed generalization and the two-timescale crossing, and adds an independent-seed check. [15, 16]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2605-06219",
+      "paper": "Joint Consistency: A Unified Test-Time Aggregation Framework via Energy Minimization",
+      "authors": "Yunzhen Yao · Hongye Wang · Yahong Wang · Michael C. Gastpar · Bo Jiang · Lie He",
+      "url": "https://arxiv.org/pdf/2605.06219v2",
+      "kind": "Brief · Substantive revision",
+      "title": "Reasoning aggregation adds a within-answer disagreement penalty",
+      "dateNote": "First posted May 7 · v2 November 14, 2026 ET",
+      "evidence": "Compared relevant sections in both versions",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "New Equation (7) explicitly penalizes disagreement inside an answer group. Appendix E derives the term from comparisons against a reference trace. [17, 18]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2607-07386",
+      "paper": "Sparse Delta Memory: Scaling the State of Linear RNNs through Sparsity",
+      "authors": "Loïc Cabannes · Pierre-Emmanuel Mazaré · Ilze Amanda Auzina · et al.",
+      "url": "https://arxiv.org/pdf/2607.07386v2",
+      "kind": "Brief · Substantive revision",
+      "title": "Sparse linear RNNs get fixed-state-capacity ablations",
+      "dateNote": "First posted July 8 · v2 November 16, 2026 ET",
+      "evidence": "Compared relevant sections in both versions",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Version 2 adds 1.4B experiments varying head count and factorization of addresses at fixed state size, reporting pretraining loss, long-sequence loss and needle retrieval. [19, 20]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2507-04348",
+      "paper": "SmartThinker: Learning High-Density Reasoning via Step-Level Token Allocation",
+      "authors": "Xingyang He · Xiao Ling · Jie Liu",
+      "url": "https://arxiv.org/pdf/2507.04348v3",
+      "kind": "Brief · Substantive revision",
+      "title": "Step-level token allocation gets fixed-total-budget tests",
+      "dateNote": "First posted July 6, 2025 · v3 November 13, 2026 ET",
+      "evidence": "Compared relevant sections in both versions",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Version 3 adds an AIME24 test under a shared aggregate token budget, counting correct answers in the same problem order. It reports how many items were attempted and breaks out step scoring and training time. [21, 22]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.20404v1",
+      "title": "Latent feedback · Sections 2–5, Table 1 and Appendix F"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.19419v1",
+      "title": "Forward-KL distillation · Sections 2–5 and Figures 1–3"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.21241v1",
+      "title": "Inference audits · Theorem 4.1, Proposition 6.1, Table 2 and Appendix A"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.19099v1",
+      "title": "Instructor-designed AI improves learning in a randomized trial across 19 universities · Read results, Figure 3 and Methods"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.19059v1",
+      "title": "High-dimensional limit theorems for adaptive variants of SGD I: Ballistic limits · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.19477v1",
+      "title": "Grokking Can Be Steered: Selecting Desirable Solutions By Choice Of Learning Rule · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.19800v1",
+      "title": "Multi-Branch Transformer · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.20010v1",
+      "title": "PlanDiv: Test-Time Scaling with Latent Plans for Vision-Language-Action Models · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.19145v1",
+      "title": "A Systematic Study of Cross-Token Transfer for Data-Efficient Non-Verbal Text-to-Speech · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.20569v1",
+      "title": "ToolGraph as a Q-Function for Test-Time Scaling of Tool-Use Agents · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.20732v1",
+      "title": "Routing Beyond Task Categories: A Cost-Aware LAB-Bench Study · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.21003v1",
+      "title": "K2-Horizon: A Frontier Fleet of Open Source Language Models · Read Sections 2 and 6.1–6.3"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2602.05846v1",
+      "title": "Optimal scaling laws in learning hierarchical multi-index models · Previous version for comparison"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2602.05846v2",
+      "title": "Optimal scaling laws in learning hierarchical multi-index models · Updated full text"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.09724v2",
+      "title": "How Large Must a Model Be to Grok? A competition between memorisation and generalisation timescales · Previous version for comparison"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.09724v3",
+      "title": "How Large Must a Model Be to Grok? A competition between memorisation and generalisation timescales · Updated full text"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.06219v1",
+      "title": "Joint Consistency: A Unified Test-Time Aggregation Framework via Energy Minimization · Previous version for comparison"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.06219v2",
+      "title": "Joint Consistency: A Unified Test-Time Aggregation Framework via Energy Minimization · Updated full text"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2607.07386v1",
+      "title": "Sparse Delta Memory: Scaling the State of Linear RNNs through Sparsity · Previous version for comparison"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2607.07386v2",
+      "title": "Sparse Delta Memory: Scaling the State of Linear RNNs through Sparsity · Updated full text"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2507.04348v2",
+      "title": "SmartThinker: Learning High-Density Reasoning via Step-Level Token Allocation · Previous version for comparison"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2507.04348v3",
+      "title": "SmartThinker: Learning High-Density Reasoning via Step-Level Token Allocation · Updated full text"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v28/pascanu13.pdf",
+      "title": "ICML 2013 proceedings version · Sections 2, 3.2–3.3"
+    },
+    {
+      "url": "https://openalex.org/W1815076433",
+      "title": "OpenAlex · Citation record, checked November 17, 2026"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v28/pascanu13.html",
+      "title": "PMLR · ICML 2013 bibliographic record"
+    }
+  ],
+  "classic": {
+    "id": "classic-rnn-gradient-clipping",
+    "paperId": "arxiv:1211.5063",
+    "shortTitle": "Training Recurrent Neural Networks",
+    "year": 2013,
+    "topics": [
+      "RNN"
+    ],
+    "paper": "On the difficulty of training recurrent neural networks",
+    "authors": "Razvan Pascanu · Tomas Mikolov · Yoshua Bengio",
+    "url": "https://proceedings.mlr.press/v28/pascanu13.pdf",
+    "kind": "Historical classic",
+    "title": "Why RNN gradients explode and what clipping controls",
+    "dateNote": "First arXiv posting November 21, 2012 · Read the ICML 2013 proceedings version",
+    "evidence": "Read Sections 2 and 3.2–3.3. Conference record [25]",
+    "recognition": {
+      "label": "Highly cited in OpenAlex · Checked November 17, 2026",
+      "url": "https://openalex.org/W1815076433"
+    },
+    "question": "At a fixed update cap, if clipping fires often, how could directional Jacobian gains distinguish occasional steep walls from systematic long-range contraction?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Bengio et al. (1994) tied the difficulty of learning long dependencies to gradients that decay across steps. This paper follows Jacobian products in BPTT and distinguishes backward contraction from oversized parameter updates near steep walls in the loss. [23]"
+      },
+      {
+        "type": "equation",
+        "tex": "x_t=W\\sigma(x_{t-1})+Bu_t+b,\\qquad J_t=\\partial x_t/\\partial x_{t-1}=W\\operatorname{diag}(\\sigma^{\\prime}(x_{t-1}))",
+        "label": "The paper’s vanilla RNN parameterization, with input uₜ and hidden state xₜ."
+      },
+      {
+        "type": "equation",
+        "tex": "\\frac{\\partial E_t}{\\partial x_k}=\\frac{\\partial E_t}{\\partial x_t}J_t\\cdots J_{k+1},\\qquad \\|J_t\\cdots J_{k+1}\\|_2\\le (\\|W\\|_2\\Gamma)^{t-k}",
+        "label": "Row-gradient convention. If |σ′|≤Γ and the multiplier is below 1, the long-range error signal decays exponentially."
+      },
+      {
+        "type": "equation",
+        "tex": "\\widetilde g=g\\min\\{1,\\tau/\\|g\\|_2\\},\\qquad \\theta^+=\\theta-\\eta\\widetilde g",
+        "label": "Algorithm 1. The gradient direction is preserved and the Euclidean update is capped at ητ. A zero gradient remains zero."
+      },
+      {
+        "type": "equation",
+        "tex": "\\Omega=\\sum_k\\left(\\frac{\\|v_{k+1}J_{k+1}\\|_2}{\\|v_{k+1}\\|_2}-1\\right)^2,\\qquad v_{k+1}=\\partial E/\\partial x_{k+1}",
+        "label": "Soft constraint from Equation (9), encouraging norm preservation along the current nonzero backward direction. The implementation takes the immediate partial derivative, holding states and error signals fixed."
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "Clipping gives an update-norm cap. The norm-preserving penalty targets current error directions, and a long Jacobian product can still contract. [23]"
+      }
+    ]
+  }
+}

@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-17",
+    "paperId": "arxiv:1211.5063",
+    "paper": "On the difficulty of training recurrent neural networks",
+    "shortTitle": "Training Recurrent Neural Networks",
+    "year": 2013,
+    "topics": [
+      "RNN"
+    ],
+    "recognition": {
+      "label": "OpenAlex 高引用论文 · 2026-11-17 查询",
+      "url": "https://openalex.org/W1815076433"
+    },
+    "source": "https://proceedings.mlr.press/v28/pascanu13.pdf",
+    "url": "/digest/2026-11-17.html#classic-rnn-gradient-clipping"
+  },
+  {
     "date": "2026-11-16",
     "paperId": "arxiv:1611.03530",
     "paper": "Understanding Deep Learning Requires Rethinking Generalization",

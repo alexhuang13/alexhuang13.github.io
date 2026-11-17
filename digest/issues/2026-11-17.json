@@ -1,0 +1,539 @@
+{
+  "date": "2026-11-17",
+  "number": "035",
+  "publishedAt": "2026-11-17T13:52:00Z",
+  "readingMinutes": 11,
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Post-training",
+    "RNN"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "每日研究笔记",
+  "title": "潜在反馈、蒸馏优化器与推理预算审计",
+  "subtitle": "重复训练 · Muon 蒸馏 · 自适应推理 · 循环网络",
+  "intro": "固定参数量与训练 FLOPs 时，潜在反馈何时比多跑几轮更划算？短程蒸馏又给 Muon 怎样的对照？第三篇给搜索推理预算后的风险上界。经典精读重访 RNN 的梯度爆炸和裁剪。",
+  "window": "2026-11-14 至 2026-11-17（费城时间，含 11 月 17 日 arXiv 公告）",
+  "articles": [
+    {
+      "id": "paper-2611-20404",
+      "paper": "Latent Feedback Is a Compute and Data Amplifier",
+      "authors": "Benhao Huang · Chaitanya Dwivedi · Xuezhe Ma · Alexander Moreno · Hector Liu",
+      "url": "https://arxiv.org/html/2611.20404v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "额外算力给潜在反馈，还是给更多轮训练？",
+      "dateNote": "v1 提交 2026-11-15 ET · 11 月 17 日公告",
+      "evidence": "已读 §2–5、表 1 与附录 F",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "把上一 token 顶层隐状态送回当前输入。训练用一或两次并行前向近似这一递推，仅最后一趟算损失和梯度。对照固定非嵌入参数量 N、唯一语料 U 与 FLOPs 预算 F，预算单位是普通 Transformer 在 U 上训练一轮。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "u_t=e_t+W\\operatorname{rms}(h_{t-1}),\\qquad R_s=F/c_s",
+          "label": "反馈每 token 的训练 FLOPs 为基线的 cₛ 倍，因此在同一预算下只跑 Rₛ 轮。"
+        },
+        {
+          "type": "equation",
+          "tex": "L_s=E+\\left[\\left(\\frac{A}{(v_sN)^\\alpha}\\right)^q+\\left(\\frac{B}{D_s^\\beta}\\right)^q\\right]^{1/q},\\qquad D_s=U\\left[1+R^*\\left(1-e^{-(R_s-1)/R^*}\\right)\\right]\\quad(R_s\\ge1)",
+          "label": "论文拟合式。Rₛ<1 时 Dₛ=URₛ。vₛ 是容量乘子，普通 Transformer 取 1。"
+        },
+        {
+          "type": "text",
+          "text": "在第一阶展开中，容量乘子降低容量项，额外前向减少重复曝光并抬高数据项。Dolma 3、同规模同验证损失、以普通 Transformer 两轮的 FLOPs 为预算时，以唯一 token／非嵌入参数比为横轴。 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "唯一 token／参数",
+            "训练 FLOPs 节省"
+          ],
+          "rows": [
+            [
+              "12.5",
+              "−8%"
+            ],
+            [
+              "100",
+              "15–18%"
+            ],
+            [
+              "400",
+              "44–48%"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "用 60M–271M 拟合后，留出 778M 模型的验证损失相对误差至多 0.29%。结论约束部署模型大小。若允许增加参数，拟合网格里等算力的大 Transformer 损失还能低 0.006–0.012。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-19419",
+      "paper": "Do Pretraining Optimizer Gains Transfer to KL Distillation?",
+      "authors": "Lavinia Ghita · Dhruv Desai",
+      "url": "https://arxiv.org/html/2611.19419v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "短程 KL 蒸馏中，All-2D Muon 未稳定胜过 AdamW",
+      "dateNote": "v1 提交 2026-11-14 ET · 11 月 17 日公告",
+      "evidence": "已读 §2–5、图 1–3",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "四对指令微调过的 Qwen 从同一对内共享 tokenizer。固定教师分布 q，学生为 p，按 token 计算前向 KL。训练在每个样本内将答案 A 与推理 C 各取均值，避免较长的推理占走权重。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\ell_{it}=D_{\\mathrm{KL}}(q_{it}\\|p_{\\theta,it}),\\qquad L_i=\\tfrac12\\operatorname{mean}_{t\\in A_i}\\ell_{it}+\\tfrac12\\operatorname{mean}_{t\\in C_i}\\ell_{it}",
+          "label": "两区均非空时的训练目标。验证改按所有受监督 token 等权。"
+        },
+        {
+          "type": "text",
+          "text": "用 79,535 条 Nemotron 推理轨迹、全局 batch 144、1,683 步及三种子。All-2D 把谱更新也用于嵌入和输出头。下表只列正文明确报告的比较。 [2]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Qwen 学生←教师",
+            "最低验证 KL 的比较"
+          ],
+          "rows": [
+            [
+              "0.6B←1.7B",
+              "AdamW ≈ SOAP ≈ All-2D Muon"
+            ],
+            [
+              "4B←8B / 14B←32B",
+              "AdamW < SOAP, All-2D Muon"
+            ],
+            [
+              "32B←72B (Qwen2.5)",
+              "AdamW < AdaGrad"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "完成训练的矩阵方法均增加 trainer time，包含教师前向、验证和保存检查点。结果适用于这套固定预算、All-2D 参数分配及离线轨迹，未测常规仅隐藏层的 Muon 或任务准确率。 [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-21241",
+      "paper": "Anytime-Valid PAC-Bayes Certificates for Adaptive Test-Time Scaling",
+      "authors": "Xiaoyu Li · Jiangxuan Long",
+      "url": "https://arxiv.org/html/2611.21241v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "看过校准集再选采样预算，如何给风险上界？",
+      "dateNote": "v1 提交 2026-11-16 ET · 11 月 17 日公告",
+      "evidence": "已读 §3–4、§6、§8.2 及附录 A",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "把提示词、采样预算、分配规则和验证器组合看作随机预测协议。P 是独立于校准数据的先验，Q 可用 i.i.d. 校准题及运行记录选择。令损失有界于 0 到 1。从逐时刻失效率 δ/[n(n+1)] 求和，得到对所有 n、Q 同时成立的事件。 [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\operatorname{kl}(\\widehat L_n(Q)\\|L(Q))\\le \\frac{D_{\\mathrm{KL}}(Q\\|P)+\\log(2\\sqrt n\\,n(n+1)/\\delta)}{n}",
+          "label": "定理 4.1。若在 M 条规则中择一，均匀先验下选择代价是 log M／n；二元 kl 反解风险上界。"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Pr\\{\\mathrm{vote}_b(x)\\ne y\\mid x\\}\\le(m-1)e^{-b\\Delta_x^2/2},\\qquad \\Delta_x=p_x(y)-\\max_{a\\ne y}p_x(a)>0",
+          "label": "命题 6.1 的简式。b 次独立采样，答案支持至多 m。若某错误答案概率更高，正确率反而有指数衰减的上界。"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "GSM8K 的 gpt-4.1-mini 从四档预算选 b=5。659 道校准题给 0.109 上界，660 道留出题风险为 0.039。统一有效的界仍可偏宽；先验与协议族须在查看校准记录前固定。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-19099",
+      "paper": "Instructor-designed AI improves learning in a randomized trial across 19 universities",
+      "authors": "Jun Li · Robert Bray · Sébastien Martin · Hamsa Bastani (Wharton) · et al.",
+      "url": "https://arxiv.org/html/2611.19099v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "教师主导的 AI 教学试验",
+      "dateNote": "v1 提交 2026-11-13 ET · 11 月 17 日公告",
+      "evidence": "已读结果、图 3 与 Methods",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "19 所大学约 7,200 名学生。随机分派课程，结合往届成绩的差分回归，学生层级考试效应为 +0.32 SD（95% CI [0.06, 0.59]）；课堂活动和满意度无显著变化。处理是给任课教师设计并部署工具的机会，涵盖多种干预。 [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-19059",
+      "paper": "High-dimensional limit theorems for adaptive variants of SGD I: Ballistic limits",
+      "authors": "Aukosh Jagannath · Varnan Sarangian",
+      "url": "https://arxiv.org/abs/2611.19059v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "用平均法刻画自适应动量的高维极限",
+      "dateNote": "v1 提交 2026-11-13 ET · 11 月 17 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用平均法处理动量与预条件器的历史依赖，得到高维有效 Markov 动力学。例子含 Adam、Newton–Schulz Muon 及 XOR 上的混合优化器。 [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-19477",
+      "paper": "Grokking Can Be Steered: Selecting Desirable Solutions By Choice Of Learning Rule",
+      "authors": "Pascal Sager · Benjamin Grewe · Pau Vilimelis Aceituno · Thilo Stadelmann",
+      "url": "https://arxiv.org/abs/2611.19477v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "学习规则改变实现 Fourier 算法的电路大小",
+      "dateNote": "v1 提交 2026-11-14 ET · 11 月 17 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "模加法上，获得 grokking 的规则均恢复 Fourier 算法。按神经元均衡梯度或缩放衰减，使有效电路从 60% 扩到 99%。Muon 在论文设置下与 Adam、Shampoo 一样形成较集中的电路。 [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-19800",
+      "paper": "Multi-Branch Transformer",
+      "authors": "Gaotang Li · Lingjie Chen · Chunyuan Deng · et al.",
+      "url": "https://arxiv.org/abs/2611.19800v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "同参数与算力下用并行分支替换部分顺序深度",
+      "dateNote": "v1 提交 2026-11-15 ET · 11 月 17 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "MoE 预训练跨四档总参数量 0.8B–2.1B。两分支的 Wide-Shallow 版在给定预算下优于顺序对照，Balanced 版进一步改善。 [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-20010",
+      "paper": "PlanDiv: Test-Time Scaling with Latent Plans for Vision-Language-Action Models",
+      "authors": "Hanbo Zhang · Lianlei Shan · Liuhaichen Yang · Zezhi Tang",
+      "url": "https://arxiv.org/abs/2611.20010v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "增加动作预算时，分散计划比单计划重采样更有效",
+      "dateNote": "v1 提交 2026-11-15 ET · 11 月 17 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "单次 backbone 前向后解码 8 个潜在计划，CALVIN ABC→D 五任务链成功率 69.9%；8 候选的自回归、无计划或同计划对照至多 64.9%。 [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-19145",
+      "paper": "A Systematic Study of Cross-Token Transfer for Data-Efficient Non-Verbal Text-to-Speech",
+      "authors": "Jing Pan · Haibin Wu · Minxue Niu · Florian Metze · Yuzong Liu",
+      "url": "https://arxiv.org/abs/2611.19145v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "少样本笑声合成的数据配比",
+      "dateNote": "v1 提交 2026-11-13 ET · 11 月 17 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "CosyVoice 2 中，200 个笑声样本加 3,200 个咳嗽样本，将笑声 F1 从 0.170 提到 0.529，高于只用 1,600 个笑声样本的 0.495。 [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-20569",
+      "paper": "ToolGraph as a Q-Function for Test-Time Scaling of Tool-Use Agents",
+      "authors": "Ke Shen · Ankita Bhaumik · Li Dong · Shengjie Liu · Shuzhen Li · Naveed Ahmed Janvekar",
+      "url": "https://arxiv.org/abs/2611.20569v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "在工具依赖图上估计多步动作价值",
+      "dateNote": "v1 提交 2026-11-16 ET · 11 月 17 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用参数匹配及有无前置工具的执行对照构建有向图，再以动态规划、GraphSAGE 蒸馏或 LLM 评分估计目标条件动作价值；在两项工具基准、三种 backbone 上对照同图检索。 [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-20732",
+      "paper": "Routing Beyond Task Categories: A Cost-Aware LAB-Bench Study",
+      "authors": "Ahmed Tariq · Leo Guinan",
+      "url": "https://arxiv.org/abs/2611.20732v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "成本约束下路由的增益仍不确定",
+      "dateNote": "v1 提交 2026-11-16 ET · 11 月 17 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "144 道新题中，在每千次 0.678 美元预算内，读首答后决定是否转交的策略较 95/5 混合基线高 1.35 个百分点（配对 95% CI [−0.14, 3.47]）。 [11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-21003",
+      "paper": "K2-Horizon: A Frontier Fleet of Open Source Language Models",
+      "authors": "K2 Team · Zhengzhong Liu · Haonan Li · et al.",
+      "url": "https://arxiv.org/html/2611.21003v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "K2-Horizon 技术报告首发，披露跨策略的异步轨迹",
+      "dateNote": "v1 提交 2026-11-16 ET · 11 月 17 日公告",
+      "evidence": "已读 §2、§6.1–6.3",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "模型此前已发布。本期报告记载权重更新时可保留工具环境，在调用边界恢复轨迹。每 token 用实际生成策略算重要性比，上限为 2，最大版本滞后为 5；训练用序列均值。 [12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2602-05846",
+      "paper": "Optimal scaling laws in learning hierarchical multi-index models",
+      "authors": "Leonardo Defilippis · Florent Krzakala · Bruno Loureiro · Antoine Maillard",
+      "url": "https://arxiv.org/pdf/2602.05846v2",
+      "kind": "简讯 · 实质版本更新",
+      "title": "层次特征恢复新增一般噪声敏感指数",
+      "dateNote": "首发 2026-02-05 · v2 2026-11-16 ET",
+      "evidence": "已对照两版相关章节",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "新增 §3.4 与附录 C。共享偶链接函数时，若噪声敏感指数为 β⋆，定理 3.13 给出 Bayes-AMP 的第 k 个弱恢复阈值按 k 的 2γβ⋆ 次幂变化，谱估计器也达到该算法级界。 [13, 14]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2605-09724",
+      "paper": "How Large Must a Model Be to Grok? A competition between memorisation and generalisation timescales",
+      "authors": "Yiding Song · Hanming Ye",
+      "url": "https://arxiv.org/pdf/2605.09724v3",
+      "kind": "简讯 · 实质版本更新",
+      "title": "Grokking 阈值新增跨种子校准对照",
+      "dateNote": "首发 2026-05-10 · v3 2026-11-14 ET",
+      "evidence": "已对照两版相关章节",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v3 重写观测阈值与拟合阈值的比较，报告首次出现延迟泛化与两时间曲线交点之间的系统偏移，新增独立种子复查。 [15, 16]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2605-06219",
+      "paper": "Joint Consistency: A Unified Test-Time Aggregation Framework via Energy Minimization",
+      "authors": "Yunzhen Yao · Hongye Wang · Yahong Wang · Michael C. Gastpar · Bo Jiang · Lie He",
+      "url": "https://arxiv.org/pdf/2605.06219v2",
+      "kind": "简讯 · 实质版本更新",
+      "title": "推理聚合新增答案组内分歧惩罚",
+      "dateNote": "首发 2026-05-07 · v2 2026-11-14 ET",
+      "evidence": "已对照两版相关章节",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "新式 (7) 明确对同答案组内的比较分歧惩罚，附录 E 给出从参考轨迹比较出发的推导。 [17, 18]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2607-07386",
+      "paper": "Sparse Delta Memory: Scaling the State of Linear RNNs through Sparsity",
+      "authors": "Loïc Cabannes · Pierre-Emmanuel Mazaré · Ilze Amanda Auzina · et al.",
+      "url": "https://arxiv.org/pdf/2607.07386v2",
+      "kind": "简讯 · 实质版本更新",
+      "title": "稀疏线性 RNN 新增固定状态容量的消融",
+      "dateNote": "首发 2026-07-08 · v2 2026-11-16 ET",
+      "evidence": "已对照两版相关章节",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v2 在 1.4B 上新增固定状态元素数、改变头数和寻址因子分解的对照，分别报告预训练损失、长序列损失和针检索。 [19, 20]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2507-04348",
+      "paper": "SmartThinker: Learning High-Density Reasoning via Step-Level Token Allocation",
+      "authors": "Xingyang He · Xiao Ling · Jie Liu",
+      "url": "https://arxiv.org/pdf/2507.04348v3",
+      "kind": "简讯 · 实质版本更新",
+      "title": "逐步 token 分配新增固定总预算对照",
+      "dateNote": "首发 2025-07-06 · v3 2026-11-13 ET",
+      "evidence": "已对照两版相关章节",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v3 新增 AIME24 固定总 token 预算测试，按同一题目顺序比较能在预算内解对的题数；同时列出已尝试题数，并补充逐步评分与训练耗时的拆分。 [21, 22]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.20404v1",
+      "title": "潜在反馈 · §2–5、表 1 与附录 F"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.19419v1",
+      "title": "前向 KL 蒸馏 · §2–5、图 1–3"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.21241v1",
+      "title": "推理预算审计 · 定理 4.1、命题 6.1、表 2 与附录 A"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.19099v1",
+      "title": "Instructor-designed AI improves learning in a randomized trial across 19 universities · 已读结果、图 3 与 Methods"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.19059v1",
+      "title": "High-dimensional limit theorems for adaptive variants of SGD I: Ballistic limits · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.19477v1",
+      "title": "Grokking Can Be Steered: Selecting Desirable Solutions By Choice Of Learning Rule · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.19800v1",
+      "title": "Multi-Branch Transformer · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.20010v1",
+      "title": "PlanDiv: Test-Time Scaling with Latent Plans for Vision-Language-Action Models · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.19145v1",
+      "title": "A Systematic Study of Cross-Token Transfer for Data-Efficient Non-Verbal Text-to-Speech · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.20569v1",
+      "title": "ToolGraph as a Q-Function for Test-Time Scaling of Tool-Use Agents · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.20732v1",
+      "title": "Routing Beyond Task Categories: A Cost-Aware LAB-Bench Study · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.21003v1",
+      "title": "K2-Horizon: A Frontier Fleet of Open Source Language Models · 已读 §2、§6.1–6.3"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2602.05846v1",
+      "title": "Optimal scaling laws in learning hierarchical multi-index models · 对照旧版"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2602.05846v2",
+      "title": "Optimal scaling laws in learning hierarchical multi-index models · 更新版正文"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.09724v2",
+      "title": "How Large Must a Model Be to Grok? A competition between memorisation and generalisation timescales · 对照旧版"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.09724v3",
+      "title": "How Large Must a Model Be to Grok? A competition between memorisation and generalisation timescales · 更新版正文"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.06219v1",
+      "title": "Joint Consistency: A Unified Test-Time Aggregation Framework via Energy Minimization · 对照旧版"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.06219v2",
+      "title": "Joint Consistency: A Unified Test-Time Aggregation Framework via Energy Minimization · 更新版正文"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2607.07386v1",
+      "title": "Sparse Delta Memory: Scaling the State of Linear RNNs through Sparsity · 对照旧版"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2607.07386v2",
+      "title": "Sparse Delta Memory: Scaling the State of Linear RNNs through Sparsity · 更新版正文"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2507.04348v2",
+      "title": "SmartThinker: Learning High-Density Reasoning via Step-Level Token Allocation · 对照旧版"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2507.04348v3",
+      "title": "SmartThinker: Learning High-Density Reasoning via Step-Level Token Allocation · 更新版正文"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v28/pascanu13.pdf",
+      "title": "ICML 2013 会议版 · §2、§3.2–3.3"
+    },
+    {
+      "url": "https://openalex.org/W1815076433",
+      "title": "OpenAlex · 引用记录，2026-11-17 查询"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v28/pascanu13.html",
+      "title": "PMLR · ICML 2013 书目"
+    }
+  ],
+  "classic": {
+    "id": "classic-rnn-gradient-clipping",
+    "paperId": "arxiv:1211.5063",
+    "shortTitle": "Training Recurrent Neural Networks",
+    "year": 2013,
+    "topics": [
+      "RNN"
+    ],
+    "paper": "On the difficulty of training recurrent neural networks",
+    "authors": "Razvan Pascanu · Tomas Mikolov · Yoshua Bengio",
+    "url": "https://proceedings.mlr.press/v28/pascanu13.pdf",
+    "kind": "历史经典",
+    "title": "RNN 的梯度为何爆炸，裁剪约束了什么？",
+    "dateNote": "arXiv 首发 2012-11-21 · 阅读 ICML 2013 会议版",
+    "evidence": "已读 §2、§3.2–3.3。会议记录 [25]",
+    "recognition": {
+      "label": "OpenAlex 高引用论文 · 2026-11-17 查询",
+      "url": "https://openalex.org/W1815076433"
+    },
+    "question": "固定训练步长上限后，若梯度裁剪频繁触发，怎样用方向化的 Jacobian 增益区分少数陡壁与系统性长程收缩？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Bengio 等（1994）把长程学习困难与逐步衰减的梯度联系起来。本文沿 BPTT 的 Jacobian 乘积看梯度，并区分反传收缩与损失面陡壁上的更新失控。 [23]"
+      },
+      {
+        "type": "equation",
+        "tex": "x_t=W\\sigma(x_{t-1})+Bu_t+b,\\qquad J_t=\\partial x_t/\\partial x_{t-1}=W\\operatorname{diag}(\\sigma^{\\prime}(x_{t-1}))",
+        "label": "论文的普通 RNN 参数化。uₜ 为输入，xₜ 为隐状态。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\frac{\\partial E_t}{\\partial x_k}=\\frac{\\partial E_t}{\\partial x_t}J_t\\cdots J_{k+1},\\qquad \\|J_t\\cdots J_{k+1}\\|_2\\le (\\|W\\|_2\\Gamma)^{t-k}",
+        "label": "按行梯度书写。若 |σ′|≤Γ 且乘子小于 1，远期误差信号指数衰减。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widetilde g=g\\min\\{1,\\tau/\\|g\\|_2\\},\\qquad \\theta^+=\\theta-\\eta\\widetilde g",
+        "label": "算法 1。非零梯度保留方向，将本次欧氏步长限制在 ητ；零梯度仍为零。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\Omega=\\sum_k\\left(\\frac{\\|v_{k+1}J_{k+1}\\|_2}{\\|v_{k+1}\\|_2}-1\\right)^2,\\qquad v_{k+1}=\\partial E/\\partial x_{k+1}",
+        "label": "式 (9) 的软约束，仅沿当前非零反传方向鼓励保范数。实现取直接偏导，固定状态和误差信号。"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "裁剪给出更新范数上限。拟保范数的正则针对当前误差信号，长程乘积仍可能收缩。 [23]"
+      }
+    ]
+  }
+}

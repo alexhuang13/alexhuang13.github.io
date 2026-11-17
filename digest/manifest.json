@@ -4,8 +4,46 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-16",
+  "latest": "2026-11-17",
   "issues": [
+    {
+      "date": "2026-11-17",
+      "title": "潜在反馈、蒸馏优化器与推理预算审计",
+      "url": "/digest/2026-11-17.html",
+      "translations": {
+        "en": {
+          "title": "Latent Feedback, Distillation Optimizers, and Inference Audits",
+          "url": "/digest/en/2026-11-17.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.20404v1",
+        "https://arxiv.org/html/2611.19419v1",
+        "https://arxiv.org/html/2611.21241v1",
+        "https://arxiv.org/html/2611.19099v1",
+        "https://arxiv.org/abs/2611.19059v1",
+        "https://arxiv.org/abs/2611.19477v1",
+        "https://arxiv.org/abs/2611.19800v1",
+        "https://arxiv.org/abs/2611.20010v1",
+        "https://arxiv.org/abs/2611.19145v1",
+        "https://arxiv.org/abs/2611.20569v1",
+        "https://arxiv.org/abs/2611.20732v1",
+        "https://arxiv.org/html/2611.21003v1",
+        "https://arxiv.org/pdf/2602.05846v1",
+        "https://arxiv.org/pdf/2602.05846v2",
+        "https://arxiv.org/pdf/2605.09724v2",
+        "https://arxiv.org/pdf/2605.09724v3",
+        "https://arxiv.org/pdf/2605.06219v1",
+        "https://arxiv.org/pdf/2605.06219v2",
+        "https://arxiv.org/pdf/2607.07386v1",
+        "https://arxiv.org/pdf/2607.07386v2",
+        "https://arxiv.org/pdf/2507.04348v2",
+        "https://arxiv.org/pdf/2507.04348v3",
+        "https://proceedings.mlr.press/v28/pascanu13.pdf",
+        "https://openalex.org/W1815076433",
+        "https://proceedings.mlr.press/v28/pascanu13.html"
+      ]
+    },
     {
       "date": "2026-11-16",
       "title": "Muon 的临时衰减与洗牌动量",
