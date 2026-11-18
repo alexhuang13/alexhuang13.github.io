@@ -1,0 +1,453 @@
+{
+  "date": "2026-11-18",
+  "number": "036",
+  "publishedAt": "2026-11-18T13:37:52Z",
+  "readingMinutes": 12,
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Post-training",
+    "RNN"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "Daily Research Notes",
+  "title": "Vision–Language Fusion, Stratified Policies, and Scientific RLVR",
+  "subtitle": "Data mixtures · Inference budgets · Manifold Muon · Classifier-free guidance",
+  "intro": "The main reads examine fusion timing for vision and text, allocating samples across complementary policies, and converting experimental records into RLVR rewards. Briefs cover Muon and scaling-law revisions. The classic is classifier-free diffusion guidance.",
+  "window": "November 15–18, 2026 (Philadelphia time, focusing on updates since the previous issue and the November 18 announcements)",
+  "articles": [
+    {
+      "id": "paper-2611-22351",
+      "paper": "Scaling Laws for Vision-Language Fusion",
+      "authors": "Seng Pei Liew · Teppei Suzuki · Seiya Tokui",
+      "url": "https://arxiv.org/html/2611.22351v1",
+      "kind": "Main read · First arXiv posting",
+      "title": "What does fusion timing change when both token budgets are fixed?",
+      "dateNote": "v1 submitted November 17, 2026 ET · November 18 announcement",
+      "evidence": "Read Sections 4–6, Table 3 and Appendix F",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Let Dₚ be text pretraining tokens, D fusion-stage tokens and R the caption fraction. The authors separate a power law in effective exposure from a distribution-shift term, using a fitted exchange rate w between token types. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal D_{\\mathrm{cap}}=w_{\\mathrm{cap}}D_p+[R+w_{\\mathrm{cap}}(1-R)]D,\\qquad L_m=L_{0,m}+A_m\\mathcal D_m^{-\\alpha_m}+\\sigma_m B_m\\rho_m(R)\\Phi_m(D)",
+          "label": "Paper’s empirical model. The modality m is caption or text, with σcap=−1 and σtxt=+1. The saturation amplitude ρ depends on the mixture ratio, while Φ builds up with training exposure."
+        },
+        {
+          "type": "equation",
+          "tex": "T_{\\mathrm{txt}}=D_p+(1-R)D,\\quad T_{\\mathrm{cap}}=RD\\quad\\Longrightarrow\\quad\\mathcal D_{\\mathrm{cap}}=w_{\\mathrm{cap}}T_{\\mathrm{txt}}+T_{\\mathrm{cap}}",
+          "label": "At fixed budgets for both token types, the base exposure is independent of fusion timing, leaving timing effects in the shift term."
+        },
+        {
+          "type": "text",
+          "text": "Early fusion mixes from the start. Late fusion begins with text and then concentrates caption exposure. The experiment uses 56B total tokens and reports validation nats per token. [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Size",
+            "Early caption/text",
+            "Late caption/text"
+          ],
+          "rows": [
+            [
+              "300M",
+              "1.1488 / 3.4095",
+              "0.9902 / 6.3135"
+            ],
+            [
+              "1B",
+              "0.9659 / 3.0258",
+              "0.8705 / 5.8537"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "At R=1, text capability collapses, so the text scaling fit is restricted to R≤0.82. Visual downstream scores do not consistently follow caption loss, which limits the table’s interpretation to the loss trade-off. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-23154",
+      "paper": "Learning Stratified Policies for Inference-Time Objectives",
+      "authors": "Mridul Mahajan · Xuezhou Zhang · Aldo Pacchiano",
+      "url": "https://arxiv.org/html/2611.23154v1",
+      "kind": "Main read · First arXiv posting",
+      "title": "Allocate five samples across five jointly trained LoRAs",
+      "dateNote": "v1 submitted November 17, 2026 ET · November 18 announcement",
+      "evidence": "Read Sections 3–5, Theorem 1 and Appendices E–G",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A frozen backbone is shared across LoRA policies. One answer from each policy is drawn, and the population jointly optimizes the probability of at least one correct answer. The control draws five answers from one policy using the same five-sample advantage rule. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "J(\\theta_1,\\ldots,\\theta_k)=\\mathbb E_x\\!\\left[1-\\prod_{i=1}^k(1-p_i(x))\\right],\\qquad p_i(x)=\\Pr_{y\\sim\\pi_{\\theta_i}}\\{r(x,y)=1\\}",
+          "label": "Equivalent rewriting of the paper’s pass@k objective, with conditionally independent samples given x. A policy’s marginal benefit depends on how much probability the others leave uncovered."
+        },
+        {
+          "type": "equation",
+          "tex": "A_i^{\\mathrm{LOO}}=\\max_j r_j-\\max_{j\\ne i}r_j,\\qquad A_i^{\\mathrm{GM}}=\\mathbf1_{\\{i=i^*\\}}\\left(r_i-\\frac1k\\sum_j r_j\\right)",
+          "label": "Equations (4) and (6). For binary rewards, LOO rewards only a unique success. GM draws i* uniformly among maximizers and updates only that winner. Mixed groups with several successes still yield a signal, but GM is biased for pass@k."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Task / backbone",
+            "Single pass@5",
+            "Five-policy pass@5"
+          ],
+          "rows": [
+            [
+              "Sudoku / Qwen2.5-1.5B",
+              "74.2 (0.6)",
+              "80.3 (0.3)"
+            ],
+            [
+              "GSM-Symbolic / Llama-3.1-8B",
+              "85.5 (2.4)",
+              "90.4 (0.1)"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Parentheses give standard errors over three seeds. LoRA rank is 32 and the output cap is 768 tokens. Rank-160 Single still scores 74.2 on Sudoku. The GSM control uses a pre-collapse checkpoint. The regional-linear expressivity theorem is an existence result, with LLM learning and budget gains supported empirically. [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-blog-nemotron-science",
+      "paper": "Post-Training NVIDIA Nemotron to Increase Accuracy in Your Scientific Domain",
+      "authors": "Gautham Dharuman · Xiaoyun Wang · Logan Ward · Geetika Gupta · Kibibi Moseley",
+      "url": "https://developer.nvidia.com/blog/post-training-nvidia-nemotron-to-increase-accuracy-in-your-scientific-domain/",
+      "kind": "Main read · Technical blog",
+      "title": "Build RLVR from metabolism experiments in a CSV",
+      "dateNote": "Published November 16, 2026 · Added from the overlap window",
+      "evidence": "Read environment, reward, GRPO and distillation code excerpts",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Given a parent molecule and enzyme, the model submits the metabolite as SMILES. NeMo Gym connects the experimental reference to a reward server, and NeMo RL applies LoRA GRPO. The reward measures overlap between binary fingerprints of the predicted and reference molecules. [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "r(\\widehat m,m)=\\frac{|F(\\widehat m)\\cap F(m)|}{|F(\\widehat m)\\cup F(m)|}",
+          "label": "Tanimoto similarity, with F denoting the molecular fingerprint. The same scorer can filter teacher traces before SFT."
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "A threshold of 0.7 retains 1,123 teacher traces from 1,934 training prompts. Fingerprint similarity checks the final structure, while the chemical validity of each reasoning step remains separately unverified. The reported gains lack a sufficiently clear percentage definition, so this entry records the reproducible workflow and sample counts. [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-22576",
+      "paper": "ReMaRL: Learning to Unmask and Remask in Frozen Diffusion Language Models",
+      "authors": "Egor Shibaev · Danila Biktimirov · Ivan Klimov · Artem Makoian · Viacheslav Meshchaninov · Dmitry Vetrov",
+      "url": "https://arxiv.org/abs/2611.22576v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Learn remasking decisions under inference-call budgets",
+      "dateNote": "v1 submitted November 17, 2026 ET · November 18 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A roughly 0.3M-parameter GRPO policy learns to unmask, retain or remask tokens with LLaDA-8B-Instruct frozen. Comparisons cover prior scheduling and remasking rules under 4–32 model calls for math and 8–16 for code. [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-21885",
+      "paper": "Language Models Can Rewrite Their Own Weights",
+      "authors": "Jiajun Fan · Neil He · Changyi Yang · et al.",
+      "url": "https://arxiv.org/html/2611.21885v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Self-edited weights retain gains on a fixed held-out test",
+      "dateNote": "v1 submitted November 16, 2026 ET · November 18 announcement",
+      "evidence": "Read Sections 2–3, Appendix D and held-out comparisons",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A 27B model inspects states, runs tests and edits its own weights. On 490 held-out math problems fixed in advance, the eighth session’s edit scores 63.8% versus 57.2% for the base. Some edits alter linear-attention decay. Another edit improves accuracy while increasing repetitive endings. [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-22888",
+      "paper": "Stopping Is Not the Limit: Understanding and Eliciting Agent Capability in Long-Horizon Vulnerability Exploitation",
+      "authors": "Deokhyung Kang · Minjae Gwon · Sangdon Park",
+      "url": "https://arxiv.org/abs/2611.22888v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Long-horizon budgets interact with context management",
+      "dateNote": "v1 submitted November 17, 2026 ET · November 18 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "On ExploitBench, continued execution with summary management yields further verified successes after a stop. MiMo with SCoRe reaches 67.0% capability coverage at 2,000 turns. The paper’s GPT-5.5 reference is 58.6% at 300 turns, with a different budget. [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2605-09238",
+      "paper": "iMuon: Intrinsic Spectral Optimization on Riemannian Matrix Manifolds",
+      "authors": "Yibang Li · Bihari Lal Pandey · Ravi Sah · Andi Han · Cyrus Mostajeran · Pratik Jawanpuria · Bamdev Mishra",
+      "url": "https://arxiv.org/pdf/2605.09238v2",
+      "kind": "Brief · Substantive revision",
+      "title": "iMuon strengthens quotient symmetry and closed-form conditions",
+      "dateNote": "First posted May 9 ET · v2 November 16, 2026 ET",
+      "evidence": "Compared relevant full-text sections in both versions",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Version 2 reformulates group invariance of the intrinsic constraint. Proposition 3.1 connects a left–right metric structure to equivalent factor representations. Proposition 3.4 gives closed-form LMOs under singular-value invariance or norm contractivity of the scaled tangent space. These geometric conditions must be checked for each manifold. [7, 8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2605-13405",
+      "paper": "When is Warmstarting Effective for Scaling Language Models?",
+      "authors": "Neeratyoy Mallik · Maciej Janowski · Johannes Hog · et al.",
+      "url": "https://arxiv.org/pdf/2605.13405v2",
+      "kind": "Brief · Substantive revision",
+      "title": "Model growth adds base-training-cost accounting",
+      "dateNote": "First posted May 13 · v2 November 17, 2026 ET",
+      "evidence": "Compared relevant full-text sections in both versions",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "New Table 13 includes base-model training FLOPs in the IsoFLOP analysis. Both the optimal growth factor and the upper factor retaining a gain move downward. Added controls vary perturbation, shrinkage and the LLaMA architecture. [9, 10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-35707",
+      "paper": "ScAn-Bench: Evaluating Scaling Analysis Methodology",
+      "authors": "Artin Sermaxhaj · Nastaran Alipour · Donat Sinani · et al.",
+      "url": "https://arxiv.org/pdf/2609.35707v3",
+      "kind": "Brief · Substantive revision",
+      "title": "Accurate loss extrapolation can still yield poor hyperparameters",
+      "dateNote": "First posted September 28 · v3 November 17, 2026 ET",
+      "evidence": "Compared relevant full-text sections in both versions",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Version 3 adds acquisition-by-extrapolation comparisons (Figure 7) and full hyperparameter extrapolation (Table 4). Flexible loss fits can predict losses while leaving underlying parameters weakly identified, making optimal model size sensitive to ratios of fitted coefficients. [11, 12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2605-10395",
+      "paper": "Sharp feature-learning transitions and Bayes-optimal neural scaling laws in extensive-width networks",
+      "authors": "Minh-Toan Nguyen · Jean Barbier",
+      "url": "https://arxiv.org/pdf/2605.10395v2",
+      "kind": "Brief · Substantive revision",
+      "title": "Extensive-width teacher analysis extends to two hidden layers",
+      "dateNote": "First posted May 11 · v2 November 17, 2026 ET",
+      "evidence": "Compared relevant full-text sections in both versions",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The extension adds two hidden layers with widths of order d. Result 9 and Appendix N start from a replica-symmetric potential, predicting a joint transition when n reaches the first-layer parameter scale, followed by Bayes error of order k₁d/n. The extension relies on statistical-physics heuristics and numerical validation. [13, 14]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-23808",
+      "paper": "FLARE: A Full-Lifecycle Dense Supervision Paradigm for Long-Horizon Coding Agents via Generative Reward Model",
+      "authors": "Jingxuan Xu · Gang Wu · Yanan Wu · et al.",
+      "url": "https://arxiv.org/pdf/2609.23808v2",
+      "kind": "Brief · Substantive revision",
+      "title": "Coding-agent token savings get a clarified accounting scope",
+      "dateNote": "First posted September 20 · v2 November 17, 2026 ET",
+      "evidence": "Compared relevant full-text sections in both versions",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Version 2 specifies the roughly fivefold reduction as base-agent output and adds slices by model, scaffold, language and difficulty. The figure does not account for all reward-model scoring overhead. [15, 16]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-10397",
+      "paper": "Regularization Amplifies Subliminal Learning",
+      "authors": "Lawrence Feng · Jacob Mitchell Springer · Gaurav R. Ghosal · Ziqian Zhong · Aditi Raghunathan",
+      "url": "https://arxiv.org/pdf/2611.10397v2",
+      "kind": "Brief · Substantive revision",
+      "title": "Aditi revision checks learning-rate selection by held-out loss",
+      "dateNote": "First posted November 6 ET · v2 November 16, 2026 ET",
+      "evidence": "Compared relevant full-text sections in both versions",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "New Figures 19 and 27 select learning rates using held-out loss alongside the original transfer-maximizing choice. Cat and dolphin transfer still increases at lower rank, while owl and dog transfer remains low at all ranks with the selected learning rates. Figure 29 uses held-out preference accuracy to compare DPO β values. [17, 18]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-22947",
+      "paper": "The Kernel Reality Check: Benchmarking and Distilling Efficient Attention at Scale",
+      "authors": "Fırat Öncel · Cem Subakan · Mirco Ravanelli · Çağatay Yıldız",
+      "url": "https://arxiv.org/abs/2611.22947v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Model scaling leaves kernel-attention quality gaps",
+      "dateNote": "v1 submitted November 17, 2026 ET · November 18 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Under a unified distillation protocol, prior kernel-attention methods trail softmax by 2–10 points, and scaling alone does not close the gaps. LARA++ uses adaptive importance sampling to recover up to 99% of softmax accuracy, while computational overhead remains substantial. [19]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.22351v1",
+      "title": "Vision–language fusion · Sections 4–6, Table 3 and Appendix F"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.23154v1",
+      "title": "Stratified policies · Sections 3–5, Theorem 1 and Table 2"
+    },
+    {
+      "url": "https://developer.nvidia.com/blog/post-training-nvidia-nemotron-to-increase-accuracy-in-your-scientific-domain/",
+      "title": "Original NVIDIA technical blog · Environment, reward and distillation code"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.22576v1",
+      "title": "ReMaRL: Learning to Unmask and Remask in Frozen Diffusion Language Models · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.21885v1",
+      "title": "Language Models Can Rewrite Their Own Weights · Read Sections 2–3, Appendix D and held-out comparisons"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.22888v1",
+      "title": "Stopping Is Not the Limit: Understanding and Eliciting Agent Capability in Long-Horizon Vulnerability Exploitation · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.09238v1",
+      "title": "iMuon: Intrinsic Spectral Optimization on Riemannian Matrix Manifolds · Previous version for comparison"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.09238v2",
+      "title": "iMuon: Intrinsic Spectral Optimization on Riemannian Matrix Manifolds · Updated version"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.13405v1",
+      "title": "When is Warmstarting Effective for Scaling Language Models? · Previous version for comparison"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.13405v2",
+      "title": "When is Warmstarting Effective for Scaling Language Models? · Updated version"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2609.35707v2",
+      "title": "ScAn-Bench: Evaluating Scaling Analysis Methodology · Previous version for comparison"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2609.35707v3",
+      "title": "ScAn-Bench: Evaluating Scaling Analysis Methodology · Updated version"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.10395v1",
+      "title": "Sharp feature-learning transitions and Bayes-optimal neural scaling laws in extensive-width networks · Previous version for comparison"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.10395v2",
+      "title": "Sharp feature-learning transitions and Bayes-optimal neural scaling laws in extensive-width networks · Updated version"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2609.23808v1",
+      "title": "FLARE: A Full-Lifecycle Dense Supervision Paradigm for Long-Horizon Coding Agents via Generative Reward Model · Previous version for comparison"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2609.23808v2",
+      "title": "FLARE: A Full-Lifecycle Dense Supervision Paradigm for Long-Horizon Coding Agents via Generative Reward Model · Updated version"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2611.10397v1",
+      "title": "Regularization Amplifies Subliminal Learning · Previous version for comparison"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2611.10397v2",
+      "title": "Regularization Amplifies Subliminal Learning · Updated version"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.22947v1",
+      "title": "The Kernel Reality Check: Benchmarking and Distilling Efficient Attention at Scale · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2207.12598",
+      "title": "Classifier-free guidance · Sections 2–3, Algorithms 1–2 and Section 4"
+    },
+    {
+      "url": "https://openalex.org/W4288099666",
+      "title": "OpenAlex high-citation record · Checked November 18, 2026"
+    }
+  ],
+  "classic": {
+    "id": "classic-classifier-free-guidance",
+    "paperId": "arxiv:2207.12598",
+    "shortTitle": "Classifier-Free Guidance",
+    "year": 2021,
+    "topics": [
+      "Diffusion"
+    ],
+    "paper": "Classifier-Free Diffusion Guidance",
+    "authors": "Jonathan Ho · Tim Salimans",
+    "url": "https://arxiv.org/pdf/2207.12598",
+    "kind": "Historical classic",
+    "title": "What does guidance strength change at each noise level?",
+    "dateNote": "NeurIPS 2021 DGMs workshop · First arXiv posting July 26, 2022 · Read arXiv v1",
+    "evidence": "Read Sections 2–4 and Algorithms 1–2",
+    "recognition": {
+      "label": "Highly cited in OpenAlex · Checked November 18, 2026",
+      "url": "https://openalex.org/W4288099666"
+    },
+    "question": "At the same network-evaluation budget, how could we separately measure guidance-induced discretization error, score error and quality–diversity changes?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "DDPM (2020) learns scores at different noise levels through noise prediction. Dhariwal–Nichol (2021) guides sampling using a noisy classifier gradient. Ho–Salimans combine conditional and unconditional noise estimates so one network supports a quality–diversity trade-off. [20]"
+      },
+      {
+        "type": "equation",
+        "tex": "z_\\lambda=\\alpha_\\lambda x+\\sigma_\\lambda\\epsilon,\\quad\\epsilon\\sim\\mathcal N(0,I),\\qquad\\min_\\theta\\mathbb E\\|\\epsilon_\\theta(z_\\lambda,\\widetilde c)-\\epsilon\\|_2^2",
+        "label": "During training, replace c with ∅ with probability pᵤ and otherwise retain it. The noise index λ is log SNR."
+      },
+      {
+        "type": "equation",
+        "tex": "\\widetilde\\epsilon_\\theta=(1+w)\\epsilon_\\theta(z_\\lambda,c)-w\\epsilon_\\theta(z_\\lambda,\\varnothing),\\qquad \\widetilde x_\\theta=(z_\\lambda-\\sigma_\\lambda\\widetilde\\epsilon_\\theta)/\\alpha_\\lambda",
+        "label": "Equation (6) and Algorithm 2. Setting w=0 recovers ordinary conditional sampling. Both network evaluations share weights."
+      },
+      {
+        "type": "equation",
+        "tex": "s_c=\\nabla_z\\log p_\\lambda(z\\mid c),\\quad s_u=\\nabla_z\\log p_\\lambda(z),\\qquad \\widetilde s=(1+w)s_c-ws_u=s_c+w\\nabla_z\\log p_\\lambda(c\\mid z)",
+        "label": "Ideal exact-score identity for interpretation, from Bayes’ rule. Learned network scores carry approximation error."
+      },
+      {
+        "type": "equation",
+        "tex": "\\widetilde s=\\nabla_z\\log\\!\\left[p_\\lambda(z\\mid c)^{1+w}p_\\lambda(z)^{-w}\\right]",
+        "label": "An unnormalized density interpretation at a fixed noise level, requiring common support and integrability. It alone does not establish that the discrete sampler ends at the corresponding power-tilted clean-data density."
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "Section 4 reports FID, IS and precision–recall trade-offs on image tasks including ImageNet. The paper notes that unconstrained neural score fields can be nonconservative, leaving the ideal density identity to be assessed separately from actual sampling results. [20]"
+      }
+    ]
+  }
+}

@@ -4,8 +4,42 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-17",
+  "latest": "2026-11-18",
   "issues": [
+    {
+      "date": "2026-11-18",
+      "title": "视觉语言融合、分层策略与科学任务 RLVR",
+      "url": "/digest/2026-11-18.html",
+      "translations": {
+        "en": {
+          "title": "Vision–Language Fusion, Stratified Policies, and Scientific RLVR",
+          "url": "/digest/en/2026-11-18.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.22351v1",
+        "https://arxiv.org/html/2611.23154v1",
+        "https://developer.nvidia.com/blog/post-training-nvidia-nemotron-to-increase-accuracy-in-your-scientific-domain/",
+        "https://arxiv.org/abs/2611.22576v1",
+        "https://arxiv.org/html/2611.21885v1",
+        "https://arxiv.org/abs/2611.22888v1",
+        "https://arxiv.org/pdf/2605.09238v1",
+        "https://arxiv.org/pdf/2605.09238v2",
+        "https://arxiv.org/pdf/2605.13405v1",
+        "https://arxiv.org/pdf/2605.13405v2",
+        "https://arxiv.org/pdf/2609.35707v2",
+        "https://arxiv.org/pdf/2609.35707v3",
+        "https://arxiv.org/pdf/2605.10395v1",
+        "https://arxiv.org/pdf/2605.10395v2",
+        "https://arxiv.org/pdf/2609.23808v1",
+        "https://arxiv.org/pdf/2609.23808v2",
+        "https://arxiv.org/pdf/2611.10397v1",
+        "https://arxiv.org/pdf/2611.10397v2",
+        "https://arxiv.org/abs/2611.22947v1",
+        "https://arxiv.org/pdf/2207.12598",
+        "https://openalex.org/W4288099666"
+      ]
+    },
     {
       "date": "2026-11-17",
       "title": "潜在反馈、蒸馏优化器与推理预算审计",

@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-18",
+    "paperId": "arxiv:2207.12598",
+    "paper": "Classifier-Free Diffusion Guidance",
+    "shortTitle": "Classifier-Free Guidance",
+    "year": 2021,
+    "topics": [
+      "Diffusion"
+    ],
+    "recognition": {
+      "label": "OpenAlex 高引用论文 · 2026-11-18 查询",
+      "url": "https://openalex.org/W4288099666"
+    },
+    "source": "https://arxiv.org/pdf/2207.12598",
+    "url": "/digest/2026-11-18.html#classic-classifier-free-guidance"
+  },
+  {
     "date": "2026-11-17",
     "paperId": "arxiv:1211.5063",
     "paper": "On the difficulty of training recurrent neural networks",

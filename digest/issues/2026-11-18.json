@@ -1,0 +1,453 @@
+{
+  "date": "2026-11-18",
+  "number": "036",
+  "publishedAt": "2026-11-18T13:37:52Z",
+  "readingMinutes": 12,
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Post-training",
+    "RNN"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "每日研究笔记",
+  "title": "视觉语言融合、分层策略与科学任务 RLVR",
+  "subtitle": "数据配比 · 推理预算 · 流形 Muon · 无分类器引导",
+  "intro": "本期主读比较视觉与文本的融合时机、将采样预算分配给互补策略，并看实验记录如何变成 RLVR 奖励。另收录 Muon 与 scaling law 的版本更新。经典精读是无分类器扩散引导。",
+  "window": "2026-11-15 至 2026-11-18（费城时间，重点为上次刊出后及 11 月 18 日公告）",
+  "articles": [
+    {
+      "id": "paper-2611-22351",
+      "paper": "Scaling Laws for Vision-Language Fusion",
+      "authors": "Seng Pei Liew · Teppei Suzuki · Seiya Tokui",
+      "url": "https://arxiv.org/html/2611.22351v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "固定两类 token 后，融合时机的作用落在哪里？",
+      "dateNote": "v1 提交 2026-11-17 ET · 11 月 18 日公告",
+      "evidence": "已读 §4–6、表 3 与附录 F",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "设文本预训练量为 Dₚ，融合阶段 token 数为 D，caption 比例为 R。作者把 loss 分为有效曝光的幂律与分布变化两项。不同模态的 token 通过拟合的交换率 w 折算。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal D_{\\mathrm{cap}}=w_{\\mathrm{cap}}D_p+[R+w_{\\mathrm{cap}}(1-R)]D,\\qquad L_m=L_{0,m}+A_m\\mathcal D_m^{-\\alpha_m}+\\sigma_m B_m\\rho_m(R)\\Phi_m(D)",
+          "label": "原文经验模型。m 为 caption 或 text，σcap=−1，σtxt=+1；ρ 是混合比例引起的饱和幅度，Φ 是随训练曝光增长的饱和函数。"
+        },
+        {
+          "type": "equation",
+          "tex": "T_{\\mathrm{txt}}=D_p+(1-R)D,\\quad T_{\\mathrm{cap}}=RD\\quad\\Longrightarrow\\quad\\mathcal D_{\\mathrm{cap}}=w_{\\mathrm{cap}}T_{\\mathrm{txt}}+T_{\\mathrm{cap}}",
+          "label": "固定两类 token 时，基础曝光项与融合时机无关，时机效应由分布变化项承担。"
+        },
+        {
+          "type": "text",
+          "text": "早融合从头混合，晚融合先纯文本再集中加 caption。56B 总 token 的实验如下，指标为验证 nats／token。 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "规模",
+            "早融合 caption/text",
+            "晚融合 caption/text"
+          ],
+          "rows": [
+            [
+              "300M",
+              "1.1488 / 3.4095",
+              "0.9902 / 6.3135"
+            ],
+            [
+              "1B",
+              "0.9659 / 3.0258",
+              "0.8705 / 5.8537"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "纯 caption 的 R=1 会导致文本能力崩塌，文本 scaling 拟合域限定为 R≤0.82。视觉下游分数未随 caption loss 稳定排序，故此表支持 loss 权衡，任务性能仍须实测。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-23154",
+      "paper": "Learning Stratified Policies for Inference-Time Objectives",
+      "authors": "Mridul Mahajan · Xuezhou Zhang · Aldo Pacchiano",
+      "url": "https://arxiv.org/html/2611.23154v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "五次采样分给五个共同训练的 LoRA",
+      "dateNote": "v1 提交 2026-11-17 ET · 11 月 18 日公告",
+      "evidence": "已读 §3–5、定理 1、附录 E–G",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "共享冻结 backbone，每个 LoRA 定义一个策略，每策略抽一条答案，共同优化至少一条正确的概率。对照为单一策略抽五条，使用同样的五样本优势规则。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "J(\\theta_1,\\ldots,\\theta_k)=\\mathbb E_x\\!\\left[1-\\prod_{i=1}^k(1-p_i(x))\\right],\\qquad p_i(x)=\\Pr_{y\\sim\\pi_{\\theta_i}}\\{r(x,y)=1\\}",
+          "label": "对原文 pass@k 目标的等价重写，条件于 x 独立采样。一个策略的边际收益取决于其他策略尚未覆盖的概率。"
+        },
+        {
+          "type": "equation",
+          "tex": "A_i^{\\mathrm{LOO}}=\\max_j r_j-\\max_{j\\ne i}r_j,\\qquad A_i^{\\mathrm{GM}}=\\mathbf1_{\\{i=i^*\\}}\\left(r_i-\\frac1k\\sum_j r_j\\right)",
+          "label": "式 (4)、(6)。二元奖励下，LOO 只奖励唯一成功者；GM 从最高奖励者中均匀选 i*，仅对其更新。混合组内成功者有多个时仍有信号，但 GM 并非 pass@k 的无偏梯度。"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "任务／backbone",
+            "单策略 pass@5",
+            "五策略 pass@5"
+          ],
+          "rows": [
+            [
+              "Sudoku / Qwen2.5-1.5B",
+              "74.2 (0.6)",
+              "80.3 (0.3)"
+            ],
+            [
+              "GSM-Symbolic / Llama-3.1-8B",
+              "85.5 (2.4)",
+              "90.4 (0.1)"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "括号为三种子的标准误。LoRA rank=32，输出上限 768 token。单策略扩到 rank=160 在 Sudoku 仍为 74.2。GSM 单策略使用崩塌前检查点。线性分区目标的可表达性定理仅解释存在性；LLM 的学习与预算收益由实验支持。 [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-blog-nemotron-science",
+      "paper": "Post-Training NVIDIA Nemotron to Increase Accuracy in Your Scientific Domain",
+      "authors": "Gautham Dharuman · Xiaoyun Wang · Logan Ward · Geetika Gupta · Kibibi Moseley",
+      "url": "https://developer.nvidia.com/blog/post-training-nvidia-nemotron-to-increase-accuracy-in-your-scientific-domain/",
+      "kind": "主读 · 技术博客",
+      "title": "从代谢实验 CSV 构建 RLVR",
+      "dateNote": "首发 2026-11-16 · 重叠窗口补收",
+      "evidence": "已读环境、奖励、GRPO 与蒸馏代码段",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "输入母体分子及酶，模型提交代谢产物的 SMILES。NeMo Gym 将实验参考结构接到奖励服务器，NeMo RL 用 LoRA GRPO 更新模型。奖励来自预测与参考分子的二元指纹重叠。 [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "r(\\widehat m,m)=\\frac{|F(\\widehat m)\\cap F(m)|}{|F(\\widehat m)\\cup F(m)|}",
+          "label": "Tanimoto 相似度，F 是分子指纹。可用同一评分器过滤教师轨迹再做 SFT。"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "文中以阈值 0.7 从 1,934 个训练提示保留 1,123 条轨迹。指纹相似度达到阈值只核验最终结构，推理每一步的化学有效性仍未得到单独核验。博客未充分说明增益的百分比口径，故此处只记录可复核的流程与样本数。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-22576",
+      "paper": "ReMaRL: Learning to Unmask and Remask in Frozen Diffusion Language Models",
+      "authors": "Egor Shibaev · Danila Biktimirov · Ivan Klimov · Artem Makoian · Viacheslav Meshchaninov · Dmitry Vetrov",
+      "url": "https://arxiv.org/abs/2611.22576v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "把重遮罩决策纳入推理预算学习",
+      "dateNote": "v1 提交 2026-11-17 ET · 11 月 18 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "冻结 LLaDA-8B-Instruct，用约 0.3M 参数的 GRPO 策略学习揭示、保留和重新遮罩 token。在数学 4–32 次、代码 8–16 次模型调用预算下，对照已有调度与重遮罩规则。 [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-21885",
+      "paper": "Language Models Can Rewrite Their Own Weights",
+      "authors": "Jiajun Fan · Neil He · Changyi Yang · et al.",
+      "url": "https://arxiv.org/html/2611.21885v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "固定留出测试下，自改权重可保留跨任务收益",
+      "dateNote": "v1 提交 2026-11-16 ET · 11 月 18 日公告",
+      "evidence": "已读 §2–3、附录 D 及留出对照",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "27B 模型通过读取状态、运行测试及编辑自身权重进行自改进。在预先固定的 490 道留出数学题上，第八轮编辑准确率 63.8%，基线 57.2%。部分编辑调整线性注意力衰减；另一编辑虽提升准确率，也提高重复结尾比例。 [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-22888",
+      "paper": "Stopping Is Not the Limit: Understanding and Eliciting Agent Capability in Long-Horizon Vulnerability Exploitation",
+      "authors": "Deokhyung Kang · Minjae Gwon · Sangdon Park",
+      "url": "https://arxiv.org/abs/2611.22888v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "长程执行预算与上下文管理要联合比较",
+      "dateNote": "v1 提交 2026-11-17 ET · 11 月 18 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "ExploitBench 上，在停止后继续执行并管理摘要，仍能得到额外验证成功。MiMo 的 SCoRe 在 2,000 turns 达到 67.0% 能力覆盖；文中 GPT-5.5 参考值 58.6% 使用 300 turns，两者预算不同。 [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2605-09238",
+      "paper": "iMuon: Intrinsic Spectral Optimization on Riemannian Matrix Manifolds",
+      "authors": "Yibang Li · Bihari Lal Pandey · Ravi Sah · Andi Han · Cyrus Mostajeran · Pratik Jawanpuria · Bamdev Mishra",
+      "url": "https://arxiv.org/pdf/2605.09238v2",
+      "kind": "简讯 · 实质版本更新",
+      "title": "iMuon 补强商流形的对称性与闭式解条件",
+      "dateNote": "首发 2026-05-09 ET · v2 2026-11-16 ET",
+      "evidence": "已对照两版相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v2 重写内在约束的群不变性，命题 3.1 将度量的左右乘积结构连接到等价因子表示。命题 3.4 进一步给出缩放切空间满足奇异值不变性或范数收缩条件时的闭式 LMO。几何条件须逐流形核验。 [7, 8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2605-13405",
+      "paper": "When is Warmstarting Effective for Scaling Language Models?",
+      "authors": "Neeratyoy Mallik · Maciej Janowski · Johannes Hog · et al.",
+      "url": "https://arxiv.org/pdf/2605.13405v2",
+      "kind": "简讯 · 实质版本更新",
+      "title": "扩模收益新增含基座训练成本的对照",
+      "dateNote": "首发 2026-05-13 · v2 2026-11-17 ET",
+      "evidence": "已对照两版相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "新增表 13 把基础模型训练 FLOPs 计入 IsoFLOP 分析，最佳增长倍数和仍有收益的上界均向较小倍数移动。另增扰动、收缩强度及 LLaMA 架构消融。 [9, 10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-35707",
+      "paper": "ScAn-Bench: Evaluating Scaling Analysis Methodology",
+      "authors": "Artin Sermaxhaj · Nastaran Alipour · Donat Sinani · et al.",
+      "url": "https://arxiv.org/pdf/2609.35707v3",
+      "kind": "简讯 · 实质版本更新",
+      "title": "准确预测 loss 仍可能给出差的超参数",
+      "dateNote": "首发 2026-09-28 · v3 2026-11-17 ET",
+      "evidence": "已对照两版相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v3 增加数据获取与外推方法的交叉对照（图 7）及完整超参数外推（表 4）。灵活的 loss 拟合可预测损失却难识别底层参数，最优模型规模对拟合系数比值敏感。 [11, 12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2605-10395",
+      "paper": "Sharp feature-learning transitions and Bayes-optimal neural scaling laws in extensive-width networks",
+      "authors": "Minh-Toan Nguyen · Jean Barbier",
+      "url": "https://arxiv.org/pdf/2605.10395v2",
+      "kind": "简讯 · 实质版本更新",
+      "title": "宽教师网络扩到两个隐层",
+      "dateNote": "首发 2026-05-11 · v2 2026-11-17 ET",
+      "evidence": "已对照两版相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "新增两个宽度均与 d 同阶的隐层。Result 9 与附录 N 从 replica-symmetric potential 出发，预测 n 与第一层参数规模同阶处发生联合跃迁，之后 Bayes 误差按 k₁d/n 缩放。该扩展依赖统计物理启发式与数值验证。 [13, 14]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-23808",
+      "paper": "FLARE: A Full-Lifecycle Dense Supervision Paradigm for Long-Horizon Coding Agents via Generative Reward Model",
+      "authors": "Jingxuan Xu · Gang Wu · Yanan Wu · et al.",
+      "url": "https://arxiv.org/pdf/2609.23808v2",
+      "kind": "简讯 · 实质版本更新",
+      "title": "编码 agent 的 token 节省更新口径",
+      "dateNote": "首发 2026-09-20 · v2 2026-11-17 ET",
+      "evidence": "已对照两版相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v2 将约 5 倍 token 缩减具体限定为基础 agent 的输出量，并补充不同模型、脚手架、语言和难度的分组对照。这个数字未覆盖奖励模型评分产生的全部开销。 [15, 16]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-10397",
+      "paper": "Regularization Amplifies Subliminal Learning",
+      "authors": "Lawrence Feng · Jacob Mitchell Springer · Gaurav R. Ghosal · Ziqian Zhong · Aditi Raghunathan",
+      "url": "https://arxiv.org/pdf/2611.10397v2",
+      "kind": "简讯 · 实质版本更新",
+      "title": "Aditi 新版本改用留出损失选择学习率",
+      "dateNote": "首发 2026-11-06 ET · v2 2026-11-16 ET",
+      "evidence": "已对照两版相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "新增图 19、27 按留出损失选学习率，补充原先按隐偏好转移强度选择的对照。猫和海豚偏好仍随 rank 降低而增强，猫头鹰和狗在所选学习率下各 rank 都少有转移。图 29 改用留出偏好准确率比较不同 DPO β。 [17, 18]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-22947",
+      "paper": "The Kernel Reality Check: Benchmarking and Distilling Efficient Attention at Scale",
+      "authors": "Fırat Öncel · Cem Subakan · Mirco Ravanelli · Çağatay Yıldız",
+      "url": "https://arxiv.org/abs/2611.22947v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "扩模型规模仍未消除核注意力精度差距",
+      "dateNote": "v1 提交 2026-11-17 ET · 11 月 18 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "统一蒸馏协议下，已有核注意力与 softmax 有 2–10 分差距，单纯扩模未消除差距。LARA++ 的自适应重要性采样近似可恢复至多 99% 的 softmax 准确率，但计算开销仍较高。 [19]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.22351v1",
+      "title": "视觉语言融合 · §4–6、表 3、附录 F"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.23154v1",
+      "title": "分层策略 · §3–5、定理 1、表 2"
+    },
+    {
+      "url": "https://developer.nvidia.com/blog/post-training-nvidia-nemotron-to-increase-accuracy-in-your-scientific-domain/",
+      "title": "NVIDIA 原始技术博客 · 环境、奖励与蒸馏代码"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.22576v1",
+      "title": "ReMaRL: Learning to Unmask and Remask in Frozen Diffusion Language Models · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.21885v1",
+      "title": "Language Models Can Rewrite Their Own Weights · 已读 §2–3、附录 D 及留出对照"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.22888v1",
+      "title": "Stopping Is Not the Limit: Understanding and Eliciting Agent Capability in Long-Horizon Vulnerability Exploitation · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.09238v1",
+      "title": "iMuon: Intrinsic Spectral Optimization on Riemannian Matrix Manifolds · 对照旧版"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.09238v2",
+      "title": "iMuon: Intrinsic Spectral Optimization on Riemannian Matrix Manifolds · 更新版"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.13405v1",
+      "title": "When is Warmstarting Effective for Scaling Language Models? · 对照旧版"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.13405v2",
+      "title": "When is Warmstarting Effective for Scaling Language Models? · 更新版"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2609.35707v2",
+      "title": "ScAn-Bench: Evaluating Scaling Analysis Methodology · 对照旧版"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2609.35707v3",
+      "title": "ScAn-Bench: Evaluating Scaling Analysis Methodology · 更新版"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.10395v1",
+      "title": "Sharp feature-learning transitions and Bayes-optimal neural scaling laws in extensive-width networks · 对照旧版"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2605.10395v2",
+      "title": "Sharp feature-learning transitions and Bayes-optimal neural scaling laws in extensive-width networks · 更新版"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2609.23808v1",
+      "title": "FLARE: A Full-Lifecycle Dense Supervision Paradigm for Long-Horizon Coding Agents via Generative Reward Model · 对照旧版"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2609.23808v2",
+      "title": "FLARE: A Full-Lifecycle Dense Supervision Paradigm for Long-Horizon Coding Agents via Generative Reward Model · 更新版"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2611.10397v1",
+      "title": "Regularization Amplifies Subliminal Learning · 对照旧版"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2611.10397v2",
+      "title": "Regularization Amplifies Subliminal Learning · 更新版"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.22947v1",
+      "title": "The Kernel Reality Check: Benchmarking and Distilling Efficient Attention at Scale · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2207.12598",
+      "title": "无分类器引导 · §2–3、算法 1–2 及 §4"
+    },
+    {
+      "url": "https://openalex.org/W4288099666",
+      "title": "OpenAlex 高引用记录 · 2026-11-18 查询"
+    }
+  ],
+  "classic": {
+    "id": "classic-classifier-free-guidance",
+    "paperId": "arxiv:2207.12598",
+    "shortTitle": "Classifier-Free Guidance",
+    "year": 2021,
+    "topics": [
+      "Diffusion"
+    ],
+    "paper": "Classifier-Free Diffusion Guidance",
+    "authors": "Jonathan Ho · Tim Salimans",
+    "url": "https://arxiv.org/pdf/2207.12598",
+    "kind": "历史经典",
+    "title": "引导强度在噪声分布上改变了什么？",
+    "dateNote": "NeurIPS 2021 DGMs workshop · arXiv 首发 2022-07-26 · 阅读 arXiv v1",
+    "evidence": "已读 §2–4、算法 1–2",
+    "recognition": {
+      "label": "OpenAlex 高引用论文 · 2026-11-18 查询",
+      "url": "https://openalex.org/W4288099666"
+    },
+    "question": "在相同网络评估预算下，如何分别测量引导造成的离散误差、score 误差及质量—多样性变化？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "DDPM（2020）通过噪声预测学习逐噪声层级的 score。Dhariwal–Nichol（2021）用带噪分类器的梯度引导采样。Ho–Salimans 将有条件与无条件噪声估计合并，使同一网络支持质量与多样性的调节。 [20]"
+      },
+      {
+        "type": "equation",
+        "tex": "z_\\lambda=\\alpha_\\lambda x+\\sigma_\\lambda\\epsilon,\\quad\\epsilon\\sim\\mathcal N(0,I),\\qquad\\min_\\theta\\mathbb E\\|\\epsilon_\\theta(z_\\lambda,\\widetilde c)-\\epsilon\\|_2^2",
+        "label": "训练时以概率 pᵤ 把条件 c 换为 ∅，其余保持 c。λ 表示 log SNR。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widetilde\\epsilon_\\theta=(1+w)\\epsilon_\\theta(z_\\lambda,c)-w\\epsilon_\\theta(z_\\lambda,\\varnothing),\\qquad \\widetilde x_\\theta=(z_\\lambda-\\sigma_\\lambda\\widetilde\\epsilon_\\theta)/\\alpha_\\lambda",
+        "label": "原文式 (6) 与算法 2。w=0 恢复通常的条件采样。两次网络预测共享权重。"
+      },
+      {
+        "type": "equation",
+        "tex": "s_c=\\nabla_z\\log p_\\lambda(z\\mid c),\\quad s_u=\\nabla_z\\log p_\\lambda(z),\\qquad \\widetilde s=(1+w)s_c-ws_u=s_c+w\\nabla_z\\log p_\\lambda(c\\mid z)",
+        "label": "解释用的理想精确 score 恒等式，来自 Bayes 公式。实际网络 score 可有近似误差。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widetilde s=\\nabla_z\\log\\!\\left[p_\\lambda(z\\mid c)^{1+w}p_\\lambda(z)^{-w}\\right]",
+        "label": "这是固定噪声层级上的未归一化密度解释，须有公共支持且归一化可积。它本身未证明离散采样终点精确服从相同幂次的干净数据密度。"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "§4 在 ImageNet 等图像任务中展示 FID、IS 和 precision–recall 随引导强度的权衡。正文还指出，无约束神经网络产生的 score 场可能并不保守，理想密度恒等式需要与真实采样结果分开检验。 [20]"
+      }
+    ]
+  }
+}

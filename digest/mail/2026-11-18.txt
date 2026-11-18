@@ -1,0 +1,81 @@
+RESEARCH DIGEST / 2026-11-18
+视觉语言融合、分层策略与科学任务 RLVR
+数据配比 · 推理预算 · 流形 Muon · 无分类器引导
+
+中文: https://alexhuang13.github.io/digest/2026-11-18.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-18.html
+
+主读 · arXiv 首发
+固定两类 token 后，融合时机的作用落在哪里？
+Scaling Laws for Vision-Language Fusion
+https://alexhuang13.github.io/digest/2026-11-18.html#paper-2611-22351
+
+主读 · arXiv 首发
+五次采样分给五个共同训练的 LoRA
+Learning Stratified Policies for Inference-Time Objectives
+https://alexhuang13.github.io/digest/2026-11-18.html#paper-2611-23154
+
+主读 · 技术博客
+从代谢实验 CSV 构建 RLVR
+Post-Training NVIDIA Nemotron to Increase Accuracy in Your Scientific Domain
+https://alexhuang13.github.io/digest/2026-11-18.html#paper-blog-nemotron-science
+
+简讯 · arXiv 首发
+把重遮罩决策纳入推理预算学习
+ReMaRL: Learning to Unmask and Remask in Frozen Diffusion Language Models
+https://alexhuang13.github.io/digest/2026-11-18.html#paper-2611-22576
+
+简讯 · arXiv 首发
+固定留出测试下，自改权重可保留跨任务收益
+Language Models Can Rewrite Their Own Weights
+https://alexhuang13.github.io/digest/2026-11-18.html#paper-2611-21885
+
+简讯 · arXiv 首发
+长程执行预算与上下文管理要联合比较
+Stopping Is Not the Limit: Understanding and Eliciting Agent Capability in Long-Horizon Vulnerability Exploitation
+https://alexhuang13.github.io/digest/2026-11-18.html#paper-2611-22888
+
+简讯 · 实质版本更新
+iMuon 补强商流形的对称性与闭式解条件
+iMuon: Intrinsic Spectral Optimization on Riemannian Matrix Manifolds
+https://alexhuang13.github.io/digest/2026-11-18.html#paper-2605-09238
+
+简讯 · 实质版本更新
+扩模收益新增含基座训练成本的对照
+When is Warmstarting Effective for Scaling Language Models?
+https://alexhuang13.github.io/digest/2026-11-18.html#paper-2605-13405
+
+简讯 · 实质版本更新
+准确预测 loss 仍可能给出差的超参数
+ScAn-Bench: Evaluating Scaling Analysis Methodology
+https://alexhuang13.github.io/digest/2026-11-18.html#paper-2609-35707
+
+简讯 · 实质版本更新
+宽教师网络扩到两个隐层
+Sharp feature-learning transitions and Bayes-optimal neural scaling laws in extensive-width networks
+https://alexhuang13.github.io/digest/2026-11-18.html#paper-2605-10395
+
+简讯 · 实质版本更新
+编码 agent 的 token 节省更新口径
+FLARE: A Full-Lifecycle Dense Supervision Paradigm for Long-Horizon Coding Agents via Generative Reward Model
+https://alexhuang13.github.io/digest/2026-11-18.html#paper-2609-23808
+
+简讯 · 实质版本更新
+Aditi 新版本改用留出损失选择学习率
+Regularization Amplifies Subliminal Learning
+https://alexhuang13.github.io/digest/2026-11-18.html#paper-2611-10397
+
+简讯 · arXiv 首发
+扩模型规模仍未消除核注意力精度差距
+The Kernel Reality Check: Benchmarking and Distilling Efficient Attention at Scale
+https://alexhuang13.github.io/digest/2026-11-18.html#paper-2611-22947
+
+每日精读 · 2021
+引导强度在噪声分布上改变了什么？
+https://alexhuang13.github.io/digest/2026-11-18.html#classic-classifier-free-guidance
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-18.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/
