@@ -1,0 +1,76 @@
+RESEARCH DIGEST / 2026-11-19
+Muon 的曲率诊断与弱零假设下的随机化检验
+矩阵优化 · 精确推断 · 推理算力 · 异步后训练
+
+中文: https://alexhuang13.github.io/digest/2026-11-19.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-19.html
+
+主读 · arXiv 首发
+等长奇异方向更新，何时可以重分配？
+Equal Steps, Unequal Curvature: Where Muon's Update Goes Wrong
+https://alexhuang13.github.io/digest/2026-11-19.html#paper-2611-24644
+
+主读 · arXiv 首发
+允许个体效应异质，Fisher 检验何时仍精确有效？
+On the Validity of Fisher Randomization Tests under the Weak Null
+https://alexhuang13.github.io/digest/2026-11-19.html#paper-2611-24821
+
+简讯 · arXiv 首发
+把前向预算用于等价改写
+Test-Time Symmetrization: Scaling Laws for Model-Agnostic Learning under Structure
+https://alexhuang13.github.io/digest/2026-11-19.html#paper-2611-24032
+
+简讯 · arXiv 首发
+复用专家训练日志的时间顺序
+Replay, Don't Resample: Off-Policy Consolidation of Long-Horizon RL Experts
+https://alexhuang13.github.io/digest/2026-11-19.html#paper-2611-24059
+
+简讯 · arXiv 首发
+表格基础模型的合成与真实数据曲线不同
+Towards Reliable Scaling Laws for Tabular Foundation Models
+https://alexhuang13.github.io/digest/2026-11-19.html#paper-2611-24214
+
+简讯 · arXiv 首发
+小模型组件收益的交互需要重复对照
+Do Frontier Model Ingredients Add Up? A Replicated Factorial Study of Small Language Models
+https://alexhuang13.github.io/digest/2026-11-19.html#paper-2611-24540
+
+简讯 · arXiv 首发
+从拟合前沿提取多资源交换关系
+A Differential Theory of Quality-Resource Trade-offs for AI Model Selection: The Multiresource Frontier and Its Minimax Price
+https://alexhuang13.github.io/digest/2026-11-19.html#paper-2611-23324
+
+简讯 · arXiv 首发
+学习曲线代理接受可变超参数集合
+ICICLE: In-Context Inference for Curve-Learning Extrapolation
+https://alexhuang13.github.io/digest/2026-11-19.html#paper-2611-24469
+
+简讯 · arXiv 首发
+新 token 跳过早期循环，保留深层上下文
+Late Entry in Looped Language Models
+https://alexhuang13.github.io/digest/2026-11-19.html#paper-2611-24576
+
+简讯 · 技术博客
+DaisyRose 的长程任务与异步流水线
+DaisyRose-27B: Pushing the Frontier of Post-Training Efficiency
+https://alexhuang13.github.io/digest/2026-11-19.html#paper-blog-daisyrose
+
+简讯 · 技术博客
+SFT 作业耗时需要计入评估与保存
+Why your fine-tuning job takes longer than the FLOPs say
+https://alexhuang13.github.io/digest/2026-11-19.html#paper-blog-sft-duration
+
+简讯 · 技术博客
+FinQA 的动态采样与问题回访
+A 9B model beats a 1T model on FinQA, trained with Crusoe Managed RL
+https://alexhuang13.github.io/digest/2026-11-19.html#paper-blog-finqa-rl
+
+每日精读 · 2024
+GRPO 的组基线与采样权重
+https://alexhuang13.github.io/digest/2026-11-19.html#classic-deepseekmath-grpo
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-19.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

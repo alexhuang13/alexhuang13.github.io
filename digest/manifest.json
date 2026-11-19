@@ -4,8 +4,35 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-18",
+  "latest": "2026-11-19",
   "issues": [
+    {
+      "date": "2026-11-19",
+      "title": "Muon 的曲率诊断与弱零假设下的随机化检验",
+      "url": "/digest/2026-11-19.html",
+      "translations": {
+        "en": {
+          "title": "Curvature Diagnostics for Muon and Randomization Tests under Weak Nulls",
+          "url": "/digest/en/2026-11-19.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.24644v1",
+        "https://arxiv.org/html/2611.24821v1",
+        "https://arxiv.org/abs/2611.24032v1",
+        "https://arxiv.org/abs/2611.24059v1",
+        "https://arxiv.org/abs/2611.24214v1",
+        "https://arxiv.org/html/2611.24540v1",
+        "https://arxiv.org/abs/2611.23324v1",
+        "https://arxiv.org/abs/2611.24469v1",
+        "https://arxiv.org/abs/2611.24576v1",
+        "https://huggingface.co/blog/RadixArk/daisyrose-27b-pushing-the-frontier-of-post-trainin",
+        "https://huggingface.co/blog/Dharma-AI/predicting-fine-tuning-time",
+        "https://www.crusoe.ai/resources/blog/managed-rl-9b-model-beats-1t-finqa",
+        "https://arxiv.org/html/2402.03300v2",
+        "https://openalex.org/W4391631327"
+      ]
+    },
     {
       "date": "2026-11-18",
       "title": "视觉语言融合、分层策略与科学任务 RLVR",

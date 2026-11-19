@@ -1,0 +1,440 @@
+{
+  "date": "2026-11-19",
+  "number": "037",
+  "publishedAt": "2026-11-19T13:53:09Z",
+  "readingMinutes": 11,
+  "tags": [
+    "Muon",
+    "Causal inference",
+    "Scaling laws",
+    "Post-training"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "每日研究笔记",
+  "title": "Muon 的曲率诊断与弱零假设下的随机化检验",
+  "subtitle": "矩阵优化 · 精确推断 · 推理算力 · 异步后训练",
+  "intro": "主读 Muon 谱步长的曲率校准，以及二元结局下 Fisher 检验的有限样本有效性。简讯覆盖改写式推理扩展、专家回放、循环深度与后训练系统。经典精读回到 DeepSeekMath 的 GRPO。",
+  "window": "2026-11-16 至 2026-11-19（费城时间，含窗口内新公告及索引延迟补收）",
+  "articles": [
+    {
+      "id": "paper-2611-24644",
+      "paper": "Equal Steps, Unequal Curvature: Where Muon's Update Goes Wrong",
+      "authors": "Biswa Sengupta · Jinhua Wang · Léo Maxime Brunswic",
+      "url": "https://arxiv.org/html/2611.24644v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "等长奇异方向更新，何时可以重分配？",
+      "dateNote": "v1 提交 2026-11-18 ET · 11 月 19 日公告",
+      "evidence": "已读 §2–6、表 1、附录 A 的定范数条件",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用训练动量的奇异值排名分组，将正向步长写成 D=ΣDᵦ，实际参数更新为 −D。作者另用独立留出数据估计梯度与曲率，检查各组是否拿到了合适份额。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "q(c)=-g^\\top c+\\tfrac12c^\\top Hc,\\qquad g_b=\\langle\\nabla\\widehat L,D_b\\rangle,\\qquad H_{bb^\\prime}=\\langle D_b,\\nabla^2\\widehat L D_{b^\\prime}\\rangle",
+          "label": "留出 loss 的二阶局部模型。Muon 对应 c=1；H 正定时局部最优乘子为 H⁻¹g。"
+        },
+        {
+          "type": "equation",
+          "tex": "c^\\top Nc=\\mathbf1^\\top N\\mathbf1,\\qquad N=\\operatorname{diag}(|I_b|),\\qquad p=P_{(N\\mathbf1)^\\perp}(H\\mathbf1-g)",
+          "label": "精确 polar 谱段的等 Frobenius 范数约束。p≠0 保证局部存在同范数下降方向；单组 gᵦ/Hᵦᵦ 的大小不足以决定重分配。"
+        },
+        {
+          "type": "text",
+          "text": "124M、FineWeb-Edu、100.7M tokens、三配对种子。先将 Q/K/V 分开正交化，相对 fused-QKV 的最终验证 loss 低 0.0250 nats。再在冷却阶段加谱 tilt，权重与 σ 的 −1/4 次幂成比例；以下增量均相对更强的 split-QKV 基线。 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "附加项",
+            "最终 loss 差（nats）"
+          ],
+          "rows": [
+            [
+              "NorMuon",
+              "−0.0038"
+            ],
+            [
+              "Tilt",
+              "−0.0120"
+            ],
+            [
+              "NorMuon + tilt",
+              "−0.0158"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "355M 上组合增益为 0.0188 nats。实验总预算低于 1 token／参数，局部诊断与早期筛选同步进行。组合约省 4.3% tokens，但未融合实现耗时约增 12%；这些对照尚未证明端到端提速。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-24821",
+      "paper": "On the Validity of Fisher Randomization Tests under the Weak Null",
+      "authors": "Timothy Sudijono · Edgar Dobriban · Eric Tchetgen Tchetgen",
+      "url": "https://arxiv.org/html/2611.24821v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "允许个体效应异质，Fisher 检验何时仍精确有效？",
+      "dateNote": "v1 提交 2026-11-18 ET · 11 月 19 日公告",
+      "evidence": "已读 §1–2、附录 A 的尾比较与 CRE 证明",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Neyman（1923）关心样本平均效应，Fisher（1935）的通常检验论证使用每个人效应为零。本文固定二元潜在结局，仅由处理分配产生随机性，并把三种常见设计的结论推进到有限样本。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "Y_i(a)\\in\\{0,1\\},\\qquad\\tau=\\frac1n\\sum_i[Y_i(1)-Y_i(0)],\\qquad H_{0N}:\\tau=0",
+          "label": "SUTVA 下观测 Yᵢ=Yᵢ(Aᵢ)。弱零假设允许正负个体效应相抵。"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "处理设计",
+            "有效统计量"
+          ],
+          "rows": [
+            [
+              "Balanced complete randomization",
+              "Difference in means"
+            ],
+            [
+              "Matched pairs, fair assignment",
+              "Difference in means"
+            ],
+            [
+              "Bernoulli(1/2)",
+              "Centered Horvitz–Thompson"
+            ]
+          ]
+        },
+        {
+          "type": "equation",
+          "tex": "p_F^{\\pm}=\\Pr_{A^\\prime}\\{|T(A^\\prime,Y^{\\rm obs})|\\ge|T(A^{\\rm obs},Y^{\\rm obs})|\\},\\qquad\\sup_{H_{0N}}\\Pr(p_F^{\\pm}\\le\\alpha)\\le\\alpha",
+          "label": "上述三种组合，双侧结论对所有 α∈(0,1) 有效。单侧对 τ≤0 的保证限定 α≤1/2。"
+        },
+        {
+          "type": "text",
+          "text": "以完全随机设计为例，固定观测事件总数 O 后，参考分布为 H∼Hypergeom(n,O,n/2)。证明通过潜在结局表的计数，显示真实处理组事件数相对参考分布更集中，从而得到尾概率控制。 [2]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "结论依赖二元结局和指定统计量。一般可交换设计下，文章给出单侧 p 值乘 2 的有效修正；非二元结局已有反例。 [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-24032",
+      "paper": "Test-Time Symmetrization: Scaling Laws for Model-Agnostic Learning under Structure",
+      "authors": "Behrooz Tahmasebi · Melanie Weber",
+      "url": "https://arxiv.org/abs/2611.24032v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "把前向预算用于等价改写",
+      "dateNote": "v1 提交 2026-11-18 ET · 11 月 19 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在图节点重编号等有限群改写下，作者研究对群轨道平均的近似。摘要给出改写数随 log|G| 增长的最坏情形规律，并在同前向次数下与原提示重复采样比较。规律依赖相应精度要求，未表示固定次数即可精确恢复全轨道。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-24059",
+      "paper": "Replay, Don't Resample: Off-Policy Consolidation of Long-Horizon RL Experts",
+      "authors": "Zhenrui Yue · Gongxiaohui Chen · Huimin Zeng · Honglei Zhuang · Jiashuo Sun · Zhen Han · Dong Wang",
+      "url": "https://arxiv.org/abs/2611.24059v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "复用专家训练日志的时间顺序",
+      "dateNote": "v1 提交 2026-11-18 ET · 11 月 19 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "MRPD 按各专家训练顺序回放包含行为概率与奖励的轨迹，重算策略梯度，并在记录前缀上蒸馏最终专家。摘要报告三类长程任务中优于同专家的在线蒸馏，合并阶段不再调用环境；日志顺序的影响大于日志量与奖励。 [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-24214",
+      "paper": "Towards Reliable Scaling Laws for Tabular Foundation Models",
+      "authors": "Johannes Hog · Neeratyoy Mallik · Steven Adriaensen · Jan Hendrik Metzen · Tom Viering · Danny Stoll · Frank Hutter",
+      "url": "https://arxiv.org/abs/2611.24214v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "表格基础模型的合成与真实数据曲线不同",
+      "dateNote": "v1 提交 2026-11-18 ET · 11 月 19 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "TabPFNv2 风格实验发现，少量评估数据集会让配置选择过度乐观。扩训练算力及模型大小时，还需扩大合成任务的最大行数和特征数，才能获得更可靠的外推。 [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-24540",
+      "paper": "Do Frontier Model Ingredients Add Up? A Replicated Factorial Study of Small Language Models",
+      "authors": "Biswa Sengupta",
+      "url": "https://arxiv.org/html/2611.24540v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "小模型组件收益的交互需要重复对照",
+      "dateNote": "v1 提交 2026-11-18 ET · 11 月 19 日公告",
+      "evidence": "已读实验设计、表 2 与结果",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "同模型、数据和预算的两种子部分因子设计中，MoE、Muon 和 Gated DeltaNet hybrid 平均改善较大。选定设计中二阶与三阶交互有混淆，MoE 总参数量也更高。该实验没有识别所有高阶交互。 [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-23324",
+      "paper": "A Differential Theory of Quality-Resource Trade-offs for AI Model Selection: The Multiresource Frontier and Its Minimax Price",
+      "authors": "Dmitry Ignatov",
+      "url": "https://arxiv.org/abs/2611.23324v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "从拟合前沿提取多资源交换关系",
+      "dateNote": "v1 提交 2026-11-15 ET · 11 月 19 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "作者对误差与时延、参数、训练算力和能耗的前沿建立微分表示，并在特定通道假设下导出 minimax 价格。摘要报告在 117 条已发表前沿上评估，最优价格结论依赖其前沿与资源模型。 [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-24469",
+      "paper": "ICICLE: In-Context Inference for Curve-Learning Extrapolation",
+      "authors": "Laurits Fredsgaard · Michael Riis Andersen · Mikkel N. Schmidt",
+      "url": "https://arxiv.org/abs/2611.24469v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "学习曲线代理接受可变超参数集合",
+      "dateNote": "v1 提交 2026-11-18 ET · 11 月 19 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "1.28M 参数的合成先验训练代理用于 freeze–thaw 预算分配，以共享集合编码器接收可变超参数数量。LCBench、PD1、TaskSet 的均值 regret 轨迹接近 FT-PFN；Meta-Album 部分子集优于 Quick-Tune，另一些未见明确差异。 [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-24576",
+      "paper": "Late Entry in Looped Language Models",
+      "authors": "Ziqi Jin · Jiaxi Li · Weiwen Xu · Aixin Sun",
+      "url": "https://arxiv.org/abs/2611.24576v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "新 token 跳过早期循环，保留深层上下文",
+      "dateNote": "v1 提交 2026-11-18 ET · 11 月 19 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Late entry 让新 token 只运行末 K 次循环，旧 token 的缓存补齐到 T 层。Wake 用完整状态校验候选。作者分别报告精确与有损模式；Ouro 的精确模式 5.2× 是相对逐 token 基线，相对完整 K=T 块解码为 +26%。 [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-blog-daisyrose",
+      "paper": "DaisyRose-27B: Pushing the Frontier of Post-Training Efficiency",
+      "authors": "Jason Chen · RadixArk",
+      "url": "https://huggingface.co/blog/RadixArk/daisyrose-27b-pushing-the-frontier-of-post-trainin",
+      "kind": "简讯 · 技术博客",
+      "title": "DaisyRose 的长程任务与异步流水线",
+      "dateNote": "发布 2026-11-18",
+      "evidence": "已读任务构造、后端及评估说明",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "约 1,200 个筛选任务，144 H200 训练 18 天，其中 128 卡 rollout、16 卡 trainer。最长 1M-token 会话通过 harness 摘要分成多条轨迹，原生上下文仍为 256K。Terminal-Bench 4.1 pass@1 为 5.6→12.0。比较分数取每项 BF16／FP8 两次运行较高者。 [10]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "团队报告训练后端 MFU 为 37% 对 16%，端到端吞吐为 16,800 对 8,300 tokens/s。对照后端与任务设置会影响倍数，尚无跨独立系统的复现。 [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-blog-sft-duration",
+      "paper": "Why your fine-tuning job takes longer than the FLOPs say",
+      "authors": "Bruno Duarte · Gabriel Pimenta de Freitas Cardoso · Isis F. Carvalho · Breno de Almeida Beleza · Felipe Lima",
+      "url": "https://huggingface.co/blog/Dharma-AI/predicting-fine-tuning-time",
+      "kind": "简讯 · 技术博客",
+      "title": "SFT 作业耗时需要计入评估与保存",
+      "dateNote": "发布 2026-11-18",
+      "evidence": "已读数据、预测特征、结果与局限",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "272 次 H200 作业，覆盖 LoRA 和全量 SFT，预测从获得 GPU 到作业结束的时间，排除排队。使用派发前配置、累计评估量及保存量的 CatBoost，分层五折 MAE 为 1.71 小时；最佳已测 FLOPs 基线为 12.41 小时。均值作业时长 23.43 小时。 [11]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "来自单一生产环境。特征重要性只描述预测关系，跨硬件迁移仍未验证。 [11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-blog-finqa-rl",
+      "paper": "A 9B model beats a 1T model on FinQA, trained with Crusoe Managed RL",
+      "authors": "Matan Halfon · Itay Niv · Daniel Shen · Suman Debnath · Yiwei Song · Omri Berkovitch",
+      "url": "https://www.crusoe.ai/resources/blog/managed-rl-9b-model-beats-1t-finqa",
+      "kind": "简讯 · 技术博客",
+      "title": "FinQA 的动态采样与问题回访",
+      "dateNote": "发布 2026-11-18",
+      "evidence": "已读任务、评估设置及表 3–4",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "GRPO 每题 16 条 rollout，半数问题来自新样本，半数从尚未掌握的问题中按 p(1−p) 回访；同奖励组被过滤。Qwen3.5-9B 在外部 SnorkelFinance 的 290 题上由 53.1% 到 73.9%。训练后成绩取各运行的峰值检查点。 [12]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "35B-A3B 消融为单次运行，文中报告留出分数的运行波动约 ±7 个百分点，故多数消融差距仍在噪声范围内。 [12]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.24644v1",
+      "title": "Muon 曲率诊断 · §2–6、表 1 与附录 A"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.24821v1",
+      "title": "Fisher 弱零假设 · §2、定理 2.1–2.4 与附录 A.1"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.24032v1",
+      "title": "Test-Time Symmetrization: Scaling Laws for Model-Agnostic Learning under Structure · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.24059v1",
+      "title": "Replay, Don't Resample: Off-Policy Consolidation of Long-Horizon RL Experts · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.24214v1",
+      "title": "Towards Reliable Scaling Laws for Tabular Foundation Models · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.24540v1",
+      "title": "Do Frontier Model Ingredients Add Up? A Replicated Factorial Study of Small Language Models · 已读实验设计、表 2 与结果"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.23324v1",
+      "title": "A Differential Theory of Quality-Resource Trade-offs for AI Model Selection: The Multiresource Frontier and Its Minimax Price · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.24469v1",
+      "title": "ICICLE: In-Context Inference for Curve-Learning Extrapolation · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.24576v1",
+      "title": "Late Entry in Looped Language Models · 基于摘要"
+    },
+    {
+      "url": "https://huggingface.co/blog/RadixArk/daisyrose-27b-pushing-the-frontier-of-post-trainin",
+      "title": "DaisyRose 官方团队博客 · 数据、后端与评估口径"
+    },
+    {
+      "url": "https://huggingface.co/blog/Dharma-AI/predicting-fine-tuning-time",
+      "title": "Dharma-AI 技术博客 · 数据、五折评估与局限"
+    },
+    {
+      "url": "https://www.crusoe.ai/resources/blog/managed-rl-9b-model-beats-1t-finqa",
+      "title": "Crusoe 原始研究博客 · 实验设置、表 3–4 与消融"
+    },
+    {
+      "url": "https://arxiv.org/html/2402.03300v2",
+      "title": "DeepSeekMath · §4.1–4.2、式 (3)–(4)、结果监督"
+    },
+    {
+      "url": "https://openalex.org/W4391631327",
+      "title": "OpenAlex 高引用记录 · 2026-11-19 查询"
+    }
+  ],
+  "classic": {
+    "id": "classic-deepseekmath-grpo",
+    "paperId": "arxiv:2402.03300",
+    "shortTitle": "DeepSeekMath / GRPO",
+    "year": 2024,
+    "topics": [
+      "Post-training"
+    ],
+    "paper": "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",
+    "authors": "Zhihong Shao · Peiyi Wang · Qihao Zhu · et al.",
+    "url": "https://arxiv.org/html/2402.03300v2",
+    "kind": "历史经典",
+    "title": "GRPO 的组基线与采样权重",
+    "dateNote": "arXiv 首发 2024-02-05 · 阅读 v2",
+    "evidence": "已读 §4.1–4.2、结果监督目标与数学基准表",
+    "recognition": {
+      "label": "OpenAlex 高引用论文 · 2026-11-19 查询",
+      "url": "https://openalex.org/W4391631327"
+    },
+    "question": "固定 rollout token 总预算，增加组大小 G 与增加不同问题数之间，何种成功率分布会改变最优分配？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "PPO（2017）通常用另一个网络估计 value。DeepSeekMath（2024）对同题采样一组回答，以组内相对奖励构造优势。下面聚焦原文的结果监督版本，旧策略固定为 πold，每条回答长度记为 Tᵢ。 [13]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\overline r=\\frac1G\\sum_i r_i,\\qquad\\widehat A_{it}=\\frac{r_i-\\overline r}{\\operatorname{std}(r_1,\\ldots,r_G)},\\qquad\\rho_{it}=\\frac{\\pi_\\theta(o_{it}\\mid q,o_{i,<t})}{\\pi_{\\rm old}(o_{it}\\mid q,o_{i,<t})}",
+        "label": "同一回答的所有 token 共享归一化结果奖励。组标准差非零时定义如上。"
+      },
+      {
+        "type": "equation",
+        "tex": "J(\\theta)=\\mathbb E\\frac1G\\sum_i\\frac1{T_i}\\sum_t\\left[\\min\\!\\left(\\rho_{it}\\widehat A_{it},\\operatorname{clip}(\\rho_{it},1-\\varepsilon,1+\\varepsilon)\\widehat A_{it}\\right)-\\beta\\widehat D_{it}\\right]",
+        "label": "原文式 (3)。每条序列先取 token 均值，再在回答间平均。β 控制参考策略惩罚。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widehat D_{it}=u_{it}-\\log u_{it}-1\\ge0,\\qquad u_{it}=\\frac{\\pi_{\\rm ref}(o_{it}\\mid q,o_{i,<t})}{\\pi_\\theta(o_{it}\\mid q,o_{i,<t})}",
+        "label": "原文式 (4) 的 KL 采样项。当前策略采样下其期望对应反向 KL；旧策略样本和多轮更新需要另行考虑分布差异。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\Pr\\{\\text{mixed group}\\}=1-p^G-(1-p)^G\\qquad(r_i\\overset{\\rm iid}{\\sim}\\operatorname{Bernoulli}(p))",
+        "label": "解释用简化模型。全对或全错组没有组内奖励差异；此式未建模长度、连续奖励或 clip。"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "7B 模型",
+          "GSM8K",
+          "MATH"
+        ],
+        "rows": [
+          [
+            "DeepSeekMath-Instruct",
+            "82.9%",
+            "46.8%"
+          ],
+          [
+            "DeepSeekMath-RL",
+            "88.2%",
+            "51.7%"
+          ]
+        ]
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "这两行隔离的是论文训练流水线中 SFT 到 RL 的变化，未做同预算 PPO／GRPO 因果分解。组归一化、序列均值和 clipping 会改变估计权重，不能把整套目标直接视为原始无偏 REINFORCE。 [13]"
+      }
+    ]
+  }
+}

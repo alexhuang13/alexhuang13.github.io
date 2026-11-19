@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-19",
+    "paperId": "arxiv:2402.03300",
+    "paper": "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",
+    "shortTitle": "DeepSeekMath / GRPO",
+    "year": 2024,
+    "topics": [
+      "Post-training"
+    ],
+    "recognition": {
+      "label": "OpenAlex 高引用论文 · 2026-11-19 查询",
+      "url": "https://openalex.org/W4391631327"
+    },
+    "source": "https://arxiv.org/html/2402.03300v2",
+    "url": "/digest/2026-11-19.html#classic-deepseekmath-grpo"
+  },
+  {
     "date": "2026-11-18",
     "paperId": "arxiv:2207.12598",
     "paper": "Classifier-Free Diffusion Guidance",

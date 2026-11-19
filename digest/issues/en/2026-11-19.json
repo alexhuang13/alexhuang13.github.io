@@ -1,0 +1,440 @@
+{
+  "date": "2026-11-19",
+  "number": "037",
+  "publishedAt": "2026-11-19T13:53:09Z",
+  "readingMinutes": 11,
+  "tags": [
+    "Muon",
+    "Causal inference",
+    "Scaling laws",
+    "Post-training"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "Daily Research Notes",
+  "title": "Curvature Diagnostics for Muon and Randomization Tests under Weak Nulls",
+  "subtitle": "Matrix optimization · Exact inference · Inference compute · Asynchronous post-training",
+  "intro": "The main reads examine curvature calibration of Muon’s spectral steps and finite-sample validity of Fisher tests for binary outcomes. Briefs cover inference by rewriting, expert replay, recurrence depth and post-training systems. The classic revisits GRPO in DeepSeekMath.",
+  "window": "November 16–19, 2026 (Philadelphia time, including new announcements and delayed indexing)",
+  "articles": [
+    {
+      "id": "paper-2611-24644",
+      "paper": "Equal Steps, Unequal Curvature: Where Muon's Update Goes Wrong",
+      "authors": "Biswa Sengupta · Jinhua Wang · Léo Maxime Brunswic",
+      "url": "https://arxiv.org/html/2611.24644v1",
+      "kind": "Main read · First arXiv posting",
+      "title": "When can equal steps across singular directions be reallocated?",
+      "dateNote": "v1 submitted November 18, 2026 ET · November 19 announcement",
+      "evidence": "Read Sections 2–6, Table 1 and fixed-norm conditions in Appendix A",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Partition the proposed step D=ΣDᵦ by the singular-value ranks of training momentum, with parameter update −D. Independent held-out data estimate the gradient and curvature to diagnose the step allocation. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "q(c)=-g^\\top c+\\tfrac12c^\\top Hc,\\qquad g_b=\\langle\\nabla\\widehat L,D_b\\rangle,\\qquad H_{bb^\\prime}=\\langle D_b,\\nabla^2\\widehat L D_{b^\\prime}\\rangle",
+          "label": "Second-order local model of held-out loss. Muon uses c=1. If H is positive definite, the quadratic optimum is H⁻¹g."
+        },
+        {
+          "type": "equation",
+          "tex": "c^\\top Nc=\\mathbf1^\\top N\\mathbf1,\\qquad N=\\operatorname{diag}(|I_b|),\\qquad p=P_{(N\\mathbf1)^\\perp}(H\\mathbf1-g)",
+          "label": "Equal-Frobenius-norm constraint for exact-polar bands. If p≠0, a local same-norm improvement exists. Isolated ratios gᵦ/Hᵦᵦ do not determine the reallocation."
+        },
+        {
+          "type": "text",
+          "text": "At 124M parameters, FineWeb-Edu, 100.7M tokens and three paired seeds, splitting Q/K/V lowers final validation loss by 0.0250 nats versus fused QKV. A spectral tilt proportional to σ to the power −1/4 is then applied during cooldown. Increments below are against the stronger split-QKV baseline. [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Additional ingredient",
+            "Final loss difference (nats)"
+          ],
+          "rows": [
+            [
+              "NorMuon",
+              "−0.0038"
+            ],
+            [
+              "Tilt",
+              "−0.0120"
+            ],
+            [
+              "NorMuon + tilt",
+              "−0.0158"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "At 355M, the combination gains 0.0188 nats. Budgets are below one token per parameter, and diagnostics overlapped early screening. The combination saves about 4.3% tokens but takes about 12% more time in the unfused implementation, leaving end-to-end acceleration unestablished. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-24821",
+      "paper": "On the Validity of Fisher Randomization Tests under the Weak Null",
+      "authors": "Timothy Sudijono · Edgar Dobriban · Eric Tchetgen Tchetgen",
+      "url": "https://arxiv.org/html/2611.24821v1",
+      "kind": "Main read · First arXiv posting",
+      "title": "When does a Fisher test remain valid with heterogeneous individual effects?",
+      "dateNote": "v1 submitted November 18, 2026 ET · November 19 announcement",
+      "evidence": "Read Sections 1–2 and Appendix A’s tail comparison and CRE proof",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Neyman (1923) targets a sample-average effect. Fisher’s (1935) standard randomization argument assumes zero effect for every unit. This paper fixes binary potential outcomes, uses only assignment randomness, and obtains finite-sample guarantees for three common designs. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "Y_i(a)\\in\\{0,1\\},\\qquad\\tau=\\frac1n\\sum_i[Y_i(1)-Y_i(0)],\\qquad H_{0N}:\\tau=0",
+          "label": "Under SUTVA, observe Yᵢ=Yᵢ(Aᵢ). The weak null allows positive and negative effects to cancel."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Assignment design",
+            "Valid statistic"
+          ],
+          "rows": [
+            [
+              "Balanced complete randomization",
+              "Difference in means"
+            ],
+            [
+              "Matched pairs, fair assignment",
+              "Difference in means"
+            ],
+            [
+              "Bernoulli(1/2)",
+              "Centered Horvitz–Thompson"
+            ]
+          ]
+        },
+        {
+          "type": "equation",
+          "tex": "p_F^{\\pm}=\\Pr_{A^\\prime}\\{|T(A^\\prime,Y^{\\rm obs})|\\ge|T(A^{\\rm obs},Y^{\\rm obs})|\\},\\qquad\\sup_{H_{0N}}\\Pr(p_F^{\\pm}\\le\\alpha)\\le\\alpha",
+          "label": "For the three combinations, the two-sided result holds for all α∈(0,1). The one-sided guarantee for τ≤0 is stated for α≤1/2."
+        },
+        {
+          "type": "text",
+          "text": "In complete randomization, conditioning on the observed event total O gives reference H∼Hypergeom(n,O,n/2). Counting compatible potential-outcome tables shows that the actual treated-event count is more concentrated, yielding tail control. [2]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The result depends on binary outcomes and the specified statistics. For a general exchangeable design, the paper gives a valid correction by doubling the one-sided p-value. Nonbinary outcomes admit counterexamples. [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-24032",
+      "paper": "Test-Time Symmetrization: Scaling Laws for Model-Agnostic Learning under Structure",
+      "authors": "Behrooz Tahmasebi · Melanie Weber",
+      "url": "https://arxiv.org/abs/2611.24032v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Spend forward passes on equivalent rewritings",
+      "dateNote": "v1 submitted November 18, 2026 ET · November 19 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "For finite-group rewritings such as graph relabeling, the authors approximate an orbit average. The abstract gives worst-case growth with log|G| and compares rewritings with repeated sampling at matched forward-pass counts. The law depends on the required approximation accuracy and does not imply exact recovery with a fixed number of calls. [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-24059",
+      "paper": "Replay, Don't Resample: Off-Policy Consolidation of Long-Horizon RL Experts",
+      "authors": "Zhenrui Yue · Gongxiaohui Chen · Huimin Zeng · Honglei Zhuang · Jiashuo Sun · Zhen Han · Dong Wang",
+      "url": "https://arxiv.org/abs/2611.24059v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Reuse the chronological order of expert training logs",
+      "dateNote": "v1 submitted November 18, 2026 ET · November 19 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "MRPD replays trajectories containing behavior probabilities and rewards in each expert’s training order, recomputes policy gradients and distills final experts at logged prefixes. The abstract reports better consolidation than online distillation on three long-horizon domains, without new environment calls. Log order matters more than amount or rewards. [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-24214",
+      "paper": "Towards Reliable Scaling Laws for Tabular Foundation Models",
+      "authors": "Johannes Hog · Neeratyoy Mallik · Steven Adriaensen · Jan Hendrik Metzen · Tom Viering · Danny Stoll · Frank Hutter",
+      "url": "https://arxiv.org/abs/2611.24214v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Synthetic and real-data scaling differ for tabular models",
+      "dateNote": "v1 submitted November 18, 2026 ET · November 19 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "TabPFNv2-style experiments find optimistic configuration selection when too few evaluation datasets are used. Expanding model size and compute also requires expanding maximum synthetic-task rows and features for more reliable extrapolation. [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-24540",
+      "paper": "Do Frontier Model Ingredients Add Up? A Replicated Factorial Study of Small Language Models",
+      "authors": "Biswa Sengupta",
+      "url": "https://arxiv.org/html/2611.24540v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Component interactions need replicated comparisons",
+      "dateNote": "v1 submitted November 18, 2026 ET · November 19 announcement",
+      "evidence": "Read design, Table 2 and results",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In a two-seed fractional factorial at shared model setting, data and budget, MoE, Muon and a Gated DeltaNet hybrid give larger average improvements. Some second- and third-order effects are aliased, and MoE has more total parameters. The design does not identify every higher-order interaction. [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-23324",
+      "paper": "A Differential Theory of Quality-Resource Trade-offs for AI Model Selection: The Multiresource Frontier and Its Minimax Price",
+      "authors": "Dmitry Ignatov",
+      "url": "https://arxiv.org/abs/2611.23324v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Extracting multi-resource trade-offs from fitted frontiers",
+      "dateNote": "v1 submitted November 15, 2026 ET · November 19 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The author develops a differential representation of error frontiers over latency, parameters, training compute and energy, deriving minimax prices under a channel model. The abstract reports evaluation on 117 published frontiers. The price conclusions depend on the assumed frontier and resource model. [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-24469",
+      "paper": "ICICLE: In-Context Inference for Curve-Learning Extrapolation",
+      "authors": "Laurits Fredsgaard · Michael Riis Andersen · Mikkel N. Schmidt",
+      "url": "https://arxiv.org/abs/2611.24469v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "A learning-curve surrogate accepts variable hyperparameter sets",
+      "dateNote": "v1 submitted November 18, 2026 ET · November 19 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A 1.28M-parameter surrogate trained on synthetic priors supports freeze–thaw allocation using a shared set encoder for variable hyperparameter counts. Mean-regret trajectories resemble FT-PFN on LCBench, PD1 and TaskSet. Some Meta-Album subsets improve over Quick-Tune, while others show no clear difference. [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-24576",
+      "paper": "Late Entry in Looped Language Models",
+      "authors": "Ziqi Jin · Jiaxi Li · Weiwen Xu · Aixin Sun",
+      "url": "https://arxiv.org/abs/2611.24576v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "New tokens skip early loops while retaining deep context",
+      "dateNote": "v1 submitted November 18, 2026 ET · November 19 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Late entry runs new tokens through only the final K loops while completing old-token caches to depth T. Wake verifies candidates using completed states. Exact and lossy modes are reported separately. Ouro’s 5.2× exact-mode speedup is against the tokenwise baseline, versus +26% over full K=T block decoding. [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-blog-daisyrose",
+      "paper": "DaisyRose-27B: Pushing the Frontier of Post-Training Efficiency",
+      "authors": "Jason Chen · RadixArk",
+      "url": "https://huggingface.co/blog/RadixArk/daisyrose-27b-pushing-the-frontier-of-post-trainin",
+      "kind": "Brief · Technical blog",
+      "title": "DaisyRose’s long-horizon tasks and asynchronous pipeline",
+      "dateNote": "Published November 18, 2026",
+      "evidence": "Read task construction, backend and evaluation notes",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "About 1,200 selected tasks were trained over 18 days on 144 H200s, with 128 for rollouts and 16 for the trainer. Sessions up to 1M tokens are split into trajectories through harness summaries, while native context stays at 256K. Terminal-Bench 4.1 pass@1 rises from 5.6 to 12.0. Reported benchmark scores select the higher BF16/FP8 result per benchmark. [10]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The team reports backend MFU of 37% versus 16% and end-to-end throughput of 16,800 versus 8,300 tokens/s. Multipliers depend on the compared backends and task settings, with independent-system replication still outstanding. [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-blog-sft-duration",
+      "paper": "Why your fine-tuning job takes longer than the FLOPs say",
+      "authors": "Bruno Duarte · Gabriel Pimenta de Freitas Cardoso · Isis F. Carvalho · Breno de Almeida Beleza · Felipe Lima",
+      "url": "https://huggingface.co/blog/Dharma-AI/predicting-fine-tuning-time",
+      "kind": "Brief · Technical blog",
+      "title": "SFT duration needs evaluation and checkpoint overheads",
+      "dateNote": "Published November 18, 2026",
+      "evidence": "Read data, predictors, results and limitations",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Across 272 H200 jobs covering LoRA and full SFT, the target is elapsed time from GPU allocation to completion, excluding queueing. CatBoost uses pre-dispatch configuration, cumulative evaluation volume and checkpoint volume. Stratified five-fold MAE is 1.71 hours versus 12.41 for the best tested FLOP baseline. Mean job duration is 23.43 hours. [11]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The data come from one production environment. Feature importance describes predictive associations, and transfer across hardware remains unverified. [11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-blog-finqa-rl",
+      "paper": "A 9B model beats a 1T model on FinQA, trained with Crusoe Managed RL",
+      "authors": "Matan Halfon · Itay Niv · Daniel Shen · Suman Debnath · Yiwei Song · Omri Berkovitch",
+      "url": "https://www.crusoe.ai/resources/blog/managed-rl-9b-model-beats-1t-finqa",
+      "kind": "Brief · Technical blog",
+      "title": "Dynamic sampling and prompt revisiting on FinQA",
+      "dateNote": "Published November 18, 2026",
+      "evidence": "Read task and evaluation protocol and Tables 3–4",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "GRPO uses 16 rollouts per prompt. Half the prompts are fresh and half revisit unmastered prompts weighted by p(1−p), while equal-reward groups are filtered. Qwen3.5-9B rises from 53.1% to 73.9% on 290 external SnorkelFinance questions. Trained scores use each run’s peak checkpoint. [12]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The 35B-A3B ablations are single runs. The reported held-out run-to-run variation is about ±7 percentage points, leaving most ablation differences within that noise range. [12]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.24644v1",
+      "title": "Muon curvature diagnostics · Sections 2–6, Table 1 and Appendix A"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.24821v1",
+      "title": "Fisher tests under weak nulls · Section 2, Theorems 2.1–2.4 and Appendix A.1"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.24032v1",
+      "title": "Test-Time Symmetrization: Scaling Laws for Model-Agnostic Learning under Structure · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.24059v1",
+      "title": "Replay, Don't Resample: Off-Policy Consolidation of Long-Horizon RL Experts · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.24214v1",
+      "title": "Towards Reliable Scaling Laws for Tabular Foundation Models · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.24540v1",
+      "title": "Do Frontier Model Ingredients Add Up? A Replicated Factorial Study of Small Language Models · Read design, Table 2 and results"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.23324v1",
+      "title": "A Differential Theory of Quality-Resource Trade-offs for AI Model Selection: The Multiresource Frontier and Its Minimax Price · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.24469v1",
+      "title": "ICICLE: In-Context Inference for Curve-Learning Extrapolation · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.24576v1",
+      "title": "Late Entry in Looped Language Models · Abstract only"
+    },
+    {
+      "url": "https://huggingface.co/blog/RadixArk/daisyrose-27b-pushing-the-frontier-of-post-trainin",
+      "title": "DaisyRose team blog · Data, backend and evaluation protocol"
+    },
+    {
+      "url": "https://huggingface.co/blog/Dharma-AI/predicting-fine-tuning-time",
+      "title": "Dharma-AI technical blog · Data, five-fold evaluation and limitations"
+    },
+    {
+      "url": "https://www.crusoe.ai/resources/blog/managed-rl-9b-model-beats-1t-finqa",
+      "title": "Crusoe original research blog · Protocol, Tables 3–4 and ablations"
+    },
+    {
+      "url": "https://arxiv.org/html/2402.03300v2",
+      "title": "DeepSeekMath · Sections 4.1–4.2, Equations (3)–(4) and outcome supervision"
+    },
+    {
+      "url": "https://openalex.org/W4391631327",
+      "title": "OpenAlex high-citation record · Checked November 19, 2026"
+    }
+  ],
+  "classic": {
+    "id": "classic-deepseekmath-grpo",
+    "paperId": "arxiv:2402.03300",
+    "shortTitle": "DeepSeekMath / GRPO",
+    "year": 2024,
+    "topics": [
+      "Post-training"
+    ],
+    "paper": "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",
+    "authors": "Zhihong Shao · Peiyi Wang · Qihao Zhu · et al.",
+    "url": "https://arxiv.org/html/2402.03300v2",
+    "kind": "Historical classic",
+    "title": "GRPO’s group baseline and sampling weights",
+    "dateNote": "First arXiv posting February 5, 2024 · Read v2",
+    "evidence": "Read Sections 4.1–4.2, outcome-supervision objective and math benchmark tables",
+    "recognition": {
+      "label": "Highly cited in OpenAlex · Checked November 19, 2026",
+      "url": "https://openalex.org/W4391631327"
+    },
+    "question": "At fixed rollout-token budget, which distributions of per-question success probabilities change the optimal trade-off between group size G and the number of distinct questions?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "PPO (2017) typically uses a separate value network. DeepSeekMath (2024) samples a group of answers per question and constructs advantages from relative group rewards. Here we focus on outcome supervision, with fixed sampling policy πold and response length Tᵢ. [13]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\overline r=\\frac1G\\sum_i r_i,\\qquad\\widehat A_{it}=\\frac{r_i-\\overline r}{\\operatorname{std}(r_1,\\ldots,r_G)},\\qquad\\rho_{it}=\\frac{\\pi_\\theta(o_{it}\\mid q,o_{i,<t})}{\\pi_{\\rm old}(o_{it}\\mid q,o_{i,<t})}",
+        "label": "All tokens in one answer share its normalized outcome reward, defined above for nonzero group standard deviation."
+      },
+      {
+        "type": "equation",
+        "tex": "J(\\theta)=\\mathbb E\\frac1G\\sum_i\\frac1{T_i}\\sum_t\\left[\\min\\!\\left(\\rho_{it}\\widehat A_{it},\\operatorname{clip}(\\rho_{it},1-\\varepsilon,1+\\varepsilon)\\widehat A_{it}\\right)-\\beta\\widehat D_{it}\\right]",
+        "label": "Equation (3). Token terms are averaged within each sequence before averaging across answers. β controls the reference-policy penalty."
+      },
+      {
+        "type": "equation",
+        "tex": "\\widehat D_{it}=u_{it}-\\log u_{it}-1\\ge0,\\qquad u_{it}=\\frac{\\pi_{\\rm ref}(o_{it}\\mid q,o_{i,<t})}{\\pi_\\theta(o_{it}\\mid q,o_{i,<t})}",
+        "label": "KL sample term in Equation (4). Its expectation under current-policy sampling gives reverse KL. Old-policy samples and multiple updates require attention to the distribution mismatch."
+      },
+      {
+        "type": "equation",
+        "tex": "\\Pr\\{\\text{mixed group}\\}=1-p^G-(1-p)^G\\qquad(r_i\\overset{\\rm iid}{\\sim}\\operatorname{Bernoulli}(p))",
+        "label": "Simplified model for interpretation. All-correct or all-wrong groups have no within-group reward difference. This expression omits length effects, continuous rewards and clipping."
+      },
+      {
+        "type": "table",
+        "headers": [
+          "7B model",
+          "GSM8K",
+          "MATH"
+        ],
+        "rows": [
+          [
+            "DeepSeekMath-Instruct",
+            "82.9%",
+            "46.8%"
+          ],
+          [
+            "DeepSeekMath-RL",
+            "88.2%",
+            "51.7%"
+          ]
+        ]
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "The rows compare the paper’s SFT and RL stages, without a matched-budget causal decomposition of PPO versus GRPO. Group normalization, sequence averaging and clipping change estimator weights, so the complete objective does not directly equal unbiased vanilla REINFORCE. [13]"
+      }
+    ]
+  }
+}
