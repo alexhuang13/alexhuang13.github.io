@@ -1,0 +1,535 @@
+{
+  "date": "2026-11-20",
+  "number": "038",
+  "publishedAt": "2026-11-20T13:30:00Z",
+  "readingMinutes": 13,
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Flow matching",
+    "Post-training"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "Daily Research Notes",
+  "title": "How Training Budgets Reshape Inference Scaling, and Non-Gaussian Sources Flow to Data",
+  "subtitle": "Budget internalization · Flow matching · Federated Muon · Deep linear dynamics",
+  "intro": "The main reads examine how fixed rollout caps reshape test-time scaling and how Euler discretization behaves in flow matching with non-Gaussian sources. Briefs cover spectral optimization, revised architecture and data-scaling studies, and post-training systems. The classic uses deep linear networks to resolve learning plateaus.",
+  "window": "November 17–20, 2026 (Philadelphia time, including new announcements and delayed indexing)",
+  "articles": [
+    {
+      "id": "paper-2611-26172",
+      "paper": "Budget Internalization: Fixed-Budget RLVR Trades Test-Time Scaling for In-Budget Accuracy",
+      "authors": "Ilia Zavidnyi · Alexander Kovrigin · Arina Puchkova · Kirill Gelvan · Sergey Titov",
+      "url": "https://arxiv.org/html/2611.26172v1",
+      "kind": "Main read · First arXiv posting",
+      "title": "A training cap becomes a stopping habit",
+      "dateNote": "v1 submitted November 19, 2026 ET · November 20 announcement",
+      "evidence": "Read training setup, budget curves, ablations and limitations",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A fixed rollout cap B also changes behavior: across Qwen3.5-4B, Gemma4-E2B and Nemotron-3-Nano-4B, GRPO improves accuracy near the cap while contracting the benefits of longer reasoning. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "r_B(y)=\\mathbf1\\{y\\text{ is correct}\\}\\mathbf1\\{y\\text{ finishes within }B\\},\\qquad A_B(b)=\\mathbb E[\\mathbf1\\{\\text{correct at evaluation cap }b\\}]",
+          "label": "Simplified notation for censored rewards; A_B(b) is accuracy at evaluation cap b after training with cap B, not the full GRPO objective."
+        },
+        {
+          "type": "equation",
+          "tex": "\\Delta_B(b)=A_B(b)-A_{\\rm base}(b),\\qquad \\Delta_{8k}(8k)>0,\\quad \\Delta_{8k}(64k)<0",
+          "label": "The sign reversal below is an empirical finding, not a universal theorem."
+        },
+        {
+          "type": "text",
+          "text": "The table uses Table 3 ablations: Qwen3.5-4B, DeepScaleR, an 8K training cap, at most 300 steps and 32 prompts × 8 rollouts per step. AIME 2024/25 contains 60 problems; avg@16 is mean correctness over 16 generations per problem (%), not pass@16. [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Condition",
+            "8K",
+            "64K"
+          ],
+          "rows": [
+            [
+              "Base",
+              "9.2 ± 6.2",
+              "78.8 ± 8.5"
+            ],
+            [
+              "GRPO",
+              "50.4 ± 10.4",
+              "56.5 ± 10.0"
+            ],
+            [
+              "Forced answer",
+              "7.0 ± 5.3",
+              "77.2 ± 8.5"
+            ],
+            [
+              "KL β=0.01",
+              "32.4 ± 11.0",
+              "70.1 ± 8.7"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "SFT on artificially truncated traces also reproduces internalization; naturally completed short traces do not show the same contraction. Strong KL and forced answers retain more high-budget capability while sacrificing in-budget gains. [1]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The ± values are problem-level 95% intervals. These ablations each use one training seed; the main DeepScaleR comparison separately uses three. Evidence implicates length censoring but does not establish an explicit internal representation of B. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-26407",
+      "paper": "Flow Matching from Non-Gaussian Sources: A Theory of Efficient Sampling",
+      "authors": "Yuchen Zhou · Lili Zheng · Yuxin Chen · Gen Li",
+      "url": "https://arxiv.org/html/2611.26407v1",
+      "kind": "Main read · First arXiv posting",
+      "title": "Non-Gaussian sources: which sampling error is controlled?",
+      "dateNote": "v1 submitted November 19, 2026 ET · November 20 announcement",
+      "evidence": "Read the model, Assumptions 1–3, Theorem 1 and proof outline; affiliation confirms Wharton’s Yuxin Chen",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Flow matching and rectified flow (2023) learn transport velocities by regression. Heavy-tailed or mixture sources are allowed; the question is how finitely many velocity evaluations control Euler error. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "Z\\sim P_0,\\quad X_\\star\\sim P_1,\\quad Z\\perp X_\\star,\\qquad X_t=(1-t)Z+tX_\\star,\\qquad v_t(x)=\\mathbb E[X_\\star-Z\\mid X_t=x]",
+          "label": "Independent linear interpolation and its population velocity field."
+        },
+        {
+          "type": "equation",
+          "tex": "Y_0\\overset d=(1-t_0)Z,\\qquad Y_n=Y_{n-1}+(t_n-t_{n-1})v_{t_{n-1}}(Y_{n-1}),\\qquad V_0=\\operatorname{tr}\\operatorname{Cov}(Z)",
+          "label": "Sampling starts at a positive t₀ and stops early at tₙ<1; the grid refines near both endpoints."
+        },
+        {
+          "type": "text",
+          "text": "Assume a positive C¹ source density, an L-Lipschitz score and finite V₀; the target second moment is bounded by a fixed power of (N+1) times V₀, with Assumption 3’s endpoint and step-size conditions. Theorem 1 gives: [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\operatorname{TV}(\\mathcal L(Y_N),\\mathcal L(X_{t_N}))\\leq\\frac{CL(d+\\log N)V_0\\log^2 N}{N},\\qquad N=\\widetilde O(LdV_0/\\varepsilon)",
+          "label": "The guarantee targets the early-stopped interpolant. The proof accumulates one-step errors using TV contraction and restricted injectivity of non-Gaussian Euler maps."
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The analysis uses the exact population velocity and does not cover estimation error. The target may be singular, so the bound cannot be rewritten as TV≤ε against the original P₁. [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-25300",
+      "paper": "Federated Learning of Car Aerodynamics Surrogates with Spectral Optimizers",
+      "authors": "Arman Bolatov · Nikolay Spitsyn · Daniil Medyakov · Vladimir Aletov · Dmitry Bylinkin · Martin Takáč · Aleksandr Beznosikov",
+      "url": "https://arxiv.org/html/2611.25300v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Muon in heterogeneous federated CFD",
+      "dateNote": "v1 submitted November 18, 2026 ET · November 20 announcement",
+      "evidence": "Read Sections 3–5",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "On six body-type clients, Transolver with FedMuon/FedMARS-M reaches drag error within 2% of centralized Muon using 2–4 local epochs per round. Momentum is corrected before orthogonalization. This application does not establish a general heterogeneous-convergence theory. [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-25297",
+      "paper": "ScaleDiag: Diagnosing the Limits of Test-Time Scaling in GUI Grounding",
+      "authors": "Chen Liu · Zhen Fang · Xin Yu · Dadong Wang · Ling Chen",
+      "url": "https://arxiv.org/abs/2611.25297v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "GUI grounding: coverage versus selection",
+      "dateNote": "v1 submitted November 18, 2026 ET · November 20 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Controlled changes to cropping, instruction information and candidate sampling separate bottlenecks. Correct coordinates often occur among samples, leaving 5.1–11.0 percentage points of oracle headroom; geometric consensus adds almost nothing. Abstract only; oracle headroom is not an achieved deployment gain. [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-26103",
+      "paper": "UniVEP: Unifying Velocity and Endpoint Prediction for Robot Manipulation",
+      "authors": "Zhengtu Liang · Qiwei Liang · Tao Lin · Shihang Weng · Boyang Cai · Xiangyu Chen · Yikeng Chen · Jiaming Liang · Bohan Tan · Yu Yan · Renjing Xu",
+      "url": "https://arxiv.org/abs/2611.26103v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Evaluation-step curves for robot policies",
+      "dateNote": "v1 submitted November 19, 2026 ET · November 20 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Joint endpoint and velocity training switches prediction types as noise declines. On RoboTwin, one StarVLA forward gives 61.36% success versus 59.96% for the best single-target baseline at 16 forwards. Abstract only; this is not a training-compute scaling theorem. [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-25763",
+      "paper": "Closing Performance Gap for Diffusion Language Models under Low Inference Budgets",
+      "authors": "Hao Wu · Sipeng Chen · Jingwen Fu · Yuwang Wang",
+      "url": "https://arxiv.org/abs/2611.25763v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "CaRR reuses the existing edit trajectory",
+      "dateNote": "v1 submitted November 19, 2026 ET · November 20 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "CaRR refills replaced tokens and recovers submittable answers from the existing trajectory. At one-eighth of the full forward budget, mean accuracy over six metrics rises 7.44 percentage points. Abstract only; no extra backbone forwards does not imply zero system overhead. [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-26420",
+      "paper": "Awaken-HI: Scaling Humanoid Intelligence with Whole-Body Human Experience",
+      "authors": "EngineAI",
+      "url": "https://arxiv.org/html/2611.26420v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "Scaling whole-body human-motion data",
+      "dateNote": "v1 submitted November 19, 2026 ET · November 20 announcement",
+      "evidence": "Read the data, scaling experiment and evaluation protocol",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Human pretraining increases from 5,000 to 50,000 hours with robot adaptation data fixed, measuring action error and task success. Mean success is 93.75% across eight individual tasks, with only ten trials per task; this does not determine a cross-platform scaling exponent. [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-25167",
+      "paper": "Game-Theoretic Data Allocation for Expert Specialization and Routing",
+      "authors": "Mark Lovett · Denis Lim · Soroush Vosoughi",
+      "url": "https://arxiv.org/html/2611.25167v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "One allocation rule for expert training and routing",
+      "dateNote": "v1 submitted November 18, 2026 ET · November 20 announcement",
+      "evidence": "Read the model and allocation ablation",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "InflEns solves a location game in fixed prompt-trait space to allocate LoRA training weights and routing shares. The highest-share expert has lowest held-out NLL on about 90% of prompts, versus about 15% after permutation. Evidence is limited to the studied safety corpus. [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-25624",
+      "paper": "Deviations from the NTK Regime in CNNs under Joint Depth-Width Scaling",
+      "authors": "Maria Matveev · Pascal Esser · Gitta Kutyniok · Mariia Seleznova",
+      "url": "https://arxiv.org/abs/2611.25624v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "CNNs: initial concentration versus kernel constancy",
+      "dateNote": "v1 submitted November 19, 2026 ET · November 20 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "At critical initialization, NTK dispersion approximately collapses against depth-to-width ratio L/C. Training-time kernel rotation also increases with this ratio, even under ordered initialization. Abstract only; numerical evidence does not establish a unified limit theorem. [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-17488",
+      "paper": "LimiX-2: A Contextual Mechanism Network Towards General Structured-Data Intelligence",
+      "authors": "LimiX Team",
+      "url": "https://arxiv.org/html/2609.17488v2",
+      "kind": "Brief · Version update",
+      "title": "LimiX-2: slopes change after recomputing the comparison pool",
+      "dateNote": "First posted September 15, 2026 · v2 November 19, 2026 ET",
+      "evidence": "Compared Section 6 in v1/v2",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v2 adds model sizes to the comparison pool and recomputes Elo. The TabArena slope per parameter doubling changes from 34.68 to 45.73, and R² from 0.9808 to 0.9570. Both versions’ Section 6 was checked; Elo depends on its comparison pool, and 2B remains an extrapolation. [10] [20]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-37745",
+      "paper": "Optimizer-dependent training dynamics converge to the same one-third optimal data scaling",
+      "authors": "Hyunseok Lee · Mihir Basil · Yizhou Liu · Jeff Gore",
+      "url": "https://arxiv.org/html/2609.37745v2",
+      "kind": "Brief · Version update",
+      "title": "The one-third exponent: newly explicit boundaries",
+      "dateNote": "First posted September 29, 2026 · v2 November 19, 2026 ET",
+      "evidence": "Compared Appendices D–H in v1/v2",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v2 adds a discrete Lyapunov stability condition, learning-rate fits for seven optimizers and a discussion of Adam features absent from the theory. In the fixed-teacher, single-softmax model, radial/tangential dynamic exponents remain distinct from optimal data scaling; this is not universal D⁻¹ᐟ³ for arbitrary LLMs. [11] [21]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-27964",
+      "paper": "Learning from Transients: Linear RNN Scaling Laws in Stationary Prediction",
+      "authors": "Ziyan Chen · Linhe Zheng · Peilin Liu · Zhongzhu Zhou · Ding-Xuan Zhou",
+      "url": "https://arxiv.org/html/2609.27964v3",
+      "kind": "Brief · Version update",
+      "title": "Linear RNNs: transients under a fixed stationary target",
+      "dateNote": "First posted August 23, 2026 · v3 November 18, 2026 ET",
+      "evidence": "Compared model and proof revisions in v2/v3",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v3 reformulates the fixed stationary prediction setting and expands spectral comparisons and noncommuting filter-perturbation proofs. Heavy-tailed initialization can alter finite-time bias; constant-length trajectories attain the optimal risk order in the theorem-controlled range. Assumptions include stable linear-Gaussian dynamics and aligned power-law spectra. [12] [22]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-39632",
+      "paper": "Towards Better Exploration in Sequential Test-Time Scaling",
+      "authors": "Joseph Rance · Fabio Pizzati · Juil Sock · Woody Bayliss · Marc Górriz Blanch · Philip Torr · Adel Bibi",
+      "url": "https://arxiv.org/html/2609.39632v3",
+      "kind": "Brief · Version update",
+      "title": "Sequential reasoning: do attractors retain states?",
+      "dateNote": "First posted September 30, 2026 · v3 November 19, 2026 ET",
+      "evidence": "Compared the new Table 4 in v3 against v2",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v3 adds a next-state resampling test using 100 attractor states for each model/method/benchmark combination. Same-attractor transitions range from 92% to 100%. This is an empirical test with fixed clusters, not a proof of Markov absorption for all reasoning chains. [13] [23]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2602-08236",
+      "paper": "When and How Much to Imagine: Adaptive Test-Time Scaling with World Models for Visual Spatial Reasoning",
+      "authors": "Shoubin Yu · Yue Zhang · Zun Wang · Jaehong Yoon · Huaxiu Yao · Mingyu Ding · Mohit Bansal",
+      "url": "https://arxiv.org/html/2602.08236v3",
+      "kind": "Brief · Version update",
+      "title": "Imagination control: new gating, planning and verification ablations",
+      "dateNote": "First posted February 8, 2026 ET · v3 November 18, 2026 ET",
+      "evidence": "Compared Appendix C in v2/v3",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v3 adds Appendix C ablations of components, wrong-skip penalties and transfer. On SAT-Real, AVIC-R versus always-on gives 77.3% versus 69.3% accuracy at 3.03 versus 12.34 mean calls. These are system configurations; the quality/call trade-off cannot be attributed to one module alone. [14] [24]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-24977",
+      "paper": "CANDID: Candidate-Driven Intervention for Disciplined Execution in Local Computer-Use Agents",
+      "authors": "Woongkyu Lee · Jungwook Choi",
+      "url": "https://arxiv.org/abs/2611.24977v1",
+      "kind": "Brief · First arXiv posting",
+      "title": "CANDID allocates parallel samples at failure points",
+      "dateNote": "v1 submitted November 17, 2026 ET · November 20 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Parallel test-time scaling targets loop recovery and termination: repeated-behavior candidates are filtered and DONE requires unanimity. Abstract only; exact OSWorld improvements and budget ablations were not fully checked in this run. [15]"
+        }
+      ]
+    },
+    {
+      "id": "paper-tunix-agentic",
+      "paper": "Multi-Turn Agentic Reinforcement Learning with Tunix and Gemma 4 on Google TPUs",
+      "authors": "Wei Wei",
+      "url": "https://developers.googleblog.com/multi-turn-agentic-reinforcement-learning-with-tunix-and-gemma-4-on-google-tpus/",
+      "kind": "Brief · Technical blog",
+      "title": "Token continuity in multi-turn RL",
+      "dateNote": "Site date: November 19, 2026",
+      "evidence": "Read technical text; experimental results are publisher-reported",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Gemma 4 E2B trains for 100 steps on one TPU v6e-8 host, with 8 boards × 8 games per step. Reported held-out-board wins rise from 9.4% to 95%. The implementation uses GSPO-token loss, RLOO advantages and exact token IDs across tool turns. One small game does not establish general agent transfer. [16]"
+        }
+      ]
+    },
+    {
+      "id": "paper-dynamo-rl",
+      "paper": "Reducing Rollout Bottlenecks in Reinforcement Learning with NVIDIA Dynamo",
+      "authors": "Amr Elmeleegy · Harry Kim · Kyle Kranen",
+      "url": "https://developer.nvidia.com/blog/reducing-rollout-bottlenecks-in-reinforcement-learning-with-nvidia-dynamo/",
+      "kind": "Brief · Technical blog",
+      "title": "Rollouts: cache routing and delta weights",
+      "dateNote": "Site date: November 19, 2026",
+      "evidence": "Read technical text; experimental results are publisher-reported",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The technical post details KV-reuse/load routing, resident GPU-weight reuse, compressed delta distribution and recovery catch-up. The RL framework determines sample eligibility and weight freshness. Weight-update acceleration is not converted here into end-to-end training acceleration. [17]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.26172v1",
+      "title": "Budget internalization · Sections 2–3, Table 3, Appendix A and limitations"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.26407v1",
+      "title": "Non-Gaussian-source flow matching · Sections 2–3, Theorem 1 and Section 5"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.25300v1",
+      "title": "Federated Learning of Car Aerodynamics Surrogates with Spectral Optimizers · Read Sections 3–5"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.25297v1",
+      "title": "ScaleDiag: Diagnosing the Limits of Test-Time Scaling in GUI Grounding · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.26103v1",
+      "title": "UniVEP: Unifying Velocity and Endpoint Prediction for Robot Manipulation · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.25763v1",
+      "title": "Closing Performance Gap for Diffusion Language Models under Low Inference Budgets · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.26420v1",
+      "title": "Awaken-HI: Scaling Humanoid Intelligence with Whole-Body Human Experience · Read the data, scaling experiment and evaluation protocol"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.25167v1",
+      "title": "Game-Theoretic Data Allocation for Expert Specialization and Routing · Read the model and allocation ablation"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.25624v1",
+      "title": "Deviations from the NTK Regime in CNNs under Joint Depth-Width Scaling · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.17488v2",
+      "title": "LimiX-2: A Contextual Mechanism Network Towards General Structured-Data Intelligence · Compared Section 6 in v1/v2"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.37745v2",
+      "title": "Optimizer-dependent training dynamics converge to the same one-third optimal data scaling · Compared Appendices D–H in v1/v2"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.27964v3",
+      "title": "Learning from Transients: Linear RNN Scaling Laws in Stationary Prediction · Compared model and proof revisions in v2/v3"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.39632v3",
+      "title": "Towards Better Exploration in Sequential Test-Time Scaling · Compared the new Table 4 in v3 against v2"
+    },
+    {
+      "url": "https://arxiv.org/html/2602.08236v3",
+      "title": "When and How Much to Imagine: Adaptive Test-Time Scaling with World Models for Visual Spatial Reasoning · Compared Appendix C in v2/v3"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.24977v1",
+      "title": "CANDID: Candidate-Driven Intervention for Disciplined Execution in Local Computer-Use Agents · Abstract only"
+    },
+    {
+      "url": "https://developers.googleblog.com/multi-turn-agentic-reinforcement-learning-with-tunix-and-gemma-4-on-google-tpus/",
+      "title": "Multi-Turn Agentic Reinforcement Learning with Tunix and Gemma 4 on Google TPUs · Main text and implementation details"
+    },
+    {
+      "url": "https://developer.nvidia.com/blog/reducing-rollout-bottlenecks-in-reinforcement-learning-with-nvidia-dynamo/",
+      "title": "Reducing Rollout Bottlenecks in Reinforcement Learning with NVIDIA Dynamo · Main text and implementation details"
+    },
+    {
+      "url": "https://arxiv.org/pdf/1312.6120v3",
+      "title": "Classic · Deep linear networks, Sections 1.1–2, Equations 2–15 and Figure 3"
+    },
+    {
+      "url": "https://api.openalex.org/works/W2125930537",
+      "title": "Selection evidence · 1,849 citations in the queried OpenAlex record, checked November 20, 2026"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.17488v1",
+      "title": "Prior version for comparison · 2609.17488v1"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.37745v1",
+      "title": "Prior version for comparison · 2609.37745v1"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.27964v2",
+      "title": "Prior version for comparison · 2609.27964v2"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.39632v2",
+      "title": "Prior version for comparison · 2609.39632v2"
+    },
+    {
+      "url": "https://arxiv.org/html/2602.08236v2",
+      "title": "Prior version for comparison · 2602.08236v2"
+    }
+  ],
+  "classic": {
+    "id": "classic-deep-linear",
+    "paperId": "arxiv:1312.6120",
+    "shortTitle": "Deep linear learning dynamics",
+    "year": 2014,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "kind": "Daily classic",
+    "title": "Deep linear networks: where do plateaus come from?",
+    "paper": "Exact solutions to the nonlinear dynamics of learning in deep linear neural networks",
+    "authors": "Andrew M. Saxe · James L. McClelland · Surya Ganguli",
+    "url": "https://arxiv.org/pdf/1312.6120v3",
+    "dateNote": "Historical classic · First posted December 20, 2013; read v3, February 19, 2014; ICLR 2014",
+    "evidence": "Read Sections 1.1–2, Equations 2–15 and Figure 3; exact solutions and their assumptions",
+    "recognition": {
+      "label": "1,849 citations in the queried OpenAlex record (checked November 20, 2026)",
+      "url": "https://api.openalex.org/works/W2125930537"
+    },
+    "question": "If inputs are not whitened and the singular basis of Σᵧₓ is not aligned with Σₓₓ, which cross-mode coupling breaks the plateau first?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Depth makes parameter dynamics nonlinear even when the input-output map stays linear. Following Baldi–Hornik’s (1989) loss geometry, Saxe et al. (2014) solve a family of trajectories to explain plateaus and rapid transitions. [18]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widehat y=W_2W_1x,\\qquad \\mathbb E[xx^\\top]=I,\\quad \\Sigma_{yx}=\\mathbb E[yx^\\top]=USV^\\top,\\qquad \\mathcal L=\\tfrac12\\mathbb E\\|y-W_2W_1x\\|^2",
+        "label": "Whitened inputs, squared loss and singular modes representable by the hidden layer. Below, τ is the time scale of continuous gradient flow."
+      },
+      {
+        "type": "equation",
+        "tex": "\\tau\\dot W_1=W_2^\\top(\\Sigma_{yx}-W_2W_1),\\qquad \\tau\\dot W_2=(\\Sigma_{yx}-W_2W_1)W_1^\\top",
+        "label": "The paper’s dynamics: the linear end-to-end map produces coupled cubic weight equations."
+      },
+      {
+        "type": "text",
+        "text": "Use the special aligned initialization W₁=R diag(a)Vᵀ and W₂=U diag(b)Rᵀ, with orthogonal hidden modes and RᵀR=I. This defines an invariant manifold with independent modes: [18]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\tau\\dot a=b(s-ab),\\qquad \\tau\\dot b=a(s-ab),\\qquad \\frac{d}{dt}(a^2-b^2)=0",
+        "label": "The paper’s decoupled equations; subtracting the derivatives gives conserved interlayer imbalance."
+      },
+      {
+        "type": "equation",
+        "tex": "s>0,\\quad a=b>0,\\quad u=ab:\\qquad \\tau\\dot u=2u(s-u),\\qquad u(t)=\\frac{s}{1+(s/u_0-1)e^{-2st/\\tau}}",
+        "label": "Exact solution for a balanced, aligned mode. Small u₀ yields a plateau followed by a sharp rise; modes with larger singular value s learn earlier."
+      },
+      {
+        "type": "equation",
+        "tex": "W_L\\cdots W_1:\\qquad \\tau\\dot u=L\\,u^{\\,2-2/L}(s-u),\\qquad u=\\prod_{\\ell=1}^{L}a_\\ell,\\quad a_1=\\cdots=a_L>0",
+        "label": "The paper’s depth notation rewritten as L weight matrices. Depth changes escape dynamics near small u while preserving the class of linear end-to-end maps."
+      },
+      {
+        "type": "text",
+        "text": "Figure 3 compares the exact curves with randomly initialized linear and tanh networks on 32 orthogonal inputs; agreement for the latter two is approximate. The queried OpenAlex record shows 1,849 citations on November 20, 2026; other same-title records were not merged. [18] [19]"
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "Exact solutions require whitening, alignment and continuous time. Numerical agreement for random initialization and nonlinear networks is not a theorem beyond these assumptions. Finite-step stability also constrains the interpretation of the depth limit. [18]"
+      }
+    ]
+  }
+}

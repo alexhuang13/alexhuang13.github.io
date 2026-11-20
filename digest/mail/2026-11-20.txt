@@ -1,0 +1,101 @@
+RESEARCH DIGEST / 2026-11-20
+训练预算如何改变推理扩展，非高斯源如何流向数据
+预算内化 · Flow matching · Muon 联邦学习 · 深线性动力学
+
+中文: https://alexhuang13.github.io/digest/2026-11-20.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-20.html
+
+主读 · arXiv 首发
+训练上限会成为推理的停止习惯
+Budget Internalization: Fixed-Budget RLVR Trades Test-Time Scaling for In-Budget Accuracy
+https://alexhuang13.github.io/digest/2026-11-20.html#paper-2611-26172
+
+主读 · arXiv 首发
+非高斯源：控制的是哪一种采样误差？
+Flow Matching from Non-Gaussian Sources: A Theory of Efficient Sampling
+https://alexhuang13.github.io/digest/2026-11-20.html#paper-2611-26407
+
+简讯 · arXiv 首发
+Muon 进入异质联邦 CFD
+Federated Learning of Car Aerodynamics Surrogates with Spectral Optimizers
+https://alexhuang13.github.io/digest/2026-11-20.html#paper-2611-25300
+
+简讯 · arXiv 首发
+GUI：候选覆盖与可选择性分开
+ScaleDiag: Diagnosing the Limits of Test-Time Scaling in GUI Grounding
+https://alexhuang13.github.io/digest/2026-11-20.html#paper-2611-25297
+
+简讯 · arXiv 首发
+机器人策略的评估步数曲线
+UniVEP: Unifying Velocity and Endpoint Prediction for Robot Manipulation
+https://alexhuang13.github.io/digest/2026-11-20.html#paper-2611-26103
+
+简讯 · arXiv 首发
+CaRR：复用既有编辑轨迹
+Closing Performance Gap for Diffusion Language Models under Low Inference Budgets
+https://alexhuang13.github.io/digest/2026-11-20.html#paper-2611-25763
+
+简讯 · arXiv 首发
+人类全身动作数据的扩展
+Awaken-HI: Scaling Humanoid Intelligence with Whole-Body Human Experience
+https://alexhuang13.github.io/digest/2026-11-20.html#paper-2611-26420
+
+简讯 · arXiv 首发
+用同一分配规则训练并路由专家
+Game-Theoretic Data Allocation for Expert Specialization and Routing
+https://alexhuang13.github.io/digest/2026-11-20.html#paper-2611-25167
+
+简讯 · arXiv 首发
+CNN：初始化集中不等于训练中核不变
+Deviations from the NTK Regime in CNNs under Joint Depth-Width Scaling
+https://alexhuang13.github.io/digest/2026-11-20.html#paper-2611-25624
+
+简讯 · 版本更新
+LimiX-2：重算比较池后，斜率改变
+LimiX-2: A Contextual Mechanism Network Towards General Structured-Data Intelligence
+https://alexhuang13.github.io/digest/2026-11-20.html#paper-2609-17488
+
+简讯 · 版本更新
+一分之三指数：增加了哪些边界？
+Optimizer-dependent training dynamics converge to the same one-third optimal data scaling
+https://alexhuang13.github.io/digest/2026-11-20.html#paper-2609-37745
+
+简讯 · 版本更新
+线性 RNN：固定平稳目标后的瞬态收益
+Learning from Transients: Linear RNN Scaling Laws in Stationary Prediction
+https://alexhuang13.github.io/digest/2026-11-20.html#paper-2609-27964
+
+简讯 · 版本更新
+序贯推理：吸引子是否真的留得住？
+Towards Better Exploration in Sequential Test-Time Scaling
+https://alexhuang13.github.io/digest/2026-11-20.html#paper-2609-39632
+
+简讯 · 版本更新
+想象控制：新增门控、规划与验证消融
+When and How Much to Imagine: Adaptive Test-Time Scaling with World Models for Visual Spatial Reasoning
+https://alexhuang13.github.io/digest/2026-11-20.html#paper-2602-08236
+
+简讯 · arXiv 首发
+CANDID：在失败点分配并行采样
+CANDID: Candidate-Driven Intervention for Disciplined Execution in Local Computer-Use Agents
+https://alexhuang13.github.io/digest/2026-11-20.html#paper-2611-24977
+
+简讯 · 技术博客
+多轮 RL 的 token 连续性
+Multi-Turn Agentic Reinforcement Learning with Tunix and Gemma 4 on Google TPUs
+https://alexhuang13.github.io/digest/2026-11-20.html#paper-tunix-agentic
+
+简讯 · 技术博客
+rollout：缓存路由与增量权重
+Reducing Rollout Bottlenecks in Reinforcement Learning with NVIDIA Dynamo
+https://alexhuang13.github.io/digest/2026-11-20.html#paper-dynamo-rl
+
+每日精读 · 2014
+深线性网络：平台期从哪里来？
+https://alexhuang13.github.io/digest/2026-11-20.html#classic-deep-linear
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-20.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

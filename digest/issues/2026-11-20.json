@@ -1,0 +1,535 @@
+{
+  "date": "2026-11-20",
+  "number": "038",
+  "publishedAt": "2026-11-20T13:30:00Z",
+  "readingMinutes": 13,
+  "tags": [
+    "Scaling laws",
+    "Muon",
+    "Flow matching",
+    "Post-training"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "每日研究笔记",
+  "title": "训练预算如何改变推理扩展，非高斯源如何流向数据",
+  "subtitle": "预算内化 · Flow matching · Muon 联邦学习 · 深线性动力学",
+  "intro": "主读固定 rollout 上限如何改变测试时扩展，以及非高斯源 flow matching 的 Euler 离散误差。简讯收录谱优化、架构与数据扩展的版本修订及后训练系统；经典精读用深线性网络解开学习平台期。",
+  "window": "2026-11-17 至 2026-11-20（费城时间，含窗口内新公告及索引延迟补收）",
+  "articles": [
+    {
+      "id": "paper-2611-26172",
+      "paper": "Budget Internalization: Fixed-Budget RLVR Trades Test-Time Scaling for In-Budget Accuracy",
+      "authors": "Ilia Zavidnyi · Alexander Kovrigin · Arina Puchkova · Kirill Gelvan · Sergey Titov",
+      "url": "https://arxiv.org/html/2611.26172v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "训练上限会成为推理的停止习惯",
+      "dateNote": "v1 提交 2026-11-19 ET · 11 月 20 日公告",
+      "evidence": "已读训练设置、预算曲线、消融与局限",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "固定 rollout 上限 B 不只限制训练花费：在 Qwen3.5-4B、Gemma4-E2B、Nemotron-3-Nano-4B 上，GRPO 提高预算附近的准确率，却压缩了更长推理的收益。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "r_B(y)=\\mathbf1\\{y\\text{ is correct}\\}\\mathbf1\\{y\\text{ finishes within }B\\},\\qquad A_B(b)=\\mathbb E[\\mathbf1\\{\\text{correct at evaluation cap }b\\}]",
+          "label": "截断奖励的简化记号；A_B(b) 是用上限 B 训练后、在上限 b 下的准确率，不是完整 GRPO 目标。"
+        },
+        {
+          "type": "equation",
+          "tex": "\\Delta_B(b)=A_B(b)-A_{\\rm base}(b),\\qquad \\Delta_{8k}(8k)>0,\\quad \\Delta_{8k}(64k)<0",
+          "label": "下面的符号反转来自原文实验，不是普适定理。"
+        },
+        {
+          "type": "text",
+          "text": "表为 Qwen3.5-4B、DeepScaleR、8K 训练上限的表 3 消融；至多 300 步、每步 32 prompts × 8 rollouts。AIME 2024/25 共 60 题，avg@16 为每题 16 次生成的平均正确率（%），不是 pass@16。 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "条件",
+            "8K",
+            "64K"
+          ],
+          "rows": [
+            [
+              "Base",
+              "9.2 ± 6.2",
+              "78.8 ± 8.5"
+            ],
+            [
+              "GRPO",
+              "50.4 ± 10.4",
+              "56.5 ± 10.0"
+            ],
+            [
+              "Forced answer",
+              "7.0 ± 5.3",
+              "77.2 ± 8.5"
+            ],
+            [
+              "KL β=0.01",
+              "32.4 ± 11.0",
+              "70.1 ± 8.7"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "人为截断轨迹上的 SFT 也复现内化，自然结束的短轨迹没有同样收缩。强 KL 和强制回答保留更多高预算能力，同时牺牲预算内增益。 [1]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "表中 ± 为题目层面的 95% 区间；这些消融各用一个训练种子，主 DeepScaleR 对照另有三个种子。机制证据指向长度截断，但未证明模型显式表示了 B。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-26407",
+      "paper": "Flow Matching from Non-Gaussian Sources: A Theory of Efficient Sampling",
+      "authors": "Yuchen Zhou · Lili Zheng · Yuxin Chen · Gen Li",
+      "url": "https://arxiv.org/html/2611.26407v1",
+      "kind": "主读 · arXiv 首发",
+      "title": "非高斯源：控制的是哪一种采样误差？",
+      "dateNote": "v1 提交 2026-11-19 ET · 11 月 20 日公告",
+      "evidence": "已读模型、假设 1–3、定理 1 与证明框架；署名核对为 Wharton Yuxin Chen",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Flow matching 与 rectified flow（2023）用回归学习输运速度。源分布可选重尾或混合分布，难点是如何在有限次速度评估下控制 Euler 误差。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "Z\\sim P_0,\\quad X_\\star\\sim P_1,\\quad Z\\perp X_\\star,\\qquad X_t=(1-t)Z+tX_\\star,\\qquad v_t(x)=\\mathbb E[X_\\star-Z\\mid X_t=x]",
+          "label": "独立线性插值与总体速度场。"
+        },
+        {
+          "type": "equation",
+          "tex": "Y_0\\overset d=(1-t_0)Z,\\qquad Y_n=Y_{n-1}+(t_n-t_{n-1})v_{t_{n-1}}(Y_{n-1}),\\qquad V_0=\\operatorname{tr}\\operatorname{Cov}(Z)",
+          "label": "采样从正时间 t₀ 开始、在 tₙ<1 早停；时间网格在两端加密。"
+        },
+        {
+          "type": "text",
+          "text": "假设源密度处处正且 C¹、score 为 L-Lipschitz、V₀ 有限；目标二阶矩至多为 (N+1) 的固定次幂乘 V₀，并使用假设 3 的端点与步长条件。原文定理 1 给出： [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\operatorname{TV}(\\mathcal L(Y_N),\\mathcal L(X_{t_N}))\\leq\\frac{CL(d+\\log N)V_0\\log^2 N}{N},\\qquad N=\\widetilde O(LdV_0/\\varepsilon)",
+          "label": "保证针对早停插值分布；证明以 TV 收缩累加单步误差，并处理非高斯 Euler 映射的受限单射性。"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "使用精确总体速度场；没有覆盖速度估计误差。目标可奇异，因此不能把上式改写成对原始 P₁ 的 TV≤ε。 [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-25300",
+      "paper": "Federated Learning of Car Aerodynamics Surrogates with Spectral Optimizers",
+      "authors": "Arman Bolatov · Nikolay Spitsyn · Daniil Medyakov · Vladimir Aletov · Dmitry Bylinkin · Martin Takáč · Aleksandr Beznosikov",
+      "url": "https://arxiv.org/html/2611.25300v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "Muon 进入异质联邦 CFD",
+      "dateNote": "v1 提交 2026-11-18 ET · 11 月 20 日公告",
+      "evidence": "已读 §3–5",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "六个车身类型客户端上训练 Transolver；FedMuon/FedMARS-M 每轮 2–4 个本地 epoch 的阻力误差距集中式 Muon 不超过 2%。校正动量后再正交化；该应用证据尚未给出通用异质收敛理论。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-25297",
+      "paper": "ScaleDiag: Diagnosing the Limits of Test-Time Scaling in GUI Grounding",
+      "authors": "Chen Liu · Zhen Fang · Xin Yu · Dadong Wang · Ling Chen",
+      "url": "https://arxiv.org/abs/2611.25297v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "GUI：候选覆盖与可选择性分开",
+      "dateNote": "v1 提交 2026-11-18 ET · 11 月 20 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "分别改变裁剪、指令信息与候选采样。正确坐标常已被采到，但选择留下 5.1–11.0 个百分点的 oracle 空间；几何共识几乎无增益。基于摘要，oracle 差距不代表可实现的部署提升。 [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-26103",
+      "paper": "UniVEP: Unifying Velocity and Endpoint Prediction for Robot Manipulation",
+      "authors": "Zhengtu Liang · Qiwei Liang · Tao Lin · Shihang Weng · Boyang Cai · Xiangyu Chen · Yikeng Chen · Jiaming Liang · Bohan Tan · Yu Yan · Renjing Xu",
+      "url": "https://arxiv.org/abs/2611.26103v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "机器人策略的评估步数曲线",
+      "dateNote": "v1 提交 2026-11-19 ET · 11 月 20 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "联合训练 endpoint 与 velocity，并随噪声降低切换预测方式。RoboTwin 上一次 StarVLA 前向成功率 61.36%，最佳单目标对照 16 次为 59.96%。基于摘要；不是训练算力 scaling 定理。 [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-25763",
+      "paper": "Closing Performance Gap for Diffusion Language Models under Low Inference Budgets",
+      "authors": "Hao Wu · Sipeng Chen · Jingwen Fu · Yuwang Wang",
+      "url": "https://arxiv.org/abs/2611.25763v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "CaRR：复用既有编辑轨迹",
+      "dateNote": "v1 提交 2026-11-19 ET · 11 月 20 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在原定 forward schedule 内重填被替换 tokens，并从轨迹恢复可提交答案。1/8 完整前向预算时，六指标平均准确率增 7.44 个百分点。基于摘要；没有增加 backbone 前向，不等于零系统开销。 [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-26420",
+      "paper": "Awaken-HI: Scaling Humanoid Intelligence with Whole-Body Human Experience",
+      "authors": "EngineAI",
+      "url": "https://arxiv.org/html/2611.26420v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "人类全身动作数据的扩展",
+      "dateNote": "v1 提交 2026-11-19 ET · 11 月 20 日公告",
+      "evidence": "已读数据、扩展实验与评估协议",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "人类预训练数据从 5,000 增至 50,000 小时，固定机器人适配数据后观察动作预测误差与任务成功率的扩展。八项单任务均值 93.75%；每项仅十次试验，未据此推断跨平台 scaling 指数。 [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-25167",
+      "paper": "Game-Theoretic Data Allocation for Expert Specialization and Routing",
+      "authors": "Mark Lovett · Denis Lim · Soroush Vosoughi",
+      "url": "https://arxiv.org/html/2611.25167v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "用同一分配规则训练并路由专家",
+      "dateNote": "v1 提交 2026-11-18 ET · 11 月 20 日公告",
+      "evidence": "已读模型与分配消融",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "InflEns 在固定 prompt-trait 空间解位置博弈，给 LoRA 专家分配训练权重与路由份额。约 90% prompts 的最高份额专家有最低留出 NLL；打乱分配后约 15%。这是特定安全语料上的分配实验。 [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-25624",
+      "paper": "Deviations from the NTK Regime in CNNs under Joint Depth-Width Scaling",
+      "authors": "Maria Matveev · Pascal Esser · Gitta Kutyniok · Mariia Seleznova",
+      "url": "https://arxiv.org/abs/2611.25624v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "CNN：初始化集中不等于训练中核不变",
+      "dateNote": "v1 提交 2026-11-19 ET · 11 月 20 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "临界初始化下，NTK dispersion 曲线近似按深宽比 L/C 塌缩；训练中核旋转也随此比值增加，连有序初始化也如此。基于摘要；是数值证据，尚非统一极限定理。 [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-17488",
+      "paper": "LimiX-2: A Contextual Mechanism Network Towards General Structured-Data Intelligence",
+      "authors": "LimiX Team",
+      "url": "https://arxiv.org/html/2609.17488v2",
+      "kind": "简讯 · 版本更新",
+      "title": "LimiX-2：重算比较池后，斜率改变",
+      "dateNote": "首发 2026-09-15 · v2 2026-11-19 ET",
+      "evidence": "已对照 v1/v2 §6",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v2 将不同尺寸模型加入比较池并重算 Elo；TabArena 每参数翻倍斜率从 34.68 改为 45.73，R² 从 0.9808 改为 0.9570。已核对两版 §6；Elo 依赖比较池，2B 仍仅为外推。 [10] [20]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-37745",
+      "paper": "Optimizer-dependent training dynamics converge to the same one-third optimal data scaling",
+      "authors": "Hyunseok Lee · Mihir Basil · Yizhou Liu · Jeff Gore",
+      "url": "https://arxiv.org/html/2609.37745v2",
+      "kind": "简讯 · 版本更新",
+      "title": "一分之三指数：增加了哪些边界？",
+      "dateNote": "首发 2026-09-29 · v2 2026-11-19 ET",
+      "evidence": "已对照 v1/v2 附录 D–H",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v2 新增离散 Lyapunov 稳定条件、七优化器学习率拟合与 Adam 未纳入理论的特征讨论。固定 teacher 的单层 softmax 模型中，径向/切向指数关系与最优数据指数仍须区分；不是任意 LLM 的普适 D⁻¹ᐟ³。 [11] [21]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-27964",
+      "paper": "Learning from Transients: Linear RNN Scaling Laws in Stationary Prediction",
+      "authors": "Ziyan Chen · Linhe Zheng · Peilin Liu · Zhongzhu Zhou · Ding-Xuan Zhou",
+      "url": "https://arxiv.org/html/2609.27964v3",
+      "kind": "简讯 · 版本更新",
+      "title": "线性 RNN：固定平稳目标后的瞬态收益",
+      "dateNote": "首发 2026-08-23 · v3 2026-11-18 ET",
+      "evidence": "已对照 v2/v3 模型与证明改写",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v3 重写固定平稳预测 setting，并扩展谱比较与非交换滤波扰动证明。重尾初始化可改变有限时偏差；定理控制范围内，常长度轨迹已达最优风险阶。结论依赖稳定线性高斯动力学与对齐幂律谱。 [12] [22]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-39632",
+      "paper": "Towards Better Exploration in Sequential Test-Time Scaling",
+      "authors": "Joseph Rance · Fabio Pizzati · Juil Sock · Woody Bayliss · Marc Górriz Blanch · Philip Torr · Adel Bibi",
+      "url": "https://arxiv.org/html/2609.39632v3",
+      "kind": "简讯 · 版本更新",
+      "title": "序贯推理：吸引子是否真的留得住？",
+      "dateNote": "首发 2026-09-30 · v3 2026-11-19 ET",
+      "evidence": "已对照 v2/v3 新表 4",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v3 新增每种模型/方法/基准抽取 100 个吸引子状态、重采样下一状态的实验；同吸引子转移率为 92%–100%。这是固定聚类的经验检验，不能据此证明所有推理链的马尔可夫吸收性。 [13] [23]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2602-08236",
+      "paper": "When and How Much to Imagine: Adaptive Test-Time Scaling with World Models for Visual Spatial Reasoning",
+      "authors": "Shoubin Yu · Yue Zhang · Zun Wang · Jaehong Yoon · Huaxiu Yao · Mingyu Ding · Mohit Bansal",
+      "url": "https://arxiv.org/html/2602.08236v3",
+      "kind": "简讯 · 版本更新",
+      "title": "想象控制：新增门控、规划与验证消融",
+      "dateNote": "首发 2026-02-08 ET · v3 2026-11-18 ET",
+      "evidence": "已对照 v2/v3 附录 C",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v3 新增附录 C 的模块、错误跳过惩罚与迁移消融。SAT-Real 的 AVIC-R 对 always-on 为 77.3% 对 69.3%，平均调用 3.03 对 12.34；这是不同系统配置的质量/调用权衡，不能归因于单一模块。 [14] [24]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-24977",
+      "paper": "CANDID: Candidate-Driven Intervention for Disciplined Execution in Local Computer-Use Agents",
+      "authors": "Woongkyu Lee · Jungwook Choi",
+      "url": "https://arxiv.org/abs/2611.24977v1",
+      "kind": "简讯 · arXiv 首发",
+      "title": "CANDID：在失败点分配并行采样",
+      "dateNote": "v1 提交 2026-11-17 ET · 11 月 20 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "把并行 test-time scaling 用在循环恢复与终止判定：过滤重复行为候选，DONE 采用一致同意门控。基于摘要；OSWorld 改进尚未在本次核对完整数值与预算消融。 [15]"
+        }
+      ]
+    },
+    {
+      "id": "paper-tunix-agentic",
+      "paper": "Multi-Turn Agentic Reinforcement Learning with Tunix and Gemma 4 on Google TPUs",
+      "authors": "Wei Wei",
+      "url": "https://developers.googleblog.com/multi-turn-agentic-reinforcement-learning-with-tunix-and-gemma-4-on-google-tpus/",
+      "kind": "简讯 · 技术博客",
+      "title": "多轮 RL 的 token 连续性",
+      "dateNote": "站点标注 2026-11-19",
+      "evidence": "已读技术正文；实验为发布方报告",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Gemma 4 E2B 在单台 TPU v6e-8 上训练 100 步，每步 8 boards × 8 games；文章报告留出棋盘胜率从 9.4% 到 95%。实现用 GSPO-token loss、RLOO advantage，并保持工具轮次间原始 token IDs。单一小游戏不代表通用 agent 泛化。 [16]"
+        }
+      ]
+    },
+    {
+      "id": "paper-dynamo-rl",
+      "paper": "Reducing Rollout Bottlenecks in Reinforcement Learning with NVIDIA Dynamo",
+      "authors": "Amr Elmeleegy · Harry Kim · Kyle Kranen",
+      "url": "https://developer.nvidia.com/blog/reducing-rollout-bottlenecks-in-reinforcement-learning-with-nvidia-dynamo/",
+      "kind": "简讯 · 技术博客",
+      "title": "rollout：缓存路由与增量权重",
+      "dateNote": "站点标注 2026-11-19",
+      "evidence": "已读技术正文；实验为发布方报告",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "技术文拆解 KV 复用/负载的路由权衡、GPU 常驻权重复用、压缩 delta 分发与故障追赶。样本可接受性和权重 freshness 仍由 RL 框架判断；本文不把权重更新加速换算成端到端训练加速。 [17]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.26172v1",
+      "title": "预算内化 · §2–3、表 3、附录 A 与局限"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.26407v1",
+      "title": "非高斯源 Flow Matching · §2–3 定理 1、§5"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.25300v1",
+      "title": "Federated Learning of Car Aerodynamics Surrogates with Spectral Optimizers · 已读 §3–5"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.25297v1",
+      "title": "ScaleDiag: Diagnosing the Limits of Test-Time Scaling in GUI Grounding · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.26103v1",
+      "title": "UniVEP: Unifying Velocity and Endpoint Prediction for Robot Manipulation · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.25763v1",
+      "title": "Closing Performance Gap for Diffusion Language Models under Low Inference Budgets · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.26420v1",
+      "title": "Awaken-HI: Scaling Humanoid Intelligence with Whole-Body Human Experience · 已读数据、扩展实验与评估协议"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.25167v1",
+      "title": "Game-Theoretic Data Allocation for Expert Specialization and Routing · 已读模型与分配消融"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.25624v1",
+      "title": "Deviations from the NTK Regime in CNNs under Joint Depth-Width Scaling · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.17488v2",
+      "title": "LimiX-2: A Contextual Mechanism Network Towards General Structured-Data Intelligence · 已对照 v1/v2 §6"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.37745v2",
+      "title": "Optimizer-dependent training dynamics converge to the same one-third optimal data scaling · 已对照 v1/v2 附录 D–H"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.27964v3",
+      "title": "Learning from Transients: Linear RNN Scaling Laws in Stationary Prediction · 已对照 v2/v3 模型与证明改写"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.39632v3",
+      "title": "Towards Better Exploration in Sequential Test-Time Scaling · 已对照 v2/v3 新表 4"
+    },
+    {
+      "url": "https://arxiv.org/html/2602.08236v3",
+      "title": "When and How Much to Imagine: Adaptive Test-Time Scaling with World Models for Visual Spatial Reasoning · 已对照 v2/v3 附录 C"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.24977v1",
+      "title": "CANDID: Candidate-Driven Intervention for Disciplined Execution in Local Computer-Use Agents · 基于摘要"
+    },
+    {
+      "url": "https://developers.googleblog.com/multi-turn-agentic-reinforcement-learning-with-tunix-and-gemma-4-on-google-tpus/",
+      "title": "Multi-Turn Agentic Reinforcement Learning with Tunix and Gemma 4 on Google TPUs · 正文与实现说明"
+    },
+    {
+      "url": "https://developer.nvidia.com/blog/reducing-rollout-bottlenecks-in-reinforcement-learning-with-nvidia-dynamo/",
+      "title": "Reducing Rollout Bottlenecks in Reinforcement Learning with NVIDIA Dynamo · 正文与实现说明"
+    },
+    {
+      "url": "https://arxiv.org/pdf/1312.6120v3",
+      "title": "经典 · 深线性网络 §1.1–2、式 2–15、图 3"
+    },
+    {
+      "url": "https://api.openalex.org/works/W2125930537",
+      "title": "入选依据 · OpenAlex 所查条目 1,849 次引用，查询 2026-11-20"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.17488v1",
+      "title": "版本对照原件 · 2609.17488v1"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.37745v1",
+      "title": "版本对照原件 · 2609.37745v1"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.27964v2",
+      "title": "版本对照原件 · 2609.27964v2"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.39632v2",
+      "title": "版本对照原件 · 2609.39632v2"
+    },
+    {
+      "url": "https://arxiv.org/html/2602.08236v2",
+      "title": "版本对照原件 · 2602.08236v2"
+    }
+  ],
+  "classic": {
+    "id": "classic-deep-linear",
+    "paperId": "arxiv:1312.6120",
+    "shortTitle": "Deep linear learning dynamics",
+    "year": 2014,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "kind": "每日经典精读",
+    "title": "深线性网络：平台期从哪里来？",
+    "paper": "Exact solutions to the nonlinear dynamics of learning in deep linear neural networks",
+    "authors": "Andrew M. Saxe · James L. McClelland · Surya Ganguli",
+    "url": "https://arxiv.org/pdf/1312.6120v3",
+    "dateNote": "历史经典 · 首发 2013-12-20，所读 v3 为 2014-02-19；ICLR 2014",
+    "evidence": "已读 §1.1–2、式 2–15 与图 3；原文精确解及其假设",
+    "recognition": {
+      "label": "OpenAlex 所查条目 1,849 次引用（查询 2026-11-20）",
+      "url": "https://api.openalex.org/works/W2125930537"
+    },
+    "question": "若输入未白化且 Σₓₓ 与 Σᵧₓ 的奇异基不对齐，平台期先由哪一种跨模态耦合打破？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "深度增加参数化的非线性，即使输入输出映射仍是线性的。继 Baldi–Hornik（1989）的损失几何之后，Saxe 等（2014）求解一族学习轨迹，解释平台期与快速转变。 [18]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widehat y=W_2W_1x,\\qquad \\mathbb E[xx^\\top]=I,\\quad \\Sigma_{yx}=\\mathbb E[yx^\\top]=USV^\\top,\\qquad \\mathcal L=\\tfrac12\\mathbb E\\|y-W_2W_1x\\|^2",
+        "label": "白化输入、平方损失与可由隐藏层表示的奇异模态。以下 τ 是连续梯度流的时间尺度。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\tau\\dot W_1=W_2^\\top(\\Sigma_{yx}-W_2W_1),\\qquad \\tau\\dot W_2=(\\Sigma_{yx}-W_2W_1)W_1^\\top",
+        "label": "原文动力学：端到端线性模型给出了耦合三次权重方程。"
+      },
+      {
+        "type": "text",
+        "text": "取特殊对齐初始化 W₁=R diag(a)Vᵀ、W₂=U diag(b)Rᵀ，隐藏模态正交，且 RᵀR=I。这构成不变流形，每个模态独立演化： [18]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\tau\\dot a=b(s-ab),\\qquad \\tau\\dot b=a(s-ab),\\qquad \\frac{d}{dt}(a^2-b^2)=0",
+        "label": "原文解耦方程；守恒的层间不平衡直接由两式相减得到。"
+      },
+      {
+        "type": "equation",
+        "tex": "s>0,\\quad a=b>0,\\quad u=ab:\\qquad \\tau\\dot u=2u(s-u),\\qquad u(t)=\\frac{s}{1+(s/u_0-1)e^{-2st/\\tau}}",
+        "label": "平衡、对齐模态的精确解。u₀ 很小时先平台后陡升；大奇异值 s 的模态先学会。"
+      },
+      {
+        "type": "equation",
+        "tex": "W_L\\cdots W_1:\\qquad \\tau\\dot u=L\\,u^{\\,2-2/L}(s-u),\\qquad u=\\prod_{\\ell=1}^{L}a_\\ell,\\quad a_1=\\cdots=a_L>0",
+        "label": "把原文层数记号改为 L 个权重矩阵；深度改变逃离小 u 区域的动力学，而非线性映射的表达类。"
+      },
+      {
+        "type": "text",
+        "text": "图 3 用 32 个正交输入比较精确曲线、随机初始化线性网络及 tanh 网络；后两者仅近似匹配。OpenAlex 所查条目显示 1,849 次引用（2026-11-20），未合并同题其他数据库条目。 [18] [19]"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "精确解要求白化、对齐和连续时间；随机初始化与非线性网络的数值近似不是这些假设之外的定理。有限学习率的稳定性也限制深度极限的解释。 [18]"
+      }
+    ]
+  }
+}

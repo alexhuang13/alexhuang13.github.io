@@ -1,0 +1,101 @@
+RESEARCH DIGEST / 2026-11-20
+How Training Budgets Reshape Inference Scaling, and Non-Gaussian Sources Flow to Data
+Budget internalization · Flow matching · Federated Muon · Deep linear dynamics
+
+中文: https://alexhuang13.github.io/digest/2026-11-20.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-20.html
+
+Main read · First arXiv posting
+A training cap becomes a stopping habit
+Budget Internalization: Fixed-Budget RLVR Trades Test-Time Scaling for In-Budget Accuracy
+https://alexhuang13.github.io/digest/en/2026-11-20.html#paper-2611-26172
+
+Main read · First arXiv posting
+Non-Gaussian sources: which sampling error is controlled?
+Flow Matching from Non-Gaussian Sources: A Theory of Efficient Sampling
+https://alexhuang13.github.io/digest/en/2026-11-20.html#paper-2611-26407
+
+Brief · First arXiv posting
+Muon in heterogeneous federated CFD
+Federated Learning of Car Aerodynamics Surrogates with Spectral Optimizers
+https://alexhuang13.github.io/digest/en/2026-11-20.html#paper-2611-25300
+
+Brief · First arXiv posting
+GUI grounding: coverage versus selection
+ScaleDiag: Diagnosing the Limits of Test-Time Scaling in GUI Grounding
+https://alexhuang13.github.io/digest/en/2026-11-20.html#paper-2611-25297
+
+Brief · First arXiv posting
+Evaluation-step curves for robot policies
+UniVEP: Unifying Velocity and Endpoint Prediction for Robot Manipulation
+https://alexhuang13.github.io/digest/en/2026-11-20.html#paper-2611-26103
+
+Brief · First arXiv posting
+CaRR reuses the existing edit trajectory
+Closing Performance Gap for Diffusion Language Models under Low Inference Budgets
+https://alexhuang13.github.io/digest/en/2026-11-20.html#paper-2611-25763
+
+Brief · First arXiv posting
+Scaling whole-body human-motion data
+Awaken-HI: Scaling Humanoid Intelligence with Whole-Body Human Experience
+https://alexhuang13.github.io/digest/en/2026-11-20.html#paper-2611-26420
+
+Brief · First arXiv posting
+One allocation rule for expert training and routing
+Game-Theoretic Data Allocation for Expert Specialization and Routing
+https://alexhuang13.github.io/digest/en/2026-11-20.html#paper-2611-25167
+
+Brief · First arXiv posting
+CNNs: initial concentration versus kernel constancy
+Deviations from the NTK Regime in CNNs under Joint Depth-Width Scaling
+https://alexhuang13.github.io/digest/en/2026-11-20.html#paper-2611-25624
+
+Brief · Version update
+LimiX-2: slopes change after recomputing the comparison pool
+LimiX-2: A Contextual Mechanism Network Towards General Structured-Data Intelligence
+https://alexhuang13.github.io/digest/en/2026-11-20.html#paper-2609-17488
+
+Brief · Version update
+The one-third exponent: newly explicit boundaries
+Optimizer-dependent training dynamics converge to the same one-third optimal data scaling
+https://alexhuang13.github.io/digest/en/2026-11-20.html#paper-2609-37745
+
+Brief · Version update
+Linear RNNs: transients under a fixed stationary target
+Learning from Transients: Linear RNN Scaling Laws in Stationary Prediction
+https://alexhuang13.github.io/digest/en/2026-11-20.html#paper-2609-27964
+
+Brief · Version update
+Sequential reasoning: do attractors retain states?
+Towards Better Exploration in Sequential Test-Time Scaling
+https://alexhuang13.github.io/digest/en/2026-11-20.html#paper-2609-39632
+
+Brief · Version update
+Imagination control: new gating, planning and verification ablations
+When and How Much to Imagine: Adaptive Test-Time Scaling with World Models for Visual Spatial Reasoning
+https://alexhuang13.github.io/digest/en/2026-11-20.html#paper-2602-08236
+
+Brief · First arXiv posting
+CANDID allocates parallel samples at failure points
+CANDID: Candidate-Driven Intervention for Disciplined Execution in Local Computer-Use Agents
+https://alexhuang13.github.io/digest/en/2026-11-20.html#paper-2611-24977
+
+Brief · Technical blog
+Token continuity in multi-turn RL
+Multi-Turn Agentic Reinforcement Learning with Tunix and Gemma 4 on Google TPUs
+https://alexhuang13.github.io/digest/en/2026-11-20.html#paper-tunix-agentic
+
+Brief · Technical blog
+Rollouts: cache routing and delta weights
+Reducing Rollout Bottlenecks in Reinforcement Learning with NVIDIA Dynamo
+https://alexhuang13.github.io/digest/en/2026-11-20.html#paper-dynamo-rl
+
+Daily classic · 2014
+Deep linear networks: where do plateaus come from?
+https://alexhuang13.github.io/digest/en/2026-11-20.html#classic-deep-linear
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-20.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

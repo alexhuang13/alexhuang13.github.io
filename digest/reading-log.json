@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-20",
+    "paperId": "arxiv:1312.6120",
+    "paper": "Exact solutions to the nonlinear dynamics of learning in deep linear neural networks",
+    "shortTitle": "Deep linear learning dynamics",
+    "year": 2014,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "recognition": {
+      "label": "OpenAlex 所查条目 1,849 次引用（查询 2026-11-20）",
+      "url": "https://api.openalex.org/works/W2125930537"
+    },
+    "source": "https://arxiv.org/pdf/1312.6120v3",
+    "url": "/digest/2026-11-20.html#classic-deep-linear"
+  },
+  {
     "date": "2026-11-19",
     "paperId": "arxiv:2402.03300",
     "paper": "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",

@@ -4,8 +4,45 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-19",
+  "latest": "2026-11-20",
   "issues": [
+    {
+      "date": "2026-11-20",
+      "title": "训练预算如何改变推理扩展，非高斯源如何流向数据",
+      "url": "/digest/2026-11-20.html",
+      "translations": {
+        "en": {
+          "title": "How Training Budgets Reshape Inference Scaling, and Non-Gaussian Sources Flow to Data",
+          "url": "/digest/en/2026-11-20.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.26172v1",
+        "https://arxiv.org/html/2611.26407v1",
+        "https://arxiv.org/html/2611.25300v1",
+        "https://arxiv.org/abs/2611.25297v1",
+        "https://arxiv.org/abs/2611.26103v1",
+        "https://arxiv.org/abs/2611.25763v1",
+        "https://arxiv.org/html/2611.26420v1",
+        "https://arxiv.org/html/2611.25167v1",
+        "https://arxiv.org/abs/2611.25624v1",
+        "https://arxiv.org/html/2609.17488v2",
+        "https://arxiv.org/html/2609.37745v2",
+        "https://arxiv.org/html/2609.27964v3",
+        "https://arxiv.org/html/2609.39632v3",
+        "https://arxiv.org/html/2602.08236v3",
+        "https://arxiv.org/abs/2611.24977v1",
+        "https://developers.googleblog.com/multi-turn-agentic-reinforcement-learning-with-tunix-and-gemma-4-on-google-tpus/",
+        "https://developer.nvidia.com/blog/reducing-rollout-bottlenecks-in-reinforcement-learning-with-nvidia-dynamo/",
+        "https://arxiv.org/pdf/1312.6120v3",
+        "https://api.openalex.org/works/W2125930537",
+        "https://arxiv.org/html/2609.17488v1",
+        "https://arxiv.org/html/2609.37745v1",
+        "https://arxiv.org/html/2609.27964v2",
+        "https://arxiv.org/html/2609.39632v2",
+        "https://arxiv.org/html/2602.08236v2"
+      ]
+    },
     {
       "date": "2026-11-19",
       "title": "Muon 的曲率诊断与弱零假设下的随机化检验",
