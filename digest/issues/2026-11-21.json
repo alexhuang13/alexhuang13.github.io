@@ -1,0 +1,265 @@
+{
+  "date": "2026-11-21",
+  "number": "039",
+  "publishedAt": "2026-11-21T14:00:00Z",
+  "readingMinutes": 10,
+  "tags": [
+    "Post-training",
+    "Scaling laws",
+    "Agentic RL"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "每日研究笔记",
+  "title": "把真实 harness 与用户反馈带回训练",
+  "subtitle": "Harness adapters · 在线 RL · 经验 scaling 经典",
+  "intro": "两篇新技术文聚焦训练与部署的一致性：一篇在原生 agent harness 内训练 LoRA，一篇从真实对话的单次 rollout 持续更新。另收可变循环架构简讯；经典回到经验学习曲线的测量方法。 简讯另收具身后训练的分层架构观点。",
+  "window": "2026-11-18 至 2026-11-21（费城时间；重点为上期以来，含延迟补收）",
+  "articles": [
+    {
+      "id": "paper-harness-adapters",
+      "paper": "Introducing harness adapters: adapt your favorite model to your harness to improve performance and cost",
+      "authors": "Younes B · Ben Burtenshaw · Nathan Habib · Lysandre · Amine Dirhoussi · Adithya S K · Shaun Smith · Sergio Paniego · Joel Niklaus · Lewis Tunstall",
+      "url": "https://huggingface.co/blog/harness-adapters-at-scale",
+      "kind": "主读 · 技术博客",
+      "title": "在原生 harness 中训练：验证器与任务难度都要筛",
+      "dateNote": "首发 2026-11-20（站点日期）",
+      "evidence": "已读技术正文、训练预算和配对评估；未复现实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Qwen3.8-27B 的原生 Pi、Hermes、OpenCode 循环由代理记录准确 token，再由异步 GRPO 训练各自 LoRA。任务先检查参考解、空操作、错误解与重放，再保留基座有时成功的样本。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "A_i=r_i-\\frac1G\\sum_{j=1}^G r_j,\\qquad r_i\\in\\{0,1\\},\\qquad 0<\\sum_i r_i<G",
+          "label": "解释性简化：未标准化的组内 advantage；二元奖励全同会使这一正确性信号归零。最终训练还含 0.1 的工具效率奖励。"
+        },
+        {
+          "type": "text",
+          "text": "最终三轮训练合计 598 步、78,114 samples、167M trained tokens；每个 adapter 用 2×B200（一张采样、一张训练），rollout 关闭 thinking。表为 SWE-bench Pro hard-51 的同 harness pass@1，每题一次；上限 2 小时、100 agent steps、131,072 tokens。 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Harness",
+            "Base",
+            "Adapter"
+          ],
+          "rows": [
+            [
+              "Pi",
+              "39.2%",
+              "64.7%"
+            ],
+            [
+              "Hermes",
+              "29.4%",
+              "43.1%"
+            ],
+            [
+              "OpenCode",
+              "35.3%",
+              "51.0%"
+            ]
+          ]
+        },
+        {
+          "type": "equation",
+          "tex": "\\Delta W_h=B_hA_h,\\qquad \\Delta W_{\\rm merged}=\\tfrac12\\sum_{h=1}^3\\Delta W_h,\\qquad \\operatorname{rank}_{\\rm LoRA}:32\\to96",
+          "label": "原文按 rank 拼接，三个更新各乘 1/2；近正交更新并不保证任意加和都好。"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "工具调用减少率只在基座和 adapter 都解对的题上比较；不能换算总训练提速。合并权重用 Terminal-Bench 调参，其成绩有选择偏差；AutomationBench 迁移无清晰普遍增益。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-kaon-online-rl",
+      "paper": "Online RL: Learning From User Behavior in Real Time",
+      "authors": "Mouse · Alex Xi",
+      "url": "https://www.kaonlabs.com/writing/online-rl",
+      "kind": "主读 · 技术博客",
+      "title": "单次真实 rollout：离策略修正与长度偏差",
+      "dateNote": "首发 2026-11-20（站点日期）",
+      "evidence": "已读算法、实现和结果说明；奖励未公开",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "对话用户只能体验一个回复，无法在相同状态重采样一组人。Kaon 将精确 token、真实采样概率 q、top-k 概率头与权重版本一同归档，限制策略版本滞后，再更新 LoRA。截断轨迹不补 EOS。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "A_t=r_t-V(s_t),\\qquad w(y)=\\min\\{p(y)/q(y),C\\},\\qquad \\ell_y=-A_t\\bigl(w(y)\\log p(y)-\\mathcal C\\bigr)",
+          "label": "原文在线 critic 与 token loss；A、w 和下式校正系数停止梯度。p 为训练策略，q 为真实截断采样分布。"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal C=\\sum_{z\\in\\mathcal H_k}[m(z)-\\alpha p(z)]\\log p(z),\\quad m(z)=\\min\\{p(z),Cq(z)\\},\\quad \\alpha=\\min\\{Cq_{\\rm tail}/p_{\\rm tail},1\\}",
+          "label": "TIS 控制大比率，Score Centering 修正概率失配下的漂移；这是截断、top-k 近似目标，未给出无偏性保证。"
+        },
+        {
+          "type": "text",
+          "text": "长度消融发现：回复内先按长度平均，再跨回复平均，会与 advantage 不平衡共同奖励短回复。改为全 token 聚合，或改平衡方式，均稳定长度，但约损失一半早期表面 turn 增益；同时叠加两种修正又因聚合单位不匹配而变差。 [2]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "具体奖励、绝对样本数与绝对指标未披露；在线深度是行为指标，不能直接解释为用户福祉或任务正确率。文章的早期 +14.7% 含长度偏差，不能当作校正后的净收益。 [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-inkling-varloop",
+      "paper": "Welcome Inkling 2 Mini, Cutting-edge Performance for your Local Setup",
+      "authors": "Merve · Pedro Cuenca · Aritra Roy Gosthipaty · Guarin Flück",
+      "url": "https://huggingface.co/blog/inkling2mini",
+      "kind": "简讯 · 架构技术文",
+      "title": "共享权重不等于共享推理状态",
+      "dateNote": "首发 2026-11-20（站点日期）",
+      "evidence": "已读架构与 variable-loop 说明；未核对完整评测",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "24 个物理层中，中间 12 层循环三次，共 6+3×12+6=48 次层访问。研究 checkpoint 允许改 pass 数，但每次访问保留独立 KV/卷积状态。作者未深入评测可变 pass 的质量曲线，故只记作 inference-compute 研究产物，不宣称已验证 scaling law。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-embodied-rl-stack",
+      "paper": "The Death of System 1: Why VLA and WAM Imitation Learning Is Fading",
+      "authors": "Lixin Xu",
+      "url": "https://davidlxu.github.io/posts/2026/11/the-end-of-system-1/",
+      "kind": "简讯 · 研究者技术综合",
+      "title": "具身后训练：分层架构的一个判断",
+      "dateNote": "首发 2026-11-20（站点日期）",
+      "evidence": "已读正文；观点综合，不是新对照实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "作者以推理模型的仿真 RL 后训练及低层接触控制 RL，论证中间模仿策略可能变为可选工具。可讨论的技术接口是高层给目标位姿/技能，低层处理高频反馈。“模仿层消亡”是作者推测；现有任务结果不足以建立跨机器人、时延与分布迁移的普遍替代结论。 [6]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://huggingface.co/blog/harness-adapters-at-scale",
+      "title": "Harness adapters · 任务过滤、训练设置、合并与配对评估"
+    },
+    {
+      "url": "https://www.kaonlabs.com/writing/online-rl",
+      "title": "在线 RL · TITO、TIS/Score Centering、单轨迹 critic 与长度消融"
+    },
+    {
+      "url": "https://huggingface.co/blog/inkling2mini",
+      "title": "Inkling 2 Mini · 循环结构与可变 pass 研究产物"
+    },
+    {
+      "url": "https://arxiv.org/pdf/1712.00409v1",
+      "title": "经典 · §3 测量协议、§4 学习曲线、附录 A 表 1"
+    },
+    {
+      "url": "https://api.openalex.org/works/W2775461895",
+      "title": "OpenAlex 所查条目 1,569 次引用；查询 2026-11-21"
+    },
+    {
+      "url": "https://davidlxu.github.io/posts/2026/11/the-end-of-system-1/",
+      "title": "具身后训练技术综合 · 作者的分层架构判断"
+    }
+  ],
+  "classic": {
+    "id": "classic-hestness",
+    "paperId": "arxiv:1712.00409",
+    "shortTitle": "Hestness empirical scaling",
+    "year": 2017,
+    "topics": [
+      "Scaling laws"
+    ],
+    "kind": "每日经典精读",
+    "title": "测量学习曲线：先区分截距、斜率与误差底",
+    "paper": "Deep Learning Scaling is Predictable, Empirically",
+    "authors": "Joel Hestness · Sharan Narang · Newsha Ardalani · Gregory Diamos · Heewoo Jun · Hassan Kianinejad · Md. Mostofa Ali Patwary · Yang Yang · Yanqi Zhou",
+    "url": "https://arxiv.org/pdf/1712.00409v1",
+    "dateNote": "历史预印本，无会议年份 · 首发/所读 v1：2017-12-01",
+    "evidence": "已读 §3–4、§5.2 与附录 A 表 1",
+    "recognition": {
+      "label": "OpenAlex 所查条目 1,569 次引用（2026-11-21）",
+      "url": "https://api.openalex.org/works/W2775461895"
+    },
+    "question": "若数据池固定且重复采样增加，怎样用实验区分幂律指数改变与有效独立样本数饱和？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "在 Kaplan（2020）与 Chinchilla（2022）之前，Hestness 等（2017）跨翻译、语言、图像与语音测量数据学习曲线。这里的对象是选好模型后的验证误差，并非单次训练的 loss 随步数下降。 [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "|T_i|=m_i\\approx 2^i m_0,\\qquad V\\cap T_i=\\varnothing,\\qquad \\widehat M_i\\in\\arg\\min_{M\\in\\mathcal M_i}L(M\\mid T_i,V)",
+        "label": "对原文协议的数学整理：随机打乱后按约倍增数据 shard 搜容量与优化参数，共用固定验证集；这定义复合学习曲线。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\varepsilon(m)=a m^{\\beta_g}+\\gamma,\\quad \\beta_g<0,\\qquad s(m)\\approx b m^{\\beta_p}",
+        "label": "原文经验拟合：误差曲线可带平移项 γ；所需模型大小 s(m) 在多项实验中次线性增长。"
+      },
+      {
+        "type": "text",
+        "text": "附录 A 表 1 的复合曲线指数如下。指标不同，指数不能当作同一种质量收益直接跨行比较。 [4]"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "模型/任务",
+          "验证指标",
+          "β_g"
+        ],
+        "rows": [
+          [
+            "NMT / LSTM",
+            "Token error",
+            "−0.128"
+          ],
+          [
+            "Word LM / LSTM",
+            "Cross-entropy",
+            "−0.066"
+          ],
+          [
+            "Image / ResNet",
+            "Classification error",
+            "−0.309"
+          ],
+          [
+            "Speech / DS2",
+            "Character error rate",
+            "−0.299"
+          ]
+        ]
+      },
+      {
+        "type": "equation",
+        "tex": "\\frac{m_2}{m_1}=\\left(\\frac{\\varepsilon(m_2)-\\gamma}{\\varepsilon(m_1)-\\gamma}\\right)^{1/\\beta_g},\\qquad \\frac{s(m_2)}{s(m_1)}\\approx\\left(\\frac{m_2}{m_1}\\right)^{\\beta_p}",
+        "label": "我的代数整理：只有留在同一幂律区间、误差底 γ 固定时，才能把目标误差转成数据和模型倍率。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\log\\varepsilon(m)=\\log a+\\beta_g\\log m\\quad(\\gamma=0),\\qquad \\frac{d\\log\\varepsilon}{d\\log m}=\\beta_g",
+        "label": "我的解释：截距下降与斜率改变是两种不同证据；有限区间的直线不能自动外推到新数据分布。"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "原文关于架构/优化器常改截距的观察局限于所测任务与搜索；不是指数不变定理。模型选取与验证误差估计共用 V，也不等于独立测试集保证。 [4]"
+      },
+      {
+        "type": "text",
+        "text": "入选依据：OpenAlex 所查条目 1,569 次引用（2026-11-21）。 [5]"
+      }
+    ]
+  }
+}

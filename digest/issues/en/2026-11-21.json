@@ -1,0 +1,265 @@
+{
+  "date": "2026-11-21",
+  "number": "039",
+  "publishedAt": "2026-11-21T14:00:00Z",
+  "readingMinutes": 10,
+  "tags": [
+    "Post-training",
+    "Scaling laws",
+    "Agentic RL"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "Daily Research Notes",
+  "title": "Bringing Real Harnesses and User Feedback Back into Training",
+  "subtitle": "Harness adapters · Online RL · A classic in empirical scaling",
+  "intro": "Two new technical posts examine training–deployment consistency: LoRA training inside native agent harnesses and continuous updates from single live conversational rollouts. A brief covers variable-loop architecture; the classic revisits how empirical learning curves are measured. Another brief covers a layered-architecture view of embodied post-training.",
+  "window": "November 18–21, 2026 (Philadelphia time; emphasis on updates since the previous issue, including delayed indexing)",
+  "articles": [
+    {
+      "id": "paper-harness-adapters",
+      "paper": "Introducing harness adapters: adapt your favorite model to your harness to improve performance and cost",
+      "authors": "Younes B · Ben Burtenshaw · Nathan Habib · Lysandre · Amine Dirhoussi · Adithya S K · Shaun Smith · Sergio Paniego · Joel Niklaus · Lewis Tunstall",
+      "url": "https://huggingface.co/blog/harness-adapters-at-scale",
+      "kind": "Main read · Technical blog",
+      "title": "Training inside the native harness: screen verifiers and task difficulty",
+      "dateNote": "First published November 20, 2026 (site date)",
+      "evidence": "Read technical text, training budgets and paired evaluation; experiments not reproduced",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A proxy records exact tokens from Qwen3.8-27B running native Pi, Hermes and OpenCode loops; asynchronous GRPO trains a LoRA for each. Tasks first undergo reference, no-op, wrong-solution and replay checks, then retain cases the base model sometimes solves. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "A_i=r_i-\\frac1G\\sum_{j=1}^G r_j,\\qquad r_i\\in\\{0,1\\},\\qquad 0<\\sum_i r_i<G",
+          "label": "Explanatory simplification: unnormalized within-group advantages. Identical binary rewards eliminate this correctness signal. Final training also includes a 0.1 tool-efficiency reward."
+        },
+        {
+          "type": "text",
+          "text": "The three final runs total 598 steps, 78,114 samples and 167M trained tokens. Each adapter uses 2×B200, one for sampling and one for training, with thinking off during rollouts. The table reports within-harness pass@1 on SWE-bench Pro hard-51, one attempt per task, capped at 2 hours, 100 agent steps and 131,072 tokens. [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Harness",
+            "Base",
+            "Adapter"
+          ],
+          "rows": [
+            [
+              "Pi",
+              "39.2%",
+              "64.7%"
+            ],
+            [
+              "Hermes",
+              "29.4%",
+              "43.1%"
+            ],
+            [
+              "OpenCode",
+              "35.3%",
+              "51.0%"
+            ]
+          ]
+        },
+        {
+          "type": "equation",
+          "tex": "\\Delta W_h=B_hA_h,\\qquad \\Delta W_{\\rm merged}=\\tfrac12\\sum_{h=1}^3\\Delta W_h,\\qquad \\operatorname{rank}_{\\rm LoRA}:32\\to96",
+          "label": "The post concatenates ranks and scales each update by 1/2. Nearly orthogonal updates do not guarantee arbitrary sums perform well."
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Tool-call reductions condition on tasks solved by both models and cannot be converted into overall training speedups. Merge weights were selected on Terminal-Bench, introducing selection optimism; AutomationBench transfer shows no clear general improvement. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-kaon-online-rl",
+      "paper": "Online RL: Learning From User Behavior in Real Time",
+      "authors": "Mouse · Alex Xi",
+      "url": "https://www.kaonlabs.com/writing/online-rl",
+      "kind": "Main read · Technical blog",
+      "title": "One live rollout: off-policy correction and length bias",
+      "dateNote": "First published November 20, 2026 (site date)",
+      "evidence": "Read algorithm, implementation and results; reward undisclosed",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A user experiences one reply, preventing a group of human rollouts from the same state. Kaon archives exact tokens, actual sampling probabilities q, the top-k head and weight versions, bounds policy-version lag, then updates LoRA. Truncated trajectories receive no appended EOS. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "A_t=r_t-V(s_t),\\qquad w(y)=\\min\\{p(y)/q(y),C\\},\\qquad \\ell_y=-A_t\\bigl(w(y)\\log p(y)-\\mathcal C\\bigr)",
+          "label": "The post’s online critic and token loss; A, w and the correction coefficients below are stop-gradient. p is the training policy and q the actual truncated sampling distribution."
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal C=\\sum_{z\\in\\mathcal H_k}[m(z)-\\alpha p(z)]\\log p(z),\\quad m(z)=\\min\\{p(z),Cq(z)\\},\\quad \\alpha=\\min\\{Cq_{\\rm tail}/p_{\\rm tail},1\\}",
+          "label": "TIS controls large ratios; Score Centering corrects mismatch-induced drift. This is a clipped, top-k approximation with no unbiasedness guarantee supplied."
+        },
+        {
+          "type": "text",
+          "text": "Length ablations find that averaging within replies before averaging across replies interacts with advantage imbalance to favor short replies. Global-token aggregation or revised balancing stabilizes length but removes roughly half the early apparent turn gain. Combining both fixes performs worse because their aggregation units differ. [2]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The exact reward, absolute sample sizes and absolute metrics are undisclosed. Session depth is behavioral and does not directly measure welfare or correctness. The early +14.7% includes length bias and is not a corrected net gain. [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-inkling-varloop",
+      "paper": "Welcome Inkling 2 Mini, Cutting-edge Performance for your Local Setup",
+      "authors": "Merve · Pedro Cuenca · Aritra Roy Gosthipaty · Guarin Flück",
+      "url": "https://huggingface.co/blog/inkling2mini",
+      "kind": "Brief · Architecture technical post",
+      "title": "Shared weights do not imply shared inference states",
+      "dateNote": "First published November 20, 2026 (site date)",
+      "evidence": "Read architecture and variable-loop description; full evaluation not checked",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The middle 12 of 24 physical layers repeat three times, giving 6+3×12+6=48 layer visits. A research checkpoint allows variable pass counts, but visits retain separate KV/convolution states. The authors have not deeply evaluated quality versus pass count, so this is an inference-compute research artifact without a verified scaling law. [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-embodied-rl-stack",
+      "paper": "The Death of System 1: Why VLA and WAM Imitation Learning Is Fading",
+      "authors": "Lixin Xu",
+      "url": "https://davidlxu.github.io/posts/2026/11/the-end-of-system-1/",
+      "kind": "Brief · Researcher technical synthesis",
+      "title": "Embodied post-training: a layered-architecture argument",
+      "dateNote": "First published November 20, 2026 (site date)",
+      "evidence": "Read the text; a synthesis, not a new controlled experiment",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The author combines simulation RL post-training of reasoning models with low-level contact-control RL to argue that intermediate imitation policies may become optional tools. A concrete interface is high-level target poses/skills with low-level fast feedback. The proposed disappearance of the imitation layer is the author’s conjecture; existing task results do not establish universal replacement across robots, latency constraints and distribution shifts. [6]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://huggingface.co/blog/harness-adapters-at-scale",
+      "title": "Harness adapters · Task filtering, training setup, merging and paired evaluation"
+    },
+    {
+      "url": "https://www.kaonlabs.com/writing/online-rl",
+      "title": "Online RL · TITO, TIS/Score Centering, single-trajectory critic and length ablations"
+    },
+    {
+      "url": "https://huggingface.co/blog/inkling2mini",
+      "title": "Inkling 2 Mini · Loop structure and variable-pass research artifact"
+    },
+    {
+      "url": "https://arxiv.org/pdf/1712.00409v1",
+      "title": "Classic · Section 3 protocol, Section 4 learning curves and Appendix A Table 1"
+    },
+    {
+      "url": "https://api.openalex.org/works/W2775461895",
+      "title": "1,569 citations in the queried OpenAlex record; checked November 21, 2026"
+    },
+    {
+      "url": "https://davidlxu.github.io/posts/2026/11/the-end-of-system-1/",
+      "title": "Embodied post-training synthesis · The author’s layered-architecture argument"
+    }
+  ],
+  "classic": {
+    "id": "classic-hestness",
+    "paperId": "arxiv:1712.00409",
+    "shortTitle": "Hestness empirical scaling",
+    "year": 2017,
+    "topics": [
+      "Scaling laws"
+    ],
+    "kind": "Daily classic",
+    "title": "Measuring learning curves: intercepts, slopes and floors",
+    "paper": "Deep Learning Scaling is Predictable, Empirically",
+    "authors": "Joel Hestness · Sharan Narang · Newsha Ardalani · Gregory Diamos · Heewoo Jun · Hassan Kianinejad · Md. Mostofa Ali Patwary · Yang Yang · Yanqi Zhou",
+    "url": "https://arxiv.org/pdf/1712.00409v1",
+    "dateNote": "Historical preprint, no conference year · First posted/read v1: December 1, 2017",
+    "evidence": "Read Sections 3–4, Section 5.2 and Appendix A Table 1",
+    "recognition": {
+      "label": "1,569 citations in the queried OpenAlex record (November 21, 2026)",
+      "url": "https://api.openalex.org/works/W2775461895"
+    },
+    "question": "With a fixed data pool and increasing reuse, how would an experiment distinguish a changed power-law exponent from saturation of the effective independent sample count?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Before Kaplan (2020) and Chinchilla (2022), Hestness et al. (2017) measured data learning curves across translation, language, images and speech. The object is validation error after model selection, not loss versus steps along one training run. [4]"
+      },
+      {
+        "type": "equation",
+        "tex": "|T_i|=m_i\\approx 2^i m_0,\\qquad V\\cap T_i=\\varnothing,\\qquad \\widehat M_i\\in\\arg\\min_{M\\in\\mathcal M_i}L(M\\mid T_i,V)",
+        "label": "Mathematical restatement of the protocol: randomly shuffle, roughly double shard sizes, search capacity and optimization settings, and use a fixed validation set. This defines a composite learning curve."
+      },
+      {
+        "type": "equation",
+        "tex": "\\varepsilon(m)=a m^{\\beta_g}+\\gamma,\\quad \\beta_g<0,\\qquad s(m)\\approx b m^{\\beta_p}",
+        "label": "Empirical fits from the paper: error curves may include offset γ; required model size s(m) grows sublinearly in several experiments."
+      },
+      {
+        "type": "text",
+        "text": "Composite-curve exponents from Appendix A Table 1 follow. Metrics differ, so these are not directly comparable gains in a common quality measure. [4]"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Model/task",
+          "Validation metric",
+          "β_g"
+        ],
+        "rows": [
+          [
+            "NMT / LSTM",
+            "Token error",
+            "−0.128"
+          ],
+          [
+            "Word LM / LSTM",
+            "Cross-entropy",
+            "−0.066"
+          ],
+          [
+            "Image / ResNet",
+            "Classification error",
+            "−0.309"
+          ],
+          [
+            "Speech / DS2",
+            "Character error rate",
+            "−0.299"
+          ]
+        ]
+      },
+      {
+        "type": "equation",
+        "tex": "\\frac{m_2}{m_1}=\\left(\\frac{\\varepsilon(m_2)-\\gamma}{\\varepsilon(m_1)-\\gamma}\\right)^{1/\\beta_g},\\qquad \\frac{s(m_2)}{s(m_1)}\\approx\\left(\\frac{m_2}{m_1}\\right)^{\\beta_p}",
+        "label": "My algebraic rearrangement: converting target error into data and model multipliers requires remaining in the same power-law regime with a fixed floor γ."
+      },
+      {
+        "type": "equation",
+        "tex": "\\log\\varepsilon(m)=\\log a+\\beta_g\\log m\\quad(\\gamma=0),\\qquad \\frac{d\\log\\varepsilon}{d\\log m}=\\beta_g",
+        "label": "My interpretation: a lower intercept and a changed slope are different evidence. A finite-range line does not automatically extrapolate to a new data distribution."
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "The observation that architectures/optimizers often shift intercepts is limited to the tested tasks and search; it is not an exponent-invariance theorem. Using V for selection and error measurement is not an independent-test guarantee. [4]"
+      },
+      {
+        "type": "text",
+        "text": "Selection evidence: 1,569 citations in the queried OpenAlex record (November 21, 2026). [5]"
+      }
+    ]
+  }
+}

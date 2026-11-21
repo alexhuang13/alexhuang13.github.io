@@ -4,8 +4,27 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-20",
+  "latest": "2026-11-21",
   "issues": [
+    {
+      "date": "2026-11-21",
+      "title": "把真实 harness 与用户反馈带回训练",
+      "url": "/digest/2026-11-21.html",
+      "translations": {
+        "en": {
+          "title": "Bringing Real Harnesses and User Feedback Back into Training",
+          "url": "/digest/en/2026-11-21.html"
+        }
+      },
+      "sources": [
+        "https://huggingface.co/blog/harness-adapters-at-scale",
+        "https://www.kaonlabs.com/writing/online-rl",
+        "https://huggingface.co/blog/inkling2mini",
+        "https://arxiv.org/pdf/1712.00409v1",
+        "https://api.openalex.org/works/W2775461895",
+        "https://davidlxu.github.io/posts/2026/11/the-end-of-system-1/"
+      ]
+    },
     {
       "date": "2026-11-20",
       "title": "训练预算如何改变推理扩展，非高斯源如何流向数据",

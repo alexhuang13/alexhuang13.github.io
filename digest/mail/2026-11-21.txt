@@ -1,0 +1,36 @@
+RESEARCH DIGEST / 2026-11-21
+把真实 harness 与用户反馈带回训练
+Harness adapters · 在线 RL · 经验 scaling 经典
+
+中文: https://alexhuang13.github.io/digest/2026-11-21.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-21.html
+
+主读 · 技术博客
+在原生 harness 中训练：验证器与任务难度都要筛
+Introducing harness adapters: adapt your favorite model to your harness to improve performance and cost
+https://alexhuang13.github.io/digest/2026-11-21.html#paper-harness-adapters
+
+主读 · 技术博客
+单次真实 rollout：离策略修正与长度偏差
+Online RL: Learning From User Behavior in Real Time
+https://alexhuang13.github.io/digest/2026-11-21.html#paper-kaon-online-rl
+
+简讯 · 架构技术文
+共享权重不等于共享推理状态
+Welcome Inkling 2 Mini, Cutting-edge Performance for your Local Setup
+https://alexhuang13.github.io/digest/2026-11-21.html#paper-inkling-varloop
+
+简讯 · 研究者技术综合
+具身后训练：分层架构的一个判断
+The Death of System 1: Why VLA and WAM Imitation Learning Is Fading
+https://alexhuang13.github.io/digest/2026-11-21.html#paper-embodied-rl-stack
+
+每日精读 · 2017
+测量学习曲线：先区分截距、斜率与误差底
+https://alexhuang13.github.io/digest/2026-11-21.html#classic-hestness
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-21.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

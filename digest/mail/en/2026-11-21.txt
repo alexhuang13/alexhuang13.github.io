@@ -1,0 +1,36 @@
+RESEARCH DIGEST / 2026-11-21
+Bringing Real Harnesses and User Feedback Back into Training
+Harness adapters · Online RL · A classic in empirical scaling
+
+中文: https://alexhuang13.github.io/digest/2026-11-21.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-21.html
+
+Main read · Technical blog
+Training inside the native harness: screen verifiers and task difficulty
+Introducing harness adapters: adapt your favorite model to your harness to improve performance and cost
+https://alexhuang13.github.io/digest/en/2026-11-21.html#paper-harness-adapters
+
+Main read · Technical blog
+One live rollout: off-policy correction and length bias
+Online RL: Learning From User Behavior in Real Time
+https://alexhuang13.github.io/digest/en/2026-11-21.html#paper-kaon-online-rl
+
+Brief · Architecture technical post
+Shared weights do not imply shared inference states
+Welcome Inkling 2 Mini, Cutting-edge Performance for your Local Setup
+https://alexhuang13.github.io/digest/en/2026-11-21.html#paper-inkling-varloop
+
+Brief · Researcher technical synthesis
+Embodied post-training: a layered-architecture argument
+The Death of System 1: Why VLA and WAM Imitation Learning Is Fading
+https://alexhuang13.github.io/digest/en/2026-11-21.html#paper-embodied-rl-stack
+
+Daily classic · 2017
+Measuring learning curves: intercepts, slopes and floors
+https://alexhuang13.github.io/digest/en/2026-11-21.html#classic-hestness
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-21.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-21",
+    "paperId": "arxiv:1712.00409",
+    "paper": "Deep Learning Scaling is Predictable, Empirically",
+    "shortTitle": "Hestness empirical scaling",
+    "year": 2017,
+    "topics": [
+      "Scaling laws"
+    ],
+    "recognition": {
+      "label": "OpenAlex 所查条目 1,569 次引用（2026-11-21）",
+      "url": "https://api.openalex.org/works/W2775461895"
+    },
+    "source": "https://arxiv.org/pdf/1712.00409v1",
+    "url": "/digest/2026-11-21.html#classic-hestness"
+  },
+  {
     "date": "2026-11-20",
     "paperId": "arxiv:1312.6120",
     "paper": "Exact solutions to the nonlinear dynamics of learning in deep linear neural networks",
