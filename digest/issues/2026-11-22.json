@@ -1,0 +1,132 @@
+{
+  "date": "2026-11-22",
+  "number": "040",
+  "publishedAt": "2026-11-22T14:00:00Z",
+  "readingMinutes": 7,
+  "tags": [
+    "Diffusion models",
+    "Daily classic"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "每日研究笔记",
+  "title": "潜空间里的去噪：压缩什么，保留什么",
+  "subtitle": "今日经典 · Latent Diffusion Models",
+  "intro": "本期未核验到可新增的研究动态。今日精读 Latent Diffusion：先学习保留感知细节的压缩表示，再在潜空间建模；压缩率决定算力与重建质量之间的取舍。",
+  "window": "2026-11-19 08:48 至 2026-11-22 08:58（America/New_York；72 小时重叠，重点为上期以来）",
+  "articles": [],
+  "sources": [
+    {
+      "url": "https://arxiv.org/pdf/2112.10752v2",
+      "title": "LDM 原文 v2 · §3、§4.1、图 6–7、附录 G"
+    },
+    {
+      "url": "https://arxiv.org/abs/2006.11239",
+      "title": "背景旧文 · DDPM（2020）"
+    },
+    {
+      "url": "https://arxiv.org/abs/2012.09841",
+      "title": "背景旧文 · VQGAN（2021）"
+    },
+    {
+      "url": "https://api.openalex.org/works/W4312933868",
+      "title": "OpenAlex · 所查 CVPR 条目 37,545 次引用，查询 2026-11-22"
+    }
+  ],
+  "classic": {
+    "id": "classic-ldm",
+    "paperId": "arxiv:2112.10752",
+    "shortTitle": "Latent Diffusion Models",
+    "year": 2022,
+    "topics": [
+      "Diffusion models"
+    ],
+    "kind": "每日经典精读",
+    "title": "把压缩误差与生成误差分开",
+    "paper": "High-Resolution Image Synthesis with Latent Diffusion Models",
+    "authors": "Robin Rombach · Andreas Blattmann · Dominik Lorenz · Patrick Esser · Björn Ommer",
+    "url": "https://arxiv.org/pdf/2112.10752v2",
+    "dateNote": "CVPR 2022 · 首发 2021-12-20；所读 v2：2022-04-13",
+    "evidence": "已读 §3、§4.1、图 6–7 与附录 G",
+    "recognition": {
+      "label": "OpenAlex 所查条目 37,545 次引用（2026-11-22）",
+      "url": "https://api.openalex.org/works/W4312933868"
+    },
+    "question": "若总预算包含压缩器训练与大量推理，最优 f 会怎样随部署样本数 n 改变？应怎样控制解码器容量，才能区分表示瓶颈和去噪器优化不足？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "DDPM（2020）把生成化为逐步去噪，但像素空间中的每一步仍昂贵。VQGAN（2021）先压缩再学习生成先验；LDM（CVPR 2022）保留二维潜空间，让卷积 U-Net 承担生成，避免为可行的自回归建模而过度压缩。以下为历史精读，不计入今日新闻。 [1] [2] [3]"
+      },
+      {
+        "type": "equation",
+        "tex": "x\\in\\mathbb R^{H\\times W\\times3},\\quad z=E(x)\\in\\mathbb R^{H/f\\times W/f\\times c},\\quad \\widetilde x=D(z),\\quad \\frac{\\dim z}{\\dim x}=\\frac{c}{3f^2}",
+        "label": "原文设定与维数整理：f 是空间下采样倍数，c 是潜通道数；空间位置减为 1/f²，并不等于总维数或总成本也恰好减为 1/f²。"
+      },
+      {
+        "type": "text",
+        "text": "第一阶段结合感知重建与 patch 判别器，约束局部真实感；潜变量用很弱的 KL 正则，或把 VQ 量化层吸收到解码器。第二阶段固定 E、D；KL 情形采样潜变量并按估计标准差缩放，VQ 情形在量化前加噪。这里没有要求经验潜分布本身等于标准正态。 [1]"
+      },
+      {
+        "type": "equation",
+        "tex": "z_t=\\sqrt{\\bar\\alpha_t}\\,z+\\sqrt{1-\\bar\\alpha_t}\\,\\epsilon,\\quad \\epsilon\\sim\\mathcal N(0,I),\\qquad \\mathcal L=\\mathbb E_{x,y,t,\\epsilon}\\!\\left[\\|\\epsilon-\\epsilon_\\theta(z_t,t,\\tau_\\theta(y))\\|_2^2\\right]",
+        "label": "原文条件噪声预测目标（式 3），配标准前向扩散记号；t 均匀采样，编码器已固定。无条件模型删去 y。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\epsilon^*(z_t,t,y)=\\mathbb E[\\epsilon\\mid z_t,t,y],\\qquad \\nabla_{z_t}\\log p_t(z_t\\mid y)=-\\frac{\\epsilon^*(z_t,t,y)}{\\sqrt{1-\\bar\\alpha_t}}",
+        "label": "解释性整理，并非原文新定理：平方损失的总体最优解是条件均值；高斯加噪下由密度求导得到 score 恒等式。需 t>0、条件密度可微，有限网络不保证达到此解。"
+      },
+      {
+        "type": "text",
+        "text": "条件信息不必拼成图像。令 Φᵢ(zₜ) 为 U-Net 第 i 层展平的空间特征，τ(y) 为文本等输入的 token 表示；下面统一采用行向量记号。 [1]"
+      },
+      {
+        "type": "equation",
+        "tex": "Q=\\Phi_i(z_t)W_Q,\\quad K=\\tau_\\theta(y)W_K,\\quad V=\\tau_\\theta(y)W_V,\\qquad \\operatorname{Attn}(Q,K,V)=\\operatorname{softmax}\\!\\left(\\frac{QK^\\top}{\\sqrt d}\\right)V",
+        "label": "原文 cross-attention 机制，等价转置记号：每个潜空间位置查询条件 token；τ 与去噪网络共同训练。"
+      },
+      {
+        "type": "text",
+        "text": "§4.1 在单张 A100、相同参数量、相同步数下比较 f；ImageNet 类条件训练曲线到 2M 步，FID 用 100 步 DDIM 采样评估。它比较训练进度与采样吞吐，不能把相同步数称为相同墙钟时间。 [1]"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "下采样 f",
+          "所测 ImageNet 取舍"
+        ],
+        "rows": [
+          [
+            "1–2",
+            "压缩弱，训练进展慢"
+          ],
+          [
+            "4–8",
+            "质量与采样效率取得较好平衡"
+          ],
+          [
+            "32",
+            "过强压缩限制生成保真度"
+          ]
+        ]
+      },
+      {
+        "type": "equation",
+        "tex": "C_{\\rm total}\\approx C_{\\rm AE}+C_{\\rm latent\\ training}+n\\!\\left(T\\,C_{\\epsilon_\\theta}(f)+C_D(f)\\right)",
+        "label": "我的简化成本账本：生成 n 张图，每张 T 次去噪加一次解码；压缩器训练可跨多个任务摊销。空间面积缩小不是端到端加速定理。"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "已读方法、压缩消融与附录 G，未复现实验。表中结论限于原文模型、数据和预算；f 越大并非越好，重建指标也不能独自预测最终生成 FID。 [1]"
+      },
+      {
+        "type": "text",
+        "text": "入选依据：OpenAlex 所查 CVPR 条目 37,545 次引用（2026-11-22）；此计数对应该数据库条目，不当作跨库合并计数。 [4]"
+      }
+    ]
+  }
+}

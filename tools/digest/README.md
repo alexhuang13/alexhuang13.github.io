@@ -12,6 +12,8 @@ The homepage and GitHub Pages serve the committed HTML directly. No runtime API 
 
 The JSON supports text, equations, tables, notes, and source links. Plain text is escaped; inline math uses `\\(...\\)`. Sources must be HTTPS links. Formula rendering fails the build on invalid TeX. KaTeX HTML and MathML are generated in advance, with locally bundled fonts.
 
+An edition with no verified new research uses `articles: []` and a brief introductory note. It still requires the daily `classic`, source links, and a complete English translation; an edition with neither research nor a classic is rejected.
+
 Dates and report windows use America/New_York. Preserve original publication dates, distinguish versions from new papers, and label abstract-only evidence. Keep retrieval coverage notes out of the published article. Do not treat a local mathematical illustration as a paper's theorem.
 
 ## Chinese and English editions

@@ -1,0 +1,132 @@
+{
+  "date": "2026-11-22",
+  "number": "040",
+  "publishedAt": "2026-11-22T14:00:00Z",
+  "readingMinutes": 7,
+  "tags": [
+    "Diffusion models",
+    "Daily classic"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "Daily Research Notes",
+  "title": "Denoising in Latent Space: What to Compress, What to Preserve",
+  "subtitle": "Today’s classic · Latent Diffusion Models",
+  "intro": "No additional research update was verified for this issue. Today’s classic is Latent Diffusion: learn a compressed representation that retains perceptual detail, then model it in latent space. The compression ratio mediates computation and reconstruction quality.",
+  "window": "November 19, 2026, 08:48–November 22, 2026, 08:58 (America/New_York; 72-hour overlap, emphasizing updates since the previous issue)",
+  "articles": [],
+  "sources": [
+    {
+      "url": "https://arxiv.org/pdf/2112.10752v2",
+      "title": "LDM v2 · Section 3, Section 4.1, Figures 6–7 and Appendix G"
+    },
+    {
+      "url": "https://arxiv.org/abs/2006.11239",
+      "title": "Historical background · DDPM (2020)"
+    },
+    {
+      "url": "https://arxiv.org/abs/2012.09841",
+      "title": "Historical background · VQGAN (2021)"
+    },
+    {
+      "url": "https://api.openalex.org/works/W4312933868",
+      "title": "OpenAlex · 37,545 citations in the queried CVPR record, checked November 22, 2026"
+    }
+  ],
+  "classic": {
+    "id": "classic-ldm",
+    "paperId": "arxiv:2112.10752",
+    "shortTitle": "Latent Diffusion Models",
+    "year": 2022,
+    "topics": [
+      "Diffusion models"
+    ],
+    "kind": "Daily classic",
+    "title": "Separating compression error from generative error",
+    "paper": "High-Resolution Image Synthesis with Latent Diffusion Models",
+    "authors": "Robin Rombach · Andreas Blattmann · Dominik Lorenz · Patrick Esser · Björn Ommer",
+    "url": "https://arxiv.org/pdf/2112.10752v2",
+    "dateNote": "CVPR 2022 · First posted December 20, 2021; read v2: April 13, 2022",
+    "evidence": "Read Section 3, Section 4.1, Figures 6–7 and Appendix G",
+    "recognition": {
+      "label": "37,545 citations in the queried OpenAlex record (November 22, 2026)",
+      "url": "https://api.openalex.org/works/W4312933868"
+    },
+    "question": "If the total budget includes autoencoder training and many inference requests, how should optimal f change with deployment sample count n? How would you control decoder capacity to distinguish a representation bottleneck from under-optimization of the denoiser?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "DDPM (2020) turns generation into iterative denoising, but each pixel-space step remains expensive. VQGAN (2021) compresses before learning a generative prior; LDM (CVPR 2022) retains a two-dimensional latent space and assigns generation to a convolutional U-Net, reducing the need for aggressive compression to make autoregressive modeling feasible. This is historical reading, excluded from today’s news count. [1] [2] [3]"
+      },
+      {
+        "type": "equation",
+        "tex": "x\\in\\mathbb R^{H\\times W\\times3},\\quad z=E(x)\\in\\mathbb R^{H/f\\times W/f\\times c},\\quad \\widetilde x=D(z),\\quad \\frac{\\dim z}{\\dim x}=\\frac{c}{3f^2}",
+        "label": "Paper setting and dimension accounting: f is spatial downsampling and c the latent channel count. Spatial positions fall to 1/f²; total dimensionality or total cost need not fall by exactly that factor."
+      },
+      {
+        "type": "text",
+        "text": "The first stage combines perceptual reconstruction with a patch discriminator to encourage local realism. It uses weak KL regularization or absorbs a VQ quantizer into the decoder. The second stage fixes E and D: KL latents are sampled and rescaled by an estimated standard deviation; VQ latents are noised before quantization. The empirical latent distribution need not itself be standard normal. [1]"
+      },
+      {
+        "type": "equation",
+        "tex": "z_t=\\sqrt{\\bar\\alpha_t}\\,z+\\sqrt{1-\\bar\\alpha_t}\\,\\epsilon,\\quad \\epsilon\\sim\\mathcal N(0,I),\\qquad \\mathcal L=\\mathbb E_{x,y,t,\\epsilon}\\!\\left[\\|\\epsilon-\\epsilon_\\theta(z_t,t,\\tau_\\theta(y))\\|_2^2\\right]",
+        "label": "The paper’s conditional noise-prediction objective (Eq. 3), with standard forward-diffusion notation. Time t is uniform and the autoencoder is fixed. Drop y for the unconditional model."
+      },
+      {
+        "type": "equation",
+        "tex": "\\epsilon^*(z_t,t,y)=\\mathbb E[\\epsilon\\mid z_t,t,y],\\qquad \\nabla_{z_t}\\log p_t(z_t\\mid y)=-\\frac{\\epsilon^*(z_t,t,y)}{\\sqrt{1-\\bar\\alpha_t}}",
+        "label": "Explanatory restatement, not a new theorem of the paper: the population MSE optimum is a conditional mean; differentiating the Gaussian-noised density gives the score identity. This requires t>0 and a differentiable conditional density; a finite network need not attain it."
+      },
+      {
+        "type": "text",
+        "text": "Conditioning need not be formatted as an image. Let Φᵢ(zₜ) be flattened spatial features at U-Net layer i and τ(y) token representations of text or another input. The following uses a consistent row-vector convention. [1]"
+      },
+      {
+        "type": "equation",
+        "tex": "Q=\\Phi_i(z_t)W_Q,\\quad K=\\tau_\\theta(y)W_K,\\quad V=\\tau_\\theta(y)W_V,\\qquad \\operatorname{Attn}(Q,K,V)=\\operatorname{softmax}\\!\\left(\\frac{QK^\\top}{\\sqrt d}\\right)V",
+        "label": "The paper’s cross-attention mechanism in equivalent transposed notation: each latent position queries conditioning tokens. The conditioning encoder and denoiser are jointly trained."
+      },
+      {
+        "type": "text",
+        "text": "Section 4.1 compares f on one A100 with the same parameter count and step count. Class-conditional ImageNet curves reach 2M steps; FID uses 100-step DDIM sampling. The analysis compares training progress and sampling throughput; equal steps do not imply equal elapsed time. [1]"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Downsampling f",
+          "Observed ImageNet tradeoff"
+        ],
+        "rows": [
+          [
+            "1–2",
+            "Weak compression; slow training progress"
+          ],
+          [
+            "4–8",
+            "A favorable quality–sampling-efficiency balance"
+          ],
+          [
+            "32",
+            "Strong compression limits synthesis fidelity"
+          ]
+        ]
+      },
+      {
+        "type": "equation",
+        "tex": "C_{\\rm total}\\approx C_{\\rm AE}+C_{\\rm latent\\ training}+n\\!\\left(T\\,C_{\\epsilon_\\theta}(f)+C_D(f)\\right)",
+        "label": "My simplified cost accounting: generate n images with T denoiser calls and one decode each; autoencoder training can be amortized across tasks. Smaller spatial area is not an end-to-end speedup theorem."
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "Read the method, compression ablations and Appendix G; experiments were not reproduced. The table is limited to the paper’s models, data and budgets. Larger f is not uniformly better, and reconstruction metrics alone do not determine final generative FID. [1]"
+      },
+      {
+        "type": "text",
+        "text": "Selection evidence: 37,545 citations in the queried CVPR OpenAlex record (November 22, 2026). This is a record-specific database count, not a merged cross-database total. [4]"
+      }
+    ]
+  }
+}

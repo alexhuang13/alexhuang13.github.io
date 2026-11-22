@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-22",
+    "paperId": "arxiv:2112.10752",
+    "paper": "High-Resolution Image Synthesis with Latent Diffusion Models",
+    "shortTitle": "Latent Diffusion Models",
+    "year": 2022,
+    "topics": [
+      "Diffusion models"
+    ],
+    "recognition": {
+      "label": "OpenAlex 所查条目 37,545 次引用（2026-11-22）",
+      "url": "https://api.openalex.org/works/W4312933868"
+    },
+    "source": "https://arxiv.org/pdf/2112.10752v2",
+    "url": "/digest/2026-11-22.html#classic-ldm"
+  },
+  {
     "date": "2026-11-21",
     "paperId": "arxiv:1712.00409",
     "paper": "Deep Learning Scaling is Predictable, Empirically",

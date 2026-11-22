@@ -119,7 +119,7 @@ function readingPage(issues) {
 
 const issues = fs.readdirSync(path.join(out,'issues')).filter(f=>/^\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort().reverse().map(f=>{
   const data=JSON.parse(fs.readFileSync(path.join(out,'issues',f),'utf8'));
-  if(f!==data.date+'.json'||!data.articles?.length||!data.sources?.length) throw new Error('Invalid issue '+f);
+  if(f!==data.date+'.json'||!Array.isArray(data.articles)||!data.sources?.length||(!data.articles.length&&!data.classic)) throw new Error('Invalid issue '+f);
   const ids=data.articles.concat(data.classic?[data.classic]:[]).map(a=>a.id);
   if(data.classic&&(!data.classic.paperId||!Number.isInteger(data.classic.year)||!data.classic.recognition?.url||!data.classic.blocks?.length)) throw new Error('Invalid classic reading');
   if(new Set(ids).size!==ids.length||ids.some(id=>!/^[a-z][a-z0-9-]*$/.test(id))) throw new Error('Invalid article IDs');

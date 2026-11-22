@@ -1,0 +1,16 @@
+RESEARCH DIGEST / 2026-11-22
+Denoising in Latent Space: What to Compress, What to Preserve
+Today’s classic · Latent Diffusion Models
+
+中文: https://alexhuang13.github.io/digest/2026-11-22.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-22.html
+
+Daily classic · 2022
+Separating compression error from generative error
+https://alexhuang13.github.io/digest/en/2026-11-22.html#classic-ldm
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-22.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

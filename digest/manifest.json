@@ -4,8 +4,25 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-21",
+  "latest": "2026-11-22",
   "issues": [
+    {
+      "date": "2026-11-22",
+      "title": "潜空间里的去噪：压缩什么，保留什么",
+      "url": "/digest/2026-11-22.html",
+      "translations": {
+        "en": {
+          "title": "Denoising in Latent Space: What to Compress, What to Preserve",
+          "url": "/digest/en/2026-11-22.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/pdf/2112.10752v2",
+        "https://arxiv.org/abs/2006.11239",
+        "https://arxiv.org/abs/2012.09841",
+        "https://api.openalex.org/works/W4312933868"
+      ]
+    },
     {
       "date": "2026-11-21",
       "title": "把真实 harness 与用户反馈带回训练",
