@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-23",
+    "paperId": "arxiv:2307.08621",
+    "paper": "Retentive Network: A Successor to Transformer for Large Language Models",
+    "shortTitle": "RetNet",
+    "year": 2023,
+    "topics": [
+      "RNN / Linear attention"
+    ],
+    "recognition": {
+      "label": "OpenAlex 所查条目 1,145 次引用（2026-11-23）",
+      "url": "https://api.openalex.org/works/W4384648484"
+    },
+    "source": "https://arxiv.org/pdf/2307.08621v4",
+    "url": "/digest/2026-11-23.html#classic-retnet"
+  },
+  {
     "date": "2026-11-22",
     "paperId": "arxiv:2112.10752",
     "paper": "High-Resolution Image Synthesis with Latent Diffusion Models",

@@ -1,0 +1,46 @@
+RESEARCH DIGEST / 2026-11-23
+Spectral Residuals and Latent Recursion
+AIMuon · MoLR · RetNet
+
+中文: https://alexhuang13.github.io/digest/2026-11-23.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-23.html
+
+Main read · New paper
+AIMuon: polarize momentum and residual separately
+Accelerating Muon with Spectral Residual Correction
+https://alexhuang13.github.io/digest/en/2026-11-23.html#paper-2611-27077
+
+Main read · New paper
+MoLR: share a low-rank transform and allocate depth per token
+Mixture of Latent Recursions for Low-Rank Adaptation
+https://alexhuang13.github.io/digest/en/2026-11-23.html#paper-2611-27823
+
+Brief · New paper
+DistP: hyperparameter transfer for local updates
+$\mathtt{DistP}$: Scaling Local-Update Training with Zero-Shot Hyperparameter Transfer
+https://alexhuang13.github.io/digest/en/2026-11-23.html#paper-2611-27808
+
+Brief · New paper
+Self-similar organization of predictive information
+Self-similar Organization of Information in Language
+https://alexhuang13.github.io/digest/en/2026-11-23.html#paper-2611-26935
+
+Brief · New paper
+Inference budgets for heterogeneous theorem provers
+Budget-Aware Predict-and-Verify Theorem Proving with Heterogeneous LLM Solvers
+https://alexhuang13.github.io/digest/en/2026-11-23.html#paper-2611-26906
+
+Brief · Substantive revision
+Random-feature spectra: from monomials to polynomials
+Power-Law Spectrum of the Random Feature Model
+https://alexhuang13.github.io/digest/en/2026-11-23.html#paper-2603-14578
+
+Daily classic · 2023
+One retention operator, three execution orders
+https://alexhuang13.github.io/digest/en/2026-11-23.html#classic-retnet
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-23.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

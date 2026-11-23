@@ -1,0 +1,46 @@
+RESEARCH DIGEST / 2026-11-23
+谱残差与潜空间递归
+AIMuon · MoLR · RetNet
+
+中文: https://alexhuang13.github.io/digest/2026-11-23.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-23.html
+
+主读 · 新稿
+AIMuon：分别极化动量与残差
+Accelerating Muon with Spectral Residual Correction
+https://alexhuang13.github.io/digest/2026-11-23.html#paper-2611-27077
+
+主读 · 新稿
+MoLR：共享低秩变换，按 token 分配递归深度
+Mixture of Latent Recursions for Low-Rank Adaptation
+https://alexhuang13.github.io/digest/2026-11-23.html#paper-2611-27823
+
+简讯 · 新稿
+DistP：局部更新的超参数迁移
+$\mathtt{DistP}$: Scaling Local-Update Training with Zero-Shot Hyperparameter Transfer
+https://alexhuang13.github.io/digest/2026-11-23.html#paper-2611-27808
+
+简讯 · 新稿
+语言预测信息的自相似组织
+Self-similar Organization of Information in Language
+https://alexhuang13.github.io/digest/2026-11-23.html#paper-2611-26935
+
+简讯 · 新稿
+异构证明器的推理预算分配
+Budget-Aware Predict-and-Verify Theorem Proving with Heterogeneous LLM Solvers
+https://alexhuang13.github.io/digest/2026-11-23.html#paper-2611-26906
+
+简讯 · 实质修订
+随机特征谱：单项式扩到多项式
+Power-Law Spectrum of the Random Feature Model
+https://alexhuang13.github.io/digest/2026-11-23.html#paper-2603-14578
+
+每日精读 · 2023
+同一 retention，三种计算顺序
+https://alexhuang13.github.io/digest/2026-11-23.html#classic-retnet
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-23.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

@@ -1,0 +1,275 @@
+{
+  "date": "2026-11-23",
+  "number": "041",
+  "publishedAt": "2026-11-23T14:00:00Z",
+  "readingMinutes": 13,
+  "tags": [
+    "Post-training",
+    "Scaling laws",
+    "Agentic RL"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "每日研究笔记",
+  "title": "谱残差与潜空间递归",
+  "subtitle": "AIMuon · MoLR · RetNet",
+  "intro": "两篇主读分别改变谱更新方向和 LoRA 的计算深度；另收局部更新 scaling、语言信息结构、推理预算与一项实质修订。经典精读 RetNet，推导并行、递归与分块形式的等价关系。",
+  "window": "2026-11-20 至 2026-11-23（America/New_York；重点为上期以来，含 72 小时重叠）",
+  "articles": [
+    {
+      "id": "paper-2611-27077",
+      "paper": "Accelerating Muon with Spectral Residual Correction",
+      "authors": "Ren, Zhixin · Lyu, Yao · Li, Shengbo Eben · Zhang, Liping",
+      "url": "https://arxiv.org/html/2611.27077v1",
+      "kind": "主读 · 新稿",
+      "title": "AIMuon：分别极化动量与残差",
+      "dateNote": "v1：2026-11-19 ET；11 月 23 日公告",
+      "evidence": "已读相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "AIMuon 保留 EMA 动量，用当前梯度与动量之差修正参数步。令 P(A) 为紧致 SVD 的 polar 因子，P(0)=0；谱范数与核范数对偶使平方谱惩罚的线性子问题产生核范数加权方向。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "M_t=\\beta M_{t-1}+(1-\\beta)G_t,\\quad E_t=G_t-M_t,\\qquad U_t=\\|M_t\\|_*P(M_t)+c\\|E_t\\|_*P(E_t)",
+          "label": "原文精确、未归一化方向；参数更新为 −ηU。分别极化一般不等于先混合再极化。"
+        },
+        {
+          "type": "equation",
+          "tex": "D^M=\\operatorname{NS}_5(M),\\ D^E=\\operatorname{NS}_5(E),\\quad \\widehat\\nu_A=|\\langle A,D^A\\rangle|,\\quad \\widetilde U=\\widehat\\nu_M D^M+c\\widehat\\nu_E D^E",
+          "label": "实际算法各做五步 NS，再把合成方向的 Frobenius 范数匹配到同动量 Muon；全局尺度消失，相对权重仍在。"
+        },
+        {
+          "type": "text",
+          "text": "8×H100 从头预训练；每步 524,288 tokens，各优化器独立调学习率与动量。下表为达到 Muon 最终验证 loss 的步数减少率，来自完整预算曲线插值。 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "模型 / 数据",
+            "训练预算",
+            "步数减少"
+          ],
+          "rows": [
+            [
+              "GPT-2-small / FineWeb-Edu",
+              "2.48B tokens / 3 seeds",
+              "8.98%"
+            ],
+            [
+              "GPT-2-medium / FineWeb",
+              "6.9B tokens / 1 seed",
+              "10.05%"
+            ],
+            [
+              "Qwen3-0.6B / FineWeb",
+              "12B tokens / 1 seed",
+              "6.49%"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "原文驻点界针对精确、未归一化迭代，不覆盖 NS 与 RMS 匹配的完整实现。同 token 预算下 medium 与 Qwen 的训练时间分别增加约 5.6%、4.2%（不含验证）；步数减少不能直接说成端到端提速。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-27823",
+      "paper": "Mixture of Latent Recursions for Low-Rank Adaptation",
+      "authors": "Luo, Weixun · Mao, Ye · Huang, Ranran · Jing, Junpeng · Mikolajczyk, Krystian",
+      "url": "https://arxiv.org/html/2611.27823v1",
+      "kind": "主读 · 新稿",
+      "title": "MoLR：共享低秩变换，按 token 分配递归深度",
+      "dateNote": "v1：2026-11-20；11 月 23 日公告",
+      "evidence": "已读相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在 LoRA 的下投影 z₀=Ax 与上投影 B 之间插入共享变换 W。路由器给每个 token 决定是否继续；首次未通过门槛便永久停止，不是下一步重新激活。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "s_t=\\sigma(w^\\top z_t),\\qquad z_{t+1}=z_t+s_tW(z_t+\\phi(t))\\quad(s_t>b_t)",
+          "label": "原文活跃 token 更新；φ 是固定步数编码，未继续时保留当前状态作为最终表示。"
+        },
+        {
+          "type": "equation",
+          "tex": "q_t=\\frac{T-t}{T-t+1},\\qquad b_t\\leftarrow b_t+\\eta\\operatorname{sign}(\\widehat q_t-q_t),\\qquad \\Delta P=r^2+r",
+          "label": "原文路由平衡：目标停止深度在 0,…,T 上均匀，q 是条件继续率；新增参数不随最大递归深度 T 增长。"
+        },
+        {
+          "type": "text",
+          "text": "相对 LoRA 的最坏额外 MAC 比例为 T(r+1)/(d_in+d_out)。原文在训练过的递归范围内改变推理深度上限，得到质量—计算量取舍；这不是参数量增加的 scaling，也不是超过训练深度后的外推保证。 [2]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "省略步编码时可展开为输入相关的 W 多项式；不能把这个简化展开当作含 φ 的完整算法。阈值平衡也不保证每条样本都得到计算最优分配。 [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-27808",
+      "paper": "$\\mathtt{DistP}$: Scaling Local-Update Training with Zero-Shot Hyperparameter Transfer",
+      "authors": "Jovanović, Andrej · Iacob, Alex · Wiesner, Philipp · Roux, Christophe · Zimmer, Max · Sani, Lorenzo · Pokutta, Sebastian · Lane, Nicholas D.",
+      "url": "https://arxiv.org/abs/2611.27808v1",
+      "kind": "简讯 · 新稿",
+      "title": "DistP：局部更新的超参数迁移",
+      "dateNote": "v1：2026-11-20；11 月 23 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "扩大 local batch 与增加 worker 并不服从同一内层学习率规则：摘要分别报告平方根缩放与固定参考值，并拟合计算 scaling。外层有动量时，batch/同步间隔变化仍可能需要内外层联合调参；未读全文，不展开定理或把 loss 相对降幅当训练加速。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-26935",
+      "paper": "Self-similar Organization of Information in Language",
+      "authors": "Lufkin, Leon · Dawes, Cutter · Krishnamurthy, Kamesh",
+      "url": "https://arxiv.org/html/2611.26935v1",
+      "kind": "简讯 · 新稿",
+      "title": "语言预测信息的自相似组织",
+      "dateNote": "v1：2026-11-19 ET；11 月 23 日公告",
+      "evidence": "已读 §2–3 与讨论",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "从相邻文本窗的互信息与上下文 band gain 研究长度缩放，避免未知熵率干扰。所读理论与实验报告跨长度的数据塌缩；这是语言统计与长上下文可学结构的证据，不等于模型参数—算力的通用 scaling law。 [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-26906",
+      "paper": "Budget-Aware Predict-and-Verify Theorem Proving with Heterogeneous LLM Solvers",
+      "authors": "Jiang, Wei · Liu, Ziran · Wang, Wei",
+      "url": "https://arxiv.org/abs/2611.26906v1",
+      "kind": "简讯 · 新稿",
+      "title": "异构证明器的推理预算分配",
+      "dateNote": "v1：2026-11-19 ET；11 月 23 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "预测—验证框架在异构 LLM solver 间分配预算，属于推理计算分配订阅。仅核对摘要：没有据此推断可迁移到任意推理任务的 scaling 指数。 [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2603-14578",
+      "paper": "Power-Law Spectrum of the Random Feature Model",
+      "authors": "Paquette, Elliot · Xiao, Ke Liang · Zhu, Yizhe",
+      "url": "https://arxiv.org/html/2603.14578v2",
+      "kind": "简讯 · 实质修订",
+      "title": "随机特征谱：单项式扩到多项式",
+      "dateNote": "首发 2026-03-15；v2：2026-11-19 ET",
+      "evidence": "已对照旧摘要与修订正文相关段落",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "已对照 v1 摘要与 v2 正文：激活从单项式扩展到多项式，加入 Gaussian integration by parts 的扩展论证。高斯输入、协方差特征值约 j^(−α)、α>1 的设定仍关键；不是任意非线性或深网络的谱保持定理。 [6]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.27077v1",
+      "title": "AIMuon · §3–4 与附录 C"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.27823v1",
+      "title": "MoLR · §3、§4.4 与计算开销"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.27808v1",
+      "title": "$\\mathtt{DistP}$: Scaling Local-Update Training with Zero-Shot Hyperparameter Transfer · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.26935v1",
+      "title": "Self-similar Organization of Information in Language · 已读 §2–3 与讨论"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.26906v1",
+      "title": "Budget-Aware Predict-and-Verify Theorem Proving with Heterogeneous LLM Solvers · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/html/2603.14578v2",
+      "title": "Power-Law Spectrum of the Random Feature Model · 已对照旧摘要与修订正文相关段落"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2307.08621v4",
+      "title": "经典 · RetNet §2–3，所读 v4"
+    },
+    {
+      "url": "https://api.openalex.org/works/W4384648484",
+      "title": "OpenAlex 所查条目 1,145 次引用；查询 2026-11-23"
+    }
+  ],
+  "classic": {
+    "id": "classic-retnet",
+    "paperId": "arxiv:2307.08621",
+    "shortTitle": "RetNet",
+    "year": 2023,
+    "topics": [
+      "RNN / Linear attention"
+    ],
+    "kind": "每日经典精读",
+    "title": "同一 retention，三种计算顺序",
+    "paper": "Retentive Network: A Successor to Transformer for Large Language Models",
+    "authors": "Yutao Sun · Li Dong · Shaohan Huang · Shuming Ma · Yuqing Xia · Jilong Xue · Jianyong Wang · Furu Wei",
+    "url": "https://arxiv.org/pdf/2307.08621v4",
+    "dateNote": "历史预印本（2023）；首发 2023-07-17，所读 v4：2023-08-09",
+    "evidence": "已读 §2–3",
+    "recognition": {
+      "label": "OpenAlex 所查条目 1,145 次引用（2026-11-23）",
+      "url": "https://api.openalex.org/works/W4384648484"
+    },
+    "question": "固定状态容量时，怎样设计受控的远距离键值检索实验，区分指数遗忘与不同记忆写入间的干扰？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "线性注意力（2020）与 S4（2022）探索并行训练、固定状态递归。RetNet（2023）给出带指数衰减的 retention；核心是同一个算子的三种执行方式，而非把 softmax 注意力精确改写成 RNN。 [7]"
+      },
+      {
+        "type": "equation",
+        "tex": "S_0=0,\\quad S_n=\\gamma S_{n-1}+k_n^\\top v_n,\\quad o_n=q_nS_n=\\sum_{m=1}^n\\gamma^{n-m}(q_nk_m^\\top)v_m",
+        "label": "原文递归与并行等价式：q、k 为行向量，v 为值向量，位置旋转吸收到 q、k；单头 0<γ<1。展开递归即得右端。"
+      },
+      {
+        "type": "equation",
+        "tex": "O=(QK^\\top\\odot D)V,\\qquad D_{nm}=\\mathbf1_{m\\le n}\\gamma^{n-m}",
+        "label": "原文并行形式；没有 softmax。可并行不等于这个显式 N×N 实现具有线性时间。"
+      },
+      {
+        "type": "equation",
+        "tex": "R_i=\\gamma^B R_{i-1}+\\sum_{j=1}^B\\gamma^{B-j}k_{i,j}^\\top v_{i,j},\\quad o_{i,j}=q_{i,j}\\!\\left(\\gamma^jR_{i-1}+\\sum_{m=1}^j\\gamma^{j-m}k_{i,m}^\\top v_{i,m}\\right)",
+        "label": "对原文分块式的索引整理：每块长 B；块内并行，跨块仅传 R。包括 γ 的幂次，三种形式在精确算术下相同。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\gamma_h=1-2^{-5-h},\\quad Y=\\operatorname{GroupNorm}(\\operatorname{Concat}(o^{(h)})),\\quad \\operatorname{MSR}(X)=(\\operatorname{swish}(XW_G)\\odot Y)W_O",
+        "label": "原文多尺度 retention：各头固定不同衰减，分别归一化，再加入门控。原文还有残差、pre-LayerNorm 与 FFN，不能省成单一线性系统。"
+      },
+      {
+        "type": "text",
+        "text": "固定层数与宽度时，递归缓存每头为 d_k×d_v 矩阵，随序列长 N 不增长；代价仍随宽度与 batch 增长。§3 的吞吐比较依赖模型、长度、硬件与实现，本期不把其中的倍率推广到现代优化 attention 内核。 [7]"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "已读 §2–3；代数等价不保证浮点误差、训练梯度或工程吞吐完全相同。固定大小状态解决缓存增长，却不保证任意远距离检索都与完整 KV cache 等效。 [7]"
+      },
+      {
+        "type": "text",
+        "text": "入选依据：OpenAlex 所查条目 1,145 次引用（2026-11-23）。 [8]"
+      }
+    ]
+  }
+}

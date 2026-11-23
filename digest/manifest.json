@@ -4,8 +4,29 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-22",
+  "latest": "2026-11-23",
   "issues": [
+    {
+      "date": "2026-11-23",
+      "title": "谱残差与潜空间递归",
+      "url": "/digest/2026-11-23.html",
+      "translations": {
+        "en": {
+          "title": "Spectral Residuals and Latent Recursion",
+          "url": "/digest/en/2026-11-23.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.27077v1",
+        "https://arxiv.org/html/2611.27823v1",
+        "https://arxiv.org/abs/2611.27808v1",
+        "https://arxiv.org/html/2611.26935v1",
+        "https://arxiv.org/abs/2611.26906v1",
+        "https://arxiv.org/html/2603.14578v2",
+        "https://arxiv.org/pdf/2307.08621v4",
+        "https://api.openalex.org/works/W4384648484"
+      ]
+    },
     {
       "date": "2026-11-22",
       "title": "潜空间里的去噪：压缩什么，保留什么",

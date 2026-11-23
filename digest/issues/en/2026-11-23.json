@@ -1,0 +1,275 @@
+{
+  "date": "2026-11-23",
+  "number": "041",
+  "publishedAt": "2026-11-23T14:00:00Z",
+  "readingMinutes": 13,
+  "tags": [
+    "Post-training",
+    "Scaling laws",
+    "Agentic RL"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "Daily Research Notes",
+  "title": "Spectral Residuals and Latent Recursion",
+  "subtitle": "AIMuon · MoLR · RetNet",
+  "intro": "Two main reads change spectral update directions and LoRA computation depth. Briefs cover local-update scaling, language information structure, inference budgets and one substantive revision. The RetNet classic derives equivalent parallel, recurrent and chunkwise forms.",
+  "window": "November 20–23, 2026 (America/New_York; emphasis on updates since the previous issue, with a 72-hour overlap)",
+  "articles": [
+    {
+      "id": "paper-2611-27077",
+      "paper": "Accelerating Muon with Spectral Residual Correction",
+      "authors": "Ren, Zhixin · Lyu, Yao · Li, Shengbo Eben · Zhang, Liping",
+      "url": "https://arxiv.org/html/2611.27077v1",
+      "kind": "Main read · New paper",
+      "title": "AIMuon: polarize momentum and residual separately",
+      "dateNote": "v1: November 19, 2026 ET; November 23 announcement",
+      "evidence": "Read relevant full text",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "AIMuon retains EMA momentum and corrects the parameter step using the current gradient–momentum residual. Let P(A) be the compact-SVD polar factor, with P(0)=0. Spectral–nuclear duality makes a linear subproblem with a squared spectral penalty produce nuclear-norm-weighted directions. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "M_t=\\beta M_{t-1}+(1-\\beta)G_t,\\quad E_t=G_t-M_t,\\qquad U_t=\\|M_t\\|_*P(M_t)+c\\|E_t\\|_*P(E_t)",
+          "label": "The paper’s exact, unnormalized direction; the parameter step is −ηU. Separate polar transformations generally differ from polarizing a mixture."
+        },
+        {
+          "type": "equation",
+          "tex": "D^M=\\operatorname{NS}_5(M),\\ D^E=\\operatorname{NS}_5(E),\\quad \\widehat\\nu_A=|\\langle A,D^A\\rangle|,\\quad \\widetilde U=\\widehat\\nu_M D^M+c\\widehat\\nu_E D^E",
+          "label": "The implementation applies five NS steps to each component, then matches the combined Frobenius norm to same-momentum Muon. Common scale disappears while relative weighting remains."
+        },
+        {
+          "type": "text",
+          "text": "Pretraining uses 8×H100 from scratch and 524,288 tokens per step. Learning rates and momentum are tuned independently for each optimizer. The table reports interpolated step reductions to Muon’s final validation loss along full-budget curves. [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Model / data",
+            "Training budget",
+            "Step reduction"
+          ],
+          "rows": [
+            [
+              "GPT-2-small / FineWeb-Edu",
+              "2.48B tokens / 3 seeds",
+              "8.98%"
+            ],
+            [
+              "GPT-2-medium / FineWeb",
+              "6.9B tokens / 1 seed",
+              "10.05%"
+            ],
+            [
+              "Qwen3-0.6B / FineWeb",
+              "12B tokens / 1 seed",
+              "6.49%"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The stationarity bound concerns the exact, unnormalized iteration, not the full NS/RMS-matched implementation. At equal token budgets, medium and Qwen training time rises about 5.6% and 4.2%, excluding validation. Fewer steps do not establish end-to-end speedups. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-27823",
+      "paper": "Mixture of Latent Recursions for Low-Rank Adaptation",
+      "authors": "Luo, Weixun · Mao, Ye · Huang, Ranran · Jing, Junpeng · Mikolajczyk, Krystian",
+      "url": "https://arxiv.org/html/2611.27823v1",
+      "kind": "Main read · New paper",
+      "title": "MoLR: share a low-rank transform and allocate depth per token",
+      "dateNote": "v1: November 20, 2026; November 23 announcement",
+      "evidence": "Read relevant full text",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A shared transform W sits between LoRA’s down-projection z₀=Ax and up-projection B. A router decides whether each token continues. Failing a threshold stops that token permanently, rather than allowing later reactivation. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "s_t=\\sigma(w^\\top z_t),\\qquad z_{t+1}=z_t+s_tW(z_t+\\phi(t))\\quad(s_t>b_t)",
+          "label": "The paper’s active-token update; φ is a fixed step encoding. A stopped token retains its current state as its final representation."
+        },
+        {
+          "type": "equation",
+          "tex": "q_t=\\frac{T-t}{T-t+1},\\qquad b_t\\leftarrow b_t+\\eta\\operatorname{sign}(\\widehat q_t-q_t),\\qquad \\Delta P=r^2+r",
+          "label": "The paper’s routing balance targets uniform stopping depths 0,…,T; q is conditional continuation probability. Additional parameters do not grow with maximum recursion depth T."
+        },
+        {
+          "type": "text",
+          "text": "Worst-case additional MACs relative to LoRA are T(r+1)/(d_in+d_out). Varying the inference cap within the trained horizon yields a quality–computation tradeoff. This is not parameter-count scaling or a guarantee beyond trained depths. [2]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Omitting step encodings gives an input-dependent polynomial in W; this simplified expansion is not the full algorithm with φ. Threshold balancing does not guarantee compute-optimal allocation for every example. [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-27808",
+      "paper": "$\\mathtt{DistP}$: Scaling Local-Update Training with Zero-Shot Hyperparameter Transfer",
+      "authors": "Jovanović, Andrej · Iacob, Alex · Wiesner, Philipp · Roux, Christophe · Zimmer, Max · Sani, Lorenzo · Pokutta, Sebastian · Lane, Nicholas D.",
+      "url": "https://arxiv.org/abs/2611.27808v1",
+      "kind": "Brief · New paper",
+      "title": "DistP: hyperparameter transfer for local updates",
+      "dateNote": "v1: November 20, 2026; November 23 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Larger local batches and more workers follow different inner-learning-rate rules: the abstract reports square-root scaling and a fixed reference rate, plus fitted compute scaling. With outer momentum, changing batch size or synchronization intervals may still require joint inner–outer tuning. Full text was not read; no theorem is expanded and relative loss reductions are not treated as training speedups. [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-26935",
+      "paper": "Self-similar Organization of Information in Language",
+      "authors": "Lufkin, Leon · Dawes, Cutter · Krishnamurthy, Kamesh",
+      "url": "https://arxiv.org/html/2611.26935v1",
+      "kind": "Brief · New paper",
+      "title": "Self-similar organization of predictive information",
+      "dateNote": "v1: November 19, 2026 ET; November 23 announcement",
+      "evidence": "Read Sections 2–3 and discussion",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Mutual information between adjacent text windows and contextual band gains probe length scaling while avoiding an unknown entropy rate. The theory and experiments report collapse across lengths. This is evidence about language statistics and learnable long-context structure, not a universal parameter–compute scaling law. [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-26906",
+      "paper": "Budget-Aware Predict-and-Verify Theorem Proving with Heterogeneous LLM Solvers",
+      "authors": "Jiang, Wei · Liu, Ziran · Wang, Wei",
+      "url": "https://arxiv.org/abs/2611.26906v1",
+      "kind": "Brief · New paper",
+      "title": "Inference budgets for heterogeneous theorem provers",
+      "dateNote": "v1: November 19, 2026 ET; November 23 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A predict-and-verify framework allocates budget across heterogeneous LLM solvers, within the inference-compute-allocation subscription. Abstract only: no transferable scaling exponent for arbitrary reasoning tasks is inferred. [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2603-14578",
+      "paper": "Power-Law Spectrum of the Random Feature Model",
+      "authors": "Paquette, Elliot · Xiao, Ke Liang · Zhu, Yizhe",
+      "url": "https://arxiv.org/html/2603.14578v2",
+      "kind": "Brief · Substantive revision",
+      "title": "Random-feature spectra: from monomials to polynomials",
+      "dateNote": "First posted March 15, 2026; v2: November 19, 2026 ET",
+      "evidence": "Compared old abstract and relevant revised-text passages",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Comparing the v1 abstract with v2 text verifies an extension from monomial to polynomial activations using Gaussian integration by parts. Gaussian inputs, covariance eigenvalues of order j^(−α), and α>1 remain crucial; this is not a spectral-preservation theorem for arbitrary nonlinearities or deep networks. [6]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.27077v1",
+      "title": "AIMuon · Sections 3–4 and Appendix C"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.27823v1",
+      "title": "MoLR · Section 3, Section 4.4 and computational overhead"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.27808v1",
+      "title": "$\\mathtt{DistP}$: Scaling Local-Update Training with Zero-Shot Hyperparameter Transfer · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.26935v1",
+      "title": "Self-similar Organization of Information in Language · Read Sections 2–3 and discussion"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.26906v1",
+      "title": "Budget-Aware Predict-and-Verify Theorem Proving with Heterogeneous LLM Solvers · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/html/2603.14578v2",
+      "title": "Power-Law Spectrum of the Random Feature Model · Compared old abstract and relevant revised-text passages"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2307.08621v4",
+      "title": "Classic · RetNet Sections 2–3, read v4"
+    },
+    {
+      "url": "https://api.openalex.org/works/W4384648484",
+      "title": "1,145 citations in the queried OpenAlex record; checked November 23, 2026"
+    }
+  ],
+  "classic": {
+    "id": "classic-retnet",
+    "paperId": "arxiv:2307.08621",
+    "shortTitle": "RetNet",
+    "year": 2023,
+    "topics": [
+      "RNN / Linear attention"
+    ],
+    "kind": "Daily classic",
+    "title": "One retention operator, three execution orders",
+    "paper": "Retentive Network: A Successor to Transformer for Large Language Models",
+    "authors": "Yutao Sun · Li Dong · Shaohan Huang · Shuming Ma · Yuqing Xia · Jilong Xue · Jianyong Wang · Furu Wei",
+    "url": "https://arxiv.org/pdf/2307.08621v4",
+    "dateNote": "Historical preprint (2023); first posted July 17, 2023; read v4: August 9, 2023",
+    "evidence": "Read Sections 2–3",
+    "recognition": {
+      "label": "1,145 citations in the queried OpenAlex record (November 23, 2026)",
+      "url": "https://api.openalex.org/works/W4384648484"
+    },
+    "question": "With fixed state capacity, how would a controlled long-range key–value retrieval experiment distinguish exponential forgetting from interference between memory writes?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Linear attention (2020) and S4 (2022) explored parallel training and fixed-state recurrence. RetNet (2023) introduces exponentially decayed retention. The core is three execution forms of one operator, not an exact RNN rewrite of softmax attention. [7]"
+      },
+      {
+        "type": "equation",
+        "tex": "S_0=0,\\quad S_n=\\gamma S_{n-1}+k_n^\\top v_n,\\quad o_n=q_nS_n=\\sum_{m=1}^n\\gamma^{n-m}(q_nk_m^\\top)v_m",
+        "label": "The paper’s recurrent–parallel equivalence: q and k are row vectors, v is a value vector, and positional rotations are absorbed into q and k. For one head, 0<γ<1. Unrolling the recurrence gives the sum."
+      },
+      {
+        "type": "equation",
+        "tex": "O=(QK^\\top\\odot D)V,\\qquad D_{nm}=\\mathbf1_{m\\le n}\\gamma^{n-m}",
+        "label": "The paper’s parallel form, without softmax. Parallelizability does not make this explicit N×N implementation linear-time."
+      },
+      {
+        "type": "equation",
+        "tex": "R_i=\\gamma^B R_{i-1}+\\sum_{j=1}^B\\gamma^{B-j}k_{i,j}^\\top v_{i,j},\\quad o_{i,j}=q_{i,j}\\!\\left(\\gamma^jR_{i-1}+\\sum_{m=1}^j\\gamma^{j-m}k_{i,m}^\\top v_{i,m}\\right)",
+        "label": "Index restatement of the paper’s chunkwise form: blocks have length B, with within-block parallelism and state R passed between blocks. Including the displayed decay powers, all three forms agree in exact arithmetic."
+      },
+      {
+        "type": "equation",
+        "tex": "\\gamma_h=1-2^{-5-h},\\quad Y=\\operatorname{GroupNorm}(\\operatorname{Concat}(o^{(h)})),\\quad \\operatorname{MSR}(X)=(\\operatorname{swish}(XW_G)\\odot Y)W_O",
+        "label": "The paper’s multi-scale retention uses fixed head-specific decays, headwise normalization and gating. Residuals, pre-LayerNorm and FFNs also remain; the full network is not a single linear system."
+      },
+      {
+        "type": "text",
+        "text": "At fixed width and layer count, each head caches a d_k×d_v recurrent matrix, independent of sequence length N. Cost still grows with width and batch size. Section 3 throughput comparisons depend on model, length, hardware and implementation; this note does not extrapolate their multipliers to modern optimized attention kernels. [7]"
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "Read Sections 2–3. Algebraic equivalence does not guarantee identical floating-point errors, training gradients or engineering throughput. Fixed state removes cache growth without guaranteeing equivalence to a full KV cache on arbitrary long-range retrieval. [7]"
+      },
+      {
+        "type": "text",
+        "text": "Selection evidence: 1,145 citations in the queried OpenAlex record (November 23, 2026). [8]"
+      }
+    ]
+  }
+}
