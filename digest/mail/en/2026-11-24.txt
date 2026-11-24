@@ -1,0 +1,116 @@
+RESEARCH DIGEST / 2026-11-24
+Principal Directions, Random Coverage and Data Mixtures
+DRAM · ProMix · Human-feedback summarization
+
+中文: https://alexhuang13.github.io/digest/2026-11-24.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-24.html
+
+Main read · New paper
+DRAM: low rank should not retain only the strongest directions
+DRAM: Memory-Efficient Muon via Rank Reallocation in Principal-Random Subspaces
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2611-28595
+
+Main read · New paper
+ProMix: separate irreducible difficulty from learning headroom
+ProMix: Efficient Data Mixture Optimization for Robotic Imitation via Proxy-Reference DRO
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2611-29873
+
+Brief · New paper
+Rotational schedules depend on parameter scale
+From Learning Rates to Rotational Schedules: Finite-Horizon Theory on the Sphere
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2611-29579
+
+Brief · New paper
+Stein Guidance: whole-path correction
+Stein Guidance without Gradients: Discretization Uniform Diffusion Inference Time Scaling beyond Particle SMC
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2611-28654
+
+Brief · New paper
+TTC4TS: frozen forecasting with candidate synthesis
+Think Before You Forecast: Scaling Test-Time Compute for Time Series Forecasting
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2611-29566
+
+Brief · New paper
+TT-RSI: contextual recursion and weight distillation
+Beyond Self-Consistency: Recursive Self-Improvement at Test Time
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2611-30965
+
+Brief · New paper
+LoopRes: distinguish loop outputs and build incrementally
+Unlocking the Power of Loops in Pretrained LLMs with Loop Residuals
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2611-31094
+
+Brief · New paper
+Wrong endpoints need not be stable attractors
+When Wrong Answers Remain Unsettled: Failure Dynamics in Recurrent Reasoners
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2611-28971
+
+Brief · New paper
+Self-refinement of VLA action samples
+Self-Refining VLA Sampling
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2611-29383
+
+Brief · New paper
+MedCoast: budgeted search over semantic prefixes
+MedCoast: Semantic Abstraction of Reasoning Trajectories for Test-Time Biomedical Question Answering
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2611-28586
+
+Brief · New paper
+Fuzzy e-Means: transferring batch/step scaling rules
+Fuzzy e-Means: Fuzzy c-Means on Large Data with Moving-Average Mini-Batch Updates
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2611-29241
+
+Brief · New paper
+WeMM-Ecom: staged increases in domain-data proportion
+WeMM-Ecom: Advancing Multimodal Content Understanding for WeChat E-Commerce
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2611-30662
+
+Brief · Substantive revision
+Muon EoS: separate alignment from loss balance
+Muon Sublates the Edge of Stability in LLM Pretraining: What Persists and What Changes
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2609-34915
+
+Brief · Substantive revision
+Gradual adaptation: scope and paired-run guarantees
+Optimal Training-Time Scaling in Gradual Adaptation
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2608-04927
+
+Brief · Substantive revision
+SAE scaling: controlled geometry and error-floor analysis
+The Geometric Wall: Manifold Structure Predicts Layerwise Sparse Autoencoder Scaling Laws
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2605-09887
+
+Brief · Substantive revision
+Looped training recipes: larger scale and RL failures
+Closing the Loop: Practical Training Recipes for Looped Language Models
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2610-00673
+
+Brief · Substantive revision
+EGLR: extending joint layer-span and temperature sampling
+Entropy-Gated Latent Recursion
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2606-16620
+
+Brief · Substantive revision
+Predicting best-of-N gains: screening and concentration extensions
+Predicting Inference-Time Scaling Gains from Labeled Validation-Set Output Statistics
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2606-02981
+
+Brief · Substantive revision
+Mamba recall scaling: additional natural-language-model probes
+On the Recall Scaling Laws in Mamba: A Theoretical and Mechanistic Study via Hashing
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-2609-07681
+
+Brief · Technical blog
+Verifier audits: pass rates are not reliable completion
+How to build and maintain an agentic evaluation
+https://alexhuang13.github.io/digest/en/2026-11-24.html#paper-agentic-evals
+
+Daily classic · 2020
+Why reward-model scores are not human preferences
+https://alexhuang13.github.io/digest/en/2026-11-24.html#classic-summarize-feedback
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-24.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

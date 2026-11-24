@@ -1,0 +1,588 @@
+{
+  "date": "2026-11-24",
+  "number": "042",
+  "publishedAt": "2026-11-24T14:00:00Z",
+  "readingMinutes": 19,
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Data mixing",
+    "Post-training"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "Daily Research Notes",
+  "title": "Principal Directions, Random Coverage and Data Mixtures",
+  "subtitle": "DRAM · ProMix · Human-feedback summarization",
+  "intro": "Main reads examine DRAM’s subspace coverage and ProMix’s reference-model correction. Briefs cover rotational scheduling, inference compute and substantive extensions of earlier papers. The classic revisits human-feedback summarization, separating reward gains from human-preference gains.",
+  "window": "November 21–24, 2026 (America/New_York; emphasis on updates since the previous issue, with a 72-hour overlap)",
+  "articles": [
+    {
+      "id": "paper-2611-28595",
+      "paper": "DRAM: Memory-Efficient Muon via Rank Reallocation in Principal-Random Subspaces",
+      "authors": "Bai, Haomin · Yu, Dingzhi · Zhao, Xuling · Yang, Sifan · Wang, Yibo · Zhang, Lijun",
+      "url": "https://arxiv.org/html/2611.28595v1",
+      "kind": "Main read · New paper",
+      "title": "DRAM: low rank should not retain only the strongest directions",
+      "dateNote": "v1: November 21, 2026 ET; November 24 announcement",
+      "evidence": "Read relevant full text",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "For X∈R^(m×n), take m≤n. Each DRAM block keeps the leading r left singular vectors R of a stochastic gradient and draws q uniform complementary directions P, with total rank k=r+q. Increasing the random share later addresses true-gradient directions missed when noise dominates TopSVD. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "B=[R\\ P],\\quad\\Pi=RR^\\top,\\quad\\delta=\\frac{q}{m-r},\\qquad\\mathbb E[BB^\\top\\mid R]=\\Pi+\\delta(I-\\Pi)",
+          "label": "The paper’s coverage lemma retains the principal subspace and covers its complement in expectation with strength δ; q>0 supplies this guarantee."
+        },
+        {
+          "type": "equation",
+          "tex": "\\widehat G_t=B^\\top G_t,\\quad H_t=(1-\\beta)H_{t-1}+\\beta\\widehat G_t,\\qquad X_{t+1}=X_t-\\eta B\\operatorname{polar}(H_t)",
+          "label": "The paper’s within-block update; reset H=βĜ at block starts. Here β weights the gradient, unlike the common momentum-coefficient convention."
+        },
+        {
+          "type": "text",
+          "text": "Persistent state falls from O(mn) to O((m+n)k), with spectral normalization on k×n momentum. C4 training uses 1.2B/2.5B/7B tokens for 60M/130M/350M models. The table reports mean accuracy over seven zero-shot tasks, not training loss. [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Model",
+            "Full-Muon",
+            "GaLore-Muon",
+            "DRAM"
+          ],
+          "rows": [
+            [
+              "60M",
+              "36.47",
+              "35.94",
+              "36.28"
+            ],
+            [
+              "130M",
+              "37.32",
+              "36.82",
+              "37.19"
+            ],
+            [
+              "350M",
+              "40.21",
+              "37.93",
+              "38.55"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Rates concern the average nuclear norm of gradients, exact polar maps, unbiased finite-variance gradients and operator/nuclear smoothness, with nondecreasing coverage factors. They do not establish an end-to-end guarantee for finite NS. Best low-memory performance does not mean matching full-state Muon. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-29873",
+      "paper": "ProMix: Efficient Data Mixture Optimization for Robotic Imitation via Proxy-Reference DRO",
+      "authors": "Sima, Qie · Xue, Wei · Guo, Yike",
+      "url": "https://arxiv.org/html/2611.29873v1",
+      "kind": "Main read · New paper",
+      "title": "ProMix: separate irreducible difficulty from learning headroom",
+      "dateNote": "v1: November 22, 2026 ET; November 24 announcement",
+      "evidence": "Read relevant full text",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Following the proxy/reference approach of DoReMi (2023) and robotic Re-Mix (2024), ProMix learns domain weights with small models. Lᵢ is mean behavioral-cloning loss on domain i; a frozen reference θR provides a baseline while proxy θP and domain distribution p are alternately optimized. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\min_{\\theta_P}\\max_{p\\in\\Delta_N}\\sum_i p_i\\bigl[L_i(\\theta_P)-L_i(\\theta_R)\\bigr]+\\lambda H(p),\\qquad H(p)=-\\sum_i p_i\\log p_i",
+          "label": "The paper’s objective: high absolute loss may reflect noise; positive entropy in the maximization discourages weight collapse. The reference is not known Bayes risk."
+        },
+        {
+          "type": "equation",
+          "tex": "g_i=L_i(\\theta_P)-L_i(\\theta_R),\\qquad p_i^+\\propto p_i\\exp\\!\\left\\{\\eta\\left[g_i-\\lambda(1+\\log p_i)\\right]\\right\\}",
+          "label": "The paper’s exponentiated-gradient update. Proxy search samples 128 examples from every domain each step, then weights by p; this is not an equal-cost step sampling a single domain from p."
+        },
+        {
+          "type": "text",
+          "text": "Reference and proxy each train for 100k steps. The 15M count covers trainable parameters, excluding frozen encoders. Weight search totals 11 GPU-hours; weights transfer to 50M and 7B VLAs without retuning. The paper reports 9,500 real-robot evaluations on Open-X: average success rises from 68.4% to 76.2%, and worst-domain success from 51.4% to 68.5%. [2]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "The 11-versus-192 GPU-hour comparison concerns mixture search at 7B, not a 17× speedup of all VLA training. Transfer of small-model domain rankings is empirical in the tested tasks, not a general guarantee. [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-29579",
+      "paper": "From Learning Rates to Rotational Schedules: Finite-Horizon Theory on the Sphere",
+      "authors": "Graldi, Jacopo · Orvieto, Antonio · Koloskova, Anastasia",
+      "url": "https://arxiv.org/html/2611.29579v1",
+      "kind": "Brief · New paper",
+      "title": "Rotational schedules depend on parameter scale",
+      "dateNote": "v1: 2026-11-22 ET; November 24 announcement",
+      "evidence": "Read introduction and relevant Section 2 text",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "For scale-invariant GD, the rotational coefficient is η/‖x‖². The text optimizes a last-iterate bound on a geodesically convex spherical cap, with an asymptotically linear-decay profile. Norm dynamics change the rotation induced by the same LR in ordinary Adam/Muon. This is not global nonconvex LLM convergence theory. [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-28654",
+      "paper": "Stein Guidance without Gradients: Discretization Uniform Diffusion Inference Time Scaling beyond Particle SMC",
+      "authors": "Zhu, Youheng · Wang, Chenyang · Chen, Minshuo · Lu, Yiping",
+      "url": "https://arxiv.org/abs/2611.28654v1",
+      "kind": "Brief · New paper",
+      "title": "Stein Guidance: whole-path correction",
+      "dateNote": "v1: 2026-11-21 ET; November 24 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Derivative-free candidate selection is paired with whole-path independence MH correction. The abstract claims finite-grid TV bounds with step-count-uniform constants under uniform value/spatial regularity; arbitrary learned values need not satisfy these conditions. [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-29566",
+      "paper": "Think Before You Forecast: Scaling Test-Time Compute for Time Series Forecasting",
+      "authors": "Liang, Daojun · Hong, Xiao · Zhang, Pei · Wang, Yinglong · Li, Shuo · Chen, Jing · Guo, Ying · Zhang, Hu",
+      "url": "https://arxiv.org/abs/2611.29566v1",
+      "kind": "Brief · New paper",
+      "title": "TTC4TS: frozen forecasting with candidate synthesis",
+      "dateNote": "v1: 2026-11-22 ET; November 24 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Candidates from augmentation, retrieval or adapters are ranked or aggregated around a frozen time-series backbone, studying gains with candidate count. A frozen backbone does not imply all generators and synthesizers are training-free. [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-30965",
+      "paper": "Beyond Self-Consistency: Recursive Self-Improvement at Test Time",
+      "authors": "Wu, Jianyu · Wang, Yizhou · Su, Encheng · Zhang, Jinouwen · Li, Pengze · Wang, Lintao · Tang, Chen · Wang, Aoran · Ouyang, Wanli · Tang, Shixiang",
+      "url": "https://arxiv.org/abs/2611.30965v1",
+      "kind": "Brief · New paper",
+      "title": "TT-RSI: contextual recursion and weight distillation",
+      "dateNote": "v1: 2026-11-23 ET; November 24 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The method re-solves with the previous complete solution as reference, then distills successive refinements. The abstract compares matched test-time-scaling budgets. Its limiting analysis does not imply unlimited self-improvement for arbitrary unlabeled models. [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-31094",
+      "paper": "Unlocking the Power of Loops in Pretrained LLMs with Loop Residuals",
+      "authors": "Zhao, Xuanlei · Xu, Hailun · Wang, Kai · Luo, Yang · Ren, Yingxuan · Zhu, Zirui · Lou, Yuxuan · Xu, Kun · Wang, Yan · Sarkar, Kanchan · You, Yang",
+      "url": "https://arxiv.org/abs/2611.31094v1",
+      "kind": "Brief · New paper",
+      "title": "LoopRes: distinguish loop outputs and build incrementally",
+      "dateNote": "v1: 2026-11-23 ET; November 24 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Looped layers attend to earlier loop outputs with learned loop-identity keys and a bounded residual window. This studies adding scalable computation to existing LLMs; the abstract’s 2× compute is a budget comparison, not an equal-cost gain. [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-28971",
+      "paper": "When Wrong Answers Remain Unsettled: Failure Dynamics in Recurrent Reasoners",
+      "authors": "Zang, Jiucheng · Peng, Congkai · Wei, Yankai",
+      "url": "https://arxiv.org/abs/2611.28971v1",
+      "kind": "Brief · New paper",
+      "title": "Wrong endpoints need not be stable attractors",
+      "dateNote": "v1: 2026-11-21 ET; November 24 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Extending HRM recurrence without noise changes many wrong answers; matched-compute depth extension outperforms the tested frozen noise. Finite-horizon evidence from one main checkpoint does not exclude asymptotic attractors. [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-29383",
+      "paper": "Self-Refining VLA Sampling",
+      "authors": "Duan, Jeff · Sharma, Arjun · Cruden, Jennifer · Tibrewal, Vansh",
+      "url": "https://arxiv.org/abs/2611.29383v1",
+      "kind": "Brief · New paper",
+      "title": "Self-refinement of VLA action samples",
+      "dateNote": "v1: 2026-11-22 ET; November 24 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Predict-and-Perturb refinement is adapted to flow-generated action trajectories as an alternative inference-compute route to large candidate pools or external correctors. Abstract only; no guarantee across arbitrary robots or budgets is asserted. [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-28586",
+      "paper": "MedCoast: Semantic Abstraction of Reasoning Trajectories for Test-Time Biomedical Question Answering",
+      "authors": "Zhong, Yishan · Li, Jieru · Ding, Xuanzhe · Wang, Shaunna · Yang, Yanxin · Nnamdi, Micky C. · Tamo, J. Ben · Wang, Yifei · Yuan, Yining · Marteau, Benoit L. · Tan, Shaun Q. Y. · Moore, Carrie · Xie, Luyu · Xie, Yang · Shi, Wenqi · Wang, May D.",
+      "url": "https://arxiv.org/abs/2611.28586v1",
+      "kind": "Brief · New paper",
+      "title": "MedCoast: budgeted search over semantic prefixes",
+      "dateNote": "v1: 2026-11-21 ET; November 24 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Offline clustering of same-prefix reasoning steps trains a lightweight PRM, which prioritizes online expansions. The abstract compares fixed-budget self-consistency. Full experiments were not read; the largest task gain is not an average gain. [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-29241",
+      "paper": "Fuzzy e-Means: Fuzzy c-Means on Large Data with Moving-Average Mini-Batch Updates",
+      "authors": "Tiwari, Paritosh · Rathore, Punit",
+      "url": "https://arxiv.org/abs/2611.29241v1",
+      "kind": "Brief · New paper",
+      "title": "Fuzzy e-Means: transferring batch/step scaling rules",
+      "dateNote": "v1: 2026-11-22 ET; November 24 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Moving averages and batch/step rules transfer from e-means to fuzzy clustering, with hard-assignment initialization and relocation disabled. Small low-dimensional problems can remain slower; no universal speedup is claimed. [11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-30662",
+      "paper": "WeMM-Ecom: Advancing Multimodal Content Understanding for WeChat E-Commerce",
+      "authors": "Xie, Binhui · Li, Jinmin · Tang, Haomiao · Wang, Guangting · Jin, Song · Zhu, Jianwei · Rao, Fengyun · Lyu, Jing",
+      "url": "https://arxiv.org/abs/2611.30662v1",
+      "kind": "Brief · New paper",
+      "title": "WeMM-Ecom: staged increases in domain-data proportion",
+      "dateNote": "v1: 2026-11-23 ET; November 24 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The report describes two-stage continued pretraining with increasing e-commerce mixture proportions, followed by hybrid-thinking post-training. Included for its substantive data-mixing recipe; abstract only, without inferring precise scaling exponents from model rankings. [12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-34915",
+      "paper": "Muon Sublates the Edge of Stability in LLM Pretraining: What Persists and What Changes",
+      "authors": "Chen, Yanzhe · Zhao, Qifang · Xu, Xiaoxiao · Liu, Fanghui",
+      "url": "https://arxiv.org/html/2609.34915v3",
+      "kind": "Brief · Substantive revision",
+      "title": "Muon EoS: separate alignment from loss balance",
+      "dateNote": "First posted 2026-09-28; v3: 2026-11-22 ET",
+      "evidence": "Compared relevant old/new text; not all differences audited",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The revision expands update-alignment, frozen-state diagnostics and 130M checkpoint interventions. The paper explicitly studies no-momentum stochastic Muon. An initial loss increase at larger LR and a lower terminal loss after specified WSD continuation are distinct observations. New experimental numbers were not exhaustively checked. [13] [14]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2608-04927",
+      "paper": "Optimal Training-Time Scaling in Gradual Adaptation",
+      "authors": "Xu, Zonghuan · Harish, Krishna",
+      "url": "https://arxiv.org/html/2608.04927v4",
+      "kind": "Brief · Substantive revision",
+      "title": "Gradual adaptation: scope and paired-run guarantees",
+      "dateNote": "First posted 2026-08-05; v4: 2026-11-22 ET",
+      "evidence": "Compared relevant old/new text; not all differences audited",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Compared with the earlier text, the revision adds an average-prediction-loss counterexample, a paired-run guarantee and budget-transfer analysis. Linear tasks with a shared zero-loss solution differ from the general nonlinear paired statement; the 1/N training-time law is not universal for every task path. [15] [16]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2605-09887",
+      "paper": "The Geometric Wall: Manifold Structure Predicts Layerwise Sparse Autoencoder Scaling Laws",
+      "authors": "Zaher, Eslam · Trzaskowski, Maciej · Nguyen, Quan · Roosta, Fred",
+      "url": "https://arxiv.org/html/2605.09887v2",
+      "kind": "Brief · Substantive revision",
+      "title": "SAE scaling: controlled geometry and error-floor analysis",
+      "dateNote": "First posted 2026-05-10; v2: 2026-11-21 ET",
+      "evidence": "Compared relevant old/new text; not all differences audited",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The revision adds controlled synthetic experiments, held-out-layer prediction and rate/floor separation. Predicting fitted exponents from layer geometry does not establish universal exponents for all models. [17] [18]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-00673",
+      "paper": "Closing the Loop: Practical Training Recipes for Looped Language Models",
+      "authors": "Marchenko, Andrei · Bezrukov, Viacheslav · Kashurin, Oleg · Fedorova, Inessa · Bocharov, Dmitry · Shakhvalieva, Yuliana · Tikhonova, Maria · Ternovskii, Valerii",
+      "url": "https://arxiv.org/html/2610.00673v2",
+      "kind": "Brief · Substantive revision",
+      "title": "Looped training recipes: larger scale and RL failures",
+      "dateNote": "First posted 2026-09-30; v2: 2026-11-23 ET",
+      "evidence": "Compared relevant old/new text; not all differences audited",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "New material includes a larger-scale recipe, inference and a larger-run appendix, plus failures where RL stops helping on mostly solved rollouts and exit gates collapse. This records extensions and failure modes rather than relabeling old training conclusions as new. [19] [20]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2606-16620",
+      "paper": "Entropy-Gated Latent Recursion",
+      "authors": "Bhattacharjee, Soham · Chauhan, Dushyant Singh · Lahlou, Salem · Takac, Martin · Lukas, Nils",
+      "url": "https://arxiv.org/html/2606.16620v5",
+      "kind": "Brief · Substantive revision",
+      "title": "EGLR: extending joint layer-span and temperature sampling",
+      "dateNote": "First posted 2026-06-15; v5: 2026-11-22 ET",
+      "evidence": "Compared relevant old/new text; not all differences audited",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The revision adds combined L/T axes, a newer model, code evaluation and preliminary RL-rollout experiments. Oracle joint-pool ceilings differ from achievable selection accuracy and are not final performance. [21] [22]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2606-02981",
+      "paper": "Predicting Inference-Time Scaling Gains from Labeled Validation-Set Output Statistics",
+      "authors": "Zhang, Luyang · Li, Jingyan",
+      "url": "https://arxiv.org/html/2606.02981v2",
+      "kind": "Brief · Substantive revision",
+      "title": "Predicting best-of-N gains: screening and concentration extensions",
+      "dateNote": "First posted 2026-06-01; v2: 2026-11-23 ET",
+      "evidence": "Compared relevant old/new text; not all differences audited",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The revision adds/reorganizes screening use, bootstrap feature recurrence, joint concentration and held-out extensions. It depends on one sampling round on a labeled validation set, not label-free prediction at zero validation cost. [23] [24]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-07681",
+      "paper": "On the Recall Scaling Laws in Mamba: A Theoretical and Mechanistic Study via Hashing",
+      "authors": "Koren, Yuval · Ben-Kish, Assaf · Giryes, Raja · Wolf, Lior · Zimerman, Itamar",
+      "url": "https://arxiv.org/html/2609.07681v2",
+      "kind": "Brief · Substantive revision",
+      "title": "Mamba recall scaling: additional natural-language-model probes",
+      "dateNote": "First posted 2026-09-07; v2: 2026-11-23 ET",
+      "evidence": "Compared relevant old/new text; not all differences audited",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The revision adds appendices on zero-shot associative recall in natural-language-pretrained Mamba and reverse-engineering MQAR. Existing hashing scaling results are not repackaged as new theorems. [25] [26]"
+        }
+      ]
+    },
+    {
+      "id": "paper-agentic-evals",
+      "paper": "How to build and maintain an agentic evaluation",
+      "authors": "Avijit Ghosh · Ben Burtenshaw · Irene Solaiman",
+      "url": "https://huggingface.co/blog/agentic-evals",
+      "kind": "Brief · Technical blog",
+      "title": "Verifier audits: pass rates are not reliable completion",
+      "dateNote": "First published November 23, 2026 (site date)",
+      "evidence": "Read method and results",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "On eight synthetic-spectrum development tasks, checking only a peak-height ratio admits a shortcut that never fits the spectrum; fit checks are needed. Three-rollout pass@3 is 7/8, while success in all three runs, pass^3, is 1/8. These answer different reliability questions. The small development set does not establish deployment generalization. [27]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.28595v1",
+      "title": "DRAM · Sections 3–4, coverage lemma, update and experiments"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.29873v1",
+      "title": "ProMix · Sections III–V, reference ablation and compute accounting"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.29579v1",
+      "title": "From Learning Rates to Rotational Schedules: Finite-Horizon Theory on the Sphere · Read introduction and relevant Section 2 text"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.28654v1",
+      "title": "Stein Guidance without Gradients: Discretization Uniform Diffusion Inference Time Scaling beyond Particle SMC · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.29566v1",
+      "title": "Think Before You Forecast: Scaling Test-Time Compute for Time Series Forecasting · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.30965v1",
+      "title": "Beyond Self-Consistency: Recursive Self-Improvement at Test Time · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.31094v1",
+      "title": "Unlocking the Power of Loops in Pretrained LLMs with Loop Residuals · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.28971v1",
+      "title": "When Wrong Answers Remain Unsettled: Failure Dynamics in Recurrent Reasoners · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.29383v1",
+      "title": "Self-Refining VLA Sampling · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.28586v1",
+      "title": "MedCoast: Semantic Abstraction of Reasoning Trajectories for Test-Time Biomedical Question Answering · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.29241v1",
+      "title": "Fuzzy e-Means: Fuzzy c-Means on Large Data with Moving-Average Mini-Batch Updates · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.30662v1",
+      "title": "WeMM-Ecom: Advancing Multimodal Content Understanding for WeChat E-Commerce · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.34915v3",
+      "title": "Muon Sublates the Edge of Stability in LLM Pretraining: What Persists and What Changes · Compared relevant old/new text; not all differences audited"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.34915v2",
+      "title": "Earlier version for comparison 2609.34915v2"
+    },
+    {
+      "url": "https://arxiv.org/html/2608.04927v4",
+      "title": "Optimal Training-Time Scaling in Gradual Adaptation · Compared relevant old/new text; not all differences audited"
+    },
+    {
+      "url": "https://arxiv.org/html/2608.04927v3",
+      "title": "Earlier version for comparison 2608.04927v3"
+    },
+    {
+      "url": "https://arxiv.org/html/2605.09887v2",
+      "title": "The Geometric Wall: Manifold Structure Predicts Layerwise Sparse Autoencoder Scaling Laws · Compared relevant old/new text; not all differences audited"
+    },
+    {
+      "url": "https://arxiv.org/html/2605.09887v1",
+      "title": "Earlier version for comparison 2605.09887v1"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.00673v2",
+      "title": "Closing the Loop: Practical Training Recipes for Looped Language Models · Compared relevant old/new text; not all differences audited"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.00673v1",
+      "title": "Earlier version for comparison 2610.00673v1"
+    },
+    {
+      "url": "https://arxiv.org/html/2606.16620v5",
+      "title": "Entropy-Gated Latent Recursion · Compared relevant old/new text; not all differences audited"
+    },
+    {
+      "url": "https://arxiv.org/html/2606.16620v4",
+      "title": "Earlier version for comparison 2606.16620v4"
+    },
+    {
+      "url": "https://arxiv.org/html/2606.02981v2",
+      "title": "Predicting Inference-Time Scaling Gains from Labeled Validation-Set Output Statistics · Compared relevant old/new text; not all differences audited"
+    },
+    {
+      "url": "https://arxiv.org/html/2606.02981v1",
+      "title": "Earlier version for comparison 2606.02981v1"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.07681v2",
+      "title": "On the Recall Scaling Laws in Mamba: A Theoretical and Mechanistic Study via Hashing · Compared relevant old/new text; not all differences audited"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.07681v1",
+      "title": "Earlier version for comparison 2609.07681v1"
+    },
+    {
+      "url": "https://huggingface.co/blog/agentic-evals",
+      "title": "Technical blog · Verifier auditing and repeated rollouts"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2009.01325v3",
+      "title": "Classic · Sections 3–4, reward model, KL and overoptimization"
+    },
+    {
+      "url": "https://api.openalex.org/works/W3082115681",
+      "title": "3,702 citations in the queried OpenAlex record; checked November 24, 2026"
+    }
+  ],
+  "classic": {
+    "id": "classic-summarize-feedback",
+    "paperId": "arxiv:2009.01325",
+    "shortTitle": "Summarizing from human feedback",
+    "year": 2020,
+    "topics": [
+      "Post-training"
+    ],
+    "kind": "Daily classic",
+    "title": "Why reward-model scores are not human preferences",
+    "paper": "Learning to summarize from human feedback",
+    "authors": "Nisan Stiennon · Long Ouyang · Jeff Wu · Daniel M. Ziegler · Ryan Lowe · Chelsea Voss · Alec Radford · Dario Amodei · Paul Christiano",
+    "url": "https://arxiv.org/pdf/2009.01325v3",
+    "dateNote": "NeurIPS 2020; first posted September 2, 2020; read v3: February 15, 2022",
+    "evidence": "Read Sections 3–4, especially Section 4.3",
+    "recognition": {
+      "label": "3,702 citations in the queried OpenAlex record (November 24, 2026)",
+      "url": "https://api.openalex.org/works/W3082115681"
+    },
+    "question": "At a matched KL budget, how would an independent labeling budget distinguish reward-model error, preference-distribution shift and insufficient policy optimization?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "After preference learning by Christiano et al. (2017) and language-model fine-tuning by Ziegler et al. (2019), this NeurIPS 2020 work joins comparison labeling, reward learning and PPO for summarization. Let x be a post and y a summary of at most 48 tokens. The target is labeler preference rather than ROUGE itself. [28]"
+      },
+      {
+        "type": "equation",
+        "tex": "P_\\theta(y_w\\succ y_l\\mid x)=\\sigma(r_\\theta(x,y_w)-r_\\theta(x,y_l)),\\quad\\mathcal L_{\\rm RM}=-\\mathbb E\\log P_\\theta(y_w\\succ y_l\\mid x)",
+        "label": "The paper’s preference model: pairwise comparisons identify score differences, not calibrated absolute summary quality."
+      },
+      {
+        "type": "equation",
+        "tex": "R(x,y)=r_\\theta(x,y)-\\beta\\log\\frac{\\pi(y\\mid x)}{\\pi_{\\rm SFT}(y\\mid x)},\\quad J(\\pi)=\\mathbb E_x\\!\\left[\\mathbb E_\\pi r_\\theta-\\beta D_{\\rm KL}(\\pi\\|\\pi_{\\rm SFT})\\right]",
+        "label": "The paper’s sampled reward and its expectation; KL references SFT, not the changing old policy. PPO updates the policy."
+      },
+      {
+        "type": "equation",
+        "tex": "\\pi^*(y\\mid x)=\\frac{\\pi_{\\rm SFT}(y\\mid x)e^{r_\\theta(x,y)/\\beta}}{Z(x)},\\qquad J_x(\\pi)=\\beta\\log Z(x)-\\beta D_{\\rm KL}(\\pi\\|\\pi^*)",
+        "label": "Explanatory derivation for each x: with fixed reward, β>0, finite Z and compatible support, completing the KL yields the ideal optimum. This is not a paper theorem that finite PPO training attains it."
+      },
+      {
+        "type": "equation",
+        "tex": "r_\\theta=u+e\\quad\\Longrightarrow\\quad\\pi^*\\propto\\pi_{\\rm SFT}\\exp(u/\\beta)\\exp(e/\\beta)",
+        "label": "My error decomposition: u denotes ideal preference utility and e modeling error. Reducing β amplifies both; KL regularization does not automatically eliminate reward hacking."
+      },
+      {
+        "type": "text",
+        "text": "The paper releases 64,832 TL;DR comparisons. PPO’s value network is separate from the policy and initialized from the reward model; all three have the same size in the described experiments. Section 4.3 varies optimization strength against an earlier reward model and finds eventual deterioration in human preference despite rising predicted preference. [28]"
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "Read the method and overoptimization experiments; not reproduced. Preferences depend on instructions, labelers and summary distributions. Reward-validation accuracy and true utility after optimization are different metrics. [28]"
+      },
+      {
+        "type": "text",
+        "text": "Selection evidence: 3,702 citations in the queried OpenAlex record (November 24, 2026). [29]"
+      }
+    ]
+  }
+}

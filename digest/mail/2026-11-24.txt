@@ -1,0 +1,116 @@
+RESEARCH DIGEST / 2026-11-24
+主方向、随机覆盖与数据混合
+DRAM · ProMix · Human-feedback summarization
+
+中文: https://alexhuang13.github.io/digest/2026-11-24.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-24.html
+
+主读 · 新稿
+DRAM：低秩不应只保留当前最强方向
+DRAM: Memory-Efficient Muon via Rank Reallocation in Principal-Random Subspaces
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2611-28595
+
+主读 · 新稿
+ProMix：把不可约难度与学习余量分开
+ProMix: Efficient Data Mixture Optimization for Robotic Imitation via Proxy-Reference DRO
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2611-29873
+
+简讯 · 新稿
+旋转调度：学习率还要除以参数尺度
+From Learning Rates to Rotational Schedules: Finite-Horizon Theory on the Sphere
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2611-29579
+
+简讯 · 新稿
+Stein Guidance：整条路径的校正
+Stein Guidance without Gradients: Discretization Uniform Diffusion Inference Time Scaling beyond Particle SMC
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2611-28654
+
+简讯 · 新稿
+TTC4TS：冻结预测器，多候选合成
+Think Before You Forecast: Scaling Test-Time Compute for Time Series Forecasting
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2611-29566
+
+简讯 · 新稿
+TT-RSI：上下文递归与权重蒸馏
+Beyond Self-Consistency: Recursive Self-Improvement at Test Time
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2611-30965
+
+简讯 · 新稿
+LoopRes：循环输出需可区分且逐步累积
+Unlocking the Power of Loops in Pretrained LLMs with Loop Residuals
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2611-31094
+
+简讯 · 新稿
+错误终点并不等于稳定吸引子
+When Wrong Answers Remain Unsettled: Failure Dynamics in Recurrent Reasoners
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2611-28971
+
+简讯 · 新稿
+VLA 动作采样的自修订
+Self-Refining VLA Sampling
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2611-29383
+
+简讯 · 新稿
+MedCoast：在语义前缀空间做预算内搜索
+MedCoast: Semantic Abstraction of Reasoning Trajectories for Test-Time Biomedical Question Answering
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2611-28586
+
+简讯 · 新稿
+Fuzzy e-Means：迁移 batch/步长 scaling 规则
+Fuzzy e-Means: Fuzzy c-Means on Large Data with Moving-Average Mini-Batch Updates
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2611-29241
+
+简讯 · 新稿
+WeMM-Ecom：分阶段提高领域数据比例
+WeMM-Ecom: Advancing Multimodal Content Understanding for WeChat E-Commerce
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2611-30662
+
+简讯 · 实质修订
+Muon EoS：分开更新对齐与损失平衡
+Muon Sublates the Edge of Stability in LLM Pretraining: What Persists and What Changes
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2609-34915
+
+简讯 · 实质修订
+渐变适应：补充适用边界与 paired-run 保证
+Optimal Training-Time Scaling in Gradual Adaptation
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2608-04927
+
+简讯 · 实质修订
+SAE scaling：新增受控几何与误差底分析
+The Geometric Wall: Manifold Structure Predicts Layerwise Sparse Autoencoder Scaling Laws
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2605-09887
+
+简讯 · 实质修订
+循环训练配方：扩大规模与 RL 失败经验
+Closing the Loop: Practical Training Recipes for Looped Language Models
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2610-00673
+
+简讯 · 实质修订
+EGLR：递归层跨度与温度的组合扩展
+Entropy-Gated Latent Recursion
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2606-16620
+
+简讯 · 实质修订
+预测 best-of-N 收益：扩展筛选与置信分析
+Predicting Inference-Time Scaling Gains from Labeled Validation-Set Output Statistics
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2606-02981
+
+简讯 · 实质修订
+Mamba recall scaling：补充自然语言模型探针
+On the Recall Scaling Laws in Mamba: A Theoretical and Mechanistic Study via Hashing
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-2609-07681
+
+简讯 · 技术博客
+验证器审计：通过率不等于可靠完成
+How to build and maintain an agentic evaluation
+https://alexhuang13.github.io/digest/2026-11-24.html#paper-agentic-evals
+
+每日精读 · 2020
+奖励模型的分数为何不等于人类偏好
+https://alexhuang13.github.io/digest/2026-11-24.html#classic-summarize-feedback
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-24.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

@@ -1,0 +1,588 @@
+{
+  "date": "2026-11-24",
+  "number": "042",
+  "publishedAt": "2026-11-24T14:00:00Z",
+  "readingMinutes": 19,
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Data mixing",
+    "Post-training"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "每日研究笔记",
+  "title": "主方向、随机覆盖与数据混合",
+  "subtitle": "DRAM · ProMix · Human-feedback summarization",
+  "intro": "主读 DRAM 的子空间覆盖与 ProMix 的参考模型校正；简讯汇集旋转调度、推理计算与旧稿实质扩展。经典回到用人类比较训练摘要模型，区分奖励提升与真实偏好提升。",
+  "window": "2026-11-21 至 2026-11-24（America/New_York；重点为上期以来，含 72 小时重叠）",
+  "articles": [
+    {
+      "id": "paper-2611-28595",
+      "paper": "DRAM: Memory-Efficient Muon via Rank Reallocation in Principal-Random Subspaces",
+      "authors": "Bai, Haomin · Yu, Dingzhi · Zhao, Xuling · Yang, Sifan · Wang, Yibo · Zhang, Lijun",
+      "url": "https://arxiv.org/html/2611.28595v1",
+      "kind": "主读 · 新稿",
+      "title": "DRAM：低秩不应只保留当前最强方向",
+      "dateNote": "v1：2026-11-21 ET；11 月 24 日公告",
+      "evidence": "已读相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "对矩阵参数 X∈R^(m×n)，设 m≤n。DRAM 每块取随机梯度的前 r 个左奇异向量 R，再从其正交补均匀抽 q 个方向 P，总秩 k=r+q。后期增加随机份额，针对的是噪声主导 TopSVD 时遗漏真实梯度的问题。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "B=[R\\ P],\\quad\\Pi=RR^\\top,\\quad\\delta=\\frac{q}{m-r},\\qquad\\mathbb E[BB^\\top\\mid R]=\\Pi+\\delta(I-\\Pi)",
+          "label": "原文覆盖引理：主子空间完整保留，正交补以 δ 强度被期望覆盖；q>0 才提供这一保证。"
+        },
+        {
+          "type": "equation",
+          "tex": "\\widehat G_t=B^\\top G_t,\\quad H_t=(1-\\beta)H_{t-1}+\\beta\\widehat G_t,\\qquad X_{t+1}=X_t-\\eta B\\operatorname{polar}(H_t)",
+          "label": "原文块内更新；块首重置 H=βĜ。此处 β 是梯度权重，区别于常见的动量系数记法。"
+        },
+        {
+          "type": "text",
+          "text": "持久状态由 O(mn) 降为 O((m+n)k)，并在 k×n 动量上做谱归一化。C4 上 60M/130M/350M 模型分别训练 1.2B/2.5B/7B tokens；下表为七项零样本任务平均准确率，不是训练 loss。 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "模型",
+            "Full-Muon",
+            "GaLore-Muon",
+            "DRAM"
+          ],
+          "rows": [
+            [
+              "60M",
+              "36.47",
+              "35.94",
+              "36.28"
+            ],
+            [
+              "130M",
+              "37.32",
+              "36.82",
+              "37.19"
+            ],
+            [
+              "350M",
+              "40.21",
+              "37.93",
+              "38.55"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "收敛率针对平均核范数梯度、精确 polar、无偏有限方差梯度及算子/核范数光滑性，并要求覆盖因子非减；不是实际有限 NS 的端到端保证。最佳低内存结果也不等于匹配全状态 Muon。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-29873",
+      "paper": "ProMix: Efficient Data Mixture Optimization for Robotic Imitation via Proxy-Reference DRO",
+      "authors": "Sima, Qie · Xue, Wei · Guo, Yike",
+      "url": "https://arxiv.org/html/2611.29873v1",
+      "kind": "主读 · 新稿",
+      "title": "ProMix：把不可约难度与学习余量分开",
+      "dateNote": "v1：2026-11-22 ET；11 月 24 日公告",
+      "evidence": "已读相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "继 DoReMi（2023）和机器人 Re-Mix（2024）的 proxy/reference 思路，ProMix 用小模型学习域权重。Lᵢ 是域 i 的行为克隆平均损失；冻结参考模型 θR 提供基线，代理 θP 与域分布 p 交替优化。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\min_{\\theta_P}\\max_{p\\in\\Delta_N}\\sum_i p_i\\bigl[L_i(\\theta_P)-L_i(\\theta_R)\\bigr]+\\lambda H(p),\\qquad H(p)=-\\sum_i p_i\\log p_i",
+          "label": "原文目标：高绝对 loss 可能只是噪声；最大化方的正熵项抑制权重塌缩。参考模型不是已知 Bayes 风险。"
+        },
+        {
+          "type": "equation",
+          "tex": "g_i=L_i(\\theta_P)-L_i(\\theta_R),\\qquad p_i^+\\propto p_i\\exp\\!\\left\\{\\eta\\left[g_i-\\lambda(1+\\log p_i)\\right]\\right\\}",
+          "label": "原文指数梯度更新。代理搜索每步对每个域采 128 条，再以 p 加权；不能误写成仅按 p 抽一个域的同成本步骤。"
+        },
+        {
+          "type": "text",
+          "text": "参考和代理各训练 100k 步；15M 指可训练参数，冻结编码器另计。权重搜索共 11 GPU-hours，转移至 50M 和 7B VLA 后不重调。原文报告 Open-X 9,500 次真实机器人评估中平均成功率 68.4%→76.2%，最差域 51.4%→68.5%。 [2]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "11 对 192 GPU-hours 比较的是 7B 设定下的混合权重搜索成本，不是整个 VLA 训练提速 17 倍。小模型域排序可迁移是所测任务的经验结果，未给出普遍保证。 [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-29579",
+      "paper": "From Learning Rates to Rotational Schedules: Finite-Horizon Theory on the Sphere",
+      "authors": "Graldi, Jacopo · Orvieto, Antonio · Koloskova, Anastasia",
+      "url": "https://arxiv.org/html/2611.29579v1",
+      "kind": "简讯 · 新稿",
+      "title": "旋转调度：学习率还要除以参数尺度",
+      "dateNote": "v1：2026-11-22 ET；11 月 24 日公告",
+      "evidence": "已读引言与 §2 相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在尺度不变模型中，GD 的旋转系数为 η/‖x‖²。正文在测地凸球冠上优化末次迭代上界，最优轮廓渐近线性衰减；普通 Adam/Muon 的范数变化会改变同一 LR 的旋转轨迹。球面理论不是 LLM 非凸全局收敛定理。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-28654",
+      "paper": "Stein Guidance without Gradients: Discretization Uniform Diffusion Inference Time Scaling beyond Particle SMC",
+      "authors": "Zhu, Youheng · Wang, Chenyang · Chen, Minshuo · Lu, Yiping",
+      "url": "https://arxiv.org/abs/2611.28654v1",
+      "kind": "简讯 · 新稿",
+      "title": "Stein Guidance：整条路径的校正",
+      "dateNote": "v1：2026-11-21 ET；11 月 24 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "无梯度候选选择配整路径独立 MH 校正；摘要声称在统一值函数/空间正则性条件下，有限网格 TV 界的常数不随步数增长。该条件保证不等于任意学习到的 value 都满足。 [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-29566",
+      "paper": "Think Before You Forecast: Scaling Test-Time Compute for Time Series Forecasting",
+      "authors": "Liang, Daojun · Hong, Xiao · Zhang, Pei · Wang, Yinglong · Li, Shuo · Chen, Jing · Guo, Ying · Zhang, Hu",
+      "url": "https://arxiv.org/abs/2611.29566v1",
+      "kind": "简讯 · 新稿",
+      "title": "TTC4TS：冻结预测器，多候选合成",
+      "dateNote": "v1：2026-11-22 ET；11 月 24 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在冻结时间序列骨干之外生成增强、检索或 adapter 候选，再排序或聚合，研究候选数带来的推理计算收益。骨干冻结不意味着候选生成器和合成器完全无需学习。 [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-30965",
+      "paper": "Beyond Self-Consistency: Recursive Self-Improvement at Test Time",
+      "authors": "Wu, Jianyu · Wang, Yizhou · Su, Encheng · Zhang, Jinouwen · Li, Pengze · Wang, Lintao · Tang, Chen · Wang, Aoran · Ouyang, Wanli · Tang, Shixiang",
+      "url": "https://arxiv.org/abs/2611.30965v1",
+      "kind": "简讯 · 新稿",
+      "title": "TT-RSI：上下文递归与权重蒸馏",
+      "dateNote": "v1：2026-11-23 ET；11 月 24 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用上轮完整解答作参照重新求解，再蒸馏连续修订；摘要比较同 test-time scaling 预算。其极限论证不能直接解释为任意无标签模型都会持续自改进。 [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-31094",
+      "paper": "Unlocking the Power of Loops in Pretrained LLMs with Loop Residuals",
+      "authors": "Zhao, Xuanlei · Xu, Hailun · Wang, Kai · Luo, Yang · Ren, Yingxuan · Zhu, Zirui · Lou, Yuxuan · Xu, Kun · Wang, Yan · Sarkar, Kanchan · You, Yang",
+      "url": "https://arxiv.org/abs/2611.31094v1",
+      "kind": "简讯 · 新稿",
+      "title": "LoopRes：循环输出需可区分且逐步累积",
+      "dateNote": "v1：2026-11-23 ET；11 月 24 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "让循环层读取先前循环输出，加可学习循环身份 key，并限制残差窗口。属于把已有 LLM 改成可扩展计算架构的研究；摘要的 2× compute 是对照预算，不能当同成本增益。 [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-28971",
+      "paper": "When Wrong Answers Remain Unsettled: Failure Dynamics in Recurrent Reasoners",
+      "authors": "Zang, Jiucheng · Peng, Congkai · Wei, Yankai",
+      "url": "https://arxiv.org/abs/2611.28971v1",
+      "kind": "简讯 · 新稿",
+      "title": "错误终点并不等于稳定吸引子",
+      "dateNote": "v1：2026-11-21 ET；11 月 24 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "延长 HRM 的递归而不加噪，也可改变大量错误答案；同预算对照中延长深度优于所测冻结噪声。有限时域、单个主要 checkpoint 的结果不能排除渐近吸引子。 [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-29383",
+      "paper": "Self-Refining VLA Sampling",
+      "authors": "Duan, Jeff · Sharma, Arjun · Cruden, Jennifer · Tibrewal, Vansh",
+      "url": "https://arxiv.org/abs/2611.29383v1",
+      "kind": "简讯 · 新稿",
+      "title": "VLA 动作采样的自修订",
+      "dateNote": "v1：2026-11-22 ET；11 月 24 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "把 flow 生成的 Predict-and-Perturb 修订用于动作轨迹，研究替代大量候选或外部纠正器的推理计算路径。基于摘要，不提供跨机器人或任意预算的推广保证。 [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-28586",
+      "paper": "MedCoast: Semantic Abstraction of Reasoning Trajectories for Test-Time Biomedical Question Answering",
+      "authors": "Zhong, Yishan · Li, Jieru · Ding, Xuanzhe · Wang, Shaunna · Yang, Yanxin · Nnamdi, Micky C. · Tamo, J. Ben · Wang, Yifei · Yuan, Yining · Marteau, Benoit L. · Tan, Shaun Q. Y. · Moore, Carrie · Xie, Luyu · Xie, Yang · Shi, Wenqi · Wang, May D.",
+      "url": "https://arxiv.org/abs/2611.28586v1",
+      "kind": "简讯 · 新稿",
+      "title": "MedCoast：在语义前缀空间做预算内搜索",
+      "dateNote": "v1：2026-11-21 ET；11 月 24 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "离线聚类同前缀推理步骤，训练轻量 PRM，在线优先扩展高分前缀；摘要报告与固定预算 self-consistency 的比较。未读完整实验，不能把最大单项收益当平均收益。 [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-29241",
+      "paper": "Fuzzy e-Means: Fuzzy c-Means on Large Data with Moving-Average Mini-Batch Updates",
+      "authors": "Tiwari, Paritosh · Rathore, Punit",
+      "url": "https://arxiv.org/abs/2611.29241v1",
+      "kind": "简讯 · 新稿",
+      "title": "Fuzzy e-Means：迁移 batch/步长 scaling 规则",
+      "dateNote": "v1：2026-11-22 ET；11 月 24 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "把 e-means 的移动平均、batch 与步长规则迁入 fuzzy clustering，但需先 hard-assignment 初始化并关闭重定位。小低维数据上仍可能更慢，不宣称统一加速。 [11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-30662",
+      "paper": "WeMM-Ecom: Advancing Multimodal Content Understanding for WeChat E-Commerce",
+      "authors": "Xie, Binhui · Li, Jinmin · Tang, Haomiao · Wang, Guangting · Jin, Song · Zhu, Jianwei · Rao, Fengyun · Lyu, Jing",
+      "url": "https://arxiv.org/abs/2611.30662v1",
+      "kind": "简讯 · 新稿",
+      "title": "WeMM-Ecom：分阶段提高领域数据比例",
+      "dateNote": "v1：2026-11-23 ET；11 月 24 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "技术报告给出两阶段继续预训练，逐步提高电商数据占比，随后做混合 thinking 后训练。按实质数据混合配方收录；基于摘要，不从跨模型榜单推断精确 scaling 指数。 [12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-34915",
+      "paper": "Muon Sublates the Edge of Stability in LLM Pretraining: What Persists and What Changes",
+      "authors": "Chen, Yanzhe · Zhao, Qifang · Xu, Xiaoxiao · Liu, Fanghui",
+      "url": "https://arxiv.org/html/2609.34915v3",
+      "kind": "简讯 · 实质修订",
+      "title": "Muon EoS：分开更新对齐与损失平衡",
+      "dateNote": "首发 2026-09-28；v3：2026-11-22 ET",
+      "evidence": "已对照旧/新版相关正文；未逐项复核全部差异",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "修订扩展了 update-alignment、冻结状态诊断和 130M checkpoint 干预的论述。原文明确研究无动量随机 Muon；较大学习率的短期升 loss 与指定 WSD 续训后的较低终点 loss 是不同观察。未逐项复核新增实验数值。 [13] [14]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2608-04927",
+      "paper": "Optimal Training-Time Scaling in Gradual Adaptation",
+      "authors": "Xu, Zonghuan · Harish, Krishna",
+      "url": "https://arxiv.org/html/2608.04927v4",
+      "kind": "简讯 · 实质修订",
+      "title": "渐变适应：补充适用边界与 paired-run 保证",
+      "dateNote": "首发 2026-08-05；v4：2026-11-22 ET",
+      "evidence": "已对照旧/新版相关正文；未逐项复核全部差异",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "对照旧稿，新稿加入平均预测损失反例、paired-run 保证与预算迁移分析。共同零损失解的线性设定和一般非线性成对结论不同，不能把 1/N 训练时间律当每个任务路径的普遍结论。 [15] [16]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2605-09887",
+      "paper": "The Geometric Wall: Manifold Structure Predicts Layerwise Sparse Autoencoder Scaling Laws",
+      "authors": "Zaher, Eslam · Trzaskowski, Maciej · Nguyen, Quan · Roosta, Fred",
+      "url": "https://arxiv.org/html/2605.09887v2",
+      "kind": "简讯 · 实质修订",
+      "title": "SAE scaling：新增受控几何与误差底分析",
+      "dateNote": "首发 2026-05-10；v2：2026-11-21 ET",
+      "evidence": "已对照旧/新版相关正文；未逐项复核全部差异",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "修订增加受控合成实验、held-out-layer 预测和 rate/floor 分离讨论。层间几何对拟合指数的预测证据不等于几何量决定所有模型的普适指数。 [17] [18]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-00673",
+      "paper": "Closing the Loop: Practical Training Recipes for Looped Language Models",
+      "authors": "Marchenko, Andrei · Bezrukov, Viacheslav · Kashurin, Oleg · Fedorova, Inessa · Bocharov, Dmitry · Shakhvalieva, Yuliana · Tikhonova, Maria · Ternovskii, Valerii",
+      "url": "https://arxiv.org/html/2610.00673v2",
+      "kind": "简讯 · 实质修订",
+      "title": "循环训练配方：扩大规模与 RL 失败经验",
+      "dateNote": "首发 2026-09-30；v2：2026-11-23 ET",
+      "evidence": "已对照旧/新版相关正文；未逐项复核全部差异",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "新稿新增 larger-scale recipe、推理与附录 larger run，并报告任务已基本解出后 RL 不再有效、exit gate 也可能塌缩。这里记录扩展与失败经验，不把旧稿训练结论重新计作新结果。 [19] [20]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2606-16620",
+      "paper": "Entropy-Gated Latent Recursion",
+      "authors": "Bhattacharjee, Soham · Chauhan, Dushyant Singh · Lahlou, Salem · Takac, Martin · Lukas, Nils",
+      "url": "https://arxiv.org/html/2606.16620v5",
+      "kind": "简讯 · 实质修订",
+      "title": "EGLR：递归层跨度与温度的组合扩展",
+      "dateNote": "首发 2026-06-15；v5：2026-11-22 ET",
+      "evidence": "已对照旧/新版相关正文；未逐项复核全部差异",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "新稿增加 L/T 轴组合、较新模型、代码任务和初步 RL rollout 实验。oracle joint-pool 上限与可实现的选择准确率必须分开，不能把最优候选存在率当最终性能。 [21] [22]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2606-02981",
+      "paper": "Predicting Inference-Time Scaling Gains from Labeled Validation-Set Output Statistics",
+      "authors": "Zhang, Luyang · Li, Jingyan",
+      "url": "https://arxiv.org/html/2606.02981v2",
+      "kind": "简讯 · 实质修订",
+      "title": "预测 best-of-N 收益：扩展筛选与置信分析",
+      "dateNote": "首发 2026-06-01；v2：2026-11-23 ET",
+      "evidence": "已对照旧/新版相关正文；未逐项复核全部差异",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "新增/重组筛选用途、bootstrap 特征重复率、联合集中界与 held-out 扩展。它依赖有标签验证集的一轮采样，不能表述为无标签、无验证成本预测。 [23] [24]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-07681",
+      "paper": "On the Recall Scaling Laws in Mamba: A Theoretical and Mechanistic Study via Hashing",
+      "authors": "Koren, Yuval · Ben-Kish, Assaf · Giryes, Raja · Wolf, Lior · Zimerman, Itamar",
+      "url": "https://arxiv.org/html/2609.07681v2",
+      "kind": "简讯 · 实质修订",
+      "title": "Mamba recall scaling：补充自然语言模型探针",
+      "dateNote": "首发 2026-09-07；v2：2026-11-23 ET",
+      "evidence": "已对照旧/新版相关正文；未逐项复核全部差异",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "修订新增自然语言预训练 Mamba 的 zero-shot associative recall 与 MQAR 机制逆向分析附录；原有 hashing scaling 结论不在此重新包装为新定理。 [25] [26]"
+        }
+      ]
+    },
+    {
+      "id": "paper-agentic-evals",
+      "paper": "How to build and maintain an agentic evaluation",
+      "authors": "Avijit Ghosh · Ben Burtenshaw · Irene Solaiman",
+      "url": "https://huggingface.co/blog/agentic-evals",
+      "kind": "简讯 · 技术博客",
+      "title": "验证器审计：通过率不等于可靠完成",
+      "dateNote": "首发 2026-11-23（站点日期）",
+      "evidence": "已读方法与结果",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "八个合成光谱开发任务中，只核对峰高比会放过未拟合的捷径，需增加拟合检查。三次 rollout 的 pass@3 为 7/8，全部三次成功的 pass^3 为 1/8；两者回答不同可靠性问题。样本很小，不能推广到真实部署分布。 [27]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.28595v1",
+      "title": "DRAM · §3–4，覆盖引理、更新与实验"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.29873v1",
+      "title": "ProMix · §III–V，参考消融与算力核算"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.29579v1",
+      "title": "From Learning Rates to Rotational Schedules: Finite-Horizon Theory on the Sphere · 已读引言与 §2 相关正文"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.28654v1",
+      "title": "Stein Guidance without Gradients: Discretization Uniform Diffusion Inference Time Scaling beyond Particle SMC · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.29566v1",
+      "title": "Think Before You Forecast: Scaling Test-Time Compute for Time Series Forecasting · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.30965v1",
+      "title": "Beyond Self-Consistency: Recursive Self-Improvement at Test Time · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.31094v1",
+      "title": "Unlocking the Power of Loops in Pretrained LLMs with Loop Residuals · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.28971v1",
+      "title": "When Wrong Answers Remain Unsettled: Failure Dynamics in Recurrent Reasoners · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.29383v1",
+      "title": "Self-Refining VLA Sampling · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.28586v1",
+      "title": "MedCoast: Semantic Abstraction of Reasoning Trajectories for Test-Time Biomedical Question Answering · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.29241v1",
+      "title": "Fuzzy e-Means: Fuzzy c-Means on Large Data with Moving-Average Mini-Batch Updates · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.30662v1",
+      "title": "WeMM-Ecom: Advancing Multimodal Content Understanding for WeChat E-Commerce · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.34915v3",
+      "title": "Muon Sublates the Edge of Stability in LLM Pretraining: What Persists and What Changes · 已对照旧/新版相关正文；未逐项复核全部差异"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.34915v2",
+      "title": "版本对照旧稿 2609.34915v2"
+    },
+    {
+      "url": "https://arxiv.org/html/2608.04927v4",
+      "title": "Optimal Training-Time Scaling in Gradual Adaptation · 已对照旧/新版相关正文；未逐项复核全部差异"
+    },
+    {
+      "url": "https://arxiv.org/html/2608.04927v3",
+      "title": "版本对照旧稿 2608.04927v3"
+    },
+    {
+      "url": "https://arxiv.org/html/2605.09887v2",
+      "title": "The Geometric Wall: Manifold Structure Predicts Layerwise Sparse Autoencoder Scaling Laws · 已对照旧/新版相关正文；未逐项复核全部差异"
+    },
+    {
+      "url": "https://arxiv.org/html/2605.09887v1",
+      "title": "版本对照旧稿 2605.09887v1"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.00673v2",
+      "title": "Closing the Loop: Practical Training Recipes for Looped Language Models · 已对照旧/新版相关正文；未逐项复核全部差异"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.00673v1",
+      "title": "版本对照旧稿 2610.00673v1"
+    },
+    {
+      "url": "https://arxiv.org/html/2606.16620v5",
+      "title": "Entropy-Gated Latent Recursion · 已对照旧/新版相关正文；未逐项复核全部差异"
+    },
+    {
+      "url": "https://arxiv.org/html/2606.16620v4",
+      "title": "版本对照旧稿 2606.16620v4"
+    },
+    {
+      "url": "https://arxiv.org/html/2606.02981v2",
+      "title": "Predicting Inference-Time Scaling Gains from Labeled Validation-Set Output Statistics · 已对照旧/新版相关正文；未逐项复核全部差异"
+    },
+    {
+      "url": "https://arxiv.org/html/2606.02981v1",
+      "title": "版本对照旧稿 2606.02981v1"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.07681v2",
+      "title": "On the Recall Scaling Laws in Mamba: A Theoretical and Mechanistic Study via Hashing · 已对照旧/新版相关正文；未逐项复核全部差异"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.07681v1",
+      "title": "版本对照旧稿 2609.07681v1"
+    },
+    {
+      "url": "https://huggingface.co/blog/agentic-evals",
+      "title": "技术博客 · 验证器审计与重复 rollout"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2009.01325v3",
+      "title": "经典 · §3–4，奖励模型、KL 与过优化"
+    },
+    {
+      "url": "https://api.openalex.org/works/W3082115681",
+      "title": "OpenAlex 所查条目 3,702 次引用；查询 2026-11-24"
+    }
+  ],
+  "classic": {
+    "id": "classic-summarize-feedback",
+    "paperId": "arxiv:2009.01325",
+    "shortTitle": "Summarizing from human feedback",
+    "year": 2020,
+    "topics": [
+      "Post-training"
+    ],
+    "kind": "每日经典精读",
+    "title": "奖励模型的分数为何不等于人类偏好",
+    "paper": "Learning to summarize from human feedback",
+    "authors": "Nisan Stiennon · Long Ouyang · Jeff Wu · Daniel M. Ziegler · Ryan Lowe · Chelsea Voss · Alec Radford · Dario Amodei · Paul Christiano",
+    "url": "https://arxiv.org/pdf/2009.01325v3",
+    "dateNote": "NeurIPS 2020；首发 2020-09-02，所读 v3：2022-02-15",
+    "evidence": "已读 §3–4，重点 §4.3",
+    "recognition": {
+      "label": "OpenAlex 所查条目 3,702 次引用（2026-11-24）",
+      "url": "https://api.openalex.org/works/W3082115681"
+    },
+    "question": "在相同 KL 预算下，如何用独立标注预算区分奖励模型误差、偏好分布漂移与策略优化不足？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Christiano 等（2017）的偏好学习、Ziegler 等（2019）的语言模型微调之后，这篇 NeurIPS 2020 工作把比较标注、奖励学习、PPO 串成摘要流水线。设 x 为帖子，y 为不超过 48 tokens 的摘要；优化目标是标注者偏好，而非 ROUGE 本身。 [28]"
+      },
+      {
+        "type": "equation",
+        "tex": "P_\\theta(y_w\\succ y_l\\mid x)=\\sigma(r_\\theta(x,y_w)-r_\\theta(x,y_l)),\\quad\\mathcal L_{\\rm RM}=-\\mathbb E\\log P_\\theta(y_w\\succ y_l\\mid x)",
+        "label": "原文偏好模型：成对比较只识别分数差；分数并非经过校准的绝对摘要质量。"
+      },
+      {
+        "type": "equation",
+        "tex": "R(x,y)=r_\\theta(x,y)-\\beta\\log\\frac{\\pi(y\\mid x)}{\\pi_{\\rm SFT}(y\\mid x)},\\quad J(\\pi)=\\mathbb E_x\\!\\left[\\mathbb E_\\pi r_\\theta-\\beta D_{\\rm KL}(\\pi\\|\\pi_{\\rm SFT})\\right]",
+        "label": "原文采样奖励与其期望形式；KL 的参照是 SFT，不是逐步更新的旧策略。策略用 PPO 更新。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\pi^*(y\\mid x)=\\frac{\\pi_{\\rm SFT}(y\\mid x)e^{r_\\theta(x,y)/\\beta}}{Z(x)},\\qquad J_x(\\pi)=\\beta\\log Z(x)-\\beta D_{\\rm KL}(\\pi\\|\\pi^*)",
+        "label": "解释性逐 x 推导：固定奖励、β>0、有限 Z 且支持相容时，补成 KL 得到理想最优解；不是 PPO 有限训练会精确达到的原文定理。"
+      },
+      {
+        "type": "equation",
+        "tex": "r_\\theta=u+e\\quad\\Longrightarrow\\quad\\pi^*\\propto\\pi_{\\rm SFT}\\exp(u/\\beta)\\exp(e/\\beta)",
+        "label": "我的误差分解：u 表示理想偏好效用，e 是建模误差；减小 β 同时放大两者，KL 约束不自动消除 reward hacking。"
+      },
+      {
+        "type": "text",
+        "text": "原文公开 64,832 条 TL;DR 比较。PPO 的 value 网络与策略完全分离，并从奖励模型初始化；三者在所述实验中同规模。§4.3 用较早奖励模型改变优化强度，观察到预测偏好继续升高时，实际人类偏好最终下降。 [28]"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "已读方法与过优化实验，未复现。偏好依赖标注规范、人群与摘要分布；奖励验证准确率和优化后的真实效用不是同一指标。 [28]"
+      },
+      {
+        "type": "text",
+        "text": "入选依据：OpenAlex 所查条目 3,702 次引用（2026-11-24）。 [29]"
+      }
+    ]
+  }
+}

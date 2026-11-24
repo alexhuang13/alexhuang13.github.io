@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-24",
+    "paperId": "arxiv:2009.01325",
+    "paper": "Learning to summarize from human feedback",
+    "shortTitle": "Summarizing from human feedback",
+    "year": 2020,
+    "topics": [
+      "Post-training"
+    ],
+    "recognition": {
+      "label": "OpenAlex 所查条目 3,702 次引用（2026-11-24）",
+      "url": "https://api.openalex.org/works/W3082115681"
+    },
+    "source": "https://arxiv.org/pdf/2009.01325v3",
+    "url": "/digest/2026-11-24.html#classic-summarize-feedback"
+  },
+  {
     "date": "2026-11-23",
     "paperId": "arxiv:2307.08621",
     "paper": "Retentive Network: A Successor to Transformer for Large Language Models",
