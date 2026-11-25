@@ -1,0 +1,393 @@
+{
+  "date": "2026-11-25",
+  "number": "043",
+  "publishedAt": "2026-11-25T14:00:00Z",
+  "readingMinutes": 16,
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training",
+    "Deep learning theory"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "每日研究笔记",
+  "title": "循环深度的锚定与 ensemble 的盲区",
+  "subtitle": "Sparrow · Ensemble uncertainty · Neural collapse",
+  "intro": "主读 input injection 与截断反传的联系，以及 ensemble 分歧为何只反映部分可约误差；补收精度相关的学习率迁移，并列出其他新稿、实质修订与证明 RL 复现。经典精读 Neural Collapse。",
+  "window": "2026-11-22 至 2026-11-25（America/New_York；重点为上期以来，含 72 小时重叠）",
+  "articles": [
+    {
+      "id": "paper-2611-31513",
+      "paper": "How to build and train your recurrent-depth model: A fixed-point perspective",
+      "authors": "Pethick, Thomas",
+      "url": "https://arxiv.org/html/2611.31513v1",
+      "kind": "主读 · 新稿",
+      "title": "Input injection：锚定、偏差与截断梯度",
+      "dateNote": "v1：2026-11-23 ET；11 月 25 日公告",
+      "evidence": "已读相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "反复使用共享层可增加推理深度，但训练通常只反传最后 H 步。原文把固定输入 u 的持续注入写成 Halpern iteration；锚定既帮助收缩，也改变极限点。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "z^{k+1}=\\beta_k u+(1-\\beta_k)T_\\theta(z^k),\\qquad q=(1-\\beta)\\operatorname{Lip}(T_\\theta)<1",
+          "label": "原文定步长条件：β 固定时，迭代可在 T 稍有扩张时仍收缩；收敛的是锚定算子的固定点，一般不是 T 的固定点。"
+        },
+        {
+          "type": "equation",
+          "tex": "\\left\\|\\partial_\\theta z^K-(\\partial_\\theta z^K)_{H}\\right\\|\\le\\frac{Bq^H}{1-q}",
+          "label": "原文截断梯度界：需轨迹可微、u 与 z⁰ 不依赖 θ，且逐步参数 Jacobian 一致有界 B。不是任意训练过程的无偏梯度保证。"
+        },
+        {
+          "type": "text",
+          "text": "在 T 非扩张且固定点非空等条件下，βₖ=1/log(k+3) 可消除锚定偏差；达到绝对梯度误差 ε 所需窗口为 O(log K[log log K+log(1/ε)])。神经参数化的 Lipschitz 控制进一步导出行范数与谱范数的联合约束。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal K_{r,s}=\\{Z:\\max_i\\|Z_{i,:}\\|_2\\le r,\\ \\|Z\\|_{\\rm op}\\le s\\},\\quad D=\\operatorname{RowClip}_r\\!\\left(\\operatorname{Spectral}_s(\\operatorname{Row}_r(M))\\right)",
+          "label": "Sparrow 对联合约束参数组采用的廉价可行方向；Row 将每行归一化到半径 r，RowClip 只截过长行；Spectral 是谱球线性 oracle，不是谱裁剪。该组合不是精确联合 LMO。"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "语言实验主要是 Tiny Shakespeare 上 4 层、宽 128 的小模型；“无额外开销”不等于已验证大规模端到端提速。固定点/截断理论也不直接证明 Sparrow 训练非凸 LLM 全局收敛。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-32801",
+      "paper": "Scaling Laws of Ensemble Uncertainty in Language Models",
+      "authors": "Ravanbakhsh, Siamak · Nitchi, David · Ngo, Khang",
+      "url": "https://arxiv.org/html/2611.32801v1",
+      "kind": "主读 · 新稿",
+      "title": "Ensemble 看不见成员共同遗漏的信息",
+      "dateNote": "v1：2026-11-24 ET；11 月 25 日公告",
+      "evidence": "已读相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "令 pₓ 为真实下一 token 分布，qₛ 为 S 个成员。原文从 log loss 出发区分不可约熵、可约误差和 ensemble 可恢复的分歧；“成员一致”并不意味着已穷尽 epistemic uncertainty。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "L(q)=\\mathbb E_XH(p_X)+\\mathbb E_XD_{\\rm KL}(p_X\\|q_X),\\qquad \\bar L=\\frac1S\\sum_sL(q_s)",
+          "label": "原文恒等式，不要求模型校准；把可约误差等同特定信息论 epistemic 量则需要额外校准条件。"
+        },
+        {
+          "type": "equation",
+          "tex": "q_G(y\\mid x)=\\frac{\\exp\\{S^{-1}\\sum_s\\log q_s(y\\mid x)\\}}{Z_x},\\quad\\rho_G=\\bar L-L(q_G)=\\frac1S\\sum_s\\mathbb E_XD_{\\rm KL}(q_G\\|q_s)",
+          "label": "原文几何池化：平均 log 概率并重新归一化；ρG 是损失恢复量，不是全部可约误差。"
+        },
+        {
+          "type": "equation",
+          "tex": "\\bar L-H(Y\\mid X)=\\rho_G+\\bigl[L(q_G)-H(Y\\mid X)\\bigr]",
+          "label": "原文 visible / invisible 分解；两项之和才是平均成员的可约 log loss。共享表示瓶颈可留在右侧第二项。"
+        },
+        {
+          "type": "text",
+          "text": "公开模型的 recent-text 拟合中，几何 spread 对参数量的幂律指数约 0.118–0.200，loss 的指数约 0.191–0.313（共享误差底假设）；晚分叉还会降低多样性。二者不同衰减支持 ensemble 随规模变得更有竞争力，但不是任意硬件/训练预算下的算力最优定理。 [2]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "误差底估计和模型族、数据、pooling 方式影响拟合；S/(S−1) 的总体修正依赖近邻与独立性近似，不能对共享训练历史成员当作严格无偏修正。 [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-31166",
+      "paper": "Precision-Aware Learning Rate Transfer Across Block Count in LLM Post-Training",
+      "authors": "Chen, Nan · Villar, Soledad · Hayou, Soufiane",
+      "url": "https://arxiv.org/pdf/2611.31166v1",
+      "kind": "简讯 · 新稿",
+      "title": "TipSweep：精度决定深度迁移指数",
+      "dateNote": "v1：2026-11-23 ET；延迟补收",
+      "evidence": "已读 PDF 摘要与引言",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "补收：仅训练最后 k₀ 个 block 搜学习率，再迁移至 k 个可训练 block；FP32 master weights 下约 η∝k⁻¹，直接 BF16 更新下约 η∝k⁻¹ᐟ²。已读 PDF 摘要与引言，未逐项复核舍入模型假设；不是跨任意精度的同一规律。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-31995",
+      "paper": "Metric-Dependent Scaling Laws for Sketched Multiclass Softmax Regression",
+      "authors": "Chen, Ziyan · Zheng, Linhe · Liu, Peilin · Zhou, Zhongzhu · Zhou, Ding-Xuan",
+      "url": "https://arxiv.org/html/2611.31995v1",
+      "kind": "简讯 · 新稿",
+      "title": "同一谱尺度，不同风险指数",
+      "dateNote": "v1：2026-11-24 ET；11 月 25 日公告",
+      "evidence": "已读摘要与引言",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "有限样本重复使用的 sketched 多类 softmax 模型中，cross-entropy excess 与 excess 0–1 risk 共享谱尺度，teacher–student 决策分歧取其平方根。高斯 teacher–student、谱假设及决策非退化条件不可省略；基于摘要与引言。 [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-32504",
+      "paper": "InducedTFMs: A Family of Sub-Quadratic Tabular Foundation Models Using Induced Attention",
+      "authors": "Gobbi, Salome · Atienza, Nicolas · Cancedda, Nicola · Arbel, Michael",
+      "url": "https://arxiv.org/abs/2611.32504v1",
+      "kind": "简讯 · 新稿",
+      "title": "InducedTFM：计算复杂度与实际拐点分开",
+      "dateNote": "v1：2026-11-24 ET；11 月 25 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "双维 attention 都替换为 induced attention，固定诱导规模时降低样本与特征维度的复杂度。摘要在匹配训练预算下比较 TabICLv2；窄表的推理优势不代表宽表也优于 row compression。 [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-33009",
+      "paper": "Train What You Run: Probabilistic Convolutions for Learning Token Compaction in State Space Models",
+      "authors": "Kubaty, Piotr · Saladkou, Mikhail · Tabor, Jacek · Struski, Łukasz",
+      "url": "https://arxiv.org/abs/2611.33009v1",
+      "kind": "简讯 · 新稿",
+      "title": "ProbConv：训练时考虑删除后的邻域",
+      "dateNote": "v1：2026-11-24 ET；11 月 25 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在独立 keep 决策下精确计算保留位置激活前的期望卷积，并让 keep 概率可微；二元决策时重现压缩后的 Mamba block。期望的激活前算子不等于整个非线性网络的期望。 [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-33130",
+      "paper": "Exploratory Midtraining for Robot Policies",
+      "authors": "Kshitiz · Hu, Zheyuan · Wu, Robyn · Li, Yizhou · Zhang, Yunchu · Tevy, Vattanary · Tayal, Kavya · Yin, Shawn · Onol, Aykut · Arora, Kushal · Shah, Dhruv · Gupta, Abhishek · Erickson, Zackory · Kumar, Aviral",
+      "url": "https://arxiv.org/abs/2611.33130v1",
+      "kind": "简讯 · 新稿",
+      "title": "机器人 midtraining：扩展可连接的行为覆盖",
+      "dateNote": "v1：2026-11-24 ET；11 月 25 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用可逆对抗扰动收集 β-Data，并将局部结果用语言重标，报告更有利的数据 scaling 和追加 rollout 时间收益。基于摘要，不能把行为覆盖等同成功演示数量，也不推断通用指数。 [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-32297",
+      "paper": "MaskedVGGT: Masked Multi-View Transformers Are Scalable 3D Learners",
+      "authors": "Zou, Zichen · Jia, Xiaosong · Chen, Wen-Ming · Wu, Zuxuan · Jiang, Yu-Gang",
+      "url": "https://arxiv.org/abs/2611.32297v1",
+      "kind": "简讯 · 新稿",
+      "title": "MaskedVGGT：把跨视图学习与单图表示解耦",
+      "dateNote": "v1：2026-11-24 ET；11 月 25 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "冻结强 2D encoder，只预训练新增多视图 transformer；以 EMA teacher 的未遮挡目标监督 masked self-distillation。模型到 1B、增加无标签视频的结果属于模型/数据 scaling 证据；同更新次数并不自动等于同总 FLOPs。 [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-22650",
+      "paper": "The Ephemeral Cost of Switching Optimizers Across LLM Training Stages",
+      "authors": "Zhao, Xinyu · Wertheimer, Davis · Sharma, Ashutosh · Panda, Rameswar · Liang, Paul Pu",
+      "url": "https://arxiv.org/html/2610.22650v2",
+      "kind": "简讯 · 实质修订",
+      "title": "切换优化器：新增 RLVR 分阶段比较",
+      "dateNote": "首发 2026-10-15 ET；v2：2026-11-23 ET",
+      "evidence": "已对照旧/新版相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "对照 v1/v2，修订新增 RL mismatch 章节与 RLVR 设置、结果附录，扩展到自训 1.2B、Qwen3-1.7B/4B 的数学 RLVR。所测终点 AdamW/Muon 相近，不表示所有阶段瞬态代价为零。 [9] [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2607-04574",
+      "paper": "A Few Teacher Steps Go a Long Way: Efficient SFT Data Collection for LLM Agents",
+      "authors": "Ye, Junze · Cheng, Jiayi · Lu, Miao · Mankowski, Michal · Blanchet, Jose · Bayati, Mohsen",
+      "url": "https://arxiv.org/html/2607.04574v3",
+      "kind": "简讯 · 实质修订",
+      "title": "短教师续写：扩展成本口径与对照",
+      "dateNote": "首发 2026-07-05 ET；v3：2026-11-24 ET",
+      "evidence": "已对照旧/新版相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v3 对 on-policy 教师预算分配作更完整整理，扩展 OP-Critical 和 RL/OPD 对照。OP-Critical 在 v2 已存在，不能说成新提出；这里收录的是扩展分析。过滤前教师生成成本与保留训练 token 数必须分开。 [11] [12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-36826",
+      "paper": "Learning via Self-Consistency for Diffusion-based Video Reasoning",
+      "authors": "Ni, Zhenghao · Qiu, Weimin · Tang, Meng",
+      "url": "https://arxiv.org/html/2609.36826v2",
+      "kind": "简讯 · 实质修订",
+      "title": "视频推理：从拒绝微调扩到 self-consistency RL",
+      "dateNote": "首发 2026-09-29 ET；v2：2026-11-23 ET",
+      "evidence": "已对照旧/新版相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "旧稿含多 rollout 共识与 rejection fine-tuning；v2 明确引入 SC-FT 与 SC-RL 的共识蒸馏和奖励步骤，以单次生成内化多采样收益。共识不是 ground truth，无外部 verifier 不保证不会强化共同错误。 [13] [14]"
+        }
+      ]
+    },
+    {
+      "id": "paper-fineproofenvs",
+      "paper": "FineProofEnvs: Better Math Proofs from a 2B Model with RL",
+      "authors": "Adithya S K",
+      "url": "https://huggingface.co/blog/FineEnvs/fineproofenvs-rl-2b-prover",
+      "kind": "简讯 · 技术博客/复现",
+      "title": "证明 RL 复现：rubric 分数与完整证明比例分开",
+      "dateNote": "首发 2026-11-24（站点日期）",
+      "evidence": "已读训练设置与结果",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Qwen3.5-2B 从 base 直接 RL，1,024 训练题、500 步。64 道筛选后的 held-out 题各四次采样，归一化 rubric 均分 0.217→0.407；完整得分 attempt 12.1%→25.4%。这是 LLM judge 评分，不是 Lean 验证；评测子集经过参考证明可评分筛选。 [15]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.31513v1",
+      "title": "Sparrow · §4–7，附录 D.2"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.32801v1",
+      "title": "Ensemble uncertainty · §2–3，拟合与边界"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2611.31166v1",
+      "title": "Precision-Aware Learning Rate Transfer Across Block Count in LLM Post-Training · 已读 PDF 摘要与引言"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.31995v1",
+      "title": "Metric-Dependent Scaling Laws for Sketched Multiclass Softmax Regression · 已读摘要与引言"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.32504v1",
+      "title": "InducedTFMs: A Family of Sub-Quadratic Tabular Foundation Models Using Induced Attention · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.33009v1",
+      "title": "Train What You Run: Probabilistic Convolutions for Learning Token Compaction in State Space Models · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.33130v1",
+      "title": "Exploratory Midtraining for Robot Policies · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.32297v1",
+      "title": "MaskedVGGT: Masked Multi-View Transformers Are Scalable 3D Learners · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.22650v2",
+      "title": "The Ephemeral Cost of Switching Optimizers Across LLM Training Stages · 已对照旧/新版相关正文"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.22650v1",
+      "title": "版本对照 2610.22650v1"
+    },
+    {
+      "url": "https://arxiv.org/html/2607.04574v3",
+      "title": "A Few Teacher Steps Go a Long Way: Efficient SFT Data Collection for LLM Agents · 已对照旧/新版相关正文"
+    },
+    {
+      "url": "https://arxiv.org/html/2607.04574v2",
+      "title": "版本对照 2607.04574v2"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.36826v2",
+      "title": "Learning via Self-Consistency for Diffusion-based Video Reasoning · 已对照旧/新版相关正文"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.36826v1",
+      "title": "版本对照 2609.36826v1"
+    },
+    {
+      "url": "https://huggingface.co/blog/FineEnvs/fineproofenvs-rl-2b-prover",
+      "title": "FineProofEnvs · 设置、训练失败与 held-out 结果"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2008.08186v2",
+      "title": "经典 · NC1–NC4、定义、实证与附录"
+    },
+    {
+      "url": "https://api.openalex.org/works/W3065974826",
+      "title": "OpenAlex 所查条目 1,217 次引用；查询 2026-11-25"
+    }
+  ],
+  "classic": {
+    "id": "classic-neural-collapse",
+    "paperId": "arxiv:2008.08186",
+    "shortTitle": "Neural Collapse",
+    "year": 2020,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "kind": "每日经典精读",
+    "title": "从零训练误差到对称的分类几何",
+    "paper": "Prevalence of neural collapse during the terminal phase of deep learning training",
+    "authors": "Vardan Papyan · X. Y. Han · David L. Donoho",
+    "url": "https://arxiv.org/pdf/2008.08186v2",
+    "dateNote": "PNAS 2020；首发 2020-08-18，所读 v2：2020-08-21",
+    "evidence": "已读 NC1–NC4 定义、实证与相关论证",
+    "recognition": {
+      "label": "OpenAlex 所查条目 1,217 次引用（2026-11-25）",
+      "url": "https://api.openalex.org/works/W3065974826"
+    },
+    "question": "固定特征维数与算力，把类别样本数改成长尾分布后，如何区分优化不足、类权重改变与 simplex 几何本身不可实现？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "零训练分类误差之后，交叉熵训练仍会继续改变倒数第二层表示。Papyan、Han 与 Donoho（PNAS 2020）把这一 terminal phase 的几何规律组织成 Neural Collapse；它首先是一组跨任务实证现象，不是任意网络 SGD 的全局收敛定理。 [16]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mu_c=\\frac1n\\sum_i h_{ic},\\quad\\mu_G=\\frac1C\\sum_c\\mu_c,\\quad\\Sigma_W=\\frac1{Cn}\\sum_{c,i}(h_{ic}-\\mu_c)(h_{ic}-\\mu_c)^\\top,\\quad\\Sigma_B=\\frac1C\\sum_c(\\mu_c-\\mu_G)(\\mu_c-\\mu_G)^\\top",
+        "label": "原文平衡分类设定的记号整理：C 类、每类 n 个训练特征 h；W 是类内散布，B 是类间散布。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathcal N_1=\\frac1C\\operatorname{tr}(\\Sigma_W\\Sigma_B^\\dagger)\\longrightarrow0",
+        "label": "NC1 的归一化诊断：类内变异相对于类间几何趋小；不是所有特征范数都趋零。"
+      },
+      {
+        "type": "equation",
+        "tex": "v_c=\\frac{\\mu_c-\\mu_G}{\\|\\mu_c-\\mu_G\\|},\\quad V=[v_1,\\ldots,v_C],\\quad V^\\top V\\longrightarrow\\frac{C}{C-1}\\!\\left(I-\\frac1C\\mathbf1\\mathbf1^\\top\\right)",
+        "label": "NC2：中心化均值范数趋等，方向夹角余弦趋 −1/(C−1)，即 simplex ETF；需特征空间容纳 C−1 维。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\frac{w_c}{\\|w_c\\|}\\longrightarrow v_c,\\qquad \\arg\\max_c\\langle\\mu_c-\\mu_G,h-\\mu_G\\rangle=\\arg\\min_c\\|h-\\mu_c\\|^2",
+        "label": "NC3 为分类器与中心化均值自对偶；右式是理想等范数、共同偏置下的代数推导，解释 NC4 的 nearest-class-center 规则，不是任意未见样本准确率保证。"
+      },
+      {
+        "type": "text",
+        "text": "原文在不同数据、网络及损失设置下跟踪零误差之后的训练几何。四项观察应分开检验：类内收缩、simplex ETF、自对偶、NCC 决策；某一项接近零并不足以推出其余三项。 [16]"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "已读定义、实证与相关论证；未复现实验。类平衡、足够特征维数与 terminal training regime 很关键；训练集几何规整不自动解释测试泛化或长尾类性能。 [16]"
+      },
+      {
+        "type": "text",
+        "text": "入选依据：OpenAlex 所查条目 1,217 次引用（2026-11-25）。 [17]"
+      }
+    ]
+  }
+}

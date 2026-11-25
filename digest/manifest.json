@@ -4,8 +4,38 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-24",
+  "latest": "2026-11-25",
   "issues": [
+    {
+      "date": "2026-11-25",
+      "title": "循环深度的锚定与 ensemble 的盲区",
+      "url": "/digest/2026-11-25.html",
+      "translations": {
+        "en": {
+          "title": "Anchoring Recurrent Depth and Exposing Ensemble Blind Spots",
+          "url": "/digest/en/2026-11-25.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.31513v1",
+        "https://arxiv.org/html/2611.32801v1",
+        "https://arxiv.org/pdf/2611.31166v1",
+        "https://arxiv.org/html/2611.31995v1",
+        "https://arxiv.org/abs/2611.32504v1",
+        "https://arxiv.org/abs/2611.33009v1",
+        "https://arxiv.org/abs/2611.33130v1",
+        "https://arxiv.org/abs/2611.32297v1",
+        "https://arxiv.org/html/2610.22650v2",
+        "https://arxiv.org/html/2610.22650v1",
+        "https://arxiv.org/html/2607.04574v3",
+        "https://arxiv.org/html/2607.04574v2",
+        "https://arxiv.org/html/2609.36826v2",
+        "https://arxiv.org/html/2609.36826v1",
+        "https://huggingface.co/blog/FineEnvs/fineproofenvs-rl-2b-prover",
+        "https://arxiv.org/pdf/2008.08186v2",
+        "https://api.openalex.org/works/W3065974826"
+      ]
+    },
     {
       "date": "2026-11-24",
       "title": "主方向、随机覆盖与数据混合",

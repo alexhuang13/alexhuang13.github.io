@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-25",
+    "paperId": "arxiv:2008.08186",
+    "paper": "Prevalence of neural collapse during the terminal phase of deep learning training",
+    "shortTitle": "Neural Collapse",
+    "year": 2020,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "recognition": {
+      "label": "OpenAlex 所查条目 1,217 次引用（2026-11-25）",
+      "url": "https://api.openalex.org/works/W3065974826"
+    },
+    "source": "https://arxiv.org/pdf/2008.08186v2",
+    "url": "/digest/2026-11-25.html#classic-neural-collapse"
+  },
+  {
     "date": "2026-11-24",
     "paperId": "arxiv:2009.01325",
     "paper": "Learning to summarize from human feedback",

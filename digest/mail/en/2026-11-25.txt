@@ -1,0 +1,76 @@
+RESEARCH DIGEST / 2026-11-25
+Anchoring Recurrent Depth and Exposing Ensemble Blind Spots
+Sparrow · Ensemble uncertainty · Neural collapse
+
+中文: https://alexhuang13.github.io/digest/2026-11-25.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-25.html
+
+Main read · New paper
+Input injection: anchoring, bias and truncated gradients
+How to build and train your recurrent-depth model: A fixed-point perspective
+https://alexhuang13.github.io/digest/en/2026-11-25.html#paper-2611-31513
+
+Main read · New paper
+Ensembles cannot see information all members miss
+Scaling Laws of Ensemble Uncertainty in Language Models
+https://alexhuang13.github.io/digest/en/2026-11-25.html#paper-2611-32801
+
+Brief · New paper
+TipSweep: precision changes the depth-transfer exponent
+Precision-Aware Learning Rate Transfer Across Block Count in LLM Post-Training
+https://alexhuang13.github.io/digest/en/2026-11-25.html#paper-2611-31166
+
+Brief · New paper
+One spectral scale, different risk exponents
+Metric-Dependent Scaling Laws for Sketched Multiclass Softmax Regression
+https://alexhuang13.github.io/digest/en/2026-11-25.html#paper-2611-31995
+
+Brief · New paper
+InducedTFM: complexity versus practical crossover
+InducedTFMs: A Family of Sub-Quadratic Tabular Foundation Models Using Induced Attention
+https://alexhuang13.github.io/digest/en/2026-11-25.html#paper-2611-32504
+
+Brief · New paper
+ProbConv: account for post-deletion neighborhoods
+Train What You Run: Probabilistic Convolutions for Learning Token Compaction in State Space Models
+https://alexhuang13.github.io/digest/en/2026-11-25.html#paper-2611-33009
+
+Brief · New paper
+Robot midtraining: connected behavioral coverage
+Exploratory Midtraining for Robot Policies
+https://alexhuang13.github.io/digest/en/2026-11-25.html#paper-2611-33130
+
+Brief · New paper
+MaskedVGGT: separate cross-view learning from image representations
+MaskedVGGT: Masked Multi-View Transformers Are Scalable 3D Learners
+https://alexhuang13.github.io/digest/en/2026-11-25.html#paper-2611-32297
+
+Brief · Substantive revision
+Optimizer switching: added stage-wise RLVR comparisons
+The Ephemeral Cost of Switching Optimizers Across LLM Training Stages
+https://alexhuang13.github.io/digest/en/2026-11-25.html#paper-2610-22650
+
+Brief · Substantive revision
+Short teacher continuations: expanded cost accounting and comparisons
+A Few Teacher Steps Go a Long Way: Efficient SFT Data Collection for LLM Agents
+https://alexhuang13.github.io/digest/en/2026-11-25.html#paper-2607-04574
+
+Brief · Substantive revision
+Video reasoning: from rejection fine-tuning to self-consistency RL
+Learning via Self-Consistency for Diffusion-based Video Reasoning
+https://alexhuang13.github.io/digest/en/2026-11-25.html#paper-2609-36826
+
+Brief · Technical blog/replication
+Proof-RL replication: rubric scores versus full-proof rates
+FineProofEnvs: Better Math Proofs from a 2B Model with RL
+https://alexhuang13.github.io/digest/en/2026-11-25.html#paper-fineproofenvs
+
+Daily classic · 2020
+From zero training error to symmetric classification geometry
+https://alexhuang13.github.io/digest/en/2026-11-25.html#classic-neural-collapse
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-25.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

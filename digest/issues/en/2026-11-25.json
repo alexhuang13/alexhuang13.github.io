@@ -1,0 +1,393 @@
+{
+  "date": "2026-11-25",
+  "number": "043",
+  "publishedAt": "2026-11-25T14:00:00Z",
+  "readingMinutes": 16,
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training",
+    "Deep learning theory"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "Daily Research Notes",
+  "title": "Anchoring Recurrent Depth and Exposing Ensemble Blind Spots",
+  "subtitle": "Sparrow · Ensemble uncertainty · Neural collapse",
+  "intro": "Main reads connect input injection to truncated backpropagation and explain why ensemble disagreement captures only part of reducible error. A delayed addition covers precision-aware learning-rate transfer; briefs include other new papers, substantive revisions and a proof-RL replication. The classic is Neural Collapse.",
+  "window": "November 22–25, 2026 (America/New_York; emphasis on updates since the previous issue, with a 72-hour overlap)",
+  "articles": [
+    {
+      "id": "paper-2611-31513",
+      "paper": "How to build and train your recurrent-depth model: A fixed-point perspective",
+      "authors": "Pethick, Thomas",
+      "url": "https://arxiv.org/html/2611.31513v1",
+      "kind": "Main read · New paper",
+      "title": "Input injection: anchoring, bias and truncated gradients",
+      "dateNote": "v1: November 23, 2026 ET; November 25 announcement",
+      "evidence": "Read relevant full text",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Reusing shared layers increases inference depth, while training often backpropagates through only the final H steps. The paper identifies persistent injection of fixed input u with Halpern iteration: anchoring helps contraction but also changes the limit. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "z^{k+1}=\\beta_k u+(1-\\beta_k)T_\\theta(z^k),\\qquad q=(1-\\beta)\\operatorname{Lip}(T_\\theta)<1",
+          "label": "The paper’s constant-step condition: fixed β can contract even for mildly expansive T. The limit is a fixed point of the anchored operator, generally not of T."
+        },
+        {
+          "type": "equation",
+          "tex": "\\left\\|\\partial_\\theta z^K-(\\partial_\\theta z^K)_{H}\\right\\|\\le\\frac{Bq^H}{1-q}",
+          "label": "The paper’s truncation bound requires trajectory differentiability, θ-independent u and z⁰, and uniformly B-bounded per-step parameter Jacobians. It is not unbiasedness of arbitrary training gradients."
+        },
+        {
+          "type": "text",
+          "text": "With nonexpansive T and a nonempty fixed-point set, among other conditions, βₖ=1/log(k+3) removes anchor bias. Absolute gradient error ε needs a window O(log K[log log K+log(1/ε)]). Lipschitz control of the neural parameterization motivates joint row- and spectral-norm constraints. [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal K_{r,s}=\\{Z:\\max_i\\|Z_{i,:}\\|_2\\le r,\\ \\|Z\\|_{\\rm op}\\le s\\},\\quad D=\\operatorname{RowClip}_r\\!\\left(\\operatorname{Spectral}_s(\\operatorname{Row}_r(M))\\right)",
+          "label": "Sparrow’s cheap feasible direction for jointly constrained parameter groups. Row normalizes each row to radius r; RowClip clips only oversized rows. Spectral is a spectral-ball linear oracle, not spectral clipping. The composition is not the exact joint LMO."
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Language experiments mainly use a four-layer, width-128 model on Tiny Shakespeare. No extra overhead is not demonstrated large-scale end-to-end acceleration. Fixed-point/truncation theory does not directly establish global convergence of nonconvex LLM training with Sparrow. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-32801",
+      "paper": "Scaling Laws of Ensemble Uncertainty in Language Models",
+      "authors": "Ravanbakhsh, Siamak · Nitchi, David · Ngo, Khang",
+      "url": "https://arxiv.org/html/2611.32801v1",
+      "kind": "Main read · New paper",
+      "title": "Ensembles cannot see information all members miss",
+      "dateNote": "v1: November 24, 2026 ET; November 25 announcement",
+      "evidence": "Read relevant full text",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Let pₓ be the true next-token distribution and qₛ the S members. The paper separates irreducible entropy, reducible error and ensemble-recoverable disagreement through log loss. Agreement does not exhaust epistemic uncertainty. [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "L(q)=\\mathbb E_XH(p_X)+\\mathbb E_XD_{\\rm KL}(p_X\\|q_X),\\qquad \\bar L=\\frac1S\\sum_sL(q_s)",
+          "label": "The paper’s identity needs no model calibration; identifying reducible error with a particular information-theoretic epistemic quantity requires additional calibration conditions."
+        },
+        {
+          "type": "equation",
+          "tex": "q_G(y\\mid x)=\\frac{\\exp\\{S^{-1}\\sum_s\\log q_s(y\\mid x)\\}}{Z_x},\\quad\\rho_G=\\bar L-L(q_G)=\\frac1S\\sum_s\\mathbb E_XD_{\\rm KL}(q_G\\|q_s)",
+          "label": "The paper’s geometric pooling averages log probabilities and renormalizes. ρG is recovered loss, not all reducible error."
+        },
+        {
+          "type": "equation",
+          "tex": "\\bar L-H(Y\\mid X)=\\rho_G+\\bigl[L(q_G)-H(Y\\mid X)\\bigr]",
+          "label": "The paper’s visible/invisible decomposition. Their sum is mean-member reducible log loss; shared representation limits can remain in the second term."
+        },
+        {
+          "type": "text",
+          "text": "On recent text, public-model fits give geometric-spread parameter exponents about 0.118–0.200 versus loss exponents about 0.191–0.313 under a shared-floor assumption. Later branching further reduces diversity. Different decay rates support growing competitiveness with scale, not compute optimality for arbitrary hardware/training budgets. [2]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Floor estimates, model families, data and pooling affect fits. The S/(S−1) population correction relies on nearby-prediction and independence approximations; it is not an exactly unbiased correction for members sharing training history. [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-31166",
+      "paper": "Precision-Aware Learning Rate Transfer Across Block Count in LLM Post-Training",
+      "authors": "Chen, Nan · Villar, Soledad · Hayou, Soufiane",
+      "url": "https://arxiv.org/pdf/2611.31166v1",
+      "kind": "Brief · New paper",
+      "title": "TipSweep: precision changes the depth-transfer exponent",
+      "dateNote": "v1: 2026-11-23 ET; delayed addition",
+      "evidence": "Read PDF abstract and introduction",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Delayed addition: tune only the final k₀ blocks, then transfer to k trainable blocks. Rates scale approximately as k⁻¹ with FP32 master weights and k⁻¹ᐟ² under direct BF16 updates. Read the PDF abstract and introduction; rounding-model assumptions were not exhaustively audited. There is no single rule across arbitrary precision formats. [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-31995",
+      "paper": "Metric-Dependent Scaling Laws for Sketched Multiclass Softmax Regression",
+      "authors": "Chen, Ziyan · Zheng, Linhe · Liu, Peilin · Zhou, Zhongzhu · Zhou, Ding-Xuan",
+      "url": "https://arxiv.org/html/2611.31995v1",
+      "kind": "Brief · New paper",
+      "title": "One spectral scale, different risk exponents",
+      "dateNote": "v1: 2026-11-24 ET; November 25 announcement",
+      "evidence": "Read abstract and introduction",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In finite-sample-reuse sketched multiclass softmax, cross-entropy excess and excess 0–1 risk share a spectral scale; teacher–student decision disagreement takes its square root. Gaussian teacher–student, spectral and decision-nondegeneracy assumptions matter. Based on abstract and introduction. [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-32504",
+      "paper": "InducedTFMs: A Family of Sub-Quadratic Tabular Foundation Models Using Induced Attention",
+      "authors": "Gobbi, Salome · Atienza, Nicolas · Cancedda, Nicola · Arbel, Michael",
+      "url": "https://arxiv.org/abs/2611.32504v1",
+      "kind": "Brief · New paper",
+      "title": "InducedTFM: complexity versus practical crossover",
+      "dateNote": "v1: 2026-11-24 ET; November 25 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Both attention stages use induced attention, reducing sample/feature complexity at fixed inducing size. The abstract compares matched training budgets with TabICLv2; inference gains on narrow tables do not imply superiority to row compression on wide tables. [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-33009",
+      "paper": "Train What You Run: Probabilistic Convolutions for Learning Token Compaction in State Space Models",
+      "authors": "Kubaty, Piotr · Saladkou, Mikhail · Tabor, Jacek · Struski, Łukasz",
+      "url": "https://arxiv.org/abs/2611.33009v1",
+      "kind": "Brief · New paper",
+      "title": "ProbConv: account for post-deletion neighborhoods",
+      "dateNote": "v1: 2026-11-24 ET; November 25 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Under independent keep decisions, the method computes exact expected pre-activation convolution at kept positions and differentiates keep probabilities. Binary decisions reproduce a compacted Mamba block. An expected pre-activation operator is not the expectation of the whole nonlinear network. [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-33130",
+      "paper": "Exploratory Midtraining for Robot Policies",
+      "authors": "Kshitiz · Hu, Zheyuan · Wu, Robyn · Li, Yizhou · Zhang, Yunchu · Tevy, Vattanary · Tayal, Kavya · Yin, Shawn · Onol, Aykut · Arora, Kushal · Shah, Dhruv · Gupta, Abhishek · Erickson, Zackory · Kumar, Aviral",
+      "url": "https://arxiv.org/abs/2611.33130v1",
+      "kind": "Brief · New paper",
+      "title": "Robot midtraining: connected behavioral coverage",
+      "dateNote": "v1: 2026-11-24 ET; November 25 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "β-Data uses reversible adversarial perturbations and language relabeling of local outcomes, reporting better data scaling and gains from extra rollout time. Abstract only: behavioral coverage is not the count of successful demonstrations, and no universal exponent is inferred. [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-32297",
+      "paper": "MaskedVGGT: Masked Multi-View Transformers Are Scalable 3D Learners",
+      "authors": "Zou, Zichen · Jia, Xiaosong · Chen, Wen-Ming · Wu, Zuxuan · Jiang, Yu-Gang",
+      "url": "https://arxiv.org/abs/2611.32297v1",
+      "kind": "Brief · New paper",
+      "title": "MaskedVGGT: separate cross-view learning from image representations",
+      "dateNote": "v1: 2026-11-24 ET; November 25 announcement",
+      "evidence": "Abstract only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A strong 2D encoder is frozen while an added multi-view transformer learns via masked self-distillation from an unmasked EMA teacher. Scaling to 1B and adding unlabeled video provide model/data scaling evidence; equal update counts do not automatically mean equal total FLOPs. [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2610-22650",
+      "paper": "The Ephemeral Cost of Switching Optimizers Across LLM Training Stages",
+      "authors": "Zhao, Xinyu · Wertheimer, Davis · Sharma, Ashutosh · Panda, Rameswar · Liang, Paul Pu",
+      "url": "https://arxiv.org/html/2610.22650v2",
+      "kind": "Brief · Substantive revision",
+      "title": "Optimizer switching: added stage-wise RLVR comparisons",
+      "dateNote": "First posted 2026-10-15 ET; v2: 2026-11-23 ET",
+      "evidence": "Compared relevant old/new text",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Comparing v1/v2 verifies a new RL-mismatch section and RLVR setup/results appendices, extending to math RLVR on in-house 1.2B and Qwen3-1.7B/4B. Similar tested final AdamW/Muon performance does not imply zero transient costs in all stages. [9] [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2607-04574",
+      "paper": "A Few Teacher Steps Go a Long Way: Efficient SFT Data Collection for LLM Agents",
+      "authors": "Ye, Junze · Cheng, Jiayi · Lu, Miao · Mankowski, Michal · Blanchet, Jose · Bayati, Mohsen",
+      "url": "https://arxiv.org/html/2607.04574v3",
+      "kind": "Brief · Substantive revision",
+      "title": "Short teacher continuations: expanded cost accounting and comparisons",
+      "dateNote": "First posted 2026-07-05 ET; v3: 2026-11-24 ET",
+      "evidence": "Compared relevant old/new text",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "v3 provides fuller on-policy teacher-budget accounting and expanded OP-Critical and RL/OPD comparisons. OP-Critical already existed in v2; the update is expanded analysis, not its introduction. Pre-filter teacher-generation cost differs from retained training-token count. [11] [12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2609-36826",
+      "paper": "Learning via Self-Consistency for Diffusion-based Video Reasoning",
+      "authors": "Ni, Zhenghao · Qiu, Weimin · Tang, Meng",
+      "url": "https://arxiv.org/html/2609.36826v2",
+      "kind": "Brief · Substantive revision",
+      "title": "Video reasoning: from rejection fine-tuning to self-consistency RL",
+      "dateNote": "First posted 2026-09-29 ET; v2: 2026-11-23 ET",
+      "evidence": "Compared relevant old/new text",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The earlier version included multi-rollout consensus and rejection fine-tuning. v2 explicitly introduces SC-FT and SC-RL consensus distillation/reward stages to internalize multi-sample gains in one generation. Consensus is not ground truth; removing an external verifier does not prevent reinforcement of shared errors. [13] [14]"
+        }
+      ]
+    },
+    {
+      "id": "paper-fineproofenvs",
+      "paper": "FineProofEnvs: Better Math Proofs from a 2B Model with RL",
+      "authors": "Adithya S K",
+      "url": "https://huggingface.co/blog/FineEnvs/fineproofenvs-rl-2b-prover",
+      "kind": "Brief · Technical blog/replication",
+      "title": "Proof-RL replication: rubric scores versus full-proof rates",
+      "dateNote": "First published November 24, 2026 (site date)",
+      "evidence": "Read training setup and results",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Qwen3.5-2B trains directly from base with RL on 1,024 problems for 500 steps. Four samples on each of 64 selected held-out problems raise normalized rubric means from 0.217 to 0.407 and full-mark attempts from 12.1% to 25.4%. These are LLM-judge scores, not Lean verification; evaluation problems were filtered for reference-proof gradeability. [15]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.31513v1",
+      "title": "Sparrow · Sections 4–7 and Appendix D.2"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.32801v1",
+      "title": "Ensemble uncertainty · Sections 2–3, fits and limits"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2611.31166v1",
+      "title": "Precision-Aware Learning Rate Transfer Across Block Count in LLM Post-Training · Read PDF abstract and introduction"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.31995v1",
+      "title": "Metric-Dependent Scaling Laws for Sketched Multiclass Softmax Regression · Read abstract and introduction"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.32504v1",
+      "title": "InducedTFMs: A Family of Sub-Quadratic Tabular Foundation Models Using Induced Attention · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.33009v1",
+      "title": "Train What You Run: Probabilistic Convolutions for Learning Token Compaction in State Space Models · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.33130v1",
+      "title": "Exploratory Midtraining for Robot Policies · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.32297v1",
+      "title": "MaskedVGGT: Masked Multi-View Transformers Are Scalable 3D Learners · Abstract only"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.22650v2",
+      "title": "The Ephemeral Cost of Switching Optimizers Across LLM Training Stages · Compared relevant old/new text"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.22650v1",
+      "title": "Version comparison 2610.22650v1"
+    },
+    {
+      "url": "https://arxiv.org/html/2607.04574v3",
+      "title": "A Few Teacher Steps Go a Long Way: Efficient SFT Data Collection for LLM Agents · Compared relevant old/new text"
+    },
+    {
+      "url": "https://arxiv.org/html/2607.04574v2",
+      "title": "Version comparison 2607.04574v2"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.36826v2",
+      "title": "Learning via Self-Consistency for Diffusion-based Video Reasoning · Compared relevant old/new text"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.36826v1",
+      "title": "Version comparison 2609.36826v1"
+    },
+    {
+      "url": "https://huggingface.co/blog/FineEnvs/fineproofenvs-rl-2b-prover",
+      "title": "FineProofEnvs · Setup, training failures and held-out results"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2008.08186v2",
+      "title": "Classic · NC1–NC4, definitions, empirical evidence and appendix"
+    },
+    {
+      "url": "https://api.openalex.org/works/W3065974826",
+      "title": "1,217 citations in the queried OpenAlex record; checked November 25, 2026"
+    }
+  ],
+  "classic": {
+    "id": "classic-neural-collapse",
+    "paperId": "arxiv:2008.08186",
+    "shortTitle": "Neural Collapse",
+    "year": 2020,
+    "topics": [
+      "Deep learning theory"
+    ],
+    "kind": "Daily classic",
+    "title": "From zero training error to symmetric classification geometry",
+    "paper": "Prevalence of neural collapse during the terminal phase of deep learning training",
+    "authors": "Vardan Papyan · X. Y. Han · David L. Donoho",
+    "url": "https://arxiv.org/pdf/2008.08186v2",
+    "dateNote": "PNAS 2020; first posted August 18, 2020; read v2: August 21, 2020",
+    "evidence": "Read NC1–NC4 definitions, empirical evidence and relevant arguments",
+    "recognition": {
+      "label": "1,217 citations in the queried OpenAlex record (November 25, 2026)",
+      "url": "https://api.openalex.org/works/W3065974826"
+    },
+    "question": "At fixed feature dimension and compute, after making class counts long-tailed, how would you distinguish insufficient optimization, altered class weighting and infeasible simplex geometry?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "After training classification error reaches zero, cross-entropy training still changes penultimate representations. Papyan, Han and Donoho (PNAS 2020) organize terminal-phase geometry as Neural Collapse. It is first a collection of empirical phenomena, not a global SGD-convergence theorem for arbitrary networks. [16]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\mu_c=\\frac1n\\sum_i h_{ic},\\quad\\mu_G=\\frac1C\\sum_c\\mu_c,\\quad\\Sigma_W=\\frac1{Cn}\\sum_{c,i}(h_{ic}-\\mu_c)(h_{ic}-\\mu_c)^\\top,\\quad\\Sigma_B=\\frac1C\\sum_c(\\mu_c-\\mu_G)(\\mu_c-\\mu_G)^\\top",
+        "label": "Notation restatement of the paper’s balanced-class setting: C classes and n training features h per class. W measures within-class scatter and B between-class scatter."
+      },
+      {
+        "type": "equation",
+        "tex": "\\mathcal N_1=\\frac1C\\operatorname{tr}(\\Sigma_W\\Sigma_B^\\dagger)\\longrightarrow0",
+        "label": "A normalized NC1 diagnostic: within-class variability shrinks relative to between-class geometry; feature norms need not vanish."
+      },
+      {
+        "type": "equation",
+        "tex": "v_c=\\frac{\\mu_c-\\mu_G}{\\|\\mu_c-\\mu_G\\|},\\quad V=[v_1,\\ldots,v_C],\\quad V^\\top V\\longrightarrow\\frac{C}{C-1}\\!\\left(I-\\frac1C\\mathbf1\\mathbf1^\\top\\right)",
+        "label": "NC2: centered means approach equal norms and pairwise cosine −1/(C−1), a simplex ETF. Feature dimension must accommodate C−1 dimensions."
+      },
+      {
+        "type": "equation",
+        "tex": "\\frac{w_c}{\\|w_c\\|}\\longrightarrow v_c,\\qquad \\arg\\max_c\\langle\\mu_c-\\mu_G,h-\\mu_G\\rangle=\\arg\\min_c\\|h-\\mu_c\\|^2",
+        "label": "NC3 is classifier–centered-mean self-duality. The right identity is an algebraic derivation under ideal equal norms and common bias, explaining NC4’s nearest-class-center rule; it does not guarantee accuracy on arbitrary unseen samples."
+      },
+      {
+        "type": "text",
+        "text": "The paper tracks post-zero-error training geometry across datasets, networks and loss settings. Within-class collapse, simplex ETF geometry, self-duality and NCC decisions should be tested separately; one nearly satisfied diagnostic does not imply all four. [16]"
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "Read definitions, empirical evidence and relevant arguments; experiments not reproduced. Balanced classes, sufficient feature dimension and terminal training regime matter. Regular training geometry does not automatically explain test generalization or tail-class performance. [16]"
+      },
+      {
+        "type": "text",
+        "text": "Selection evidence: 1,217 citations in the queried OpenAlex record (November 25, 2026). [17]"
+      }
+    ]
+  }
+}

@@ -1,0 +1,76 @@
+RESEARCH DIGEST / 2026-11-25
+循环深度的锚定与 ensemble 的盲区
+Sparrow · Ensemble uncertainty · Neural collapse
+
+中文: https://alexhuang13.github.io/digest/2026-11-25.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-25.html
+
+主读 · 新稿
+Input injection：锚定、偏差与截断梯度
+How to build and train your recurrent-depth model: A fixed-point perspective
+https://alexhuang13.github.io/digest/2026-11-25.html#paper-2611-31513
+
+主读 · 新稿
+Ensemble 看不见成员共同遗漏的信息
+Scaling Laws of Ensemble Uncertainty in Language Models
+https://alexhuang13.github.io/digest/2026-11-25.html#paper-2611-32801
+
+简讯 · 新稿
+TipSweep：精度决定深度迁移指数
+Precision-Aware Learning Rate Transfer Across Block Count in LLM Post-Training
+https://alexhuang13.github.io/digest/2026-11-25.html#paper-2611-31166
+
+简讯 · 新稿
+同一谱尺度，不同风险指数
+Metric-Dependent Scaling Laws for Sketched Multiclass Softmax Regression
+https://alexhuang13.github.io/digest/2026-11-25.html#paper-2611-31995
+
+简讯 · 新稿
+InducedTFM：计算复杂度与实际拐点分开
+InducedTFMs: A Family of Sub-Quadratic Tabular Foundation Models Using Induced Attention
+https://alexhuang13.github.io/digest/2026-11-25.html#paper-2611-32504
+
+简讯 · 新稿
+ProbConv：训练时考虑删除后的邻域
+Train What You Run: Probabilistic Convolutions for Learning Token Compaction in State Space Models
+https://alexhuang13.github.io/digest/2026-11-25.html#paper-2611-33009
+
+简讯 · 新稿
+机器人 midtraining：扩展可连接的行为覆盖
+Exploratory Midtraining for Robot Policies
+https://alexhuang13.github.io/digest/2026-11-25.html#paper-2611-33130
+
+简讯 · 新稿
+MaskedVGGT：把跨视图学习与单图表示解耦
+MaskedVGGT: Masked Multi-View Transformers Are Scalable 3D Learners
+https://alexhuang13.github.io/digest/2026-11-25.html#paper-2611-32297
+
+简讯 · 实质修订
+切换优化器：新增 RLVR 分阶段比较
+The Ephemeral Cost of Switching Optimizers Across LLM Training Stages
+https://alexhuang13.github.io/digest/2026-11-25.html#paper-2610-22650
+
+简讯 · 实质修订
+短教师续写：扩展成本口径与对照
+A Few Teacher Steps Go a Long Way: Efficient SFT Data Collection for LLM Agents
+https://alexhuang13.github.io/digest/2026-11-25.html#paper-2607-04574
+
+简讯 · 实质修订
+视频推理：从拒绝微调扩到 self-consistency RL
+Learning via Self-Consistency for Diffusion-based Video Reasoning
+https://alexhuang13.github.io/digest/2026-11-25.html#paper-2609-36826
+
+简讯 · 技术博客/复现
+证明 RL 复现：rubric 分数与完整证明比例分开
+FineProofEnvs: Better Math Proofs from a 2B Model with RL
+https://alexhuang13.github.io/digest/2026-11-25.html#paper-fineproofenvs
+
+每日精读 · 2020
+从零训练误差到对称的分类几何
+https://alexhuang13.github.io/digest/2026-11-25.html#classic-neural-collapse
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-25.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/
