@@ -1,0 +1,406 @@
+{
+  "date": "2026-11-26",
+  "number": "044",
+  "publishedAt": "2026-11-26T13:20:00Z",
+  "readingMinutes": 16,
+  "tags": [
+    "Muon",
+    "Scaling laws",
+    "Post-training",
+    "Diffusion models"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "每日研究笔记",
+  "title": "量化误差的记忆与循环收益的归因",
+  "subtitle": "BReD · LoopTitan · Progressive Distillation",
+  "intro": "主读 EMA 状态量化与重复访问参数的控制实验；简讯涵盖数据分配、Wharton 作者新稿及研究博客。经典精读两步教师到一步学生的扩散蒸馏。",
+  "window": "2026-11-23 至 2026-11-26（America/New_York；重点为上期以来，含 72 小时重叠）",
+  "articles": [
+    {
+      "id": "paper-2611-33951",
+      "paper": "BReD: Block Replay Dithering for Stable Low-Bit EMA Optimizer States",
+      "authors": "Zhan, Heshen · Huang, Youhan · Peng, Yunke · Wang, Yao · Kong, Linghui · Zhu, Ziwei · Han, Qingyu · Wang, Yaoyuan · Chen, Congliang · Sun, Ruoyu",
+      "url": "https://arxiv.org/html/2611.33951v1",
+      "kind": "主读 · 新稿",
+      "title": "BReD：小偏差如何被动量记住",
+      "dateNote": "v1：2026-11-25 ET；11 月 26 日公告",
+      "evidence": "已读相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "令 s 为相同输入序列驱动的全精度 EMA，sᵈᑫ 为反量化状态，e=sᵈᑫ−s；每步写回注入 ε。原文先隔离存储误差，而非把两条参数轨迹上的梯度视为相同。 [1]"
+        },
+        {
+          "type": "equation",
+          "tex": "e_{t+1}=\\beta e_t+\\epsilon_{t+1},\\quad\\epsilon_t=b+\\xi_t,\\qquad\\lim_{t\\to\\infty}\\mathbb E\\|e_t\\|_F^2=\\frac{\\|b\\|_F^2}{(1-\\beta)^2}+\\frac{\\sigma^2}{1-\\beta^2}",
+          "label": "原文定理：ξ 跨时独立、零均值、二阶矩 σ²，初值二阶矩有限且独立；β∈(0,1)。偏差项在大 β 时放大更快。"
+        },
+        {
+          "type": "equation",
+          "tex": "\\alpha=\\frac{x-p_0}{\\Delta},\\quad u\\sim U(0,1),\\quad \\widehat x=p_0+\\Delta\\left(\\mathbf1\\{\\alpha+u\\ge1\\}-u+\\frac12\\right),\\quad\\operatorname{Var}(\\widehat x-x\\mid x)=\\frac{\\Delta^2}{12}",
+          "label": "原文局部无裁剪区间模型：p₀、p₀+Δ 为相邻格点。减性抖动无偏，但不是在每个 x 上都比随机舍入方差小。"
+        },
+        {
+          "type": "text",
+          "text": "BReD 以状态、步数和 block 标识重放同一随机数；block 内共享抖动减少生成成本，也引入相关性。它压缩持久状态，保留原优化器计算与超参数。 [1]"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "设置",
+            "训练预算 / 对照",
+            "4-bit 结果范围"
+          ],
+          "rows": [
+            [
+              "120M; 1.1B / 3.4B · SlimPajama",
+              "10.5B; 31.4B tokens / FP states",
+              "|ΔPPL| ≤ 0.5"
+            ],
+            [
+              "Qwen2.5-7B · UltraFeedback",
+              "SFT / FP states",
+              "|ΔPPL| ≤ 0.2"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "表中为原文所测设置的汇总，不是每项任务的保证。嵌入状态在预训练保留全精度；EMA 定理不构成含裁剪、相关误差与闭环梯度的完整 Muon 收敛证明。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-34821",
+      "paper": "LoopTitan: What Does Parameter Revisit Buy a Mixture-of-Experts?",
+      "authors": "Tian, Zichen · Lu, Yudong · Wu, Xuansheng · Zou, Na · Hu, Xia · Wang, Guanchu · Sun, Qianru",
+      "url": "https://arxiv.org/html/2611.34821v1",
+      "kind": "主读 · 新稿",
+      "title": "LoopTitan：把共享权重放到最后一项消融",
+      "dateNote": "v1：2026-11-25 ET；11 月 26 日公告",
+      "evidence": "已读相关正文",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "主设置为 1.3B 总参数、0.2B 激活参数，DCLM 5B tokens。逐步改变网络形状、专家布局、残差尺度，最后才共享中间层参数；非重复访问对照把专家分散到更多独立层。 [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "(a;W_0,\\eta_t,\\lambda)\\ \\Longleftrightarrow\\ (1;aW_0,a\\eta_t,\\lambda/a),\\qquad V_t=aW_t",
+          "label": "原文命题 1：a 为残差乘数，W 为分支末端输出投影。相同 batch、无梯度范数裁剪；Muon 不触及归一化下限，AdamW 还需 ε→ε/a。"
+        },
+        {
+          "type": "text",
+          "text": "因此残差缩放同时改变初始化、有效学习率和 weight decay，不能单独归因于递归。原文在匹配预算下发现非共享对照保留循环配方收益；但其多六个 attention block，总参数仍多 1.1%，并非完全一致。 [2]"
+        },
+        {
+          "type": "text",
+          "text": "固定参数再增加计算时，一次额外访问确有收益；Muon 下相同参数与计算的更深普通 MoE 恢复其中 90.2%。这是局部 test-loss 差距的恢复比例，不是最终能力提高 90.2%，也不是训练成本下降。 [2]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "主要指标为最终 test bits-per-byte；部分对照三种子，部分单种子。小于两标准误的差异称匹配，不证明任意尺度上共享参数没有价值。 [2]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-34276",
+      "paper": "Scaling Looped MoE Language Models under Matched Budgets: Information Flow and Parameter Allocation",
+      "authors": "Bai, Shipeng · Qin, Jiayu · Liu, Hong · Wang, Xili · Tan, Jianchao · Li, Jiacheng · Zhang, He · Lu, Yifan · Zhang, Jiaqi · Zhang, Kefeng · Xie, Yuchen · Cai, Xunliang",
+      "url": "https://arxiv.org/abs/2611.34276v1",
+      "kind": "简讯 · 新稿",
+      "title": "循环 MoE 的参数分配",
+      "dateNote": "v1：2026-11-25 ET；11 月 26 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "匹配参数/FLOPs，结合门控循环与跨阶段残差，把单次 Core 深度设为展开深度 25%–35%，节省参数转给专家。69B MLA、51B KDA 在 1T tokens 后四项均分领先 1.16、2.29 个百分点；这是整套设计，与 LoopTitan 的共享参数单因素问题不同。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-34707",
+      "paper": "When the Proxy Is Wrong: Mismatch-Corrected Bandits for Adaptive Data Sampling",
+      "authors": "Saadi, Amine · Mhanna, Elissa · Féraud, Raphaël · Lecorvé, Gwénolé",
+      "url": "https://arxiv.org/abs/2611.34707v1",
+      "kind": "简讯 · 新稿",
+      "title": "代理模型排序错误时的数据分配",
+      "dateNote": "v1：2026-11-25 ET；11 月 26 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "把数据干预视为 bandit arm，稀疏配对 target audit 校正逐 arm 偏差；不假设排序不变。摘要的线性 regret 风险与变化点界有平稳/分段设定；CivilComments-WILDS 仅为 BERT-Small→Large 的概念验证。 [4]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-34378",
+      "paper": "BADGERS: Bayesian Adaptive Graph-Guided Errors-in-Variables Regression Solution for Structured High-Dimensional Data",
+      "authors": "Hu, Zeyu · Qu, Kewen · Long, Qi · Yan, Jun · Li, Wenrui",
+      "url": "https://arxiv.org/abs/2611.34378v1",
+      "kind": "简讯 · 新稿",
+      "title": "BADGERS：图结构与测量误差联合建模",
+      "dateNote": "v1：2026-11-25 ET；11 月 26 日公告",
+      "evidence": "已读摘要与模型设置；身份经 Penn 署名核验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Qi Long（Penn）署名新稿：潜在真实协变量、不同数量的重复测量、图引导精度矩阵与回归收缩共同建模，MCMC 后验采样。基因预测的改进不等于识别因果机制；线性高斯测量模型与图质量仍是边界。 [5]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-33589",
+      "paper": "Amortizing Exact Orthogonality: Drift-Triggered Restoration for Orthogonal Fine-Tuning",
+      "authors": "Zhao, Lanxin · Li, Xiaoyu · Shi, Dai · Gao, Junbin · Han, Andi",
+      "url": "https://arxiv.org/abs/2611.33589v1",
+      "kind": "简讯 · 新稿",
+      "title": "按漂移触发 polar 恢复",
+      "dateNote": "v1：2026-11-24 ET；11 月 26 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "RTOFT 用斜对称 S 的 I+S 近似正交变换，缺陷恰为 ‖S‖²；下一次 forward 前按阈值恢复。τ² 保证依赖逐步检测与恢复顺序，不是每 epoch 修复；这是正交微调而非新的 Muon 全局理论。 [6]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-33567",
+      "paper": "ProPolar: Progressive Polar Decomposition for Implicit Neural Representations",
+      "authors": "Kim, Pureum · Ryu, Younggeon · Lee, Dongyoon · Lee, Hae Beom · Jin, Kyong Hwan",
+      "url": "https://arxiv.org/abs/2611.33567v1",
+      "kind": "简讯 · 新稿",
+      "title": "ProPolar：让活跃谱子空间随训练增长",
+      "dateNote": "v1：2026-11-24 ET；11 月 26 日公告",
+      "evidence": "已读摘要与优化机制",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在低秩子空间内更新动量并做 polar/五步 NS，逐渐增加 rank；rank 扩张期间维持峰值学习率。INR 图像拟合、超分与 NeRF 报告改善，匹配 HPO 预算不代表所有训练时间相同。 [7]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-34529",
+      "paper": "AliceAI-Foundation-80B-A3B-Base",
+      "authors": "Skachkov, Nikolay · Redina, Ekaterina · Konoplev, Maksim · Uskov, Evgenii · Zykova, Veronika · Tsarikov, Ivan · Zakharov, Artemii · Godunova, Mariia · Lunin, Dmitrii · Nikiforova, Maria · Levanov, Valerii · Kalsin, Anton · Panteleev, Daniil · Gerasev, Alexey · Kopytin, Ilia · Kapushev, Yermek · Liakhov, Egor · Lialikova, Irina · Taekina, Tatiana · Volotova, Anastasia · Kubaeva, Assol · Alekseev, Kirill · Otlivanchik, Pavel · Kosimov, Mukhammadfirdavs · Negodin, Vladislav · Vinogradov, Ivan · Andriushchenko, Anton · Nikitin, Maksim · Sukhoi, Daniil · Mazitov, Alexander · Abraham, Maksim · Zmushko, Philip · Ignatov, Maksim · Sapozhkov, Ivan · Byzov, Timofey · Shmavonian, Edgar",
+      "url": "https://arxiv.org/abs/2611.34529v1",
+      "kind": "简讯 · 新稿",
+      "title": "AliceAI：loss 代理与下游能力的脱节",
+      "dateNote": "v1：2026-11-25 ET；11 月 26 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "80B 总参数/3B 激活，Muon，17.5T tokens 的报告包含 scaling-law 实验，并警示 held-out loss 不能完全代理下游表现；MoE 输出辅助损失用于预测学习率下的稳定训练。基于摘要，未核查全部消融。 [8]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-34575",
+      "paper": "Sage-Med: Scaling Medical Multimodal Intelligence",
+      "authors": "Med Team · Hu, Ming · Tang, Cheng · Li, Wei · Li, Rongbin · Tang, Feilong · Hu, Junru · Zhu, Hongze · Yan, Qiujuan · Tang, Huanze · Wei, Shaocong · Yan, Siyuan · Cen, Min · Xu, Zhongxing · Wang, Zhonghua · Ju, Lie · Yu, Zhen · Li, Wenjie · Su, Shiyan · Hao, Jing · Liang, Jingyong · Song, Diping · Yan, Fang · Ma, Chenglong · Ning, Junzhi · Xue, Haochen · Ye, Zanting · Wang, Chenrun · Wei, Jinjie · Xin, Yi · Shen, Jianghan · Luo, Siqi · Liu, Jiyao · Xie, Huidong · Zhao, Jun · Zhou, Rulin · Jiang, Longquan · Huang, Ziyan · Chen, Ying · Zhang, Hanxiao · Wu, Junyang · Bian, Mouxiao · Lin, Jiashi · Wang, Chenyu · Qin, Qi · Huang, Jie · Zhou, Yiling · Chen, Jiawei · Wang, Kefan · Hua, Jingjing · Liu, Yaoyu · Xu, Huihui · Li, Tianbin · Ye, Jin · Chen, Ziyang · Gao, Shujian · Lu, Zilin · Yan, Jiangtao · Ji, Changkai · Tang, Wenhao · Zeng, Xinyi · Chen, Yuxing · Yang, Hongwei · Zhang, Rongzhao · Ding, Jinru · Wu, Yingcheng · Yin, Zhenfei · Li, Jinzhe · Lu, Lu · Zhong, Yun · Lin, Zhishan · Wang, Bingli · Ren, Xiaohan · Qian, Jianmin · Zhao, Penghao · Tian, Zhongbo · Zhou, Zhenbang · Dai, Peiling · Zhao, Mengjing · Zheng, Jingyu · Liu, Pinan · Li, Shiwei · Mar, Victoria · Vico-Alonso, Cristina · Wu, Qiang · Liu, Xianming · Huang, Lingtong · Song, Dili · Zhang, Minghui · Zhang, Wenlong · Guo, Qipeng · Li, Yuqiang · Dong, Nanqing · Gu, Yun · Duan, Qi · Ren, Hongliang · Shan, Hongming · Xie, Yin · An, Xiang · Wang, Benyou · Su, Yueming · Zheng, Yefeng · Ge, Zongyuan · Feng, Chun-Mei · Xu, Jie · Qiao, Yu · He, Junjun · Chen, Yirong",
+      "url": "https://arxiv.org/abs/2611.34575v1",
+      "kind": "简讯 · 新稿",
+      "title": "Sage-Med：大小增长不自动补足视觉短板",
+      "dateNote": "v1：2026-11-25 ET；11 月 26 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "对比发现更大医疗 MLLM 主要改善文本而非多模态感知；报告以分阶段数据与训练课程研究扩展。基于摘要，模型、数据与训练策略共同改变，不据此提取独立规模指数或临床有效性。 [9]"
+        }
+      ]
+    },
+    {
+      "id": "paper-2611-33812",
+      "paper": "KnitNet: Learning to Search at Inference Time for Exact RNA Inverse Design",
+      "authors": "Panescu, Antonia · Wang, Xin · Xu, Haoran · Chen, Qingyu · Oliver, Carlos · Ying, Rex",
+      "url": "https://arxiv.org/abs/2611.33812v1",
+      "kind": "简讯 · 新稿",
+      "title": "KnitNet：把 verifier 反馈用于搜索",
+      "dateNote": "v1：2026-11-25 ET；11 月 26 日公告",
+      "evidence": "基于摘要",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "通过错配折叠学习联合修复与在线 surrogate，使 RNA inverse design 的额外推理计算更有效。摘要报告五项二级结构测试的平均 exact solve rate 增加 21 个百分点；计算折叠匹配不等于湿实验验证。 [10]"
+        }
+      ]
+    },
+    {
+      "id": "paper-loopbehind",
+      "paper": "Loop Behind: Rethinking Where Extra Loops Pay Off in Looped Language Models",
+      "authors": "Xijie Gong · Tonghan Wang",
+      "url": "https://huggingface.co/blog/XijieGong/loop-behind-rethinking-where-extra-loops-pay-off-i",
+      "kind": "简讯 · 技术博客",
+      "title": "Loop Behind: Rethinking Where Extra Loops Pay Off in Looped Language Models",
+      "dateNote": "首发 2026-11-24；延迟补收",
+      "evidence": "已读方法与报告实验",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Dory-4B 的额外循环收益大多来自前序 token 更深的 KV，而非当前 token 读出前的额外循环。跨 12 项测试，深 KV 恢复 6.8/7.2 个百分点；Loop-Behind 将剩余循环与后续 token 并行。该比例是局部 accuracy 差距，非总体性能提升比例。 [11]"
+        }
+      ]
+    },
+    {
+      "id": "paper-roborsi",
+      "paper": "SenseNova-RoboRSI: Integrating VLA and Code as Policy Through Model–Harness Co-Evolution",
+      "authors": "Bruce Ws5297 / SenseNova",
+      "url": "https://huggingface.co/blog/sensenova/roborsi",
+      "kind": "简讯 · 技术博客",
+      "title": "SenseNova-RoboRSI: Integrating VLA and Code as Policy Through Model–Harness Co-Evolution",
+      "dateNote": "首发 2026-11-25",
+      "evidence": "已读训练循环与对照",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "三轮中先修改工具、教师重新收集轨迹，再拒绝筛选并 SFT 学生。相同 Preview 起点，harness-only / model-only / 联合更新 progress 为 24.8 / 32.2 / 34.7；仅 seed 0、layout 0，不作为跨场景成功率。 [12]"
+        }
+      ]
+    },
+    {
+      "id": "paper-parse35",
+      "paper": "Building on Nemotron 3.5 Parse: Open Data, Fine-Tuning, and Faster Inference",
+      "authors": "NVIDIA",
+      "url": "https://huggingface.co/blog/nvidia/building-on-nemotron-35-parse-open-data-fine-tunin",
+      "kind": "简讯 · 技术博客",
+      "title": "Building on Nemotron 3.5 Parse: Open Data, Fine-Tuning, and Faster Inference",
+      "dateNote": "首发 2026-11-26",
+      "evidence": "基于原文公开索引片段",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "SFT 后 GRPO 以结构、数值与完成情况打分。公开原文索引片段报告匹配开发 checkpoint 的总体分数 66.24→71.38、重复标记页 126→29；不是最终发布模型对比。全文本轮不可读，奖励细节未核验。 [13]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/html/2611.33951v1",
+      "title": "BReD · §3–5"
+    },
+    {
+      "url": "https://arxiv.org/html/2611.34821v1",
+      "title": "LoopTitan · §2–4，命题 1 与对照"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.34276v1",
+      "title": "Scaling Looped MoE Language Models under Matched Budgets: Information Flow and Parameter Allocation · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.34707v1",
+      "title": "When the Proxy Is Wrong: Mismatch-Corrected Bandits for Adaptive Data Sampling · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.34378v1",
+      "title": "BADGERS: Bayesian Adaptive Graph-Guided Errors-in-Variables Regression Solution for Structured High-Dimensional Data · 已读摘要与模型设置；身份经 Penn 署名核验"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.33589v1",
+      "title": "Amortizing Exact Orthogonality: Drift-Triggered Restoration for Orthogonal Fine-Tuning · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.33567v1",
+      "title": "ProPolar: Progressive Polar Decomposition for Implicit Neural Representations · 已读摘要与优化机制"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.34529v1",
+      "title": "AliceAI-Foundation-80B-A3B-Base · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.34575v1",
+      "title": "Sage-Med: Scaling Medical Multimodal Intelligence · 基于摘要"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.33812v1",
+      "title": "KnitNet: Learning to Search at Inference Time for Exact RNA Inverse Design · 基于摘要"
+    },
+    {
+      "url": "https://huggingface.co/blog/XijieGong/loop-behind-rethinking-where-extra-loops-pay-off-i",
+      "title": "Loop Behind: Rethinking Where Extra Loops Pay Off in Looped Language Models · 已读方法与报告实验"
+    },
+    {
+      "url": "https://huggingface.co/blog/sensenova/roborsi",
+      "title": "SenseNova-RoboRSI: Integrating VLA and Code as Policy Through Model–Harness Co-Evolution · 已读训练循环与对照"
+    },
+    {
+      "url": "https://huggingface.co/blog/nvidia/building-on-nemotron-35-parse-open-data-fine-tunin",
+      "title": "Building on Nemotron 3.5 Parse: Open Data, Fine-Tuning, and Faster Inference · 基于原文公开索引片段"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2202.00512v2",
+      "title": "经典 · §2–5，算法 2"
+    },
+    {
+      "url": "https://api.openalex.org/works/W4221159371",
+      "title": "OpenAlex：3,057 次引用；2026-11-26 查询"
+    }
+  ],
+  "classic": {
+    "id": "classic-progressive-distillation",
+    "paperId": "arxiv:2202.00512",
+    "shortTitle": "Progressive Distillation",
+    "year": 2022,
+    "topics": [
+      "Diffusion models"
+    ],
+    "kind": "每日经典精读",
+    "title": "两步教师到一步学生：反解一个 DDIM 步",
+    "paper": "Progressive Distillation for Fast Sampling of Diffusion Models",
+    "authors": "Tim Salimans · Jonathan Ho",
+    "url": "https://arxiv.org/pdf/2202.00512v2",
+    "dateNote": "ICLR 2022；首发 2022-02-01；所读 v2：2022-06-07",
+    "evidence": "已读 §2–5 与算法 2",
+    "recognition": {
+      "label": "OpenAlex 3,057 次引用（2026-11-26）",
+      "url": "https://api.openalex.org/works/W4221159371"
+    },
+    "question": "固定总蒸馏预算，怎样在不同阶段分配更新步数，以控制最终一步采样的端点误差而不只优化局部 MSE？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "DDIM（2020）把生成变成确定性积分，但直接减少步数会放大离散误差。Salimans 与 Ho（ICLR 2022）改为训练学生模仿两步教师的端点，反复把步数减半。 [14]"
+      },
+      {
+        "type": "equation",
+        "tex": "z_t=\\alpha_t x+\\sigma_t\\epsilon,\\quad\\alpha_t^2+\\sigma_t^2=1,\\quad D_{t\\to s}(z;\\widehat x)=\\frac{\\sigma_s}{\\sigma_t}z+\\left(\\alpha_s-\\frac{\\sigma_s}{\\sigma_t}\\alpha_t\\right)\\widehat x",
+        "label": "原文设定与 DDIM 步：s<t，ε 为标准高斯，log-SNR 随 t 下降；D 的第二个参数为去噪预测。"
+      },
+      {
+        "type": "equation",
+        "tex": "z_s^{\\rm teach}=D_{u\\to s}\\!\\left(D_{t\\to u}(z_t;\\widehat x_\\eta(z_t));\\widehat x_\\eta(z_u)\\right),\\quad s<u<t",
+        "label": "记 zᵤ 为内部教师步结果。教师冻结，给同一 zₜ 产生确定性端点；并非直接回归原始 x。"
+      },
+      {
+        "type": "equation",
+        "tex": "\\widetilde x=\\frac{z_s^{\\rm teach}-(\\sigma_s/\\sigma_t)z_t}{\\alpha_s-(\\sigma_s/\\sigma_t)\\alpha_t},\\qquad\\min_\\theta\\mathbb E\\,w(\\lambda_t)\\|\\widehat x_\\theta(z_t)-\\widetilde x\\|^2",
+        "label": "原文单步 DDIM 的反解；教师两步跨度等于学生一步。每阶段学生从教师初始化，再成为下一阶段教师。"
+      },
+      {
+        "type": "equation",
+        "tex": "v=\\alpha_t\\epsilon-\\sigma_t x,\\quad\\widehat x=\\alpha_t z_t-\\sigma_t\\widehat v,\\qquad \\widehat x_{\\epsilon}=\\frac{z_t-\\sigma_t\\widehat\\epsilon}{\\alpha_t}",
+        "label": "原文 v 参数化：α→0 时避免 ε 参数化中除以 α 的不稳定；仍需适当 loss 权重，参数化本身不消除蒸馏误差。"
+      },
+      {
+        "type": "text",
+        "text": "原文报告 CIFAR-10 四步 FID 约 3.0；这是指定模型、训练与评价协议下的结果。教师端点误差可逐阶段传递，一步近似不能保证保留所有分布细节。 [14]"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "已读正文与算法，未复现。入选依据为 OpenAlex 所查条目 3,057 次引用（2026-11-26）。 [15]"
+      }
+    ]
+  }
+}

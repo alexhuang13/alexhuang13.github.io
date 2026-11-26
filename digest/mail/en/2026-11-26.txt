@@ -1,0 +1,81 @@
+RESEARCH DIGEST / 2026-11-26
+Quantization Memory and Attribution of Looping Gains
+BReD · LoopTitan · Progressive Distillation
+
+中文: https://alexhuang13.github.io/digest/2026-11-26.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-26.html
+
+Main read · New paper
+BReD: how momentum remembers small bias
+BReD: Block Replay Dithering for Stable Low-Bit EMA Optimizer States
+https://alexhuang13.github.io/digest/en/2026-11-26.html#paper-2611-33951
+
+Main read · New paper
+LoopTitan: make weight sharing the final ablation
+LoopTitan: What Does Parameter Revisit Buy a Mixture-of-Experts?
+https://alexhuang13.github.io/digest/en/2026-11-26.html#paper-2611-34821
+
+Brief · New paper
+Parameter allocation in looped MoE
+Scaling Looped MoE Language Models under Matched Budgets: Information Flow and Parameter Allocation
+https://alexhuang13.github.io/digest/en/2026-11-26.html#paper-2611-34276
+
+Brief · New paper
+Data allocation with a misranking proxy
+When the Proxy Is Wrong: Mismatch-Corrected Bandits for Adaptive Data Sampling
+https://alexhuang13.github.io/digest/en/2026-11-26.html#paper-2611-34707
+
+Brief · New paper
+BADGERS: graph structure meets measurement error
+BADGERS: Bayesian Adaptive Graph-Guided Errors-in-Variables Regression Solution for Structured High-Dimensional Data
+https://alexhuang13.github.io/digest/en/2026-11-26.html#paper-2611-34378
+
+Brief · New paper
+Drift-triggered polar restoration
+Amortizing Exact Orthogonality: Drift-Triggered Restoration for Orthogonal Fine-Tuning
+https://alexhuang13.github.io/digest/en/2026-11-26.html#paper-2611-33589
+
+Brief · New paper
+ProPolar: grow the active spectral subspace
+ProPolar: Progressive Polar Decomposition for Implicit Neural Representations
+https://alexhuang13.github.io/digest/en/2026-11-26.html#paper-2611-33567
+
+Brief · New paper
+AliceAI: loss proxies versus downstream capability
+AliceAI-Foundation-80B-A3B-Base
+https://alexhuang13.github.io/digest/en/2026-11-26.html#paper-2611-34529
+
+Brief · New paper
+Sage-Med: size alone does not close the visual gap
+Sage-Med: Scaling Medical Multimodal Intelligence
+https://alexhuang13.github.io/digest/en/2026-11-26.html#paper-2611-34575
+
+Brief · New paper
+KnitNet: use verifier feedback to guide search
+KnitNet: Learning to Search at Inference Time for Exact RNA Inverse Design
+https://alexhuang13.github.io/digest/en/2026-11-26.html#paper-2611-33812
+
+Brief · Technical blog
+Loop Behind: Rethinking Where Extra Loops Pay Off in Looped Language Models
+Loop Behind: Rethinking Where Extra Loops Pay Off in Looped Language Models
+https://alexhuang13.github.io/digest/en/2026-11-26.html#paper-loopbehind
+
+Brief · Technical blog
+SenseNova-RoboRSI: Integrating VLA and Code as Policy Through Model–Harness Co-Evolution
+SenseNova-RoboRSI: Integrating VLA and Code as Policy Through Model–Harness Co-Evolution
+https://alexhuang13.github.io/digest/en/2026-11-26.html#paper-roborsi
+
+Brief · Technical blog
+Building on Nemotron 3.5 Parse: Open Data, Fine-Tuning, and Faster Inference
+Building on Nemotron 3.5 Parse: Open Data, Fine-Tuning, and Faster Inference
+https://alexhuang13.github.io/digest/en/2026-11-26.html#paper-parse35
+
+Daily classic · 2022
+Two teacher steps to one student step: invert DDIM
+https://alexhuang13.github.io/digest/en/2026-11-26.html#classic-progressive-distillation
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-26.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

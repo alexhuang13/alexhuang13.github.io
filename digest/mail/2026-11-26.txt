@@ -1,0 +1,81 @@
+RESEARCH DIGEST / 2026-11-26
+量化误差的记忆与循环收益的归因
+BReD · LoopTitan · Progressive Distillation
+
+中文: https://alexhuang13.github.io/digest/2026-11-26.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-26.html
+
+主读 · 新稿
+BReD：小偏差如何被动量记住
+BReD: Block Replay Dithering for Stable Low-Bit EMA Optimizer States
+https://alexhuang13.github.io/digest/2026-11-26.html#paper-2611-33951
+
+主读 · 新稿
+LoopTitan：把共享权重放到最后一项消融
+LoopTitan: What Does Parameter Revisit Buy a Mixture-of-Experts?
+https://alexhuang13.github.io/digest/2026-11-26.html#paper-2611-34821
+
+简讯 · 新稿
+循环 MoE 的参数分配
+Scaling Looped MoE Language Models under Matched Budgets: Information Flow and Parameter Allocation
+https://alexhuang13.github.io/digest/2026-11-26.html#paper-2611-34276
+
+简讯 · 新稿
+代理模型排序错误时的数据分配
+When the Proxy Is Wrong: Mismatch-Corrected Bandits for Adaptive Data Sampling
+https://alexhuang13.github.io/digest/2026-11-26.html#paper-2611-34707
+
+简讯 · 新稿
+BADGERS：图结构与测量误差联合建模
+BADGERS: Bayesian Adaptive Graph-Guided Errors-in-Variables Regression Solution for Structured High-Dimensional Data
+https://alexhuang13.github.io/digest/2026-11-26.html#paper-2611-34378
+
+简讯 · 新稿
+按漂移触发 polar 恢复
+Amortizing Exact Orthogonality: Drift-Triggered Restoration for Orthogonal Fine-Tuning
+https://alexhuang13.github.io/digest/2026-11-26.html#paper-2611-33589
+
+简讯 · 新稿
+ProPolar：让活跃谱子空间随训练增长
+ProPolar: Progressive Polar Decomposition for Implicit Neural Representations
+https://alexhuang13.github.io/digest/2026-11-26.html#paper-2611-33567
+
+简讯 · 新稿
+AliceAI：loss 代理与下游能力的脱节
+AliceAI-Foundation-80B-A3B-Base
+https://alexhuang13.github.io/digest/2026-11-26.html#paper-2611-34529
+
+简讯 · 新稿
+Sage-Med：大小增长不自动补足视觉短板
+Sage-Med: Scaling Medical Multimodal Intelligence
+https://alexhuang13.github.io/digest/2026-11-26.html#paper-2611-34575
+
+简讯 · 新稿
+KnitNet：把 verifier 反馈用于搜索
+KnitNet: Learning to Search at Inference Time for Exact RNA Inverse Design
+https://alexhuang13.github.io/digest/2026-11-26.html#paper-2611-33812
+
+简讯 · 技术博客
+Loop Behind: Rethinking Where Extra Loops Pay Off in Looped Language Models
+Loop Behind: Rethinking Where Extra Loops Pay Off in Looped Language Models
+https://alexhuang13.github.io/digest/2026-11-26.html#paper-loopbehind
+
+简讯 · 技术博客
+SenseNova-RoboRSI: Integrating VLA and Code as Policy Through Model–Harness Co-Evolution
+SenseNova-RoboRSI: Integrating VLA and Code as Policy Through Model–Harness Co-Evolution
+https://alexhuang13.github.io/digest/2026-11-26.html#paper-roborsi
+
+简讯 · 技术博客
+Building on Nemotron 3.5 Parse: Open Data, Fine-Tuning, and Faster Inference
+Building on Nemotron 3.5 Parse: Open Data, Fine-Tuning, and Faster Inference
+https://alexhuang13.github.io/digest/2026-11-26.html#paper-parse35
+
+每日精读 · 2022
+两步教师到一步学生：反解一个 DDIM 步
+https://alexhuang13.github.io/digest/2026-11-26.html#classic-progressive-distillation
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-26.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

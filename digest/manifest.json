@@ -4,8 +4,36 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-25",
+  "latest": "2026-11-26",
   "issues": [
+    {
+      "date": "2026-11-26",
+      "title": "量化误差的记忆与循环收益的归因",
+      "url": "/digest/2026-11-26.html",
+      "translations": {
+        "en": {
+          "title": "Quantization Memory and Attribution of Looping Gains",
+          "url": "/digest/en/2026-11-26.html"
+        }
+      },
+      "sources": [
+        "https://arxiv.org/html/2611.33951v1",
+        "https://arxiv.org/html/2611.34821v1",
+        "https://arxiv.org/abs/2611.34276v1",
+        "https://arxiv.org/abs/2611.34707v1",
+        "https://arxiv.org/abs/2611.34378v1",
+        "https://arxiv.org/abs/2611.33589v1",
+        "https://arxiv.org/abs/2611.33567v1",
+        "https://arxiv.org/abs/2611.34529v1",
+        "https://arxiv.org/abs/2611.34575v1",
+        "https://arxiv.org/abs/2611.33812v1",
+        "https://huggingface.co/blog/XijieGong/loop-behind-rethinking-where-extra-loops-pay-off-i",
+        "https://huggingface.co/blog/sensenova/roborsi",
+        "https://huggingface.co/blog/nvidia/building-on-nemotron-35-parse-open-data-fine-tunin",
+        "https://arxiv.org/pdf/2202.00512v2",
+        "https://api.openalex.org/works/W4221159371"
+      ]
+    },
     {
       "date": "2026-11-25",
       "title": "循环深度的锚定与 ensemble 的盲区",

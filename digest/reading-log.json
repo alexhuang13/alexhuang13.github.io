@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-26",
+    "paperId": "arxiv:2202.00512",
+    "paper": "Progressive Distillation for Fast Sampling of Diffusion Models",
+    "shortTitle": "Progressive Distillation",
+    "year": 2022,
+    "topics": [
+      "Diffusion models"
+    ],
+    "recognition": {
+      "label": "OpenAlex 3,057 次引用（2026-11-26）",
+      "url": "https://api.openalex.org/works/W4221159371"
+    },
+    "source": "https://arxiv.org/pdf/2202.00512v2",
+    "url": "/digest/2026-11-26.html#classic-progressive-distillation"
+  },
+  {
     "date": "2026-11-25",
     "paperId": "arxiv:2008.08186",
     "paper": "Prevalence of neural collapse during the terminal phase of deep learning training",
