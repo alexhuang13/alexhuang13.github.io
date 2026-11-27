@@ -1,0 +1,31 @@
+RESEARCH DIGEST / 2026-11-27
+Attributing Team Rewards and Scaling Measurement Noise
+Swarm training · Noise scaling · Mamba-2 / SSD
+
+中文: https://alexhuang13.github.io/digest/2026-11-27.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-27.html
+
+Main read · New technical article/reproduction
+New tutorial: a shared policy learns to pool private information
+Swarms, Flocks, Gangs: How to build, train, and evaluate multi-agent systems
+https://alexhuang13.github.io/digest/en/2026-11-27.html#paper-swarms-tutorial
+
+Main read · Substantive journal extension
+Journal extension: measurement quality beyond sample count
+A measurement noise scaling law for cellular representation learning
+https://alexhuang13.github.io/digest/en/2026-11-27.html#paper-noise-journal
+
+Brief · New technical blog
+Monitor nearby capabilities while distilling a language
+Distilling Kimi-K3.1-Pro into Qwen3.8-27B: Teaching a model a new language
+https://alexhuang13.github.io/digest/en/2026-11-27.html#paper-lao-distill
+
+Daily classic · 2024
+Three algorithms for one semiseparable matrix
+https://alexhuang13.github.io/digest/en/2026-11-27.html#classic-mamba2-ssd
+
+Read the full issue and equations: https://alexhuang13.github.io/digest/en/2026-11-27.html
+
+Zixun Huang · One email per issue
+Unsubscribe: mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=Please%20stop%20sending%20Research%20Digest%20to%20the%20sender%20of%20this%20email.
+Past issues: https://alexhuang13.github.io/digest/en/

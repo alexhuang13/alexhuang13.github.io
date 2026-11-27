@@ -1,0 +1,210 @@
+{
+  "date": "2026-11-27",
+  "number": "045",
+  "publishedAt": "2026-11-27T14:10:00Z",
+  "readingMinutes": 12,
+  "tags": [
+    "Post-training",
+    "Scaling laws",
+    "RNN / linear attention"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "每日研究笔记",
+  "title": "团队奖励的归因与测量噪声的尺度",
+  "subtitle": "Swarm training · Noise scaling · Mamba-2 / SSD",
+  "intro": "两篇主读：多智能体训练的新教程与复现实验，以及测量噪声 scaling 的期刊扩展；另收保留泰语能力的老挝语蒸馏。经典精读 Mamba-2 的状态空间对偶。",
+  "window": "2026-11-24 至 2026-11-27（America/New_York；重点为上期以来，含 72 小时重叠）",
+  "articles": [
+    {
+      "id": "paper-swarms-tutorial",
+      "paper": "Swarms, Flocks, Gangs: How to build, train, and evaluate multi-agent systems",
+      "authors": "Ben Burtenshaw · Kashif Rasul",
+      "url": "https://huggingface.co/blog/training-swarms",
+      "kind": "主读 · 新技术文章/复现实验",
+      "title": "新教程：共享策略学会汇总私有信息",
+      "dateNote": "博客：2026-11-26；原论文为旧文，本次为教程与复现实验",
+      "evidence": "已读任务、训练与评测设置",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "四个 Qwen3-0.6B agent 各见一个私有整数，允许通信，任一 agent 输出完整排序列表即团队成功。原论文已于 11 月 9 日收录；本次新增教程与保留的 75 步实验，不能当成新论文。 [1] [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "R_g=\\mathbf1\\{\\text{success}\\}\\left[1-0.25\\min\\!\\left(1,\\frac{C_g}{36864}\\right)\\right],\\qquad A_g=\\frac{R_g-\\overline R}{s_R+\\varepsilon}",
+          "label": "奖励为原文定义；优势公式为文字规则的数学整理：同题八次团队尝试归一化，四个 agent 共享优势。C 为团队生成 token 数；这不是逐 agent 的因果信用分配。"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "同一保留实验",
+            "起始 / 终点",
+            "范围"
+          ],
+          "rows": [
+            [
+              "Success",
+              "6.56% → 82.34%",
+              "Train: first / last 5 updates"
+            ],
+            [
+              "Tokens / team",
+              "12,826.9 → 8,026.0",
+              "Train"
+            ],
+            [
+              "Checkpoint 75",
+              "26 / 32 = 81.25%",
+              "Held out"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "信息分散使单 agent 没有足够信息，故此任务不证明团队胜过同预算单 agent。训练 token 下降不能外推到 held-out 效率；原实验为 1+7 张 H200，教程双 GPU、50 步的运行并非完全同设置。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-noise-journal",
+      "paper": "A measurement noise scaling law for cellular representation learning",
+      "authors": "Gokul Gowri · Igor Sadalski · Dan Raviv · Peng Yin · Jonathan Rosenfeld · Allon M. Klein",
+      "url": "https://www.nature.com/articles/s42256-026-01332-7",
+      "kind": "主读 · 实质扩展/期刊版",
+      "title": "期刊扩展：样本量之外还有测量质量",
+      "dateNote": "期刊版：2026-11-26；预印本首发 2025-03-04，所比 v2：2026-02-20",
+      "evidence": "已读期刊正文相关部分并对照旧版",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "用辅助信号 Y 与表示 Z 的互信息衡量任务相关信息。相比 2 月 v2，期刊版加入 STATE 模型，以及模拟相关测量噪声/批次效应分析；对数噪声规律本身是旧结论。 [3] [4]"
+        },
+        {
+          "type": "equation",
+          "tex": "X=Y+U,\\quad Z=\\sqrt\\eta X+E,\\qquad Y\\sim\\mathcal N(\\mu_Y,\\sigma_Y^2),\\ U\\sim\\mathcal N(0,\\sigma_U^2),\\ E\\sim\\mathcal N(0,1)",
+          "label": "原文标量高斯解释模型，三项独立；U 是与 Y 无关的变异，E 是测量通道噪声。η 在信号归一化后对应 SNR，不直接等于原始测序深度。"
+        },
+        {
+          "type": "equation",
+          "tex": "I(Y;Z)=\\frac12\\log_2\\frac{1+\\eta(\\sigma_Y^2+\\sigma_U^2)}{1+\\eta\\sigma_U^2},\\qquad I_{\\max}=\\frac12\\log_2\\frac{\\sigma_Y^2+\\sigma_U^2}{\\sigma_U^2}",
+          "label": "原文高斯模型恒等式；有限上限要求 σᵤ²>0。推广到真实高维非高斯数据的曲线形状是经验发现，不是任意神经网络的定理。"
+        },
+        {
+          "type": "text",
+          "text": "期刊结果继续区分噪声耐受性与高 SNR 上限：更耐噪不意味着表示质量上限更高。样本数增加与每个样本的质量改善不能自动互换；固定预算下的最优分配仍需成本模型。 [3]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "MI 依赖所选辅助任务及其估计器；高斯推导不是生物机制模型，也不使曲线成为通用表示质量指标。本文未复现实验。 [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-lao-distill",
+      "paper": "Distilling Kimi-K3.1-Pro into Qwen3.8-27B: Teaching a model a new language",
+      "authors": "Zain Hasan · Sonny Khan",
+      "url": "https://www.together.ai/blog/distilling-kimi-into-qwen",
+      "kind": "简讯 · 新技术博客",
+      "title": "蒸馏新语言时，要监测邻近能力",
+      "dateNote": "博客首发：2026-11-26",
+      "evidence": "已读方法、数据混合与结果",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "off-policy 文本蒸馏：3,834 条教师老挝语翻译加 989 条泰语翻译，训练 Qwen3.8-27B LoRA。FLORES-200 devtest 的 1,012 句 Lao chrF++ 为 5.5→44.3（教师 47.5），泰语 300 句为 46.7→47.8。只用人类 Lao 参考的对照虽达 44.7，却将 Thai 降至 5.3；数据源和训练量不同，不能视为严格等预算因果消融。 [5]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://huggingface.co/blog/training-swarms",
+      "title": "多智能体教程 · 任务、奖励、75 步实验与复现差异"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.08615",
+      "title": "背景旧文 · Simple Scaling of Swarms；11 月 9 日已收录"
+    },
+    {
+      "url": "https://www.nature.com/articles/s42256-026-01332-7",
+      "title": "测量噪声期刊版 · Results、Box 1 与边界"
+    },
+    {
+      "url": "https://arxiv.org/html/2503.02726v2",
+      "title": "对照旧版 · 2026-02-20 v2"
+    },
+    {
+      "url": "https://www.together.ai/blog/distilling-kimi-into-qwen",
+      "title": "蒸馏案例 · 数据混合、评测范围与失败实验"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2405.21060v1",
+      "title": "经典 · §2.4、5–6：SSD 与分块算法"
+    },
+    {
+      "url": "https://api.openalex.org/works/W4399317989",
+      "title": "OpenAlex：2,416 次引用；查询 2026-11-27"
+    }
+  ],
+  "classic": {
+    "id": "classic-mamba2-ssd",
+    "paperId": "arxiv:2405.21060",
+    "shortTitle": "Mamba-2 / SSD",
+    "year": 2024,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "kind": "每日经典精读",
+    "title": "同一半可分矩阵的三种算法",
+    "paper": "Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality",
+    "authors": "Tri Dao · Albert Gu",
+    "url": "https://arxiv.org/pdf/2405.21060v1",
+    "dateNote": "ICML 2024；首发与所读 v1：2024-05-31",
+    "evidence": "已读 §2.4、5–6 理论与算法",
+    "recognition": {
+      "label": "OpenAlex 2,416 次引用（2026-11-27）",
+      "url": "https://api.openalex.org/works/W4399317989"
+    },
+    "question": "固定训练 FLOPs 与状态内存，增加状态维数 N 和增加共享层循环次数，分别改变什么可表达结构，怎样设计不混淆二者的实验？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "S4（2021）用结构化状态转移实现长序列记忆；Mamba（2023）允许参数依输入变化。Dao 与 Gu（ICML 2024）在 Mamba-2 中令每个 head 的状态转移为标量乘单位阵，使递归与 attention 共享一个可分解的矩阵。 [6]"
+      },
+      {
+        "type": "equation",
+        "tex": "S_t=a_tS_{t-1}+b_tx_t^\\top,\\qquad y_t^\\top=c_t^\\top S_t,\\quad S_t\\in\\mathbb R^{N\\times P},\\ b_t,c_t\\in\\mathbb R^N,\\ x_t\\in\\mathbb R^P",
+        "label": "原文单 head 设定的记号整理；S₀=0，aₜ 为标量。系数可依赖输入，后续等价式针对给定输入的同一组系数。"
+      },
+      {
+        "type": "equation",
+        "tex": "Y=MX,\\qquad M_{ij}=c_i^\\top b_j\\prod_{k=j+1}^{i}a_k\\ \\ (i\\ge j),\\quad M_{ij}=0\\ \\ (i<j)",
+        "label": "原文展开递归；空积为 1。取 Qᵢ=cᵢ、Kⱼ=bⱼ，得到 M=(QKᵀ)⊙L，是无 softmax 的结构化 masked attention。"
+      },
+      {
+        "type": "equation",
+        "tex": "M_{ij}=\\left(c_i^\\top\\prod_{k=q+1}^{i}a_k\\right)\\left(b_j\\prod_{k=j+1}^{q}a_k\\right),\\quad i>q\\ge j\\quad\\Longrightarrow\\quad\\operatorname{rank}(M_{>q,\\le q})\\le N",
+        "label": "原文半可分结构的切分推导：严格跨边界的块低秩；这不意味着整个 T×T 矩阵低秩。"
+      },
+      {
+        "type": "equation",
+        "tex": "S_r=\\left(\\prod_{k=\\ell+1}^{r}a_k\\right)S_\\ell+\\sum_{j=\\ell+1}^{r}\\left(\\prod_{k=j+1}^{r}a_k\\right)b_jx_j^\\top",
+        "label": "为解释原文 §6 而重排的 chunk 状态公式：块内矩乘算局部输出与末状态，再 scan 块间状态，最后补入过去的贡献。"
+      },
+      {
+        "type": "text",
+        "text": "相同算子的递归、二次 attention 和分块算法，浮点误差之外不因计算顺序而改变模型。选择块长改变硬件效率；SSD core 的提速不能直接写成整个训练流程的提速。 [6]"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "已读相关理论与算法，未运行实现。标量转移是 SSD 的限制，不等于任意 softmax Transformer 都能用相同有限状态精确替代。入选：OpenAlex 所查 2,416 次引用。 [7]"
+      }
+    ]
+  }
+}

@@ -4,8 +4,28 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-26",
+  "latest": "2026-11-27",
   "issues": [
+    {
+      "date": "2026-11-27",
+      "title": "团队奖励的归因与测量噪声的尺度",
+      "url": "/digest/2026-11-27.html",
+      "translations": {
+        "en": {
+          "title": "Attributing Team Rewards and Scaling Measurement Noise",
+          "url": "/digest/en/2026-11-27.html"
+        }
+      },
+      "sources": [
+        "https://huggingface.co/blog/training-swarms",
+        "https://arxiv.org/abs/2611.08615",
+        "https://www.nature.com/articles/s42256-026-01332-7",
+        "https://arxiv.org/html/2503.02726v2",
+        "https://www.together.ai/blog/distilling-kimi-into-qwen",
+        "https://arxiv.org/pdf/2405.21060v1",
+        "https://api.openalex.org/works/W4399317989"
+      ]
+    },
     {
       "date": "2026-11-26",
       "title": "量化误差的记忆与循环收益的归因",

@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-27",
+    "paperId": "arxiv:2405.21060",
+    "paper": "Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality",
+    "shortTitle": "Mamba-2 / SSD",
+    "year": 2024,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "recognition": {
+      "label": "OpenAlex 2,416 次引用（2026-11-27）",
+      "url": "https://api.openalex.org/works/W4399317989"
+    },
+    "source": "https://arxiv.org/pdf/2405.21060v1",
+    "url": "/digest/2026-11-27.html#classic-mamba2-ssd"
+  },
+  {
     "date": "2026-11-26",
     "paperId": "arxiv:2202.00512",
     "paper": "Progressive Distillation for Fast Sampling of Diffusion Models",

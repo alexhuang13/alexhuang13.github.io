@@ -1,0 +1,31 @@
+RESEARCH DIGEST / 2026-11-27
+团队奖励的归因与测量噪声的尺度
+Swarm training · Noise scaling · Mamba-2 / SSD
+
+中文: https://alexhuang13.github.io/digest/2026-11-27.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-27.html
+
+主读 · 新技术文章/复现实验
+新教程：共享策略学会汇总私有信息
+Swarms, Flocks, Gangs: How to build, train, and evaluate multi-agent systems
+https://alexhuang13.github.io/digest/2026-11-27.html#paper-swarms-tutorial
+
+主读 · 实质扩展/期刊版
+期刊扩展：样本量之外还有测量质量
+A measurement noise scaling law for cellular representation learning
+https://alexhuang13.github.io/digest/2026-11-27.html#paper-noise-journal
+
+简讯 · 新技术博客
+蒸馏新语言时，要监测邻近能力
+Distilling Kimi-K3.1-Pro into Qwen3.8-27B: Teaching a model a new language
+https://alexhuang13.github.io/digest/2026-11-27.html#paper-lao-distill
+
+每日精读 · 2024
+同一半可分矩阵的三种算法
+https://alexhuang13.github.io/digest/2026-11-27.html#classic-mamba2-ssd
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-27.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

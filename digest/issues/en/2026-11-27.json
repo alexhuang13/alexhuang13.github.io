@@ -1,0 +1,210 @@
+{
+  "date": "2026-11-27",
+  "number": "045",
+  "publishedAt": "2026-11-27T14:10:00Z",
+  "readingMinutes": 12,
+  "tags": [
+    "Post-training",
+    "Scaling laws",
+    "RNN / linear attention"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "Daily Research Notes",
+  "title": "Attributing Team Rewards and Scaling Measurement Noise",
+  "subtitle": "Swarm training · Noise scaling · Mamba-2 / SSD",
+  "intro": "Two main reads cover a new multi-agent training tutorial with reproduction results and a journal extension of measurement-noise scaling. A brief examines Lao distillation with Thai retention. The classic derives Mamba-2 state-space duality.",
+  "window": "November 24–27, 2026 (America/New_York; emphasis on updates since the previous issue, with a 72-hour overlap)",
+  "articles": [
+    {
+      "id": "paper-swarms-tutorial",
+      "paper": "Swarms, Flocks, Gangs: How to build, train, and evaluate multi-agent systems",
+      "authors": "Ben Burtenshaw · Kashif Rasul",
+      "url": "https://huggingface.co/blog/training-swarms",
+      "kind": "Main read · New technical article/reproduction",
+      "title": "New tutorial: a shared policy learns to pool private information",
+      "dateNote": "Blog: November 26, 2026; underlying paper is older; tutorial and reproduction results",
+      "evidence": "Read task, training and evaluation settings",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Four Qwen3-0.6B agents each see one private integer; any correct complete sorted list wins. The paper was covered November 9; this is a new tutorial with preserved 75-update results. [1] [2]"
+        },
+        {
+          "type": "equation",
+          "tex": "R_g=\\mathbf1\\{\\text{success}\\}\\left[1-0.25\\min\\!\\left(1,\\frac{C_g}{36864}\\right)\\right],\\qquad A_g=\\frac{R_g-\\overline R}{s_R+\\varepsilon}",
+          "label": "Reward is specified in the post; the advantage formula summarizes its normalization rule across eight attempts per problem. All four agents share it. C counts generated team tokens; this is not causal credit assignment."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Preserved experiment",
+            "Start / end",
+            "Scope"
+          ],
+          "rows": [
+            [
+              "Success",
+              "6.56% → 82.34%",
+              "Train: first / last 5 updates"
+            ],
+            [
+              "Tokens / team",
+              "12,826.9 → 8,026.0",
+              "Train"
+            ],
+            [
+              "Checkpoint 75",
+              "26 / 32 = 81.25%",
+              "Held out"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Private information prevents a valid matched-budget single-agent comparison. Training-token savings do not establish held-out efficiency. The original uses 1+7 H200s; the two-GPU, 50-update walkthrough differs. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-noise-journal",
+      "paper": "A measurement noise scaling law for cellular representation learning",
+      "authors": "Gokul Gowri · Igor Sadalski · Dan Raviv · Peng Yin · Jonathan Rosenfeld · Allon M. Klein",
+      "url": "https://www.nature.com/articles/s42256-026-01332-7",
+      "kind": "Main read · Substantive journal extension",
+      "title": "Journal extension: measurement quality beyond sample count",
+      "dateNote": "Journal: November 26, 2026; preprint first posted March 4, 2025; compared v2: February 20, 2026",
+      "evidence": "Read relevant journal text and compared prior version",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Auxiliary mutual information I(Y;Z) measures task-relevant information. Relative to February v2, the journal adds STATE and simulated correlated-noise/batch-effect analyses. The logarithmic law itself is older. [3] [4]"
+        },
+        {
+          "type": "equation",
+          "tex": "X=Y+U,\\quad Z=\\sqrt\\eta X+E,\\qquad Y\\sim\\mathcal N(\\mu_Y,\\sigma_Y^2),\\ U\\sim\\mathcal N(0,\\sigma_U^2),\\ E\\sim\\mathcal N(0,1)",
+          "label": "Paper’s independent scalar Gaussian explanatory model. U is variation unrelated to Y; E is channel noise. η corresponds to SNR after normalization, not raw sequencing depth."
+        },
+        {
+          "type": "equation",
+          "tex": "I(Y;Z)=\\frac12\\log_2\\frac{1+\\eta(\\sigma_Y^2+\\sigma_U^2)}{1+\\eta\\sigma_U^2},\\qquad I_{\\max}=\\frac12\\log_2\\frac{\\sigma_Y^2+\\sigma_U^2}{\\sigma_U^2}",
+          "label": "Identity for the Gaussian model; a finite ceiling requires σᵤ²>0. The curve shape in high-dimensional non-Gaussian data is empirical, not a theorem for arbitrary neural networks."
+        },
+        {
+          "type": "text",
+          "text": "Noise robustness and the high-SNR ceiling remain distinct. More samples need not substitute for better measurements; optimal budget allocation still requires a cost model. [3]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "MI depends on the auxiliary task and estimator. The Gaussian derivation is neither a biological mechanism nor a universal representation-quality metric. No reproduction was performed. [3]"
+        }
+      ]
+    },
+    {
+      "id": "paper-lao-distill",
+      "paper": "Distilling Kimi-K3.1-Pro into Qwen3.8-27B: Teaching a model a new language",
+      "authors": "Zain Hasan · Sonny Khan",
+      "url": "https://www.together.ai/blog/distilling-kimi-into-qwen",
+      "kind": "Brief · New technical blog",
+      "title": "Monitor nearby capabilities while distilling a language",
+      "dateNote": "Blog first posted November 26, 2026",
+      "evidence": "Read method, data mixture and results",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Off-policy text distillation trains Qwen3.8-27B LoRA on 3,834 teacher Lao translations plus 989 Thai translations. On 1,012 FLORES-200 devtest sentences, Lao chrF++ rises 5.5→44.3 (teacher 47.5); Thai on 300 sentences rises 46.7→47.8. Human-Lao-only training reaches 44.7 but collapses Thai to 5.3. Data sources and amounts differ, so this is not a strictly budget-matched causal ablation. [5]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://huggingface.co/blog/training-swarms",
+      "title": "Swarm tutorial · task, reward, 75-update results and reproduction differences"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.08615",
+      "title": "Background · Simple Scaling of Swarms; covered November 9"
+    },
+    {
+      "url": "https://www.nature.com/articles/s42256-026-01332-7",
+      "title": "Measurement-noise journal version · Results, Box 1 and limits"
+    },
+    {
+      "url": "https://arxiv.org/html/2503.02726v2",
+      "title": "Prior version for comparison · February 20, 2026 v2"
+    },
+    {
+      "url": "https://www.together.ai/blog/distilling-kimi-into-qwen",
+      "title": "Distillation case · data mixture, evaluation scope and failed runs"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2405.21060v1",
+      "title": "Classic · Sections 2.4, 5–6: SSD and the block algorithm"
+    },
+    {
+      "url": "https://api.openalex.org/works/W4399317989",
+      "title": "OpenAlex: 2,416 citations; queried November 27, 2026"
+    }
+  ],
+  "classic": {
+    "id": "classic-mamba2-ssd",
+    "paperId": "arxiv:2405.21060",
+    "shortTitle": "Mamba-2 / SSD",
+    "year": 2024,
+    "topics": [
+      "RNN / linear attention"
+    ],
+    "kind": "Daily classic",
+    "title": "Three algorithms for one semiseparable matrix",
+    "paper": "Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality",
+    "authors": "Tri Dao · Albert Gu",
+    "url": "https://arxiv.org/pdf/2405.21060v1",
+    "dateNote": "ICML 2024; first posting and read version v1: May 31, 2024",
+    "evidence": "Read theory/algorithm in Sections 2.4, 5–6",
+    "recognition": {
+      "label": "OpenAlex: 2,416 citations (November 27, 2026)",
+      "url": "https://api.openalex.org/works/W4399317989"
+    },
+    "question": "At fixed training FLOPs and state memory, how do increasing state dimension N and revisiting shared layers change expressivity, and how could an experiment separate them?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "After S4 (2021) and input-dependent Mamba (2023), Dao and Gu (ICML 2024) constrain each head’s transition to a scalar times identity. Recurrence and attention then share one structured matrix. [6]"
+      },
+      {
+        "type": "equation",
+        "tex": "S_t=a_tS_{t-1}+b_tx_t^\\top,\\qquad y_t^\\top=c_t^\\top S_t,\\quad S_t\\in\\mathbb R^{N\\times P},\\ b_t,c_t\\in\\mathbb R^N,\\ x_t\\in\\mathbb R^P",
+        "label": "Notation for the paper’s single head: S₀=0 and aₜ is scalar. Coefficients may depend on input; the identities use the same coefficients for that input."
+      },
+      {
+        "type": "equation",
+        "tex": "Y=MX,\\qquad M_{ij}=c_i^\\top b_j\\prod_{k=j+1}^{i}a_k\\ \\ (i\\ge j),\\quad M_{ij}=0\\ \\ (i<j)",
+        "label": "Expanding recurrence gives structured masked attention M=(QKᵀ)⊙L with Qᵢ=cᵢ and Kⱼ=bⱼ. Empty products equal one; there is no softmax."
+      },
+      {
+        "type": "equation",
+        "tex": "M_{ij}=\\left(c_i^\\top\\prod_{k=q+1}^{i}a_k\\right)\\left(b_j\\prod_{k=j+1}^{q}a_k\\right),\\quad i>q\\ge j\\quad\\Longrightarrow\\quad\\operatorname{rank}(M_{>q,\\le q})\\le N",
+        "label": "The semiseparable factorization bounds the rank of blocks crossing a boundary, not the rank of the entire T×T matrix."
+      },
+      {
+        "type": "equation",
+        "tex": "S_r=\\left(\\prod_{k=\\ell+1}^{r}a_k\\right)S_\\ell+\\sum_{j=\\ell+1}^{r}\\left(\\prod_{k=j+1}^{r}a_k\\right)b_jx_j^\\top",
+        "label": "Chunk-state identity reorganizing Section 6: local matrix products compute within-block outputs and final states; a cross-chunk scan propagates states; past contributions are added back."
+      },
+      {
+        "type": "text",
+        "text": "Recurrence, quadratic attention and chunking compute the same operator up to floating-point effects. Chunk size changes hardware efficiency; core speedups do not establish end-to-end training speedups. [6]"
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "Theory and algorithm read; implementation not run. Scalar transitions restrict SSD; arbitrary softmax Transformers are not thereby exactly replaceable by the same finite state. OpenAlex records 2,416 citations. [7]"
+      }
+    ]
+  }
+}
