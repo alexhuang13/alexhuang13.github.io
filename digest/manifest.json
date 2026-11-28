@@ -4,8 +4,27 @@
     "zh-CN",
     "en"
   ],
-  "latest": "2026-11-27",
+  "latest": "2026-11-28",
   "issues": [
+    {
+      "date": "2026-11-28",
+      "title": "RL 的分布发现与样本学习",
+      "url": "/digest/2026-11-28.html",
+      "translations": {
+        "en": {
+          "title": "RL as Distribution Discovery and Learning from Samples",
+          "url": "/digest/en/2026-11-28.html"
+        }
+      },
+      "sources": [
+        "https://zanette-labs.github.io/rl-rollouts/",
+        "https://arxiv.org/abs/2611.33102v2",
+        "https://github.com/zanette-labs/rl-rollouts/commit/62141b1983b4341e0973bc735e3db660ba1be30f",
+        "https://huggingface.co/blog/StudioJadu/sentinels-h3-lora",
+        "https://arxiv.org/pdf/2308.08998v2",
+        "https://api.openalex.org/works/W4386080611"
+      ]
+    },
     {
       "date": "2026-11-27",
       "title": "团队奖励的归因与测量噪声的尺度",

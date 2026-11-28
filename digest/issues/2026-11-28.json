@@ -1,0 +1,180 @@
+{
+  "date": "2026-11-28",
+  "number": "046",
+  "publishedAt": "2026-11-28T14:15:00Z",
+  "readingMinutes": 12,
+  "tags": [
+    "Post-training",
+    "RLVR",
+    "Distillation"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "每日研究笔记",
+  "title": "RL 的分布发现与样本学习",
+  "subtitle": "Maximum likelihood replay · Video LoRA · ReST",
+  "intro": "主读已归档 rollout 的最大似然重放：离线 RL 重放的漂移、时间顺序与终点恢复；另补收视频 LoRA 训练中的数据与失败经验。经典精读 ReST，区分产生数据和利用数据。",
+  "window": "2026-11-25 至 2026-11-28（America/New_York；重点为上期以来，含重叠检索与明确标注的延迟补收）",
+  "articles": [
+    {
+      "id": "paper-rl-rollout-replay",
+      "paper": "Reinforcement Learning Can Be Recovered From Its Own Rollouts",
+      "authors": "Jiayi Sheng · Jingwen Gu · Guanning Zeng · Zhaoyi Zhou · Stefano Viel · Qianqian Wang · Fahim Tajwar · Andrea Zanette",
+      "url": "https://zanette-labs.github.io/rl-rollouts/",
+      "kind": "主读 · 新研究长文",
+      "title": "奖励不用于重放，也不等于奖励没有参与发现",
+      "dateNote": "长文网页未标首发；仓库首提交 2026-11-27。论文首发 11-24，v2 为 11-25；版本差异未核实",
+      "evidence": "已读研究长文全文；论文仅摘要与历史",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "在线策略 πₜ 生成 Dₜ，再由奖励更新。长文让同一初始模型按时间顺序学习归档响应，正确与错误回答都保留。这里的新长文与旧几日的论文合并为一条，不把 v2 的既有结论说成今日新定理。 [1] [2] [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "g_t^{\\rm replay}(x)=\\nabla_\\theta\\left\\{w_tp_t\\left[-D_{\\rm KL}(\\pi_t^+\\|q_\\theta)+D_{\\rm KL}(\\pi_t\\|q_\\theta)\\right]\\right\\}",
+          "label": "原文固定 prompt 的总体恒等式：pₜ>0 为成功概率，πₜ⁺ 为成功条件分布，wₜ 为 prompt 权重；生成策略、pₜ 与权重固定。正 KL 项来自 baseline，离开 on-policy 后可放大漂移；不是完整优化器失稳定理。"
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal L_t(q)=-\\mathbb E_{x\\sim\\rho,y\\sim\\pi_t}\\log q(y\\mid x)=\\mathbb E_{x\\sim\\rho}D_{\\rm KL}(\\pi_t\\|q)+\\mathrm{const.},\\qquad\\widehat\\pi_{t+1}=\\pi_t",
+          "label": "后一个等式只指模型可实现、精确总体拟合：学生落后一步。有限批次仅做一次梯度更新却跟踪学习曲线，是实验发现；它并非从初始分布的零期望梯度凭空产生奖励信号。"
+        },
+        {
+          "type": "equation",
+          "tex": "q^\\star(\\cdot\\mid x)=\\frac1m\\sum_{t=T-m}^{T-1}\\pi_t(\\cdot\\mid x)",
+          "label": "原文最后 m 批均权重放的无限容量总体解；prompt 分布相同。只有后期策略接近时，混合分布才接近最终策略，不能把它恒等为 πT。"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "模型 / 评测",
+            "归档使用",
+            "相对最终在线模型的误差"
+          ],
+          "rows": [
+            [
+              "Qwen3-1.7B / Knights & Knaves",
+              "Last batch / full archive",
+              "0.9 / 0.3 pp"
+            ],
+            [
+              "SmolLM2-360M-Instruct / GSM8K",
+              "Last 1 / 5 / 50 batches",
+              "5.2 / 3.0 / 0.9 pp"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "表中误差按所评 pass@k 求平均；终点重放会反复训练最后批次，不是只更新一步。Qwen 的“0.1%”指千步归档中使用一批的不同 rollout 数量，不是总计算量降到 0.1%。原始 RL 仍先完成分布发现；恢复原模型与跨模型蒸馏也不是同一保证。 [1]"
+        },
+        {
+          "type": "note",
+          "title": "证据边界",
+          "text": "已读总体解释与有限样本实验；未运行复现。奖励驱动的采样分布已编码进数据，故“重放不读奖励”不能推出从初始策略无需奖励探索即可获得同样能力。 [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-h3-lora",
+      "paper": "We trained an H3 video LoRA as an animation studio: Here’s everything we learned",
+      "authors": "Jona Nakai · Miquel Farré / Studio Jadu",
+      "url": "https://huggingface.co/blog/StudioJadu/sentinels-h3-lora",
+      "kind": "简讯 · 微调经验/延迟补收",
+      "title": "视频微调：学到风格，也学到数据偏斜",
+      "dateNote": "首发 2026-11-25；延迟补收，非今日首发",
+      "evidence": "已读数据、训练与定性评价",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "504 个切镜头筛成 393 段，按长度分桶接续 rank-32 LoRA，14 个 job 共 4,165 步；学习率从 1e−4 降到 3e−5。作者报告风格改善，却有角色声音趋同、音频伪影，且仅靠名字不能学会角色。评价为示例级定性比较，无系统 held-out 指标；平衡角色数据能否修复声音问题尚属作者假设。 [4]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://zanette-labs.github.io/rl-rollouts/",
+      "title": "研究长文 · 全文，重放目标、顺序与实验"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.33102v2",
+      "title": "论文原页 · 摘要与版本历史；未核实 v1/v2 内容差异"
+    },
+    {
+      "url": "https://github.com/zanette-labs/rl-rollouts/commit/62141b1983b4341e0973bc735e3db660ba1be30f",
+      "title": "长文仓库首提交 · 2026-11-27"
+    },
+    {
+      "url": "https://huggingface.co/blog/StudioJadu/sentinels-h3-lora",
+      "title": "视频 LoRA · 数据、训练设置与失败经验"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2308.08998v2",
+      "title": "经典 · ReST §3–4、算法 1 与讨论"
+    },
+    {
+      "url": "https://api.openalex.org/works/W4386080611",
+      "title": "OpenAlex：682 次引用；查询 2026-11-28"
+    }
+  ],
+  "classic": {
+    "id": "classic-rest",
+    "paperId": "arxiv:2308.08998",
+    "shortTitle": "ReST",
+    "year": 2023,
+    "topics": [
+      "Post-training"
+    ],
+    "kind": "每日经典精读",
+    "title": "Grow 与 Improve：采样成本如何被复用",
+    "paper": "Reinforced Self-Training (ReST) for Language Modeling",
+    "authors": "Caglar Gulcehre · Tom Le Paine · Srivatsan Srinivasan · Ksenia Konyushkova · Lotte Weerts · Abhishek Sharma · Aditya Siddhant · Alex Ahern · Miaosen Wang · Chenjie Gu · Wolfgang Macherey · Arnaud Doucet · Orhan Firat · Nando de Freitas",
+    "url": "https://arxiv.org/pdf/2308.08998v2",
+    "dateNote": "2023 预印本；首发 2023-08-17，所读 v2：2023-08-21；不主张会议奖项",
+    "evidence": "已读 §3–4、算法 1 与讨论",
+    "recognition": {
+      "label": "OpenAlex 682 次引用（2026-11-28）",
+      "url": "https://api.openalex.org/works/W4386080611"
+    },
+    "question": "固定总采样预算时，怎样区分提高筛选阈值带来的目标分布改善，与有效样本减少及奖励模型失配造成的退化？",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "传统在线 RLHF 反复生成并评分新响应，纯离线训练则受固定数据覆盖限制。ReST（2023）把 Grow 与 Improve 分离：较少轮生成，较多轮利用同一批数据；它允许多种离线损失，不只是“筛选后 SFT”的单一实现。 [5]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\pi_\\theta(y\\mid x)=\\prod_{s=1}^{|y|}\\pi_\\theta(y_s\\mid y_{<s},x),\\qquad\\ell_{\\rm NLL}(x,y;\\theta)=-\\sum_s\\log\\pi_\\theta(y_s\\mid y_{<s},x)",
+        "label": "原文条件语言建模设定；x 是源句，y 是完整译文。奖励模型 R 给整段译文评分。"
+      },
+      {
+        "type": "equation",
+        "tex": "D_g=D\\ \\cup\\ \\{(x_i,y_i):x_i\\sim D_X,\\ y_i\\sim\\pi_{\\theta_g}(\\cdot\\mid x_i)\\}",
+        "label": "原文 Grow：用当前模型扩充数据，同时保留原始 D。原始数据与生成数据的比例也是训练设计的一部分。"
+      },
+      {
+        "type": "equation",
+        "tex": "F_\\tau(x,y)=\\mathbf1\\{R(x,y)>\\tau\\},\\qquad J_\\tau(\\theta)=\\mathbb E_{(x,y)\\sim D_g}\\left[F_\\tau(x,y)\\,\\ell(x,y;\\theta)\\right],\\quad\\tau_1<\\tau_2<\\cdots",
+        "label": "原文 Improve：固定 Dg，逐步提高阈值并训练；ℓ 可为 NLL 或离线 RL 损失。阈值越高，保留样本越少。"
+      },
+      {
+        "type": "equation",
+        "tex": "q^\\star_\\tau(y\\mid x)=\\frac{\\mu_g(y\\mid x)\\mathbf1\\{R(x,y)>\\tau\\}}{\\Pr_{Y\\sim\\mu_g(\\cdot\\mid x)}[R(x,Y)>\\tau]}",
+        "label": "我们的解释性推导：取 NLL、固定 x、保留概率非零、无限容量并精确拟合；μg 是原始/生成混合数据分布。它说明筛选改变目标分布，不是有限网络单调改进定理。"
+      },
+      {
+        "type": "text",
+        "text": "原文在机器翻译中观察到奖励分数与人评排序不一致；增加 Grow 轮数可能继续推高奖励，却未继续改善人评。原始数据混入并不能保证消除 reward hacking；验证奖励与人类目标是否一致仍不可省略。 [5]"
+      },
+      {
+        "type": "note",
+        "title": "证据边界",
+        "text": "已读正文与算法，未复现。ReST 的筛选奖励与本期不筛正误的 rollout 重放不同；前者修改学习目标，后者追踪已由 RL 发现的分布。入选依据为 OpenAlex 所查 682 次引用。 [6]"
+      }
+    ]
+  }
+}

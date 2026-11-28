@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-11-28",
+    "paperId": "arxiv:2308.08998",
+    "paper": "Reinforced Self-Training (ReST) for Language Modeling",
+    "shortTitle": "ReST",
+    "year": 2023,
+    "topics": [
+      "Post-training"
+    ],
+    "recognition": {
+      "label": "OpenAlex 682 次引用（2026-11-28）",
+      "url": "https://api.openalex.org/works/W4386080611"
+    },
+    "source": "https://arxiv.org/pdf/2308.08998v2",
+    "url": "/digest/2026-11-28.html#classic-rest"
+  },
+  {
     "date": "2026-11-27",
     "paperId": "arxiv:2405.21060",
     "paper": "Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality",

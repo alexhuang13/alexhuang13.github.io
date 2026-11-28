@@ -1,0 +1,26 @@
+RESEARCH DIGEST / 2026-11-28
+RL 的分布发现与样本学习
+Maximum likelihood replay · Video LoRA · ReST
+
+中文: https://alexhuang13.github.io/digest/2026-11-28.html
+Read in English: https://alexhuang13.github.io/digest/en/2026-11-28.html
+
+主读 · 新研究长文
+奖励不用于重放，也不等于奖励没有参与发现
+Reinforcement Learning Can Be Recovered From Its Own Rollouts
+https://alexhuang13.github.io/digest/2026-11-28.html#paper-rl-rollout-replay
+
+简讯 · 微调经验/延迟补收
+视频微调：学到风格，也学到数据偏斜
+We trained an H3 video LoRA as an animation studio: Here’s everything we learned
+https://alexhuang13.github.io/digest/2026-11-28.html#paper-h3-lora
+
+每日精读 · 2023
+Grow 与 Improve：采样成本如何被复用
+https://alexhuang13.github.io/digest/2026-11-28.html#classic-rest
+
+阅读全文与公式：https://alexhuang13.github.io/digest/2026-11-28.html
+
+Zixun Huang · 每期一封
+退订邮件：mailto:alexhuang13-digest@agentmail.to?subject=%5BResearch%20Digest%5D%20UNSUBSCRIBE&body=%E8%AF%B7%E5%81%9C%E6%AD%A2%E5%90%91%E6%9C%AC%E9%82%AE%E4%BB%B6%E7%9A%84%E5%8F%91%E4%BB%B6%E5%9C%B0%E5%9D%80%E5%8F%91%E9%80%81%E7%A7%91%E7%A0%94%E6%97%A5%E6%8A%A5%E3%80%82
+往期归档：https://alexhuang13.github.io/digest/

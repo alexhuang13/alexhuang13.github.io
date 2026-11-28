@@ -1,0 +1,180 @@
+{
+  "date": "2026-11-28",
+  "number": "046",
+  "publishedAt": "2026-11-28T14:15:00Z",
+  "readingMinutes": 12,
+  "tags": [
+    "Post-training",
+    "RLVR",
+    "Distillation"
+  ],
+  "community": {
+    "provider": "giscus",
+    "repository": "alexhuang13/alexhuang13.github.io"
+  },
+  "edition": "Daily Research Notes",
+  "title": "RL as Distribution Discovery and Learning from Samples",
+  "subtitle": "Maximum likelihood replay · Video LoRA · ReST",
+  "intro": "The main read examines maximum-likelihood replay of archived RL rollouts: offline-RL drift, chronological order and endpoint recovery. A delayed brief covers video-LoRA data preparation and failures. The ReST classic separates generating data from exploiting it.",
+  "window": "November 25–28, 2026 (America/New_York; emphasis on updates since the previous issue, with overlapping searches and explicitly marked delayed inclusion)",
+  "articles": [
+    {
+      "id": "paper-rl-rollout-replay",
+      "paper": "Reinforcement Learning Can Be Recovered From Its Own Rollouts",
+      "authors": "Jiayi Sheng · Jingwen Gu · Guanning Zeng · Zhaoyi Zhou · Stefano Viel · Qianqian Wang · Fahim Tajwar · Andrea Zanette",
+      "url": "https://zanette-labs.github.io/rl-rollouts/",
+      "kind": "Main read · New research article",
+      "title": "Replay without rewards does not erase their role in discovery",
+      "dateNote": "Article page has no posting date; repository first commit November 27, 2026. Paper first posted November 24, v2 November 25; version differences unverified",
+      "evidence": "Read complete research article; paper abstract/history only",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Online πₜ generates Dₜ before a rewarded update. The article replays archived responses chronologically from the same initial model, retaining both correct and incorrect answers. Article and earlier paper are one item; v2 is not presented as a new theorem. [1] [2] [3]"
+        },
+        {
+          "type": "equation",
+          "tex": "g_t^{\\rm replay}(x)=\\nabla_\\theta\\left\\{w_tp_t\\left[-D_{\\rm KL}(\\pi_t^+\\|q_\\theta)+D_{\\rm KL}(\\pi_t\\|q_\\theta)\\right]\\right\\}",
+          "label": "Paper’s fixed-prompt population identity: pₜ>0 is success probability, πₜ⁺ the success-conditioned distribution and wₜ prompt weight. These are held fixed. The baseline creates a positive-KL term that can amplify drift; this is not a full optimizer-instability theorem."
+        },
+        {
+          "type": "equation",
+          "tex": "\\mathcal L_t(q)=-\\mathbb E_{x\\sim\\rho,y\\sim\\pi_t}\\log q(y\\mid x)=\\mathbb E_{x\\sim\\rho}D_{\\rm KL}(\\pi_t\\|q)+\\mathrm{const.},\\qquad\\widehat\\pi_{t+1}=\\pi_t",
+          "label": "The last equality requires realizability and exact population fitting: the student lags one step. Tracking with one update per finite batch is empirical, not reward information emerging from a zero expected initial gradient."
+        },
+        {
+          "type": "equation",
+          "tex": "q^\\star(\\cdot\\mid x)=\\frac1m\\sum_{t=T-m}^{T-1}\\pi_t(\\cdot\\mid x)",
+          "label": "The unrestricted population optimum for equally weighted final m batches, with a common prompt distribution. It approximates the final policy only if late policies are close; it is not identically πT."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Model / evaluation",
+            "Archive usage",
+            "Error relative to final online model"
+          ],
+          "rows": [
+            [
+              "Qwen3-1.7B / Knights & Knaves",
+              "Last batch / full archive",
+              "0.9 / 0.3 pp"
+            ],
+            [
+              "SmolLM2-360M-Instruct / GSM8K",
+              "Last 1 / 5 / 50 batches",
+              "5.2 / 3.0 / 0.9 pp"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Errors average evaluated pass@k. Endpoint replay repeatedly trains on final batches. Qwen’s “0.1%” concerns distinct rollouts, not total compute. Original RL still discovers the distribution first; same-model recovery does not guarantee cross-model transfer. [1]"
+        },
+        {
+          "type": "note",
+          "title": "Evidence boundary",
+          "text": "Population explanations and experiments read; no reproduction. Reward-driven sampling is already encoded in the archive, so reward-free replay does not imply reward-free discovery from the initial policy. [1]"
+        }
+      ]
+    },
+    {
+      "id": "paper-h3-lora",
+      "paper": "We trained an H3 video LoRA as an animation studio: Here’s everything we learned",
+      "authors": "Jona Nakai · Miquel Farré / Studio Jadu",
+      "url": "https://huggingface.co/blog/StudioJadu/sentinels-h3-lora",
+      "kind": "Brief · Fine-tuning experience/delayed inclusion",
+      "title": "Video fine-tuning learns style and dataset skew",
+      "dateNote": "First posted November 25, 2026; delayed inclusion, not first posted today",
+      "evidence": "Read data preparation, training and qualitative evaluation",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "504 shots become 393 clips; length-bucketed jobs resume a rank-32 LoRA for 4,165 steps across 14 jobs, with learning rate 1e−4→3e−5. Style improves qualitatively, but voices homogenize, audio artifacts remain and names alone do not identify characters. No systematic held-out metric is reported; balanced data as a remedy remains the authors’ hypothesis. [4]"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://zanette-labs.github.io/rl-rollouts/",
+      "title": "Research article · full text, replay objectives, ordering and experiments"
+    },
+    {
+      "url": "https://arxiv.org/abs/2611.33102v2",
+      "title": "Paper page · abstract/version history; substantive v1/v2 differences not verified"
+    },
+    {
+      "url": "https://github.com/zanette-labs/rl-rollouts/commit/62141b1983b4341e0973bc735e3db660ba1be30f",
+      "title": "First article-repository commit · November 27, 2026"
+    },
+    {
+      "url": "https://huggingface.co/blog/StudioJadu/sentinels-h3-lora",
+      "title": "Video LoRA · data, training setup and failures"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2308.08998v2",
+      "title": "Classic · ReST Sections 3–4, Algorithm 1 and discussion"
+    },
+    {
+      "url": "https://api.openalex.org/works/W4386080611",
+      "title": "OpenAlex: 682 citations; queried November 28, 2026"
+    }
+  ],
+  "classic": {
+    "id": "classic-rest",
+    "paperId": "arxiv:2308.08998",
+    "shortTitle": "ReST",
+    "year": 2023,
+    "topics": [
+      "Post-training"
+    ],
+    "kind": "Daily classic",
+    "title": "Grow and Improve: reuse the cost of sampling",
+    "paper": "Reinforced Self-Training (ReST) for Language Modeling",
+    "authors": "Caglar Gulcehre · Tom Le Paine · Srivatsan Srinivasan · Ksenia Konyushkova · Lotte Weerts · Abhishek Sharma · Aditya Siddhant · Alex Ahern · Miaosen Wang · Chenjie Gu · Wolfgang Macherey · Arnaud Doucet · Orhan Firat · Nando de Freitas",
+    "url": "https://arxiv.org/pdf/2308.08998v2",
+    "dateNote": "2023 preprint; first posted August 17, 2023; read v2: August 21, 2023; no conference-award claim",
+    "evidence": "Read Sections 3–4, Algorithm 1 and discussion",
+    "recognition": {
+      "label": "OpenAlex: 682 citations (November 28, 2026)",
+      "url": "https://api.openalex.org/works/W4386080611"
+    },
+    "question": "At fixed total sampling budget, how can improvements from a higher threshold be separated from degradation due to fewer retained samples and reward-model mismatch?",
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Online RLHF repeatedly generates and scores responses; fully offline training is coverage-limited. ReST (2023) separates Grow from Improve, reusing generated data across more optimization stages. It permits multiple offline losses, not only filtered SFT. [5]"
+      },
+      {
+        "type": "equation",
+        "tex": "\\pi_\\theta(y\\mid x)=\\prod_{s=1}^{|y|}\\pi_\\theta(y_s\\mid y_{<s},x),\\qquad\\ell_{\\rm NLL}(x,y;\\theta)=-\\sum_s\\log\\pi_\\theta(y_s\\mid y_{<s},x)",
+        "label": "Paper’s conditional language model: x is the source sentence and y the complete translation. Reward model R scores the sequence."
+      },
+      {
+        "type": "equation",
+        "tex": "D_g=D\\ \\cup\\ \\{(x_i,y_i):x_i\\sim D_X,\\ y_i\\sim\\pi_{\\theta_g}(\\cdot\\mid x_i)\\}",
+        "label": "Grow augments data with the current model while retaining original D. Their mixture proportion is part of the training design."
+      },
+      {
+        "type": "equation",
+        "tex": "F_\\tau(x,y)=\\mathbf1\\{R(x,y)>\\tau\\},\\qquad J_\\tau(\\theta)=\\mathbb E_{(x,y)\\sim D_g}\\left[F_\\tau(x,y)\\,\\ell(x,y;\\theta)\\right],\\quad\\tau_1<\\tau_2<\\cdots",
+        "label": "Improve fixes Dg while raising thresholds. ℓ may be NLL or an offline-RL loss. Higher thresholds retain fewer samples."
+      },
+      {
+        "type": "equation",
+        "tex": "q^\\star_\\tau(y\\mid x)=\\frac{\\mu_g(y\\mid x)\\mathbf1\\{R(x,y)>\\tau\\}}{\\Pr_{Y\\sim\\mu_g(\\cdot\\mid x)}[R(x,Y)>\\tau]}",
+        "label": "Our explanatory derivation assumes NLL, fixed x, positive retention probability, unlimited capacity and exact fitting. μg is the original/generated mixture. Filtering changes the target distribution; this is not a monotonic-improvement theorem for finite networks."
+      },
+      {
+        "type": "text",
+        "text": "Translation experiments show differing rankings by reward score and human evaluation. Additional Grow stages can improve reward without improving human ratings. Mixing original data does not guarantee freedom from reward hacking. [5]"
+      },
+      {
+        "type": "note",
+        "title": "Evidence boundary",
+        "text": "Paper and algorithm read; no reproduction. ReST changes the target via reward filtering; this issue’s unfiltered replay tracks an RL-discovered distribution. OpenAlex records 682 citations. [6]"
+      }
+    ]
+  }
+}
